@@ -1,5 +1,6 @@
 package com.raillylinker.module_sample_cloud_client_copy.services.impls
 
+import com.raillylinker.module_sample_cloud_client_copy.controllers.RootController
 import com.raillylinker.module_sample_cloud_client_copy.services.RootService
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
@@ -7,6 +8,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.servlet.ModelAndView
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Service
 class RootServiceImpl(
@@ -43,4 +46,14 @@ class RootServiceImpl(
         val env: String,
         val showApiDocumentBtn: Boolean
     )
+
+
+    ////
+    override fun getCurrentTime(
+        httpServletResponse: HttpServletResponse
+    ): RootController.GetCurrentTimeOutputVo? {
+        val currentTime = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        classLogger.info(currentTime)
+        return RootController.GetCurrentTimeOutputVo("Current time: $currentTime")
+    }
 }
