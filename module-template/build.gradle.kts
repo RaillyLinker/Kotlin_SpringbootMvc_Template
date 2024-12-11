@@ -59,10 +59,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis:3.4.0")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
 tasks.withType<Test> {
     useJUnitPlatform()
+    jvmArgs("-XX:+EnableDynamicAgentLoading")
+    jvmArgs("-Xshare:off")
 }
