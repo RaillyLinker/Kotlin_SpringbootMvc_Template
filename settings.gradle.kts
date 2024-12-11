@@ -16,3 +16,9 @@ include("module-cloud-eureka2")
 
 // Spring Cloud 유레카 서버3 (10003)
 include("module-cloud-eureka3")
+
+// Spring Cloud 클라이언트 샘플 (12000)
+include("module-sample-cloud-client")
+
+// Spring Cloud 클라이언트 샘플 복제 (12001)
+include("module-sample-cloud-client-copy")
