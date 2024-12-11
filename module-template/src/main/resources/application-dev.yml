@@ -2,6 +2,10 @@
 # : 개발 환경 개발자들을 위한 환경 설정
 
 spring:
+  application:
+    # Eureka 에 등록될 서비스 이름
+    name: TEMPLATE-DEV
+
   config:
     activate: # 프로필명 설정
       on-profile: dev
@@ -15,6 +19,21 @@ spring:
 springdoc:
   swagger-ui:
     enabled: true # Swagger 문서 공개 여부
+
+# eureka 서버에 전달할 정보 설정
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    # Eureka Client 로 등록
+    register-with-eureka: true
+    # Eureka 서버에서 레지스트리를 가져올지 여부
+    fetch-registry: false
+    healthcheck:
+      enabled: true  # Eureka 서버가 /actuator/health 엔드포인트로 상태를 확인
+    service-url:
+      # Eureka 서버 목록
+      defaultZone: http://127.0.0.1:10001/eureka/,http://127.0.0.1:10002/eureka/,http://127.0.0.1:10003/eureka/
 
 custom-config: # 프로젝트 내에서 사용하는 커스텀 설정
   # cors 허용 리스트 설정 (설정하지 않으면 모든 요청 허용)

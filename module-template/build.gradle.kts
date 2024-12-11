@@ -49,10 +49,19 @@ dependencies {
     // (Swagger)
     // : API 자동 문서화
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
+
+    // (Eureka Client)
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.2.0")
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
     jvmArgs("-XX:+EnableDynamicAgentLoading")
     jvmArgs("-Xshare:off")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2024.0.0") // Cloud version
+    }
 }

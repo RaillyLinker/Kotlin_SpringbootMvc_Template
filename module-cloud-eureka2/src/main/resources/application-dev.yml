@@ -1,0 +1,39 @@
+# (실행 환경 dev 설정)
+# : 개발 환경 개발자들을 위한 환경 설정
+
+spring:
+  application:
+    # Eureka 에 등록될 서비스 이름
+    name: CLOUD-EUREKA-DEV
+
+  config:
+    activate: # 프로필명 설정
+      on-profile: dev
+
+  servlet:
+    multipart:
+      # !!!multipart 데이터량 설정!!!
+      maxFileSize: 50MB
+      maxRequestSize: 50MB
+
+springdoc:
+  swagger-ui:
+    enabled: true # Swagger 문서 공개 여부
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    # Eureka Client 로 등록
+    registerWithEureka: true
+    # Eureka 서버에서 레지스트리를 가져올지 여부
+    fetchRegistry: true
+    healthcheck:
+      enabled: true  # Eureka 서버가 /actuator/health 엔드포인트로 상태를 확인
+    serviceUrl:
+      # Eureka 서버 목록
+      defaultZone: http://127.0.0.1:10001/eureka/,http://127.0.0.1:10003/eureka/
+
+custom-config: # 프로젝트 내에서 사용하는 커스텀 설정
+  # cors 허용 리스트 설정 (설정하지 않으면 모든 요청 허용)
+  cors-allow-list: http://localhost:8081, http://127.0.0.1:8081, http://localhost:3000, http://127.0.0.1:3000

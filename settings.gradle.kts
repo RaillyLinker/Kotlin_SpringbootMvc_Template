@@ -7,3 +7,12 @@ rootProject.name = "kotlin_springboot_mvc_template"
 // !!!모듈 추가/수정시 아래에 반영!!!
 // Springboot 프로젝트 모듈 템플릿 (10000)
 include("module-template")
+
+// Spring Cloud 유레카 서버1 (10001)
+include("module-cloud-eureka1")
+
+// Spring Cloud 유레카 서버2 (10002)
+include("module-cloud-eureka2")
+
+// Spring Cloud 유레카 서버3 (10003)
+include("module-cloud-eureka3")
