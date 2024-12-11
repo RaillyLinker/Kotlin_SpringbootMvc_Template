@@ -31,16 +31,16 @@ spring:
   profiles:
     group: # 프로필 그룹 생성 - 새로운 프로필명에, 하위 프로필들을 조합. 생성한 그룹은 spring.config.activate.on-profile 에서 명시해줘야함
       # !!!모듈별 설정 파일이 늘어나면 아래에 반영하기!!!
-      local8080:
+      local10000:
         - local
-        - port8080
-      dev8080:
+        - port10000
+      dev10000:
         - dev
-        - port8080
+        - port10000
       prod80:
         - prod
         - port80
-    default: local8080 # jar 실행시 프로필 설정이 없을 때 적용할 프로필
+    default: local10000 # jar 실행시 프로필 설정이 없을 때 적용할 프로필
     # IDE 실행 프로필 설정은, 실행 - 구성편집에서 VM 옵션 안에 -Dspring.profiles.active=dev8080 이렇게 설정 가능
     # prod 실행 포트를 나눠둔 이유는 배포 서버의 무중단 배포시 스위칭을 위한 것
 
@@ -48,7 +48,7 @@ custom-config: # 프로젝트 내에서 사용하는 커스텀 설정
   swagger: # Swagger 문서 설정
     document-version: 1.0.0
     # !!!Swagger 문서 타이틀!!!
-    document-title: Kotlin SpringBoot MVC MultiModule Template APIs (Dev)
+    document-title: Kotlin SpringBoot MVC Template APIs (Template)
     document-description:
       |
       **[읽어주세요]**

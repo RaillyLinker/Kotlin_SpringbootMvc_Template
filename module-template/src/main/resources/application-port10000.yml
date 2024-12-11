@@ -1,8 +1,8 @@
 spring:
   config:
     activate:
-      on-profile: port8080
+      on-profile: port10000
 
 server:
   # 포트번호
-  port: 8080
+  port: 10000
