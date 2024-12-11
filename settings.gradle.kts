@@ -22,3 +22,6 @@ include("module-sample-cloud-client")
 
 // Spring Cloud 클라이언트 샘플 복제 (12001)
 include("module-sample-cloud-client-copy")
+
+// Spring Cloud 게이트웨이 (8080)
+include("module-cloud-gateway")
