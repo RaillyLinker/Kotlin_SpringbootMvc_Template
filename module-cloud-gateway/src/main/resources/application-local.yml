@@ -32,6 +32,19 @@ spring:
                 retries: 3
                 statuses: INTERNAL_SERVER_ERROR
 
+        - id: AUTH-LOCAL  # 라우팅 ID
+          predicates:
+            - Path=/auth/**  # "/time-service/**" 경로로 들어오는 요청을 라우팅
+          uri: lb://AUTH-LOCAL  # Eureka에서 `time-service` 이름으로 서비스를 찾아서 요청을 전달
+          filters:
+            # 가장 앞의 "/time-service" 를 주소에서 떼고 라우팅
+            #            - RewritePath=/auth/(?<path>.*),/$\{path}
+            # 요청 실패시 재시도(로드밸런스 설정시 다른 노드로 요청)
+            - name: "Retry"
+              args:
+                retries: 3
+                statuses: INTERNAL_SERVER_ERROR
+
 # eureka 서버에 전달할 정보 설정
 eureka:
   instance:
