@@ -5,4 +5,5 @@ rootProject.name = "kotlin_springboot_mvc_template"
 
 // (모듈 모음)
 // !!!모듈 추가/수정시 아래에 반영!!!
+// Springboot 프로젝트 모듈 템플릿 (10000)
 include("module-template")

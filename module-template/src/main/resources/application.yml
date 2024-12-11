@@ -26,6 +26,17 @@ management:
   endpoint:
     health:
       show-details: always # actuator/health 에 디테일 정보 반환
+  info:
+    os:
+      enabled: true
+    java:
+      enabled: true
+    env:
+      enabled: true
+
+# springboot actuator info 에 표시될 정보 설정
+info:
+  made-by: com.rayllylinker
 
 spring:
   profiles:
