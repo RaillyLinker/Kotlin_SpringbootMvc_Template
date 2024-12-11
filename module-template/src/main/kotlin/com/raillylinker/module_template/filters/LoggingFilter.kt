@@ -1,6 +1,5 @@
 package com.raillylinker.module_template.filters
 
-import com.raillylinker.module_template.redis_map_components.redis1_main.Redis1_Map_RuntimeConfigIpList
 import jakarta.servlet.AsyncEvent
 import jakarta.servlet.AsyncListener
 import jakarta.servlet.FilterChain
@@ -24,10 +23,7 @@ import java.time.LocalDateTime
 // API 호출시마다 Request 와 Response 를 로깅하도록 처리했습니다.
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
-class LoggingFilter(
-    // (Redis Repository)
-    private val redis1RuntimeConfigIpList: Redis1_Map_RuntimeConfigIpList
-) : OncePerRequestFilter() {
+class LoggingFilter : OncePerRequestFilter() {
     // <멤버 변수 공간>
     private val classLogger = LoggerFactory.getLogger(this::class.java)
 
@@ -53,28 +49,6 @@ class LoggingFilter(
 
         // 요청자 Ip (ex : 127.0.0.1)
         val clientAddressIp = request.remoteAddr
-
-        val loggingDenyIpInfo = try {
-            redis1RuntimeConfigIpList.findKeyValue(Redis1_Map_RuntimeConfigIpList.KeyEnum.LOGGING_DENY_IP_LIST.name)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-
-        var loggingDeny = false
-        if (loggingDenyIpInfo != null) {
-            for (loggingDenyIp in loggingDenyIpInfo.value.ipInfoList) {
-                if (loggingDenyIp.ip == clientAddressIp) {
-                    loggingDeny = true
-                    break
-                }
-            }
-        }
-
-        if (loggingDeny) {
-            filterChain.doFilter(request, response)
-            return
-        }
 
         if (isAsyncDispatch(request)) {
             filterChain.doFilter(request, response)

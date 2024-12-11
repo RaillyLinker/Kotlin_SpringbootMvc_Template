@@ -49,14 +49,6 @@ dependencies {
     // (Swagger)
     // : API 자동 문서화
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
-
-    // (GSON)
-    // : Json - Object 라이브러리
-    implementation("com.google.code.gson:gson:2.11.0")
-
-    // (Redis)
-    // : 메모리 키 값 데이터 구조 스토어
-    implementation("org.springframework.boot:spring-boot-starter-data-redis:3.4.0")
 }
 
 tasks.withType<Test> {
