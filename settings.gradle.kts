@@ -32,3 +32,6 @@ include("module-sample-cloud-client-copy")
 
 // 스케쥴러 테스트 샘플 (12003)
 include("module-sample-scheduler")
+
+// 소켓 테스트 샘플 (12004)
+include("module-sample-socket")
