@@ -25,3 +25,6 @@ include("module-sample-cloud-client-copy")
 
 // Spring Cloud 게이트웨이 (8080)
 include("module-cloud-gateway")
+
+// 인증/인가 서버 (11000)
+include("module-auth")
