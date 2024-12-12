@@ -38,3 +38,6 @@ include("module-sample-socket")
 
 // Spring Admin Server (9090)
 include("module-spring-admin")
+
+// Kafka 테스트 Server (12005)
+include("module-sample-kafka")
