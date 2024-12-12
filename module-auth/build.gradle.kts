@@ -60,6 +60,9 @@ dependencies {
     // (Eureka Client)
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.2.0")
 
+    // (Spring Admin Client)
+    implementation("de.codecentric:spring-boot-admin-starter-client:3.4.0")
+
     // (Spring Security)
     // : 스프링 부트 보안
     implementation("org.springframework.boot:spring-boot-starter-security:3.4.0")

@@ -1,5 +1,7 @@
 package com.raillylinker.module_sample_scheduler.sys_components
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -13,13 +15,15 @@ import org.springframework.stereotype.Component
 @Component
 @EnableAsync
 class ApplicationScheduler {
+    private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
+
     // [사용 예시]
     // (fixedDelay)
     // 해당 메서드가 끝나는 시간 기준으로 milliseconds 후의 간격으로 실행
     @Scheduled(fixedDelay = 2000)
     // @Scheduled(fixedDelayString = "${fixedDelay.in.milliseconds}") // 문자열 milliseconds 사용 시
     fun scheduleFixedDelayTask() {
-        println("scheduleFixedDelayTask")
+        classLogger.info("scheduleFixedDelayTask")
     }
 
     // (initialDelay + fixedDelay)
