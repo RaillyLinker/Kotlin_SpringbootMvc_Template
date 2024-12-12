@@ -25,6 +25,8 @@
                 </pattern>
             </encoder>
 
+            <file>${LOGS_PATH}/current_log.log</file>
+
             <!-- Rolling 정책 : 로그 보관 정책 -->
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <!-- 로그 백업 파일 경로 설정 -->
@@ -87,6 +89,8 @@
                 </pattern>
             </encoder>
 
+            <file>${LOGS_PATH}/current_log.log</file>
+
             <!-- Rolling 정책 : 로그 보관 정책 -->
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <!-- 로그 백업 파일 경로 설정 -->
@@ -139,6 +143,8 @@
                 <pattern>[ls] [%23d{yyyy_MM_dd_'T'_HH_mm_ss_SSS_z}] [%-5level] [%msg] [le]%n
                 </pattern>
             </encoder>
+
+            <file>${LOGS_PATH}/current_log.log</file>
 
             <!-- Rolling 정책 : 로그 보관 정책 -->
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
