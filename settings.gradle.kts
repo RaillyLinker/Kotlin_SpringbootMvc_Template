@@ -35,3 +35,6 @@ include("module-sample-scheduler")
 
 // 소켓 테스트 샘플 (12004)
 include("module-sample-socket")
+
+// Spring Admin Server (9090)
+include("module-spring-admin")

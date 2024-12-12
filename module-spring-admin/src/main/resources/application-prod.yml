@@ -1,0 +1,14 @@
+# (실행 환경 prod 설정)
+# : 배포 환경 엄중한 환경 설정
+
+spring:
+  application:
+    name: SPRING-ADMIN-PROD
+  security:
+    user:
+      name: admin
+      password: qwer1234
+
+  config:
+    activate: # 프로필명 설정
+      on-profile: prod

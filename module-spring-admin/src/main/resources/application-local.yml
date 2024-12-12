@@ -1,0 +1,14 @@
+# (실행 환경 local 설정)
+# : 로컬 환경 개발자를 위한 환경 설정 = 서버 개발자가 마음껏 사용 가능 (그냥 IDE 를 실행하면 적용)
+
+spring:
+  application:
+    name: SPRING-ADMIN-LOCAL
+  security:
+    user:
+      name: admin
+      password: qwer1234
+
+  config:
+    activate: # 프로필명 설정
+      on-profile: local

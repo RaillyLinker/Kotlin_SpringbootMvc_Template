@@ -1,0 +1,14 @@
+# (실행 환경 dev 설정)
+# : 개발 환경 개발자들을 위한 환경 설정
+
+spring:
+  application:
+    name: SPRING-ADMIN-DEV
+  security:
+    user:
+      name: admin
+      password: qwer1234
+
+  config:
+    activate: # 프로필명 설정
+      on-profile: dev
