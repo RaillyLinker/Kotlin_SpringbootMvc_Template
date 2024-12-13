@@ -25,7 +25,7 @@
                 </pattern>
             </encoder>
 
-            <file>${LOGS_PATH}/current_log.log</file>
+            <file>${LOGS_PATH}/local_current_log.log</file>
 
             <!-- Rolling 정책 : 로그 보관 정책 -->
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -89,7 +89,7 @@
                 </pattern>
             </encoder>
 
-            <file>${LOGS_PATH}/current_log.log</file>
+            <file>${LOGS_PATH}/dev_current_log.log</file>
 
             <!-- Rolling 정책 : 로그 보관 정책 -->
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -144,7 +144,7 @@
                 </pattern>
             </encoder>
 
-            <file>${LOGS_PATH}/current_log.log</file>
+            <file>${LOGS_PATH}/prod_current_log.log</file>
 
             <!-- Rolling 정책 : 로그 보관 정책 -->
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
