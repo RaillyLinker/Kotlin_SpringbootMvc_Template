@@ -34,10 +34,6 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.1.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.3")
 
-    // (Spring Starter Web)
-    // : 스프링 부트 웹 개발
-    implementation("org.springframework.boot:spring-boot-starter-web:3.4.0")
-
     // (Spring Admin)
     implementation("de.codecentric:spring-boot-admin-starter-server:3.4.0")
 
