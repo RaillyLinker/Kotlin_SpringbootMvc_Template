@@ -9,11 +9,12 @@ import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.security.web.server.util.matcher.NegatedServerWebExchangeMatcher
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers
 
-
 // [서비스 보안 시큐리티 설정]
 @Configuration
 @EnableWebFluxSecurity
-class SecurityConfig(private val adminServer: AdminServerProperties) {
+class SecurityConfig(
+    private val adminServer: AdminServerProperties
+) {
     @Bean
     fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain? {
         http
