@@ -1,14 +1,14 @@
-# (실행 환경 dev 설정)
-# : 개발 환경 개발자들을 위한 환경 설정
+# (실행 환경 prod 설정)
+# : 배포 환경 엄중한 환경 설정
 
 spring:
   application:
     # Eureka 에 등록될 서비스 이름 (복제 서버는 같은 이름으로 설정하여 로드밸런싱)
-    name: SAMPLE-CLOUD-CLIENT-DEV
+    name: CLOUD-SAMPLE-CLIENT-PROD
 
   config:
     activate: # 프로필명 설정
-      on-profile: dev
+      on-profile: prod
 
   servlet:
     multipart:
@@ -18,7 +18,7 @@ spring:
 
 springdoc:
   swagger-ui:
-    enabled: true # Swagger 문서 공개 여부
+    enabled: false # Swagger 문서 공개 여부
 
 # eureka 서버에 전달할 정보 설정
 eureka:
