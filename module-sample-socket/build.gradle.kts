@@ -50,12 +50,6 @@ dependencies {
     // : API 자동 문서화
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 
-    // (Eureka Client)
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.2.0")
-
-    // (Spring Admin Client)
-    implementation("de.codecentric:spring-boot-admin-starter-client:3.4.0")
-
     // (WebSocket)
     // : 웹소켓
     implementation("org.springframework.boot:spring-boot-starter-websocket:3.4.0")

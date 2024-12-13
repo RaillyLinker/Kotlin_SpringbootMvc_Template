@@ -16,45 +16,9 @@ spring:
       maxFileSize: 50MB
       maxRequestSize: 50MB
 
-  boot:
-    admin:
-      client:
-        # Spring Admin 등록
-        auto-registration: true
-        # Spring Admin 서버 위치
-        url: http://127.0.0.1:9090
-        instance:
-          # 내 서버 접속 주소
-          service-url: http://127.0.0.1:12005
-          # 내 서버 이름
-          name: SAMPLE-KAFKA-DEV
-        # Spring Admin 인증/인가 정보
-        username: admin
-        password: qwer1234
-
-logging:
-  file:
-    # Spring Admin 로그 모니터링 파일
-    name: ./by_product_files/sample_kafka/logs/current_log.log
-
 springdoc:
   swagger-ui:
     enabled: true # Swagger 문서 공개 여부
-
-# eureka 서버에 전달할 정보 설정
-eureka:
-  instance:
-    hostname: localhost
-  client:
-    # Eureka Client 로 등록
-    register-with-eureka: true
-    # Eureka 서버에서 레지스트리를 가져올지 여부
-    fetch-registry: false
-    healthcheck:
-      enabled: true  # Eureka 서버가 /actuator/health 엔드포인트로 상태를 확인
-    service-url:
-      # Eureka 서버 목록
-      defaultZone: http://127.0.0.1:10001/eureka/,http://127.0.0.1:10002/eureka/,http://127.0.0.1:10003/eureka/
 
 # Kafka Cluster 설정
 kafka-cluster:

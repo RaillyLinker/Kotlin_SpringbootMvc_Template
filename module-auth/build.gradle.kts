@@ -57,12 +57,6 @@ dependencies {
     // : API 자동 문서화
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 
-    // (Eureka Client)
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.2.0")
-
-    // (Spring Admin Client)
-    implementation("de.codecentric:spring-boot-admin-starter-client:3.4.0")
-
     // (Spring Security)
     // : 스프링 부트 보안
     implementation("org.springframework.boot:spring-boot-starter-security:3.4.0")
@@ -115,6 +109,9 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
+
+    // (Apache Common Codec)
+    implementation("commons-codec:commons-codec:1.17.1")
 }
 
 tasks.withType<Test> {

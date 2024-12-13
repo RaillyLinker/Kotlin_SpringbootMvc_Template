@@ -7,7 +7,6 @@ import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
@@ -28,9 +27,6 @@ class LoggingFilter : OncePerRequestFilter() {
     // <멤버 변수 공간>
     private val classLogger = LoggerFactory.getLogger(this::class.java)
 
-    @Value("\${spring.boot.admin.client.url}")
-    private lateinit var adminServerUrl: String
-
     // 로깅 body 에 표시할 데이터 타입
     // 여기에 포함된 데이터 타입만 로그에 표시됩니다.
     private val visibleTypeList = listOf(
@@ -50,14 +46,6 @@ class LoggingFilter : OncePerRequestFilter() {
         filterChain: FilterChain
     ) {
         val requestTime = LocalDateTime.now()
-
-        // Spring Boot Admin 서버에서 온 요청인지 확인
-        val adminUrls = adminServerUrl.split(",").map { it.trim() }
-        val referer = request.getHeader("referer") ?: ""
-        if (adminUrls.any { referer.contains(it) }) {
-            filterChain.doFilter(request, response)
-            return
-        }
 
         // 요청자 Ip (ex : 127.0.0.1)
         val clientAddressIp = request.remoteAddr
