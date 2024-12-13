@@ -25,9 +25,9 @@ spring:
         url: http://127.0.0.1:9090
         instance:
           # 내 서버 접속 주소
-          service-url: http://127.0.0.1:9191
+          service-url: http://127.0.0.1:${server.port}
           # 내 서버 이름
-          name: SPRING-ADMIN-CLIENT1-DEV
+          name: ${spring.application.name}
         # Spring Admin 인증/인가 정보
         username: admin
         password: qwer1234
