@@ -30,6 +30,7 @@ class SecurityConfig(private val adminServer: AdminServerProperties) {
 
         http.authorizeExchange {
             it.pathMatchers(this.adminServer.contextPath + "/login").permitAll()
+            it.pathMatchers(this.adminServer.contextPath + "/assets/**").permitAll()
             it.anyExchange().authenticated()
         }
 
