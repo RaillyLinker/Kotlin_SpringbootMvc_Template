@@ -41,3 +41,9 @@ include("module-spring-admin")
 
 // Kafka 테스트 Server (12005)
 include("module-sample-kafka")
+
+// Spring Admin Client1 (9191)
+include("module-spring-admin-client1")
+
+// Spring Admin Client2 (9192)
+include("module-spring-admin-client2")
