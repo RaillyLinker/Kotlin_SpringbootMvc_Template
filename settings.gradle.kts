@@ -65,3 +65,6 @@ include("module-sample-etc")
 
 // JPA 테스트 샘플 (12010)
 include("module-sample-jpa")
+
+// Batch 테스트 샘플 (12011)
+include("module-sample-batch")
