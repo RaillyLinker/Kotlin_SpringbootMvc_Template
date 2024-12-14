@@ -47,3 +47,6 @@ include("module-spring-admin-client1")
 
 // Spring Admin Client2 (9192)
 include("module-spring-admin-client2")
+
+// API 테스트 샘플 (12006)
+include("module-sample-api")
