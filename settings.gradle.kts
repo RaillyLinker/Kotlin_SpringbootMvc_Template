@@ -50,3 +50,6 @@ include("module-spring-admin-client2")
 
 // API 테스트 샘플 (12006)
 include("module-sample-api")
+
+// Retrofit2 테스트 샘플 (12007)
+include("module-sample-retrofit2")
