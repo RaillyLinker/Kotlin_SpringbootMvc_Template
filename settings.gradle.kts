@@ -53,4 +53,9 @@ include("module-sample-api")
 
 // Retrofit2 테스트 샘플 (12007)
 include("module-sample-retrofit2")
+
+// Redis 테스트 샘플 (12008)
 include("module-sample-redis")
+
+// Mongodb 테스트 샘플 (12009)
+include("module-sample-mongodb")

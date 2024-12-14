@@ -1,0 +1,8 @@
+spring:
+  config:
+    activate:
+      on-profile: port12009
+
+server:
+  # 포트번호
+  port: 12009
