@@ -28,9 +28,6 @@ class LoggingFilter : OncePerRequestFilter() {
     // <멤버 변수 공간>
     private val classLogger = LoggerFactory.getLogger(this::class.java)
 
-    @Value("\${spring.boot.admin.client.url}")
-    private lateinit var adminServerUrl: String
-
     // 로깅 body 에 표시할 데이터 타입
     // 여기에 포함된 데이터 타입만 로그에 표시됩니다.
     private val visibleTypeList = listOf(
@@ -41,6 +38,21 @@ class LoggingFilter : OncePerRequestFilter() {
         MediaType.valueOf("application/*+xml")
     )
 
+    // Spring Admin Server ip 의 actuator 요청은 스킵
+    @Value("\${spring.boot.admin.client.url}")
+    private lateinit var adminServerUrl: String
+
+    // adminServerUrl 에서 ip 만 추출 (ex : "127.0.0.1,127.0.0.2")
+    private lateinit var adminServerIpList: List<String>
+
+    override fun afterPropertiesSet() {
+        super.afterPropertiesSet()
+        // adminServerUrl 를 adminServerIpList 로 변환
+        adminServerIpList = adminServerUrl.split(",").map {
+            it.removePrefix("http://").substringBefore(":")
+        }
+    }
+
 
     // ---------------------------------------------------------------------------------------------
     // <상속 메소드 공간>
@@ -49,18 +61,17 @@ class LoggingFilter : OncePerRequestFilter() {
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val requestTime = LocalDateTime.now()
+        // 요청자 Ip (ex : 127.0.0.1)
+        val clientAddressIp = request.remoteAddr
+        val requestUri = request.requestURI
 
-        // Spring Boot Admin 서버에서 온 요청인지 확인
-        val adminUrls = adminServerUrl.split(",").map { it.trim() }
-        val referer = request.getHeader("referer") ?: ""
-        if (adminUrls.any { referer.contains(it) }) {
+        // Skip logging for requests from admin server IPs and /actuator paths
+        if (adminServerIpList.contains(clientAddressIp) && requestUri.startsWith("/actuator")) {
             filterChain.doFilter(request, response)
             return
         }
 
-        // 요청자 Ip (ex : 127.0.0.1)
-        val clientAddressIp = request.remoteAddr
+        val requestTime = LocalDateTime.now()
 
         if (isAsyncDispatch(request)) {
             filterChain.doFilter(request, response)
