@@ -5,8 +5,16 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
 import java.util.*
 
+@ComponentScan(
+    // !!!Bean 스캔할 모듈들의 패키지 리스트(group) 추가하기!!!
+    basePackages =
+    [
+        "com.raillylinker"
+    ]
+)
 @SpringBootApplication
 @EnableAdminServer
 class ApplicationMain {

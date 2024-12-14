@@ -15,10 +15,7 @@ import java.util.*
             "com.raillylinker"
         ]
 )
-@SpringBootApplication(
-    // Using generated security password 워닝을 피하기 위해 SpringSecurity 비밀번호 자동 생성 비활성화
-    exclude = [UserDetailsServiceAutoConfiguration::class]
-)
+@SpringBootApplication
 class ApplicationMain {
     @Bean
     fun init() = CommandLineRunner {
