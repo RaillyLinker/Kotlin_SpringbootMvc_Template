@@ -59,3 +59,6 @@ include("module-sample-redis")
 
 // Mongodb 테스트 샘플 (12009)
 include("module-sample-mongodb")
+
+// 테스트 샘플 (12000)
+include("module-sample-etc")
