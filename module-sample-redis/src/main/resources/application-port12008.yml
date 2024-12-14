@@ -1,0 +1,8 @@
+spring:
+  config:
+    activate:
+      on-profile: port12008
+
+server:
+  # 포트번호
+  port: 12008
