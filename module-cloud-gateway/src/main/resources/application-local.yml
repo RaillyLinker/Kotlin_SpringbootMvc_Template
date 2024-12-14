@@ -10,22 +10,16 @@ spring:
     activate: # 프로필명 설정
       on-profile: local
 
-  servlet:
-    multipart:
-      # !!!multipart 데이터량 설정!!!
-      maxFileSize: 50MB
-      maxRequestSize: 50MB
-
   cloud:
     gateway:
       routes:
-        - id: SAMPLE-CLOUD-CLIENT-LOCAL  # 라우팅 ID
+        - id: CLOUD-SAMPLE-CLIENT-LOCAL  # 라우팅 ID
           predicates:
-            - Path=/sample-cloud-client/**  # "/time-service/**" 경로로 들어오는 요청을 라우팅
-          uri: lb://CLOUD-SAMPLE-CLIENT-LOCAL  # Eureka에서 `time-service` 이름으로 서비스를 찾아서 요청을 전달
+            - Path=/cloud-sample-client/**  # "/cloud-sample-client/**" 경로로 들어오는 요청을 라우팅
+          uri: lb://CLOUD-SAMPLE-CLIENT-LOCAL  # Eureka에서 `CLOUD-SAMPLE-CLIENT-LOCAL` 이름으로 서비스를 찾아서 요청을 전달
           filters:
-            # 가장 앞의 "/time-service" 를 주소에서 떼고 라우팅
-            - RewritePath=/sample-cloud-client/(?<path>.*),/$\{path}
+            # 가장 앞의 "/cloud-sample-client" 를 주소에서 떼고 라우팅
+            - RewritePath=/cloud-sample-client/(?<path>.*),/$\{path}
             # 요청 실패시 재시도(로드밸런스 설정시 다른 노드로 요청)
             - name: "Retry"
               args:
