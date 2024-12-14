@@ -1,0 +1,8 @@
+spring:
+  config:
+    activate:
+      on-profile: port12010
+
+server:
+  # 포트번호
+  port: 12010

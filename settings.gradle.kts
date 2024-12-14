@@ -62,3 +62,6 @@ include("module-sample-mongodb")
 
 // 테스트 샘플 (12000)
 include("module-sample-etc")
+
+// JPA 테스트 샘플 (12010)
+include("module-sample-jpa")
