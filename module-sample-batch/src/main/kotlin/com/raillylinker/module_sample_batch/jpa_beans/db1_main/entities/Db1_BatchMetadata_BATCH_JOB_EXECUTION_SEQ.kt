@@ -10,15 +10,19 @@ import org.hibernate.annotations.Comment
 )
 @Comment("BATCH_JOB_EXECUTION_SEQ")
 class Db1_BatchMetadata_BATCH_JOB_EXECUTION_SEQ(
-    @Id
+    @Column(name = "ID", nullable = false, columnDefinition = "BIGINT")
+    @Comment("ID")
+    var id: Long,
+
     @Column(name = "UNIQUE_KEY", nullable = false, columnDefinition = "CHAR(1)", unique = true)
     @Comment("UNIQUE_KEY")
-    var uniqueKey: Char,
-
-    @Column(name = "ID", columnDefinition = "BIGINT")
-    @Comment("ID")
-    var id: Long
+    var uniqueKey: Char
 ) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "uid", columnDefinition = "BIGINT UNSIGNED")
+    @Comment("행 고유값")
+    var uid: Long? = null
 
 
     // ---------------------------------------------------------------------------------------------

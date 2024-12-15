@@ -10,6 +10,11 @@ import org.hibernate.annotations.Comment
 )
 @Comment("BATCH_JOB_INSTANCE")
 class Db1_BatchMetadata_BATCH_JOB_INSTANCE(
+    @Id
+    @Column(name = "JOB_INSTANCE_ID", nullable = true, columnDefinition = "BIGINT")
+    @Comment("JOB_INSTANCE_ID")
+    var jobInstanceId: Long,
+
     @Column(name = "VERSION", nullable = true, columnDefinition = "BIGINT")
     @Comment("VERSION")
     var version: String?,
@@ -22,12 +27,6 @@ class Db1_BatchMetadata_BATCH_JOB_INSTANCE(
     @Comment("JOB_KEY")
     var jobKey: String
 ) {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "JOB_INSTANCE_ID", columnDefinition = "BIGINT")
-    @Comment("JOB_INSTANCE_ID")
-    var jobInstanceId: Long? = null
-
     @OneToMany(
         mappedBy = "batchJobInstance",
         fetch = FetchType.LAZY,

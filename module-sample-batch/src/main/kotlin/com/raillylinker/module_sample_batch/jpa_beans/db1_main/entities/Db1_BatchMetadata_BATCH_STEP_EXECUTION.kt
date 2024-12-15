@@ -12,6 +12,11 @@ import java.time.LocalDateTime
 )
 @Comment("BATCH_STEP_EXECUTION")
 class Db1_BatchMetadata_BATCH_STEP_EXECUTION(
+    @Id
+    @Column(name = "STEP_EXECUTION_ID", nullable = false, columnDefinition = "BIGINT")
+    @Comment("STEP_EXECUTION_ID")
+    var stepExecutionId: Long,
+
     @Column(name = "VERSION", nullable = false, columnDefinition = "BIGINT")
     @Comment("VERSION")
     var version: Long,
@@ -24,6 +29,11 @@ class Db1_BatchMetadata_BATCH_STEP_EXECUTION(
     @JoinColumn(name = "JOB_EXECUTION_ID", nullable = false)
     @Comment("JOB_EXECUTION_ID")
     var batchJobExecution: Db1_BatchMetadata_BATCH_JOB_EXECUTION,
+
+    @Column(name = "CREATE_TIME", nullable = false, columnDefinition = "DATETIME(6)")
+    @CreationTimestamp
+    @Comment("CREATE_TIME")
+    var createTime: LocalDateTime,
 
     @Column(name = "START_TIME", nullable = true, columnDefinition = "DATETIME(6)")
     @Comment("START_TIME")
@@ -81,16 +91,6 @@ class Db1_BatchMetadata_BATCH_STEP_EXECUTION(
     @Comment("LAST_UPDATED")
     var lastUpdated: LocalDateTime?
 ) {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "STEP_EXECUTION_ID", columnDefinition = "BIGINT")
-    @Comment("STEP_EXECUTION_ID")
-    var stepExecutionId: Long? = null
-
-    @Column(name = "CREATE_TIME", nullable = false, columnDefinition = "DATETIME(6)")
-    @CreationTimestamp
-    @Comment("CREATE_TIME")
-    var createTime: LocalDateTime? = null
 
 
     // ---------------------------------------------------------------------------------------------

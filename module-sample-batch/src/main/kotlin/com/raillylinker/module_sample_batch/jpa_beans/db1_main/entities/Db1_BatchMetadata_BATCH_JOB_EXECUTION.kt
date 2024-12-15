@@ -12,6 +12,11 @@ import java.time.LocalDateTime
 )
 @Comment("BATCH_JOB_EXECUTION")
 class Db1_BatchMetadata_BATCH_JOB_EXECUTION(
+    @Id
+    @Column(name = "JOB_EXECUTION_ID", nullable = false, columnDefinition = "BIGINT")
+    @Comment("JOB_EXECUTION_ID")
+    var jobExecutionId: Long,
+
     @Column(name = "VERSION", nullable = true, columnDefinition = "BIGINT")
     @Comment("VERSION")
     var version: String?,
@@ -20,6 +25,10 @@ class Db1_BatchMetadata_BATCH_JOB_EXECUTION(
     @JoinColumn(name = "JOB_INSTANCE_ID", nullable = false)
     @Comment("JOB_INSTANCE_ID")
     var batchJobInstance: Db1_BatchMetadata_BATCH_JOB_INSTANCE,
+
+    @Column(name = "CREATE_TIME", nullable = false, columnDefinition = "DATETIME(6)")
+    @Comment("CREATE_TIME")
+    var createTime: LocalDateTime,
 
     @Column(name = "START_TIME", nullable = true, columnDefinition = "DATETIME(6)")
     @Comment("START_TIME")
@@ -45,17 +54,6 @@ class Db1_BatchMetadata_BATCH_JOB_EXECUTION(
     @Comment("LAST_UPDATED")
     var lastUpdated: LocalDateTime?
 ) {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "JOB_EXECUTION_ID", columnDefinition = "BIGINT")
-    @Comment("JOB_EXECUTION_ID")
-    var jobExecutionId: Long? = null
-
-    @Column(name = "CREATE_TIME", nullable = false, columnDefinition = "DATETIME(6)")
-    @CreationTimestamp
-    @Comment("CREATE_TIME")
-    var createTime: LocalDateTime? = null
-
     @OneToMany(
         mappedBy = "batchJobExecution",
         fetch = FetchType.LAZY,

@@ -10,6 +10,11 @@ import org.hibernate.annotations.Comment
 )
 @Comment("BATCH_JOB_EXECUTION_CONTEXT")
 class Db1_BatchMetadata_BATCH_JOB_EXECUTION_CONTEXT(
+    @Id
+    @Column(name = "JOB_EXECUTION_ID", nullable = false, columnDefinition = "BIGINT")
+    @Comment("JOB_EXECUTION_ID")
+    var jobExecutionId: Long,
+
     @Column(name = "SHORT_CONTEXT", nullable = false, columnDefinition = "VARCHAR(2500)")
     @Comment("SHORT_CONTEXT")
     var shortContext: String,
@@ -18,10 +23,6 @@ class Db1_BatchMetadata_BATCH_JOB_EXECUTION_CONTEXT(
     @Comment("SERIALIZED_CONTEXT")
     var serializedContext: String?
 ) {
-    @Id
-    @Column(name = "JOB_EXECUTION_ID", columnDefinition = "BIGINT")
-    @Comment("JOB_EXECUTION_ID")
-    var jobExecutionId: Long? = null
 
 
     // ---------------------------------------------------------------------------------------------
