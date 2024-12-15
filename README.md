@@ -109,95 +109,35 @@ quartz_metadata 스키마 안에 테이블을 생성하면 됩니다.
 더 나아가서 Spring Cloud(API 기반이므로 NodeJS, Python 서버 등 호환 가능) 스택과 같은 마이크로 서비스 툴을 사용하여,<br>
 MSA 운영시의 안정성을 재고할 것입니다.
 
-## 모듈 단위 설명
+## 사용 포트 번호
 
-본 프로젝트에서 구현한 모듈은 크게 4가지로 나눌 수 있습니다.<br>
-실행 main 이 포함되고, 포트 번호를 결정짓는 app 모듈,<br>
-app 모듈에게 바로 사용되며, api 컨트롤러 역할을 하거나, 배치 작업을 실행하거나, 스케쥴 작업을 실행하거나, 소켓, kafka 와 같이 시스템 컴포넌트에 등록된 상황에서 스스로 독립적으로 활동하는 실행성 모듈,<br>
-다른 어떤 모듈도 참조하지 않고 스스로 동작하는 JPA, Redis, Mongodb 등과 같은 독립성 모듈,<br>
-사용성 모듈과 독립성 모듈 사이에 위치하여 둘을 잇는 역할을 하는 중위 모듈...<br>
-이렇게 나누었습니다.
+admin 9090 v
+admin-client1 9191 v
+admin-client2 9192 v
 
-### 루트
+cloud gateway 8080 v
+cloud eureka1 10001 v
+cloud eureka2 10002 v
+cloud eureka3 10003 v
+cloud-sample-client 10101 v
+cloud-sample-client-copy 10102 v
 
-싱글 모듈 구조에 해당하는 루트 경로의 src 코드는 제거하여 존재하지 않는 상태입니다.<br>
-루트 경로에 남아있는 파일/폴더를 설명드리자면,<br>
+template 10000 v
 
-- by_product_files<br>
-  프로젝트 부산물 파일들을 저장하는 경로.<br>
-  로그 파일 등이 위치하며, gitignore 에 등록됩니다.
-- .gitignore<br>
-  git 에서 무시할 목록을 적는 파일
-- build.gradle<br>
-  하위 모듈들에서 사용하는 Gradle Plugins 와 버전들을 설정하고,<br>
-  프로젝트에서 사용하는 프로그래밍 언어 버전 설정,<br>
-  하위 모듈들에서 사용하는 공통의 종속성 라이브러리 설정을 담당합니다.<br>
+auth 11000 v
 
-### app 모듈
+sample-etc 12000 v
+sample-scheduler 12003 v
+sample-socket 12004 v
+sample-kafka 12005 v
+sample-api 12006 v
+sample-retrofit2 12007 v
+sample-redis 12008 v
+sample-mongodb 12009 v
+sample-jpa 12010 v
+sample-batch 12011 v
+sample-quartz 12012 v
+sample-just-security 12013 v
 
-app 모듈은 서버 프로젝트의 main 함수가 위치한 시작점이라 할 수 있습니다.<br>
-서버 프로세스 실행시 사용할 포트 번호,<br>
-하위 모든 모듈들에 적용되는 설정,<br>
-api, kafka, socket, scheduler 와 같이 서버 실행시 실행되는 하위 모듈 조립<br>
-하위 모듈들의 application.yml 을 조합하는 역할을 담당합니다.<br>
-
-### api 모듈
-
-api 모듈은 실행성 모듈로, 클라이언트의 요청을 받고 응답을 보내주는 Controller 의 역할을 합니다.<br>
-controllers 에는 입출력 api 를 명시하는 역할을 하는 컨트롤러 클래스를 작성하며,<br>
-services 에는 controller 의 비즈니스 로직을 구현하는 Service 클래스를 작성합니다.<br>
-api 모듈은 일반적으로 한 프로젝트 내에 여러개로 이루어질 수 있으며,<br>
-본인의 설계 규칙에 따라 도메인 단위로 api 모듈을 분리하는데, 모듈의 명명법은 해당 모듈 내의 컨트롤러가 담당하는 URL 에 따릅니다.<br>
-예를들어 로그인, 회원가입, 회원 정보 수정 등의 계정 정보 기능을 담당하는 모듈을 만들때,<br>
-/my-service/tk/auth 라는 주소를 사용한다고 하면, 모듈을 module-api-my_service-tk-auth 라고 합니다.<br>
-보이듯, module-api 는 api 모듈의 기본 이름이고, 뒤에는 주소상 - 로 이어져있다면 _ 를 사용하고, / 로 분리된다면 - 를 사용합니다.<br>
-
-모듈 내의 controller 클래스 명명법 역시 해당 클래스가 담당하는 주소체계를 따르며,<br>
-예를들어 module-api-my_service-tk-sample 모듈에서 데이터베이스 테스트 샘플 api 를 모아둔 컨트롤러의 경우는,<br>
-/my-service/tk/sample/database-test<br>
-주소라고 정했다고 한다면, MyServiceTkSampleDatabaseTestController 라고 이름 지으면 됩니다.<br>
-
-service 클래스 명명의 경우는 controller 클래스에서 정한 이름에서 뒤에 Controller 대신 Service 를 붙이기만 하면 됩니다.
-
-### common 모듈
-
-common 모듈은 뚜렷한 주제로 묶이지 않은 모든 유틸성 코드들이 모이는 중위 모듈입니다.<br>
-만약 모듈로 떼어낼 코드가 생긴다면 먼저 이곳에 보낼 것을 고려하고,<br>
-이후 별도 모듈로 떼어낼 만하다고 판단한다면 그때 분리해도 좋습니다.
-
-### batch 모듈
-
-spring batch 를 구현한 중위 모듈입니다.<br>
-BatchConfig 에서 batch_metadata 데이터베이스 스키마 내에 배치 메타 정보를 저장하도록 설정하였고,<br>
-
-batch_components 안에 Chunk 방식과 Tasklet 방식의 예시를 추가하였습니다.<br>
-BatchJobRunner 는 본 프로젝트에서 구현한 batch_components 내의 샘플 배치 작업에 대한 테스트용 트리거 역할을 합니다.
-
-### jpa 모듈
-jpa 모듈은 독립성 모듈로, 다른 모든 비독립성 모듈들에 JPA 를 활용한 데이터베이스 활용 함수를 제공합니다.<br>
-JpaRepository, NativeQuery 활용, QueryDSL 설정 등이 되어있는데,<br>
-저의 경우는 단순한 로직은 JpaRepository 로 처리하고,<br>
-복잡한 기능은 NativeQuery 로 처리하는 편입니다.<br>
-최근에는 NativeQuery 빈도를 줄이고 QueryDSL 을 적극적으로 사용하려 하고 있습니다.<br>
-구현시 특이사항으로는, 하나의 프로젝트 내에 여러 데이터베이스에 접근하여 사용할 수 있도록 멀티 데이터 소스 구조를 구현했고,<br>
-이로인하여 DB 트랜젝션 처리 역시 커스텀 어노테이션 및 AOP Aspects 를 구현하여 처리하였습니다.
-
-### kafka 모듈
-kafka 모듈은 실행성 모듈로, kafka 미들웨어 서비스를 사용하여 이벤트 브로커를 사용하는 방식을 구현하였습니다.<br>
-이러한 모듈 샘플 코드를 참고하여 kafka 클러스터 환경에서의 producers, consumers 이벤트 처리 등을 구현 가능할 것입니다.
-
-### mongodb 모듈
-mongodb 모듈은 독립성 모듈로, jpa 모듈과 동일한 성격을 지닌 레포지토리형 모듈입니다.<br>
-MongoDB 에서 할 수 있는 기본적인 기능들에 대한 샘플 코드를 제공합니다.<br>
-jpa 모듈과 같이 멀티 데이터 소스 구조 및 커스텀 트랜젝션 어노테이션을 구현하였습니다.<br>
-
-### quartz 모듈
-quartz 모듈은 Spring Quartz 를 사용한 스케쥴링 기능을 구현한 모듈입니다.<br>
-quartz_components 안의 Config 파일로 스케쥴 코드를 작성 가능하며,<br>
-트리거 아이디를 적용하여 프로세스 복제시 중복 실행을 방지할 수 있습니다.
-
-### security 모듈
-security 모듈은 spring security 설정 모듈로, 위치로는 중위 모듈이라 할 수 있습니다.<br>
-app 모듈에서 참조하여 spring security 설정 component 를 JVM 에 올리고,<br>
-api 모듈에서 security 설정 정보를 가져와 정당한 처리를 하시면 됩니다.<br>
-security 모듈에서 설정된 인증/인가 처리 필터는 api 의 주소체계에 따라 분류하는 식으로 구현하였습니다.
+portfolio-board 13000
+(열람 회수 증가는 redis 를 사용하여 회수를 늘리고, quartz로 데이터베이스에 반영하도록 합니다.)
