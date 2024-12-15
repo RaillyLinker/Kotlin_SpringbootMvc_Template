@@ -71,3 +71,6 @@ include("module-sample-batch")
 
 // Quartz 테스트 샘플 (12012)
 include("module-sample-quartz")
+
+// 시큐리티 필터 적용 테스트 샘플 (12013)
+include("module-sample-just-security")
