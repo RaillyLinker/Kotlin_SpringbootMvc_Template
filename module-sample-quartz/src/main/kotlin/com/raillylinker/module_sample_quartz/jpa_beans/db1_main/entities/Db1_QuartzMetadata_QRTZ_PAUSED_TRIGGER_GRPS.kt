@@ -20,7 +20,7 @@ class Db1_QuartzMetadata_QRTZ_PAUSED_TRIGGER_GRPS(
     var schedName: String,
 
     @Id
-    @Column(name = "TRIGGER_GROUP", nullable = false, columnDefinition = "VARCHAR(40)")
+    @Column(name = "TRIGGER_GROUP", nullable = false, columnDefinition = "VARCHAR(190)")
     @Comment("TRIGGER_GROUP")
     var triggerGroup: String
 ) {

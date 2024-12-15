@@ -37,7 +37,7 @@ class Db1_QuartzMetadata_QRTZ_JOB_DETAILS(
     @Comment("JOB_CLASS_NAME")
     var jobClassName: String,
 
-    @Column(name = "IS_DURABLE", nullable = false, columnDefinition = "VARCHAR(120)")
+    @Column(name = "IS_DURABLE", nullable = false, columnDefinition = "VARCHAR(1)")
     @Comment("IS_DURABLE")
     var isDurable: String,
 
