@@ -91,11 +91,11 @@ class AuthServiceImpl(
                 }
 
                 "dev8080" -> {
-                    "http://127.0.0.1:8080"
+                    "http://127.0.0.1:11000"
                 }
 
                 else -> {
-                    "http://127.0.0.1:8080"
+                    "http://127.0.0.1:11000"
                 }
             }
         }
@@ -1470,7 +1470,7 @@ class AuthServiceImpl(
             // 프로필 이미지를 서버 스토리지에 저장할 때 사용하는 방식
             // 파일 저장 기본 디렉토리 경로
             val saveDirectoryPath: Path =
-                Paths.get("./by_product_files/member/profile").toAbsolutePath().normalize()
+                Paths.get("./by_product_files/auth/member/profile").toAbsolutePath().normalize()
 
             // 파일 저장 기본 디렉토리 생성
             Files.createDirectories(saveDirectoryPath)
@@ -1506,7 +1506,7 @@ class AuthServiceImpl(
                 saveDirectoryPath.resolve(savedFileName).normalize()
             )
 
-            savedProfileImageUrl = "${externalAccessAddress}/my-service/tk/auth/member-profile/$savedFileName"
+            savedProfileImageUrl = "${externalAccessAddress}/auth/member-profile/$savedFileName"
             //----------------------------------------------------------------------------------------------------------
 
             val memberProfileData =
@@ -1740,7 +1740,7 @@ class AuthServiceImpl(
                 // 프로필 이미지를 서버 스토리지에 저장할 때 사용하는 방식
                 // 파일 저장 기본 디렉토리 경로
                 val saveDirectoryPath: Path =
-                    Paths.get("./by_product_files/member/profile").toAbsolutePath().normalize()
+                    Paths.get("./by_product_files/auth/member/profile").toAbsolutePath().normalize()
 
                 // 파일 저장 기본 디렉토리 생성
                 Files.createDirectories(saveDirectoryPath)
@@ -1776,7 +1776,7 @@ class AuthServiceImpl(
                     saveDirectoryPath.resolve(savedFileName).normalize()
                 )
 
-                savedProfileImageUrl = "${externalAccessAddress}/my-service/tk/auth/member-profile/$savedFileName"
+                savedProfileImageUrl = "${externalAccessAddress}/auth/member-profile/$savedFileName"
                 //----------------------------------------------------------------------------------------------------------
 
                 val memberProfileData =
@@ -2002,7 +2002,7 @@ class AuthServiceImpl(
                 // 프로필 이미지를 서버 스토리지에 저장할 때 사용하는 방식
                 // 파일 저장 기본 디렉토리 경로
                 val saveDirectoryPath: Path =
-                    Paths.get("./by_product_files/member/profile").toAbsolutePath().normalize()
+                    Paths.get("./by_product_files/auth/member/profile").toAbsolutePath().normalize()
 
                 // 파일 저장 기본 디렉토리 생성
                 Files.createDirectories(saveDirectoryPath)
@@ -2038,7 +2038,7 @@ class AuthServiceImpl(
                     saveDirectoryPath.resolve(savedFileName).normalize()
                 )
 
-                savedProfileImageUrl = "${externalAccessAddress}/my-service/tk/auth/member-profile/$savedFileName"
+                savedProfileImageUrl = "${externalAccessAddress}/auth/member-profile/$savedFileName"
                 //----------------------------------------------------------------------------------------------------------
 
                 val memberProfileData = db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.save(
@@ -2432,7 +2432,7 @@ class AuthServiceImpl(
                 // 프로필 이미지를 서버 스토리지에 저장할 때 사용하는 방식
                 // 파일 저장 기본 디렉토리 경로
                 val saveDirectoryPath: Path =
-                    Paths.get("./by_product_files/member/profile").toAbsolutePath().normalize()
+                    Paths.get("./by_product_files/auth/member/profile").toAbsolutePath().normalize()
 
                 // 파일 저장 기본 디렉토리 생성
                 Files.createDirectories(saveDirectoryPath)
@@ -2468,7 +2468,7 @@ class AuthServiceImpl(
                     saveDirectoryPath.resolve(savedFileName).normalize()
                 )
 
-                savedProfileImageUrl = "${externalAccessAddress}/my-service/tk/auth/member-profile/$savedFileName"
+                savedProfileImageUrl = "${externalAccessAddress}/auth/member-profile/$savedFileName"
                 //----------------------------------------------------------------------------------------------------------
 
                 val memberProfileData = db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.save(
@@ -4340,7 +4340,7 @@ class AuthServiceImpl(
         //----------------------------------------------------------------------------------------------------------
         // 프로필 이미지를 서버 스토리지에 저장할 때 사용하는 방식
         // 파일 저장 기본 디렉토리 경로
-        val saveDirectoryPath: Path = Paths.get("./by_product_files/member/profile").toAbsolutePath().normalize()
+        val saveDirectoryPath: Path = Paths.get("./by_product_files/auth/member/profile").toAbsolutePath().normalize()
 
         // 파일 저장 기본 디렉토리 생성
         Files.createDirectories(saveDirectoryPath)
@@ -4376,7 +4376,7 @@ class AuthServiceImpl(
             saveDirectoryPath.resolve(savedFileName).normalize()
         )
 
-        savedProfileImageUrl = "${externalAccessAddress}/my-service/tk/auth/member-profile/$savedFileName"
+        savedProfileImageUrl = "${externalAccessAddress}/auth/member-profile/$savedFileName"
         //----------------------------------------------------------------------------------------------------------
 
         val profileData = db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.save(
@@ -4409,7 +4409,7 @@ class AuthServiceImpl(
 
         // 파일 절대 경로 및 파일명
         val serverFilePathObject =
-            Paths.get("$projectRootAbsolutePathString/by_product_files/member/profile/$fileName")
+            Paths.get("$projectRootAbsolutePathString/by_product_files/auth/member/profile/$fileName")
 
         when {
             Files.isDirectory(serverFilePathObject) -> {
