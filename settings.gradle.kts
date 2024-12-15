@@ -68,4 +68,6 @@ include("module-sample-jpa")
 
 // Batch 테스트 샘플 (12011)
 include("module-sample-batch")
+
+// Quartz 테스트 샘플 (12012)
 include("module-sample-quartz")
