@@ -1,14 +1,14 @@
 package com.raillylinker.module_sample_jpa.services
 
-import com.raillylinker.module_sample_jpa.controllers.MyServiceTkSampleDatabaseTestController
+import com.raillylinker.module_sample_jpa.controllers.JpaTestController
 import jakarta.servlet.http.HttpServletResponse
 
-interface MyServiceTkSampleDatabaseTestService {
+interface JpaTestService {
     // (DB Row 입력 테스트 API)
     fun insertDataSample(
         httpServletResponse: HttpServletResponse,
-        inputVo: MyServiceTkSampleDatabaseTestController.InsertDataSampleInputVo
-    ): MyServiceTkSampleDatabaseTestController.InsertDataSampleOutputVo?
+        inputVo: JpaTestController.InsertDataSampleInputVo
+    ): JpaTestController.InsertDataSampleOutputVo?
 
 
     ////
@@ -23,7 +23,7 @@ interface MyServiceTkSampleDatabaseTestService {
 
     ////
     // (DB Rows 조회 테스트)
-    fun selectRowsSample(httpServletResponse: HttpServletResponse): MyServiceTkSampleDatabaseTestController.SelectRowsSampleOutputVo?
+    fun selectRowsSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectRowsSampleOutputVo?
 
 
     ////
@@ -31,7 +31,7 @@ interface MyServiceTkSampleDatabaseTestService {
     fun selectRowsOrderByRandomNumSample(
         httpServletResponse: HttpServletResponse,
         num: Int
-    ): MyServiceTkSampleDatabaseTestController.SelectRowsOrderByRandomNumSampleOutputVo?
+    ): JpaTestController.SelectRowsOrderByRandomNumSampleOutputVo?
 
 
     ////
@@ -39,7 +39,7 @@ interface MyServiceTkSampleDatabaseTestService {
     fun selectRowsOrderByRowCreateDateSample(
         httpServletResponse: HttpServletResponse,
         dateString: String
-    ): MyServiceTkSampleDatabaseTestController.SelectRowsOrderByRowCreateDateSampleOutputVo?
+    ): JpaTestController.SelectRowsOrderByRowCreateDateSampleOutputVo?
 
 
     ////
@@ -48,7 +48,7 @@ interface MyServiceTkSampleDatabaseTestService {
         httpServletResponse: HttpServletResponse,
         page: Int,
         pageElementsCount: Int
-    ): MyServiceTkSampleDatabaseTestController.SelectRowsPageSampleOutputVo?
+    ): JpaTestController.SelectRowsPageSampleOutputVo?
 
 
     ////
@@ -58,7 +58,7 @@ interface MyServiceTkSampleDatabaseTestService {
         page: Int,
         pageElementsCount: Int,
         num: Int
-    ): MyServiceTkSampleDatabaseTestController.SelectRowsNativeQueryPageSampleOutputVo?
+    ): JpaTestController.SelectRowsNativeQueryPageSampleOutputVo?
 
 
     ////
@@ -66,8 +66,8 @@ interface MyServiceTkSampleDatabaseTestService {
     fun updateRowSample(
         httpServletResponse: HttpServletResponse,
         testTableUid: Long,
-        inputVo: MyServiceTkSampleDatabaseTestController.UpdateRowSampleInputVo
-    ): MyServiceTkSampleDatabaseTestController.UpdateRowSampleOutputVo?
+        inputVo: JpaTestController.UpdateRowSampleInputVo
+    ): JpaTestController.UpdateRowSampleOutputVo?
 
 
     ////
@@ -75,7 +75,7 @@ interface MyServiceTkSampleDatabaseTestService {
     fun updateRowNativeQuerySample(
         httpServletResponse: HttpServletResponse,
         testTableUid: Long,
-        inputVo: MyServiceTkSampleDatabaseTestController.UpdateRowNativeQuerySampleInputVo
+        inputVo: JpaTestController.UpdateRowNativeQuerySampleInputVo
     )
 
 
@@ -86,7 +86,7 @@ interface MyServiceTkSampleDatabaseTestService {
         page: Int,
         pageElementsCount: Int,
         searchKeyword: String
-    ): MyServiceTkSampleDatabaseTestController.SelectRowWhereSearchingKeywordSampleOutputVo?
+    ): JpaTestController.SelectRowWhereSearchingKeywordSampleOutputVo?
 
 
     ////
@@ -112,17 +112,17 @@ interface MyServiceTkSampleDatabaseTestService {
         httpServletResponse: HttpServletResponse,
         lastItemUid: Long?,
         pageElementsCount: Int
-    ): MyServiceTkSampleDatabaseTestController.SelectRowsNoDuplicatePagingSampleOutputVo?
+    ): JpaTestController.SelectRowsNoDuplicatePagingSampleOutputVo?
 
 
     ////
     // (DB Rows 조회 테스트 (카운팅))
-    fun selectRowsCountSample(httpServletResponse: HttpServletResponse): MyServiceTkSampleDatabaseTestController.SelectRowsCountSampleOutputVo?
+    fun selectRowsCountSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectRowsCountSampleOutputVo?
 
 
     ////
     // (DB Rows 조회 테스트 (네이티브 카운팅))
-    fun selectRowsCountByNativeQuerySample(httpServletResponse: HttpServletResponse): MyServiceTkSampleDatabaseTestController.SelectRowsCountByNativeQuerySampleOutputVo?
+    fun selectRowsCountByNativeQuerySample(httpServletResponse: HttpServletResponse): JpaTestController.SelectRowsCountByNativeQuerySampleOutputVo?
 
 
     ////
@@ -130,20 +130,20 @@ interface MyServiceTkSampleDatabaseTestService {
     fun selectRowByNativeQuerySample(
         httpServletResponse: HttpServletResponse,
         testTableUid: Long
-    ): MyServiceTkSampleDatabaseTestController.SelectRowByNativeQuerySampleOutputVo?
+    ): JpaTestController.SelectRowByNativeQuerySampleOutputVo?
 
 
     ////
     // (유니크 테스트 테이블 Row 입력 API)
     fun insertUniqueTestTableRowSample(
         httpServletResponse: HttpServletResponse,
-        inputVo: MyServiceTkSampleDatabaseTestController.InsertUniqueTestTableRowSampleInputVo
-    ): MyServiceTkSampleDatabaseTestController.InsertUniqueTestTableRowSampleOutputVo?
+        inputVo: JpaTestController.InsertUniqueTestTableRowSampleInputVo
+    ): JpaTestController.InsertUniqueTestTableRowSampleOutputVo?
 
 
     ////
     // (유니크 테스트 테이블 Rows 조회 테스트)
-    fun selectUniqueTestTableRowsSample(httpServletResponse: HttpServletResponse): MyServiceTkSampleDatabaseTestController.SelectUniqueTestTableRowsSampleOutputVo?
+    fun selectUniqueTestTableRowsSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectUniqueTestTableRowsSampleOutputVo?
 
 
     ////
@@ -151,8 +151,8 @@ interface MyServiceTkSampleDatabaseTestService {
     fun updateUniqueTestTableRowSample(
         httpServletResponse: HttpServletResponse,
         testTableUid: Long,
-        inputVo: MyServiceTkSampleDatabaseTestController.UpdateUniqueTestTableRowSampleInputVo
-    ): MyServiceTkSampleDatabaseTestController.UpdateUniqueTestTableRowSampleOutputVo?
+        inputVo: JpaTestController.UpdateUniqueTestTableRowSampleInputVo
+    ): JpaTestController.UpdateUniqueTestTableRowSampleOutputVo?
 
 
     ////
@@ -164,8 +164,8 @@ interface MyServiceTkSampleDatabaseTestService {
     // (외래키 부모 테이블 Row 입력 API)
     fun insertFkParentRowSample(
         httpServletResponse: HttpServletResponse,
-        inputVo: MyServiceTkSampleDatabaseTestController.InsertFkParentRowSampleInputVo
-    ): MyServiceTkSampleDatabaseTestController.InsertFkParentRowSampleOutputVo?
+        inputVo: JpaTestController.InsertFkParentRowSampleInputVo
+    ): JpaTestController.InsertFkParentRowSampleOutputVo?
 
 
     ////
@@ -173,18 +173,18 @@ interface MyServiceTkSampleDatabaseTestService {
     fun insertFkChildRowSample(
         httpServletResponse: HttpServletResponse,
         parentUid: Long,
-        inputVo: MyServiceTkSampleDatabaseTestController.InsertFkChildRowSampleInputVo
-    ): MyServiceTkSampleDatabaseTestController.InsertFkChildRowSampleOutputVo?
+        inputVo: JpaTestController.InsertFkChildRowSampleInputVo
+    ): JpaTestController.InsertFkChildRowSampleOutputVo?
 
 
     ////
     // (외래키 관련 테이블 Rows 조회 테스트)
-    fun selectFkTestTableRowsSample(httpServletResponse: HttpServletResponse): MyServiceTkSampleDatabaseTestController.SelectFkTestTableRowsSampleOutputVo?
+    fun selectFkTestTableRowsSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTestTableRowsSampleOutputVo?
 
 
     ////
     // (외래키 관련 테이블 Rows 조회 테스트(Native Join))
-    fun selectFkTestTableRowsByNativeQuerySample(httpServletResponse: HttpServletResponse): MyServiceTkSampleDatabaseTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo?
+    fun selectFkTestTableRowsByNativeQuerySample(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo?
 
 
     ////
@@ -192,7 +192,7 @@ interface MyServiceTkSampleDatabaseTestService {
     fun getNativeQueryReturnValueTest(
         httpServletResponse: HttpServletResponse,
         inputVal: Boolean
-    ): MyServiceTkSampleDatabaseTestController.GetNativeQueryReturnValueTestOutputVo?
+    ): JpaTestController.GetNativeQueryReturnValueTestOutputVo?
 
 
     ////
@@ -200,17 +200,17 @@ interface MyServiceTkSampleDatabaseTestService {
     fun sqlInjectionTest(
         httpServletResponse: HttpServletResponse,
         searchKeyword: String
-    ): MyServiceTkSampleDatabaseTestController.SqlInjectionTestOutputVo?
+    ): JpaTestController.SqlInjectionTestOutputVo?
 
 
     ////
     // (외래키 관련 테이블 Rows 조회 (네이티브 쿼리, 부모 테이블을 자식 테이블의 가장 최근 데이터만 Join))
-    fun selectFkTableRowsWithLatestChildSample(httpServletResponse: HttpServletResponse): MyServiceTkSampleDatabaseTestController.SelectFkTableRowsWithLatestChildSampleOutputVo?
+    fun selectFkTableRowsWithLatestChildSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTableRowsWithLatestChildSampleOutputVo?
 
 
     ////
     // (외래키 관련 테이블 Rows 조회 (QueryDsl))
-    fun selectFkTableRowsWithQueryDsl(httpServletResponse: HttpServletResponse): MyServiceTkSampleDatabaseTestController.SelectFkTableRowsWithQueryDslOutputVo?
+    fun selectFkTableRowsWithQueryDsl(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTableRowsWithQueryDslOutputVo?
 
 
     ////
@@ -218,7 +218,7 @@ interface MyServiceTkSampleDatabaseTestService {
     fun selectFkTableRowsByParentNameFilterWithQueryDsl(
         httpServletResponse: HttpServletResponse,
         parentName: String
-    ): MyServiceTkSampleDatabaseTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo?
+    ): JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo?
 
 
     ////
@@ -226,7 +226,7 @@ interface MyServiceTkSampleDatabaseTestService {
     fun selectFkTableChildListWithQueryDsl(
         httpServletResponse: HttpServletResponse,
         parentUid: Long
-    ): MyServiceTkSampleDatabaseTestController.SelectFkTableChildListWithQueryDslOutputVo?
+    ): JpaTestController.SelectFkTableChildListWithQueryDslOutputVo?
 
 
     ////

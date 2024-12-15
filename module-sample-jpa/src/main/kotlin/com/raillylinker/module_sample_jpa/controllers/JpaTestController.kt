@@ -1,7 +1,7 @@
 package com.raillylinker.module_sample_jpa.controllers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.raillylinker.module_sample_jpa.services.MyServiceTkSampleDatabaseTestService
+import com.raillylinker.module_sample_jpa.services.JpaTestService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.headers.Header
@@ -15,11 +15,11 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 
-@Tag(name = "/my-service/tk/sample/database-test APIs", description = "Database 에 대한 테스트 API 컨트롤러")
+@Tag(name = "/jpa-test APIs", description = "JPA 테스트 API 컨트롤러")
 @Controller
-@RequestMapping("/my-service/tk/sample/database-test")
-class MyServiceTkSampleDatabaseTestController(
-    private val service: MyServiceTkSampleDatabaseTestService
+@RequestMapping("/jpa-test")
+class JpaTestController(
+    private val service: JpaTestService
 ) {
     // <멤버 변수 공간>
 

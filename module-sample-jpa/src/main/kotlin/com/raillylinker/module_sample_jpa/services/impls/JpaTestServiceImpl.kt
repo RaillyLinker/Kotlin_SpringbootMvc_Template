@@ -1,7 +1,7 @@
 package com.raillylinker.module_sample_jpa.services.impls
 
-import com.raillylinker.module_sample_jpa.controllers.MyServiceTkSampleDatabaseTestController
-import com.raillylinker.module_sample_jpa.services.MyServiceTkSampleDatabaseTestService
+import com.raillylinker.module_sample_jpa.controllers.JpaTestController
+import com.raillylinker.module_sample_jpa.services.JpaTestService
 import com.raillylinker.module_sample_jpa.annotations.CustomTransactional
 import com.raillylinker.module_sample_jpa.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.module_sample_jpa.jpa_beans.db1_main.entities.*
@@ -21,7 +21,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 @Service
-class MyServiceTkSampleDatabaseTestServiceImpl(
+class JpaTestServiceImpl(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
 
@@ -35,7 +35,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
 
     // (Database Repository DSL)
     private val db1TemplateRepositoryDsl: Db1_Template_RepositoryDsl
-) : MyServiceTkSampleDatabaseTestService {
+) : JpaTestService {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -45,8 +45,8 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
     @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
     override fun insertDataSample(
         httpServletResponse: HttpServletResponse,
-        inputVo: MyServiceTkSampleDatabaseTestController.InsertDataSampleInputVo
-    ): MyServiceTkSampleDatabaseTestController.InsertDataSampleOutputVo? {
+        inputVo: JpaTestController.InsertDataSampleInputVo
+    ): JpaTestController.InsertDataSampleOutputVo? {
         val result = db1TemplateTestsRepository.save(
             Db1_Template_TestData(
                 inputVo.content,
@@ -57,7 +57,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         )
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.InsertDataSampleOutputVo(
+        return JpaTestController.InsertDataSampleOutputVo(
             result.uid!!,
             result.content,
             result.randomNum,
@@ -117,14 +117,14 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
 
     ////
     @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
-    override fun selectRowsSample(httpServletResponse: HttpServletResponse): MyServiceTkSampleDatabaseTestController.SelectRowsSampleOutputVo? {
+    override fun selectRowsSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectRowsSampleOutputVo? {
         val resultEntityList =
             db1TemplateTestsRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/")
         val entityVoList =
-            ArrayList<MyServiceTkSampleDatabaseTestController.SelectRowsSampleOutputVo.TestEntityVo>()
+            ArrayList<JpaTestController.SelectRowsSampleOutputVo.TestEntityVo>()
         for (resultEntity in resultEntityList) {
             entityVoList.add(
-                MyServiceTkSampleDatabaseTestController.SelectRowsSampleOutputVo.TestEntityVo(
+                JpaTestController.SelectRowsSampleOutputVo.TestEntityVo(
                     resultEntity.uid!!,
                     resultEntity.content,
                     resultEntity.randomNum,
@@ -142,10 +142,10 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         val logicalDeleteEntityVoList =
             db1TemplateTestsRepository.findAllByRowDeleteDateStrNotOrderByRowCreateDate("/")
         val logicalDeleteVoList =
-            ArrayList<MyServiceTkSampleDatabaseTestController.SelectRowsSampleOutputVo.TestEntityVo>()
+            ArrayList<JpaTestController.SelectRowsSampleOutputVo.TestEntityVo>()
         for (resultEntity in logicalDeleteEntityVoList) {
             logicalDeleteVoList.add(
-                MyServiceTkSampleDatabaseTestController.SelectRowsSampleOutputVo.TestEntityVo(
+                JpaTestController.SelectRowsSampleOutputVo.TestEntityVo(
                     resultEntity.uid!!,
                     resultEntity.content,
                     resultEntity.randomNum,
@@ -161,7 +161,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectRowsSampleOutputVo(
+        return JpaTestController.SelectRowsSampleOutputVo(
             entityVoList,
             logicalDeleteVoList
         )
@@ -173,15 +173,15 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
     override fun selectRowsOrderByRandomNumSample(
         httpServletResponse: HttpServletResponse,
         num: Int
-    ): MyServiceTkSampleDatabaseTestController.SelectRowsOrderByRandomNumSampleOutputVo? {
+    ): JpaTestController.SelectRowsOrderByRandomNumSampleOutputVo? {
         val foundEntityList = db1NativeRepository.findAllFromTemplateTestDataByNotDeletedWithRandomNumDistance(num)
 
         val testEntityVoList =
-            ArrayList<MyServiceTkSampleDatabaseTestController.SelectRowsOrderByRandomNumSampleOutputVo.TestEntityVo>()
+            ArrayList<JpaTestController.SelectRowsOrderByRandomNumSampleOutputVo.TestEntityVo>()
 
         for (entity in foundEntityList) {
             testEntityVoList.add(
-                MyServiceTkSampleDatabaseTestController.SelectRowsOrderByRandomNumSampleOutputVo.TestEntityVo(
+                JpaTestController.SelectRowsOrderByRandomNumSampleOutputVo.TestEntityVo(
                     entity.uid,
                     entity.content,
                     entity.randomNum,
@@ -197,7 +197,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectRowsOrderByRandomNumSampleOutputVo(
+        return JpaTestController.SelectRowsOrderByRandomNumSampleOutputVo(
             testEntityVoList
         )
     }
@@ -208,18 +208,18 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
     override fun selectRowsOrderByRowCreateDateSample(
         httpServletResponse: HttpServletResponse,
         dateString: String
-    ): MyServiceTkSampleDatabaseTestController.SelectRowsOrderByRowCreateDateSampleOutputVo? {
+    ): JpaTestController.SelectRowsOrderByRowCreateDateSampleOutputVo? {
         val foundEntityList = db1NativeRepository.findAllFromTemplateTestDataByNotDeletedWithRowCreateDateDistance(
             ZonedDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
                 .toLocalDateTime()
         )
 
         val testEntityVoList =
-            ArrayList<MyServiceTkSampleDatabaseTestController.SelectRowsOrderByRowCreateDateSampleOutputVo.TestEntityVo>()
+            ArrayList<JpaTestController.SelectRowsOrderByRowCreateDateSampleOutputVo.TestEntityVo>()
 
         for (entity in foundEntityList) {
             testEntityVoList.add(
-                MyServiceTkSampleDatabaseTestController.SelectRowsOrderByRowCreateDateSampleOutputVo.TestEntityVo(
+                JpaTestController.SelectRowsOrderByRowCreateDateSampleOutputVo.TestEntityVo(
                     entity.uid,
                     entity.content,
                     entity.randomNum,
@@ -235,7 +235,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectRowsOrderByRowCreateDateSampleOutputVo(
+        return JpaTestController.SelectRowsOrderByRowCreateDateSampleOutputVo(
             testEntityVoList
         )
     }
@@ -247,7 +247,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         httpServletResponse: HttpServletResponse,
         page: Int,
         pageElementsCount: Int
-    ): MyServiceTkSampleDatabaseTestController.SelectRowsPageSampleOutputVo? {
+    ): JpaTestController.SelectRowsPageSampleOutputVo? {
         val pageable: Pageable = PageRequest.of(page - 1, pageElementsCount)
         val entityList = db1TemplateTestsRepository.findAllByRowDeleteDateStrOrderByRowCreateDate(
             "/",
@@ -255,10 +255,10 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         )
 
         val testEntityVoList =
-            ArrayList<MyServiceTkSampleDatabaseTestController.SelectRowsPageSampleOutputVo.TestEntityVo>()
+            ArrayList<JpaTestController.SelectRowsPageSampleOutputVo.TestEntityVo>()
         for (entity in entityList) {
             testEntityVoList.add(
-                MyServiceTkSampleDatabaseTestController.SelectRowsPageSampleOutputVo.TestEntityVo(
+                JpaTestController.SelectRowsPageSampleOutputVo.TestEntityVo(
                     entity.uid!!,
                     entity.content,
                     entity.randomNum,
@@ -273,7 +273,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectRowsPageSampleOutputVo(
+        return JpaTestController.SelectRowsPageSampleOutputVo(
             entityList.totalElements,
             testEntityVoList
         )
@@ -287,7 +287,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         page: Int,
         pageElementsCount: Int,
         num: Int
-    ): MyServiceTkSampleDatabaseTestController.SelectRowsNativeQueryPageSampleOutputVo? {
+    ): JpaTestController.SelectRowsNativeQueryPageSampleOutputVo? {
         val pageable: Pageable = PageRequest.of(page - 1, pageElementsCount)
         val voList = db1NativeRepository.findPageAllFromTemplateTestDataByNotDeletedWithRandomNumDistance(
             num,
@@ -295,10 +295,10 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         )
 
         val testEntityVoList =
-            ArrayList<MyServiceTkSampleDatabaseTestController.SelectRowsNativeQueryPageSampleOutputVo.TestEntityVo>()
+            ArrayList<JpaTestController.SelectRowsNativeQueryPageSampleOutputVo.TestEntityVo>()
         for (vo in voList) {
             testEntityVoList.add(
-                MyServiceTkSampleDatabaseTestController.SelectRowsNativeQueryPageSampleOutputVo.TestEntityVo(
+                JpaTestController.SelectRowsNativeQueryPageSampleOutputVo.TestEntityVo(
                     vo.uid,
                     vo.content,
                     vo.randomNum,
@@ -314,7 +314,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectRowsNativeQueryPageSampleOutputVo(
+        return JpaTestController.SelectRowsNativeQueryPageSampleOutputVo(
             voList.totalElements,
             testEntityVoList
         )
@@ -326,8 +326,8 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
     override fun updateRowSample(
         httpServletResponse: HttpServletResponse,
         testTableUid: Long,
-        inputVo: MyServiceTkSampleDatabaseTestController.UpdateRowSampleInputVo
-    ): MyServiceTkSampleDatabaseTestController.UpdateRowSampleOutputVo? {
+        inputVo: JpaTestController.UpdateRowSampleInputVo
+    ): JpaTestController.UpdateRowSampleOutputVo? {
         val oldEntity = db1TemplateTestsRepository.findByUidAndRowDeleteDateStr(testTableUid, "/")
 
         if (oldEntity == null || oldEntity.rowDeleteDateStr != "/") {
@@ -344,7 +344,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         val result = db1TemplateTestsRepository.save(oldEntity)
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.UpdateRowSampleOutputVo(
+        return JpaTestController.UpdateRowSampleOutputVo(
             result.uid!!,
             result.content,
             result.randomNum,
@@ -363,7 +363,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
     override fun updateRowNativeQuerySample(
         httpServletResponse: HttpServletResponse,
         testTableUid: Long,
-        inputVo: MyServiceTkSampleDatabaseTestController.UpdateRowNativeQuerySampleInputVo
+        inputVo: JpaTestController.UpdateRowNativeQuerySampleInputVo
     ) {
         // !! 아래는 네이티브 쿼리로 수정하는 예시를 보인 것으로,
         // 이 경우에는 @UpdateTimestamp, @Version 기능이 자동 적용 되지 않습니다.
@@ -395,7 +395,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         page: Int,
         pageElementsCount: Int,
         searchKeyword: String
-    ): MyServiceTkSampleDatabaseTestController.SelectRowWhereSearchingKeywordSampleOutputVo? {
+    ): JpaTestController.SelectRowWhereSearchingKeywordSampleOutputVo? {
         val pageable: Pageable = PageRequest.of(page - 1, pageElementsCount)
         val voList = db1NativeRepository.findPageAllFromTemplateTestDataBySearchKeyword(
             searchKeyword,
@@ -403,10 +403,10 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         )
 
         val testEntityVoList =
-            ArrayList<MyServiceTkSampleDatabaseTestController.SelectRowWhereSearchingKeywordSampleOutputVo.TestEntityVo>()
+            ArrayList<JpaTestController.SelectRowWhereSearchingKeywordSampleOutputVo.TestEntityVo>()
         for (vo in voList) {
             testEntityVoList.add(
-                MyServiceTkSampleDatabaseTestController.SelectRowWhereSearchingKeywordSampleOutputVo.TestEntityVo(
+                JpaTestController.SelectRowWhereSearchingKeywordSampleOutputVo.TestEntityVo(
                     vo.uid,
                     vo.content,
                     vo.randomNum,
@@ -421,7 +421,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectRowWhereSearchingKeywordSampleOutputVo(
+        return JpaTestController.SelectRowWhereSearchingKeywordSampleOutputVo(
             voList.totalElements,
             testEntityVoList
         )
@@ -486,7 +486,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         httpServletResponse: HttpServletResponse,
         lastItemUid: Long?,
         pageElementsCount: Int
-    ): MyServiceTkSampleDatabaseTestController.SelectRowsNoDuplicatePagingSampleOutputVo? {
+    ): JpaTestController.SelectRowsNoDuplicatePagingSampleOutputVo? {
         // 중복 없는 페이징 쿼리를 사용합니다.
         val voList = db1NativeRepository.findAllFromTemplateTestDataForNoDuplicatedPaging(
             lastItemUid,
@@ -497,10 +497,10 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         val count = db1NativeRepository.countFromTemplateTestDataByNotDeleted()
 
         val testEntityVoList =
-            ArrayList<MyServiceTkSampleDatabaseTestController.SelectRowsNoDuplicatePagingSampleOutputVo.TestEntityVo>()
+            ArrayList<JpaTestController.SelectRowsNoDuplicatePagingSampleOutputVo.TestEntityVo>()
         for (vo in voList) {
             testEntityVoList.add(
-                MyServiceTkSampleDatabaseTestController.SelectRowsNoDuplicatePagingSampleOutputVo.TestEntityVo(
+                JpaTestController.SelectRowsNoDuplicatePagingSampleOutputVo.TestEntityVo(
                     vo.uid,
                     vo.content,
                     vo.randomNum,
@@ -515,7 +515,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectRowsNoDuplicatePagingSampleOutputVo(
+        return JpaTestController.SelectRowsNoDuplicatePagingSampleOutputVo(
             count,
             testEntityVoList
         )
@@ -524,21 +524,21 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
 
     ////
     @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
-    override fun selectRowsCountSample(httpServletResponse: HttpServletResponse): MyServiceTkSampleDatabaseTestController.SelectRowsCountSampleOutputVo? {
+    override fun selectRowsCountSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectRowsCountSampleOutputVo? {
         val count = db1TemplateTestsRepository.countByRowDeleteDateStr("/")
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectRowsCountSampleOutputVo(count)
+        return JpaTestController.SelectRowsCountSampleOutputVo(count)
     }
 
 
     ////
     @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
-    override fun selectRowsCountByNativeQuerySample(httpServletResponse: HttpServletResponse): MyServiceTkSampleDatabaseTestController.SelectRowsCountByNativeQuerySampleOutputVo? {
+    override fun selectRowsCountByNativeQuerySample(httpServletResponse: HttpServletResponse): JpaTestController.SelectRowsCountByNativeQuerySampleOutputVo? {
         val count = db1NativeRepository.countFromTemplateTestDataByNotDeleted()
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectRowsCountByNativeQuerySampleOutputVo(count)
+        return JpaTestController.SelectRowsCountByNativeQuerySampleOutputVo(count)
     }
 
 
@@ -547,7 +547,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
     override fun selectRowByNativeQuerySample(
         httpServletResponse: HttpServletResponse,
         testTableUid: Long
-    ): MyServiceTkSampleDatabaseTestController.SelectRowByNativeQuerySampleOutputVo? {
+    ): JpaTestController.SelectRowByNativeQuerySampleOutputVo? {
         val entity = db1NativeRepository.findFromTemplateTestDataByNotDeletedAndUid(testTableUid)
 
         if (entity == null) {
@@ -557,7 +557,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectRowByNativeQuerySampleOutputVo(
+        return JpaTestController.SelectRowByNativeQuerySampleOutputVo(
             entity.uid,
             entity.content,
             entity.randomNum,
@@ -575,8 +575,8 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
     @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
     override fun insertUniqueTestTableRowSample(
         httpServletResponse: HttpServletResponse,
-        inputVo: MyServiceTkSampleDatabaseTestController.InsertUniqueTestTableRowSampleInputVo
-    ): MyServiceTkSampleDatabaseTestController.InsertUniqueTestTableRowSampleOutputVo? {
+        inputVo: JpaTestController.InsertUniqueTestTableRowSampleInputVo
+    ): JpaTestController.InsertUniqueTestTableRowSampleOutputVo? {
         val result = db1TemplateLogicalDeleteUniqueDataRepository.save(
             Db1_Template_LogicalDeleteUniqueData(
                 inputVo.uniqueValue
@@ -584,7 +584,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         )
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.InsertUniqueTestTableRowSampleOutputVo(
+        return JpaTestController.InsertUniqueTestTableRowSampleOutputVo(
             result.uid!!,
             result.uniqueValue,
             result.rowCreateDate!!.atZone(ZoneId.systemDefault())
@@ -598,14 +598,14 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
 
     ////
     @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
-    override fun selectUniqueTestTableRowsSample(httpServletResponse: HttpServletResponse): MyServiceTkSampleDatabaseTestController.SelectUniqueTestTableRowsSampleOutputVo? {
+    override fun selectUniqueTestTableRowsSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectUniqueTestTableRowsSampleOutputVo? {
         val resultEntityList =
             db1TemplateLogicalDeleteUniqueDataRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/")
         val entityVoList =
-            ArrayList<MyServiceTkSampleDatabaseTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo>()
+            ArrayList<JpaTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo>()
         for (resultEntity in resultEntityList) {
             entityVoList.add(
-                MyServiceTkSampleDatabaseTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo(
+                JpaTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo(
                     resultEntity.uid!!,
                     resultEntity.uniqueValue,
                     resultEntity.rowCreateDate!!.atZone(ZoneId.systemDefault())
@@ -620,10 +620,10 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         val logicalDeleteEntityVoList =
             db1TemplateLogicalDeleteUniqueDataRepository.findAllByRowDeleteDateStrNotOrderByRowCreateDate("/")
         val logicalDeleteVoList =
-            ArrayList<MyServiceTkSampleDatabaseTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo>()
+            ArrayList<JpaTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo>()
         for (resultEntity in logicalDeleteEntityVoList) {
             logicalDeleteVoList.add(
-                MyServiceTkSampleDatabaseTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo(
+                JpaTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo(
                     resultEntity.uid!!,
                     resultEntity.uniqueValue,
                     resultEntity.rowCreateDate!!.atZone(ZoneId.systemDefault())
@@ -636,7 +636,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectUniqueTestTableRowsSampleOutputVo(
+        return JpaTestController.SelectUniqueTestTableRowsSampleOutputVo(
             entityVoList,
             logicalDeleteVoList
         )
@@ -648,8 +648,8 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
     override fun updateUniqueTestTableRowSample(
         httpServletResponse: HttpServletResponse,
         testTableUid: Long,
-        inputVo: MyServiceTkSampleDatabaseTestController.UpdateUniqueTestTableRowSampleInputVo
-    ): MyServiceTkSampleDatabaseTestController.UpdateUniqueTestTableRowSampleOutputVo? {
+        inputVo: JpaTestController.UpdateUniqueTestTableRowSampleInputVo
+    ): JpaTestController.UpdateUniqueTestTableRowSampleOutputVo? {
         val oldEntity =
             db1TemplateLogicalDeleteUniqueDataRepository.findByUidAndRowDeleteDateStr(testTableUid, "/")
 
@@ -677,7 +677,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         val result = db1TemplateLogicalDeleteUniqueDataRepository.save(oldEntity)
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.UpdateUniqueTestTableRowSampleOutputVo(
+        return JpaTestController.UpdateUniqueTestTableRowSampleOutputVo(
             result.uid!!,
             result.uniqueValue,
             result.rowCreateDate!!.atZone(ZoneId.systemDefault())
@@ -712,8 +712,8 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
     @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
     override fun insertFkParentRowSample(
         httpServletResponse: HttpServletResponse,
-        inputVo: MyServiceTkSampleDatabaseTestController.InsertFkParentRowSampleInputVo
-    ): MyServiceTkSampleDatabaseTestController.InsertFkParentRowSampleOutputVo? {
+        inputVo: JpaTestController.InsertFkParentRowSampleInputVo
+    ): JpaTestController.InsertFkParentRowSampleOutputVo? {
         val result = db1TemplateFkTestParentRepository.save(
             Db1_Template_FkTestParent(
                 inputVo.fkParentName
@@ -721,7 +721,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         )
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.InsertFkParentRowSampleOutputVo(
+        return JpaTestController.InsertFkParentRowSampleOutputVo(
             result.uid!!,
             result.parentName,
             result.rowCreateDate!!.atZone(ZoneId.systemDefault())
@@ -737,8 +737,8 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
     override fun insertFkChildRowSample(
         httpServletResponse: HttpServletResponse,
         parentUid: Long,
-        inputVo: MyServiceTkSampleDatabaseTestController.InsertFkChildRowSampleInputVo
-    ): MyServiceTkSampleDatabaseTestController.InsertFkChildRowSampleOutputVo? {
+        inputVo: JpaTestController.InsertFkChildRowSampleInputVo
+    ): JpaTestController.InsertFkChildRowSampleOutputVo? {
         val parentEntityOpt = db1TemplateFkTestParentRepository.findById(parentUid)
 
         if (parentEntityOpt.isEmpty) {
@@ -757,7 +757,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         )
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.InsertFkChildRowSampleOutputVo(
+        return JpaTestController.InsertFkChildRowSampleOutputVo(
             result.uid!!,
             result.childName,
             result.fkTestParent.parentName,
@@ -771,14 +771,14 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
 
     ////
     @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
-    override fun selectFkTestTableRowsSample(httpServletResponse: HttpServletResponse): MyServiceTkSampleDatabaseTestController.SelectFkTestTableRowsSampleOutputVo? {
+    override fun selectFkTestTableRowsSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTestTableRowsSampleOutputVo? {
         val resultEntityList =
             db1TemplateFkTestParentRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/")
 
         val entityVoList =
-            ArrayList<MyServiceTkSampleDatabaseTestController.SelectFkTestTableRowsSampleOutputVo.ParentEntityVo>()
+            ArrayList<JpaTestController.SelectFkTestTableRowsSampleOutputVo.ParentEntityVo>()
         for (resultEntity in resultEntityList) {
-            val childEntityVoList: ArrayList<MyServiceTkSampleDatabaseTestController.SelectFkTestTableRowsSampleOutputVo.ParentEntityVo.ChildEntityVo> =
+            val childEntityVoList: ArrayList<JpaTestController.SelectFkTestTableRowsSampleOutputVo.ParentEntityVo.ChildEntityVo> =
                 arrayListOf()
 
             val childList =
@@ -789,7 +789,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
 
             for (childEntity in childList) {
                 childEntityVoList.add(
-                    MyServiceTkSampleDatabaseTestController.SelectFkTestTableRowsSampleOutputVo.ParentEntityVo.ChildEntityVo(
+                    JpaTestController.SelectFkTestTableRowsSampleOutputVo.ParentEntityVo.ChildEntityVo(
                         childEntity.uid!!,
                         childEntity.childName,
                         childEntity.rowCreateDate!!.atZone(ZoneId.systemDefault())
@@ -801,7 +801,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
             }
 
             entityVoList.add(
-                MyServiceTkSampleDatabaseTestController.SelectFkTestTableRowsSampleOutputVo.ParentEntityVo(
+                JpaTestController.SelectFkTestTableRowsSampleOutputVo.ParentEntityVo(
                     resultEntity.uid!!,
                     resultEntity.parentName,
                     resultEntity.rowCreateDate!!.atZone(ZoneId.systemDefault())
@@ -814,7 +814,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectFkTestTableRowsSampleOutputVo(
+        return JpaTestController.SelectFkTestTableRowsSampleOutputVo(
             entityVoList
         )
     }
@@ -822,14 +822,14 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
 
     ////
     @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
-    override fun selectFkTestTableRowsByNativeQuerySample(httpServletResponse: HttpServletResponse): MyServiceTkSampleDatabaseTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo? {
+    override fun selectFkTestTableRowsByNativeQuerySample(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo? {
         val resultEntityList = db1NativeRepository.findAllFromTemplateFkTestManyToOneChildInnerJoinParentByNotDeleted()
 
         val entityVoList =
-            ArrayList<MyServiceTkSampleDatabaseTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo.ChildEntityVo>()
+            ArrayList<JpaTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo.ChildEntityVo>()
         for (resultEntity in resultEntityList) {
             entityVoList.add(
-                MyServiceTkSampleDatabaseTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo.ChildEntityVo(
+                JpaTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo.ChildEntityVo(
                     resultEntity.childUid,
                     resultEntity.childName,
                     resultEntity.childCreateDate.atZone(ZoneId.systemDefault())
@@ -843,7 +843,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo(
+        return JpaTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo(
             entityVoList
         )
     }
@@ -854,7 +854,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
     override fun getNativeQueryReturnValueTest(
         httpServletResponse: HttpServletResponse,
         inputVal: Boolean
-    ): MyServiceTkSampleDatabaseTestController.GetNativeQueryReturnValueTestOutputVo? {
+    ): JpaTestController.GetNativeQueryReturnValueTestOutputVo? {
         // boolean 값을 갖고오기 위한 테스트 테이블이 존재하지 않는다면 하나 생성하기
         val justBooleanEntity = db1TemplateJustBooleanTestRepository.findAll()
         if (justBooleanEntity.isEmpty()) {
@@ -868,7 +868,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         val resultEntity = db1NativeRepository.multiCaseBooleanReturnTest(inputVal)
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.GetNativeQueryReturnValueTestOutputVo(
+        return JpaTestController.GetNativeQueryReturnValueTestOutputVo(
             // 쿼리문 내에서 True, False 로 반환하는 값은 Long 타입으로 받습니다.
             resultEntity.normalBoolValue == 1L,
             resultEntity.funcBoolValue == 1L,
@@ -886,18 +886,18 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
     override fun sqlInjectionTest(
         httpServletResponse: HttpServletResponse,
         searchKeyword: String
-    ): MyServiceTkSampleDatabaseTestController.SqlInjectionTestOutputVo? {
+    ): JpaTestController.SqlInjectionTestOutputVo? {
         // jpaRepository : Injection Safe
         val jpaRepositoryResultEntityList =
             db1TemplateTestsRepository.findAllByContentOrderByRowCreateDate(
                 searchKeyword
             )
 
-        val jpaRepositoryResultList: ArrayList<MyServiceTkSampleDatabaseTestController.SqlInjectionTestOutputVo.TestEntityVo> =
+        val jpaRepositoryResultList: ArrayList<JpaTestController.SqlInjectionTestOutputVo.TestEntityVo> =
             arrayListOf()
         for (jpaRepositoryResultEntity in jpaRepositoryResultEntityList) {
             jpaRepositoryResultList.add(
-                MyServiceTkSampleDatabaseTestController.SqlInjectionTestOutputVo.TestEntityVo(
+                JpaTestController.SqlInjectionTestOutputVo.TestEntityVo(
                     jpaRepositoryResultEntity.uid!!,
                     jpaRepositoryResultEntity.content,
                     jpaRepositoryResultEntity.randomNum,
@@ -917,11 +917,11 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
                 searchKeyword
             )
 
-        val jpqlResultList: ArrayList<MyServiceTkSampleDatabaseTestController.SqlInjectionTestOutputVo.TestEntityVo> =
+        val jpqlResultList: ArrayList<JpaTestController.SqlInjectionTestOutputVo.TestEntityVo> =
             arrayListOf()
         for (jpqlEntity in jpqlResultEntityList) {
             jpqlResultList.add(
-                MyServiceTkSampleDatabaseTestController.SqlInjectionTestOutputVo.TestEntityVo(
+                JpaTestController.SqlInjectionTestOutputVo.TestEntityVo(
                     jpqlEntity.uid!!,
                     jpqlEntity.content,
                     jpqlEntity.randomNum,
@@ -941,11 +941,11 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
                 searchKeyword
             )
 
-        val nativeQueryResultList: ArrayList<MyServiceTkSampleDatabaseTestController.SqlInjectionTestOutputVo.TestEntityVo> =
+        val nativeQueryResultList: ArrayList<JpaTestController.SqlInjectionTestOutputVo.TestEntityVo> =
             arrayListOf()
         for (nativeQueryEntity in nativeQueryResultEntityList) {
             nativeQueryResultList.add(
-                MyServiceTkSampleDatabaseTestController.SqlInjectionTestOutputVo.TestEntityVo(
+                JpaTestController.SqlInjectionTestOutputVo.TestEntityVo(
                     nativeQueryEntity.uid,
                     nativeQueryEntity.content,
                     nativeQueryEntity.randomNum,
@@ -966,7 +966,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
          */
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SqlInjectionTestOutputVo(
+        return JpaTestController.SqlInjectionTestOutputVo(
             jpaRepositoryResultList,
             jpqlResultList,
             nativeQueryResultList
@@ -976,14 +976,14 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
 
     ////
     @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
-    override fun selectFkTableRowsWithLatestChildSample(httpServletResponse: HttpServletResponse): MyServiceTkSampleDatabaseTestController.SelectFkTableRowsWithLatestChildSampleOutputVo? {
+    override fun selectFkTableRowsWithLatestChildSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTableRowsWithLatestChildSampleOutputVo? {
         val resultEntityList = db1NativeRepository.findAllFromTemplateFkTestParentWithNearestChildOnly()
 
         val entityVoList =
-            ArrayList<MyServiceTkSampleDatabaseTestController.SelectFkTableRowsWithLatestChildSampleOutputVo.ParentEntityVo>()
+            ArrayList<JpaTestController.SelectFkTableRowsWithLatestChildSampleOutputVo.ParentEntityVo>()
         for (resultEntity in resultEntityList) {
             entityVoList.add(
-                MyServiceTkSampleDatabaseTestController.SelectFkTableRowsWithLatestChildSampleOutputVo.ParentEntityVo(
+                JpaTestController.SelectFkTableRowsWithLatestChildSampleOutputVo.ParentEntityVo(
                     resultEntity.parentUid,
                     resultEntity.parentName,
                     resultEntity.parentCreateDate.atZone(ZoneId.systemDefault())
@@ -993,7 +993,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
                     if (resultEntity.childUid == null) {
                         null
                     } else {
-                        MyServiceTkSampleDatabaseTestController.SelectFkTableRowsWithLatestChildSampleOutputVo.ParentEntityVo.ChildEntityVo(
+                        JpaTestController.SelectFkTableRowsWithLatestChildSampleOutputVo.ParentEntityVo.ChildEntityVo(
                             resultEntity.childUid!!,
                             resultEntity.childName!!,
                             resultEntity.childCreateDate!!.atZone(ZoneId.systemDefault())
@@ -1007,7 +1007,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectFkTableRowsWithLatestChildSampleOutputVo(
+        return JpaTestController.SelectFkTableRowsWithLatestChildSampleOutputVo(
             entityVoList
         )
     }
@@ -1015,19 +1015,19 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
 
     ////
     @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
-    override fun selectFkTableRowsWithQueryDsl(httpServletResponse: HttpServletResponse): MyServiceTkSampleDatabaseTestController.SelectFkTableRowsWithQueryDslOutputVo? {
+    override fun selectFkTableRowsWithQueryDsl(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTableRowsWithQueryDslOutputVo? {
         val resultEntityList = db1TemplateRepositoryDsl.findParentWithChildren()
 
         val entityVoList =
-            ArrayList<MyServiceTkSampleDatabaseTestController.SelectFkTableRowsWithQueryDslOutputVo.ParentEntityVo>()
+            ArrayList<JpaTestController.SelectFkTableRowsWithQueryDslOutputVo.ParentEntityVo>()
 
         for (resultEntity in resultEntityList) {
             val childEntityVoList =
-                ArrayList<MyServiceTkSampleDatabaseTestController.SelectFkTableRowsWithQueryDslOutputVo.ParentEntityVo.ChildEntityVo>()
+                ArrayList<JpaTestController.SelectFkTableRowsWithQueryDslOutputVo.ParentEntityVo.ChildEntityVo>()
 
             for (childEntity in resultEntity.fkTestManyToOneChildList) {
                 childEntityVoList.add(
-                    MyServiceTkSampleDatabaseTestController.SelectFkTableRowsWithQueryDslOutputVo.ParentEntityVo.ChildEntityVo(
+                    JpaTestController.SelectFkTableRowsWithQueryDslOutputVo.ParentEntityVo.ChildEntityVo(
                         childEntity.uid!!,
                         childEntity.childName,
                         childEntity.rowCreateDate!!.atZone(ZoneId.systemDefault())
@@ -1039,7 +1039,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
             }
 
             entityVoList.add(
-                MyServiceTkSampleDatabaseTestController.SelectFkTableRowsWithQueryDslOutputVo.ParentEntityVo(
+                JpaTestController.SelectFkTableRowsWithQueryDslOutputVo.ParentEntityVo(
                     resultEntity.uid!!,
                     resultEntity.parentName,
                     resultEntity.rowCreateDate!!.atZone(ZoneId.systemDefault())
@@ -1052,7 +1052,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectFkTableRowsWithQueryDslOutputVo(
+        return JpaTestController.SelectFkTableRowsWithQueryDslOutputVo(
             entityVoList
         )
     }
@@ -1063,19 +1063,19 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
     override fun selectFkTableRowsByParentNameFilterWithQueryDsl(
         httpServletResponse: HttpServletResponse,
         parentName: String
-    ): MyServiceTkSampleDatabaseTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo? {
+    ): JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo? {
         val resultEntityList = db1TemplateRepositoryDsl.findParentWithChildrenByName(parentName)
 
         val entityVoList =
-            ArrayList<MyServiceTkSampleDatabaseTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo.ParentEntityVo>()
+            ArrayList<JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo.ParentEntityVo>()
 
         for (resultEntity in resultEntityList) {
             val childEntityVoList =
-                ArrayList<MyServiceTkSampleDatabaseTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo.ParentEntityVo.ChildEntityVo>()
+                ArrayList<JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo.ParentEntityVo.ChildEntityVo>()
 
             for (childEntity in resultEntity.fkTestManyToOneChildList) {
                 childEntityVoList.add(
-                    MyServiceTkSampleDatabaseTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo.ParentEntityVo.ChildEntityVo(
+                    JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo.ParentEntityVo.ChildEntityVo(
                         childEntity.uid!!,
                         childEntity.childName,
                         childEntity.rowCreateDate!!.atZone(ZoneId.systemDefault())
@@ -1087,7 +1087,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
             }
 
             entityVoList.add(
-                MyServiceTkSampleDatabaseTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo.ParentEntityVo(
+                JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo.ParentEntityVo(
                     resultEntity.uid!!,
                     resultEntity.parentName,
                     resultEntity.rowCreateDate!!.atZone(ZoneId.systemDefault())
@@ -1100,7 +1100,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo(
+        return JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo(
             entityVoList
         )
     }
@@ -1111,15 +1111,15 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
     override fun selectFkTableChildListWithQueryDsl(
         httpServletResponse: HttpServletResponse,
         parentUid: Long
-    ): MyServiceTkSampleDatabaseTestController.SelectFkTableChildListWithQueryDslOutputVo? {
+    ): JpaTestController.SelectFkTableChildListWithQueryDslOutputVo? {
         val resultEntityList = db1TemplateRepositoryDsl.findChildByParentId(parentUid)
 
         val entityVoList =
-            ArrayList<MyServiceTkSampleDatabaseTestController.SelectFkTableChildListWithQueryDslOutputVo.ChildEntityVo>()
+            ArrayList<JpaTestController.SelectFkTableChildListWithQueryDslOutputVo.ChildEntityVo>()
 
         for (resultEntity in resultEntityList) {
             entityVoList.add(
-                MyServiceTkSampleDatabaseTestController.SelectFkTableChildListWithQueryDslOutputVo.ChildEntityVo(
+                JpaTestController.SelectFkTableChildListWithQueryDslOutputVo.ChildEntityVo(
                     resultEntity.uid!!,
                     resultEntity.childName,
                     resultEntity.rowCreateDate!!.atZone(ZoneId.systemDefault())
@@ -1131,7 +1131,7 @@ class MyServiceTkSampleDatabaseTestServiceImpl(
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return MyServiceTkSampleDatabaseTestController.SelectFkTableChildListWithQueryDslOutputVo(
+        return JpaTestController.SelectFkTableChildListWithQueryDslOutputVo(
             entityVoList
         )
     }
