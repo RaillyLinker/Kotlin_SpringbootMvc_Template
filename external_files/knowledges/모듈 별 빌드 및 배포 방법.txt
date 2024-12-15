@@ -30,9 +30,19 @@
     먼저, 배포 환경입니다.
     ubuntu 22.04 를 기반으로 하며,
 
+    만약 docker 로 ubuntu 를 만들려면,
+    >> docker run --privileged -dit --name ubuntu22_04 ubuntu:22.04 tail -f /dev/null -v /var/run/docker.sock:/var/run/docker.sock
+    >> docker exec -it ubuntu22_04 /bin/bash
+
+    환경 조성은,
+
     >> apt update
+    >> apt install curl -y
     >> apt install git -y
     >> apt install openjdk-21-jdk -y
+
+    >> apt install apt-transport-https ca-certificates curl software-properties-common -y
+    >> curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
     이처럼 환경 준비가 필요합니다.
 
@@ -56,6 +66,7 @@
 
     >> mkdir -p ~/build_run/template
 
-    >> cd
+    >> mv ./module-template/build/libs/module-template-0.0.1-SNAPSHOT.jar ~/build_run/template/module-template-0.0.1-SNAPSHOT.jar
 
-    >> cd ~/
+    >> cd ~/build_run/template
+
