@@ -1,8 +1,8 @@
 spring:
   config:
     activate:
-      on-profile: port12011
+      on-profile: port12012
 
 server:
   # 포트번호
-  port: 12011
+  port: 12012
