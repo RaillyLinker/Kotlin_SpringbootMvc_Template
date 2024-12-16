@@ -59,7 +59,7 @@ dependencies {
 
     // (JPA)
     // : DB ORM
-    api("org.springframework.boot:spring-boot-starter-data-jpa:3.3.5")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.3.5")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.18.1")
     implementation("org.hibernate:hibernate-validator:8.0.1.Final")
     implementation("com.mysql:mysql-connector-j:9.1.0") // MySQL

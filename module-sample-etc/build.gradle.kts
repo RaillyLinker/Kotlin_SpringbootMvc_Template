@@ -81,7 +81,7 @@ dependencies {
     implementation("org.xhtmlrenderer:flying-saucer-pdf:9.10.2")
 
     // (retrofit2 네트워크 요청)
-    api("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
 
@@ -91,7 +91,7 @@ dependencies {
 
     // (JPA)
     // : DB ORM
-    api("org.springframework.boot:spring-boot-starter-data-jpa:3.3.5")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.3.5")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.18.1")
     implementation("org.hibernate:hibernate-validator:8.0.1.Final")
     implementation("com.mysql:mysql-connector-j:9.1.0") // MySQL
