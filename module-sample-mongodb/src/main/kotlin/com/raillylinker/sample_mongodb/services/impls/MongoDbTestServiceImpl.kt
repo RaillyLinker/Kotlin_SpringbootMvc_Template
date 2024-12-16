@@ -2,7 +2,6 @@ package com.raillylinker.sample_mongodb.services.impls
 
 import com.raillylinker.sample_mongodb.controllers.MongoDbTestController
 import com.raillylinker.sample_mongodb.services.MongoDbTestService
-import com.raillylinker.sample_mongodb.annotations.CustomMongoDbTransactional
 import com.raillylinker.sample_mongodb.configurations.mongodb_configs.Mdb1MainConfig
 import com.raillylinker.sample_mongodb.mongodb_beans.mdb1_main.documents.Mdb1_Test
 import com.raillylinker.sample_mongodb.mongodb_beans.mdb1_main.repositories.Mdb1_Test_Repository
@@ -12,6 +11,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -27,7 +27,7 @@ class MongoDbTestServiceImpl(
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
-    @CustomMongoDbTransactional([Mdb1MainConfig.TRANSACTION_NAME]) // ReplicaSet 환경이 아니면 에러가 납니다.
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME)
     override fun insertDocumentTest(
         httpServletResponse: HttpServletResponse,
         inputVo: MongoDbTestController.InsertDocumentTestInputVo
@@ -57,7 +57,7 @@ class MongoDbTestServiceImpl(
 
 
     ////
-    @CustomMongoDbTransactional([Mdb1MainConfig.TRANSACTION_NAME]) // ReplicaSet 환경이 아니면 에러가 납니다.
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME) // ReplicaSet 환경이 아니면 에러가 납니다.
     override fun deleteAllDocumentTest(httpServletResponse: HttpServletResponse) {
         mdb1TestRepository.deleteAll()
 
@@ -67,7 +67,7 @@ class MongoDbTestServiceImpl(
 
 
     ////
-    @CustomMongoDbTransactional([Mdb1MainConfig.TRANSACTION_NAME]) // ReplicaSet 환경이 아니면 에러가 납니다.
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME) // ReplicaSet 환경이 아니면 에러가 납니다.
     override fun deleteDocumentTest(httpServletResponse: HttpServletResponse, id: String) {
         val testDocument = mdb1TestRepository.findById(id)
 
@@ -85,7 +85,7 @@ class MongoDbTestServiceImpl(
 
 
     ////
-    @CustomMongoDbTransactional([Mdb1MainConfig.TRANSACTION_NAME], readOnly = true) // ReplicaSet 환경이 아니면 에러가 납니다.
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME, readOnly = true) // ReplicaSet 환경이 아니면 에러가 납니다.
     override fun selectAllDocumentsTest(httpServletResponse: HttpServletResponse): MongoDbTestController.SelectAllDocumentsTestOutputVo? {
         val testCollectionList = mdb1TestRepository.findAll()
 
@@ -116,7 +116,7 @@ class MongoDbTestServiceImpl(
 
 
     ////
-    @CustomMongoDbTransactional([Mdb1MainConfig.TRANSACTION_NAME]) // ReplicaSet 환경이 아니면 에러가 납니다.
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME) // ReplicaSet 환경이 아니면 에러가 납니다.
     override fun transactionRollbackTest(
         httpServletResponse: HttpServletResponse
     ) {
@@ -129,7 +129,7 @@ class MongoDbTestServiceImpl(
             )
         )
 
-        throw Exception("Transaction Rollback Test!")
+        throw RuntimeException("Transaction Rollback Test!")
 
         httpServletResponse.setHeader("api-result-code", "")
         httpServletResponse.status = HttpStatus.OK.value()
@@ -149,7 +149,7 @@ class MongoDbTestServiceImpl(
             )
         )
 
-        throw Exception("No Transaction Exception Test!")
+        throw RuntimeException("No Transaction Exception Test!")
 
         httpServletResponse.setHeader("api-result-code", "")
         httpServletResponse.status = HttpStatus.OK.value()

@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.MongoTransactionManager
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
+import org.springframework.transaction.annotation.EnableTransactionManagement
 
 // [MongoDB 설정]
 @Configuration
@@ -16,6 +17,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
     basePackages = ["${ModuleConst.PACKAGE_NAME}.mongodb_beans.${Mdb1MainConfig.MONGO_DB_DIRECTORY_NAME}.repositories"],
     mongoTemplateRef = Mdb1MainConfig.MONGO_DB_DIRECTORY_NAME
 )
+@EnableTransactionManagement
 class Mdb1MainConfig {
     companion object {
         // !!!application.yml 의 datasource-mongodb 안에 작성된 이름 할당하기!!!
