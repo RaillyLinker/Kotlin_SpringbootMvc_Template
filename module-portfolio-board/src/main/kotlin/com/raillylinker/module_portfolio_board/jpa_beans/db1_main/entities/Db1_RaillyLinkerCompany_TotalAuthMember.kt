@@ -73,6 +73,12 @@ class Db1_RaillyLinkerCompany_TotalAuthMember(
     @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var totalAuthMemberEmailList: MutableList<Db1_RaillyLinkerCompany_TotalAuthMemberEmail> = mutableListOf()
 
+    @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    var sampleBoardList: MutableList<Db1_RaillyLinkerCompany_SampleBoard> = mutableListOf()
+
+    @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    var sampleBoardCommentList: MutableList<Db1_RaillyLinkerCompany_SampleBoardComment> = mutableListOf()
+
 
     // ---------------------------------------------------------------------------------------------
     // <중첩 클래스 공간>
