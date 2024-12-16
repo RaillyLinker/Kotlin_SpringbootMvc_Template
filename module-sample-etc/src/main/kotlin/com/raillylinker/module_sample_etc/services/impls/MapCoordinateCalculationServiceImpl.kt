@@ -3,7 +3,6 @@ package com.raillylinker.module_sample_etc.services.impls
 import com.raillylinker.module_sample_etc.controllers.MapCoordinateCalculationController
 import com.raillylinker.module_sample_etc.services.MapCoordinateCalculationService
 import com.raillylinker.module_sample_etc.util_components.MapCoordinateUtil
-import com.raillylinker.module_sample_etc.annotations.CustomTransactional
 import com.raillylinker.module_sample_etc.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.module_sample_etc.jpa_beans.db1_main.entities.Db1_Template_TestMap
 import com.raillylinker.module_sample_etc.jpa_beans.db1_main.repositories.Db1_Native_Repository
@@ -14,6 +13,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class MapCoordinateCalculationServiceImpl(
@@ -32,7 +32,7 @@ class MapCoordinateCalculationServiceImpl(
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun insertDefaultCoordinateDataToDatabase(httpServletResponse: HttpServletResponse) {
         db1TemplateTestMapRepository.deleteAll()
 
@@ -134,7 +134,7 @@ class MapCoordinateCalculationServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun insertCoordinateDataToDatabase(
         httpServletResponse: HttpServletResponse,
         inputVo: MapCoordinateCalculationController.InsertCoordinateDataToDatabaseInputVo
@@ -179,7 +179,7 @@ class MapCoordinateCalculationServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun deleteAllCoordinateDataFromDatabase(httpServletResponse: HttpServletResponse) {
         db1TemplateTestMapRepository.deleteAll()
 
@@ -188,7 +188,7 @@ class MapCoordinateCalculationServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectCoordinateDataRowsInRadiusKiloMeterSample(
         httpServletResponse: HttpServletResponse,
         anchorLatitude: Double,
@@ -223,7 +223,7 @@ class MapCoordinateCalculationServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectCoordinateDataRowsInCoordinateBoxSample(
         httpServletResponse: HttpServletResponse,
         northLatitude: Double, // 북위도 (ex : 37.771848)

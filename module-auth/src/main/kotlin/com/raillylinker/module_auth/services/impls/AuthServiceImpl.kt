@@ -4,7 +4,6 @@ import com.raillylinker.module_auth.controllers.AuthController
 import com.raillylinker.module_auth.services.AuthService
 import com.raillylinker.module_auth.util_components.EmailSender
 import com.raillylinker.module_auth.util_components.NaverSmsSenderComponent
-import com.raillylinker.module_auth.annotations.CustomTransactional
 import com.raillylinker.module_auth.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.module_auth.jpa_beans.db1_main.entities.*
 import com.raillylinker.module_auth.jpa_beans.db1_main.repositories.*
@@ -30,6 +29,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.StringUtils
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -149,7 +149,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun doExpireAccessToken(
         httpServletResponse: HttpServletResponse,
         memberUid: Long,
@@ -212,7 +212,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun loginWithPassword(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.LoginWithPasswordInputVo
@@ -493,7 +493,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun loginWithOAuth2AccessToken(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.LoginWithOAuth2AccessTokenInputVo
@@ -688,7 +688,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun loginWithOAuth2IdToken(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.LoginWithOAuth2IdTokenInputVo
@@ -834,7 +834,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun logout(authorization: String, httpServletResponse: HttpServletResponse) {
         val authorizationSplit = authorization.split(" ") // ex : ["Bearer", "qwer1234"]
         val token = authorizationSplit[1].trim() // (ex : "abcd1234")
@@ -884,7 +884,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun reissueJwt(
         authorization: String?,
         inputVo: AuthController.ReissueJwtInputVo,
@@ -1202,7 +1202,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun deleteAllJwtOfAMember(authorization: String, httpServletResponse: HttpServletResponse) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
@@ -1255,7 +1255,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun getMemberInfo(
         httpServletResponse: HttpServletResponse,
         authorization: String
@@ -1361,7 +1361,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun checkIdDuplicate(
         httpServletResponse: HttpServletResponse,
         id: String
@@ -1374,7 +1374,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun updateId(httpServletResponse: HttpServletResponse, authorization: String, id: String) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
@@ -1400,7 +1400,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun joinTheMembershipForTest(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.JoinTheMembershipForTestInputVo
@@ -1554,7 +1554,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun sendEmailVerificationForJoin(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.SendEmailVerificationForJoinInputVo
@@ -1609,7 +1609,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun checkEmailVerificationForJoin(
         httpServletResponse: HttpServletResponse,
         verificationUid: Long,
@@ -1654,7 +1654,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun joinTheMembershipWithEmail(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.JoinTheMembershipWithEmailInputVo
@@ -1809,7 +1809,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun sendPhoneVerificationForJoin(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.SendPhoneVerificationForJoinInputVo
@@ -1870,7 +1870,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun checkPhoneVerificationForJoin(
         httpServletResponse: HttpServletResponse,
         verificationUid: Long,
@@ -1915,7 +1915,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun joinTheMembershipWithPhoneNumber(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.JoinTheMembershipWithPhoneNumberInputVo
@@ -2072,7 +2072,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun checkOauth2AccessTokenVerificationForJoin(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.CheckOauth2AccessTokenVerificationForJoinInputVo
@@ -2247,7 +2247,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun checkOauth2IdTokenVerificationForJoin(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.CheckOauth2IdTokenVerificationForJoinInputVo
@@ -2320,7 +2320,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun joinTheMembershipWithOauth2(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.JoinTheMembershipWithOauth2InputVo
@@ -2500,7 +2500,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun updateAccountPassword(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -2596,7 +2596,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun sendEmailVerificationForFindPassword(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.SendEmailVerificationForFindPasswordInputVo
@@ -2649,7 +2649,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun checkEmailVerificationForFindPassword(
         httpServletResponse: HttpServletResponse,
         verificationUid: Long,
@@ -2696,7 +2696,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun findPasswordWithEmail(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.FindPasswordWithEmailInputVo
@@ -2818,7 +2818,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun sendPhoneVerificationForFindPassword(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.SendPhoneVerificationForFindPasswordInputVo
@@ -2877,7 +2877,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun checkPhoneVerificationForFindPassword(
         httpServletResponse: HttpServletResponse,
         verificationUid: Long,
@@ -2924,7 +2924,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun findPasswordWithPhoneNumber(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.FindPasswordWithPhoneNumberInputVo
@@ -3053,7 +3053,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun getMyEmailList(
         httpServletResponse: HttpServletResponse,
         authorization: String
@@ -3090,7 +3090,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun getMyPhoneNumberList(
         httpServletResponse: HttpServletResponse,
         authorization: String
@@ -3127,7 +3127,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun getMyOauth2List(
         httpServletResponse: HttpServletResponse,
         authorization: String
@@ -3164,7 +3164,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun sendEmailVerificationForAddNewEmail(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.SendEmailVerificationForAddNewEmailInputVo,
@@ -3228,7 +3228,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun checkEmailVerificationForAddNewEmail(
         httpServletResponse: HttpServletResponse,
         verificationUid: Long,
@@ -3283,7 +3283,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun addNewEmail(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.AddNewEmailInputVo,
@@ -3370,7 +3370,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun deleteMyEmail(
         httpServletResponse: HttpServletResponse,
         emailUid: Long,
@@ -3452,7 +3452,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun sendPhoneVerificationForAddNewPhoneNumber(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.SendPhoneVerificationForAddNewPhoneNumberInputVo,
@@ -3523,7 +3523,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun checkPhoneVerificationForAddNewPhoneNumber(
         httpServletResponse: HttpServletResponse,
         verificationUid: Long,
@@ -3577,7 +3577,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun addNewPhoneNumber(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.AddNewPhoneNumberInputVo,
@@ -3666,7 +3666,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun deleteMyPhoneNumber(
         httpServletResponse: HttpServletResponse,
         phoneUid: Long,
@@ -3747,7 +3747,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun addNewOauth2WithAccessToken(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.AddNewOauth2WithAccessTokenInputVo,
@@ -3857,7 +3857,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun addNewOauth2WithIdToken(
         httpServletResponse: HttpServletResponse,
         inputVo: AuthController.AddNewOauth2WithIdTokenInputVo,
@@ -3925,7 +3925,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun deleteMyOauth2(
         httpServletResponse: HttpServletResponse,
         oAuth2Uid: Long,
@@ -4001,7 +4001,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun withdrawalMembership(
         httpServletResponse: HttpServletResponse,
         authorization: String
@@ -4135,7 +4135,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun getMyProfileList(
         httpServletResponse: HttpServletResponse,
         authorization: String
@@ -4174,7 +4174,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun getMyFrontProfile(
         httpServletResponse: HttpServletResponse,
         authorization: String
@@ -4212,7 +4212,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun setMyFrontProfile(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -4272,7 +4272,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun deleteMyProfile(
         authorization: String,
         httpServletResponse: HttpServletResponse,
@@ -4318,7 +4318,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun addNewProfile(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -4442,7 +4442,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun getMyFrontEmail(
         httpServletResponse: HttpServletResponse,
         authorization: String
@@ -4480,7 +4480,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun setMyFrontEmail(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -4540,7 +4540,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun getMyFrontPhoneNumber(
         httpServletResponse: HttpServletResponse,
         authorization: String
@@ -4578,7 +4578,7 @@ class AuthServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun setMyFrontPhoneNumber(
         httpServletResponse: HttpServletResponse,
         authorization: String,

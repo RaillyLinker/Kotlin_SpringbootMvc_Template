@@ -11,6 +11,7 @@ import org.springframework.orm.jpa.JpaTransactionManager
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter
 import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.annotation.EnableTransactionManagement
 import javax.sql.DataSource
 
 // [DB 설정]
@@ -21,6 +22,7 @@ import javax.sql.DataSource
     entityManagerFactoryRef = "${Db1MainConfig.DATABASE_DIRECTORY_NAME}_LocalContainerEntityManagerFactoryBean", // 아래 bean 이름과 동일
     transactionManagerRef = Db1MainConfig.TRANSACTION_NAME // 아래 bean 이름과 동일
 )
+@EnableTransactionManagement
 class Db1MainConfig {
     companion object {
         // !!!application.yml 의 datasource 안에 작성된 이름 할당하기!!!
@@ -40,10 +42,16 @@ class Db1MainConfig {
     @Value("\${datasource-jpa.${DATABASE_CONFIG_NAME}.database-platform}")
     private lateinit var databasePlatform: String
 
+    @Bean("${DATABASE_DIRECTORY_NAME}_DataSource")
+    @ConfigurationProperties(prefix = "datasource-jpa.${DATABASE_CONFIG_NAME}")
+    fun customDataSource(): DataSource {
+        return DataSourceBuilder.create().build()
+    }
+
     @Bean("${DATABASE_DIRECTORY_NAME}_LocalContainerEntityManagerFactoryBean")
-    fun customEntityManagerFactory(): LocalContainerEntityManagerFactoryBean {
+    fun customEntityManagerFactory(customDataSource: DataSource): LocalContainerEntityManagerFactoryBean {
         val em = LocalContainerEntityManagerFactoryBean()
-        em.dataSource = customDataSource()
+        em.dataSource = customDataSource
         em.setPackagesToScan("${ModuleConst.PACKAGE_NAME}.jpa_beans.${DATABASE_DIRECTORY_NAME}.entities")
         val vendorAdapter = HibernateJpaVendorAdapter()
         em.jpaVendorAdapter = vendorAdapter
@@ -66,15 +74,9 @@ class Db1MainConfig {
     }
 
     @Bean(TRANSACTION_NAME)
-    fun customTransactionManager(): PlatformTransactionManager {
+    fun customTransactionManager(customEntityManagerFactory: LocalContainerEntityManagerFactoryBean): PlatformTransactionManager {
         val transactionManager = JpaTransactionManager()
-        transactionManager.entityManagerFactory = customEntityManagerFactory().`object`
+        transactionManager.entityManagerFactory = customEntityManagerFactory.`object`
         return transactionManager
-    }
-
-    @Bean("${DATABASE_DIRECTORY_NAME}_DataSource")
-    @ConfigurationProperties(prefix = "datasource-jpa.${DATABASE_CONFIG_NAME}")
-    fun customDataSource(): DataSource {
-        return DataSourceBuilder.create().build()
     }
 }

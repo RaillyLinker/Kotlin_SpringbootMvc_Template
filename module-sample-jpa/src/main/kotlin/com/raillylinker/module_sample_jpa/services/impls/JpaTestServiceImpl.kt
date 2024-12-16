@@ -2,7 +2,6 @@ package com.raillylinker.module_sample_jpa.services.impls
 
 import com.raillylinker.module_sample_jpa.controllers.JpaTestController
 import com.raillylinker.module_sample_jpa.services.JpaTestService
-import com.raillylinker.module_sample_jpa.annotations.CustomTransactional
 import com.raillylinker.module_sample_jpa.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.module_sample_jpa.jpa_beans.db1_main.entities.*
 import com.raillylinker.module_sample_jpa.jpa_beans.db1_main.repositories.*
@@ -15,6 +14,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -42,7 +42,7 @@ class JpaTestServiceImpl(
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun insertDataSample(
         httpServletResponse: HttpServletResponse,
         inputVo: JpaTestController.InsertDataSampleInputVo
@@ -73,7 +73,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun deleteRowsSample(httpServletResponse: HttpServletResponse, deleteLogically: Boolean) {
         if (deleteLogically) {
             val entityList = db1TemplateTestsRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/")
@@ -92,7 +92,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun deleteRowSample(httpServletResponse: HttpServletResponse, index: Long, deleteLogically: Boolean) {
         val entity = db1TemplateTestsRepository.findByUidAndRowDeleteDateStr(index, "/")
 
@@ -116,7 +116,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectRowsSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectRowsSampleOutputVo? {
         val resultEntityList =
             db1TemplateTestsRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/")
@@ -169,7 +169,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectRowsOrderByRandomNumSample(
         httpServletResponse: HttpServletResponse,
         num: Int
@@ -204,7 +204,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectRowsOrderByRowCreateDateSample(
         httpServletResponse: HttpServletResponse,
         dateString: String
@@ -242,7 +242,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectRowsPageSample(
         httpServletResponse: HttpServletResponse,
         page: Int,
@@ -281,7 +281,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectRowsNativeQueryPageSample(
         httpServletResponse: HttpServletResponse,
         page: Int,
@@ -322,7 +322,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun updateRowSample(
         httpServletResponse: HttpServletResponse,
         testTableUid: Long,
@@ -359,7 +359,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun updateRowNativeQuerySample(
         httpServletResponse: HttpServletResponse,
         testTableUid: Long,
@@ -389,7 +389,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectRowWhereSearchingKeywordSample(
         httpServletResponse: HttpServletResponse,
         page: Int,
@@ -429,7 +429,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun transactionTest(
         httpServletResponse: HttpServletResponse
     ) {
@@ -441,7 +441,7 @@ class JpaTestServiceImpl(
             )
         )
 
-        throw Exception("Transaction Rollback Test!")
+        throw RuntimeException("Transaction Rollback Test!")
     }
 
 
@@ -455,12 +455,12 @@ class JpaTestServiceImpl(
             )
         )
 
-        throw Exception("No Transaction Exception Test!")
+        throw RuntimeException("No Transaction Exception Test!")
     }
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun tryCatchNonTransactionTest(httpServletResponse: HttpServletResponse) {
         // @CustomTransactional 이 붙어있고, Exception 이 발생해도, 함수 내에서 try catch 로 처리하여 함수 외부로는 전파되지 않기에,
         // 트랜젝션 롤백이 발생하지 않습니다.
@@ -473,7 +473,7 @@ class JpaTestServiceImpl(
                 )
             )
 
-            throw Exception("Transaction Rollback Test!")
+            throw RuntimeException("Transaction Rollback Test!")
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -481,7 +481,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectRowsNoDuplicatePagingSample(
         httpServletResponse: HttpServletResponse,
         lastItemUid: Long?,
@@ -523,7 +523,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectRowsCountSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectRowsCountSampleOutputVo? {
         val count = db1TemplateTestsRepository.countByRowDeleteDateStr("/")
 
@@ -533,7 +533,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectRowsCountByNativeQuerySample(httpServletResponse: HttpServletResponse): JpaTestController.SelectRowsCountByNativeQuerySampleOutputVo? {
         val count = db1NativeRepository.countFromTemplateTestDataByNotDeleted()
 
@@ -543,7 +543,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectRowByNativeQuerySample(
         httpServletResponse: HttpServletResponse,
         testTableUid: Long
@@ -572,7 +572,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun insertUniqueTestTableRowSample(
         httpServletResponse: HttpServletResponse,
         inputVo: JpaTestController.InsertUniqueTestTableRowSampleInputVo
@@ -597,7 +597,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectUniqueTestTableRowsSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectUniqueTestTableRowsSampleOutputVo? {
         val resultEntityList =
             db1TemplateLogicalDeleteUniqueDataRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/")
@@ -644,7 +644,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun updateUniqueTestTableRowSample(
         httpServletResponse: HttpServletResponse,
         testTableUid: Long,
@@ -689,7 +689,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun deleteUniqueTestTableRowSample(httpServletResponse: HttpServletResponse, index: Long) {
         val entity = db1TemplateLogicalDeleteUniqueDataRepository.findByUidAndRowDeleteDateStr(index, "/")
 
@@ -709,7 +709,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun insertFkParentRowSample(
         httpServletResponse: HttpServletResponse,
         inputVo: JpaTestController.InsertFkParentRowSampleInputVo
@@ -733,7 +733,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun insertFkChildRowSample(
         httpServletResponse: HttpServletResponse,
         parentUid: Long,
@@ -770,7 +770,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectFkTestTableRowsSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTestTableRowsSampleOutputVo? {
         val resultEntityList =
             db1TemplateFkTestParentRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/")
@@ -821,7 +821,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectFkTestTableRowsByNativeQuerySample(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo? {
         val resultEntityList = db1NativeRepository.findAllFromTemplateFkTestManyToOneChildInnerJoinParentByNotDeleted()
 
@@ -850,7 +850,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun getNativeQueryReturnValueTest(
         httpServletResponse: HttpServletResponse,
         inputVal: Boolean
@@ -882,7 +882,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun sqlInjectionTest(
         httpServletResponse: HttpServletResponse,
         searchKeyword: String
@@ -975,7 +975,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectFkTableRowsWithLatestChildSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTableRowsWithLatestChildSampleOutputVo? {
         val resultEntityList = db1NativeRepository.findAllFromTemplateFkTestParentWithNearestChildOnly()
 
@@ -1014,7 +1014,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectFkTableRowsWithQueryDsl(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTableRowsWithQueryDslOutputVo? {
         val resultEntityList = db1TemplateRepositoryDsl.findParentWithChildren()
 
@@ -1059,7 +1059,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectFkTableRowsByParentNameFilterWithQueryDsl(
         httpServletResponse: HttpServletResponse,
         parentName: String
@@ -1107,7 +1107,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME], readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     override fun selectFkTableChildListWithQueryDsl(
         httpServletResponse: HttpServletResponse,
         parentUid: Long
@@ -1138,7 +1138,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun deleteFkChildRowSample(httpServletResponse: HttpServletResponse, index: Long) {
         val entityOpt = db1TemplateFkTestManyToOneChildRepository.findById(index)
 
@@ -1155,7 +1155,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun deleteFkParentRowSample(httpServletResponse: HttpServletResponse, index: Long) {
         val entityOpt = db1TemplateFkTestParentRepository.findById(index)
 
@@ -1172,7 +1172,7 @@ class JpaTestServiceImpl(
 
 
     ////
-    @CustomTransactional([Db1MainConfig.TRANSACTION_NAME])
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     override fun fkTableTransactionTest(
         httpServletResponse: HttpServletResponse
     ) {
@@ -1196,7 +1196,7 @@ class JpaTestServiceImpl(
             )
         )
 
-        throw Exception("Transaction Rollback Test!")
+        throw RuntimeException("Transaction Rollback Test!")
     }
 
 
@@ -1222,6 +1222,6 @@ class JpaTestServiceImpl(
             )
         )
 
-        throw Exception("No Transaction Exception Test!")
+        throw RuntimeException("No Transaction Exception Test!")
     }
 }
