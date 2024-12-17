@@ -31,15 +31,7 @@ class Db1_RaillyLinkerCompany_SampleBoardComment(
 
     @Column(name = "comment_content", nullable = false, columnDefinition = "TEXT")
     @Comment("댓글 본문")
-    var commentContent: String,
-
-    @Column(name = "comment_hidden", nullable = false, columnDefinition = "BIT(1)")
-    @Comment("댓글 숨김 여부")
-    var commentHidden: Boolean,
-
-    @Column(name = "show_target_only", nullable = false, columnDefinition = "BIT(1)")
-    @Comment("대상에게만 노출할지 여부")
-    var showTargetOnly: Boolean
+    var commentContent: String
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

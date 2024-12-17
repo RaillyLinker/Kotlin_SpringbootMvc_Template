@@ -27,10 +27,6 @@ class Db1_RaillyLinkerCompany_SampleBoard(
     @Comment("게시글 본문")
     var boardContent: String,
 
-    @Column(name = "board_hidden", nullable = false, columnDefinition = "BIT(1)")
-    @Comment("게시글 숨김 여부")
-    var boardHidden: Boolean,
-
     @Column(name = "view_count", nullable = false, columnDefinition = "BIGINT")
     @Comment("조회수")
     var viewCount: Boolean
