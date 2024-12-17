@@ -126,7 +126,7 @@ class SecurityConfig {
         // !!!시큐리티 필터 추가시 수정!!!
         // 본 시큐리티 필터가 관리할 주소 체계
         val securityUrlList = listOf(
-            "/security/**"
+            "/board/**"
         ) // 위 모든 경로에 적용
 
         val securityMatcher = http.securityMatcher(*securityUrlList.toTypedArray())
