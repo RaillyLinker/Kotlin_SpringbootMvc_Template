@@ -4,13 +4,31 @@ import com.raillylinker.module_portfolio_board.controllers.BoardController
 import jakarta.servlet.http.HttpServletResponse
 
 interface BoardService {
-//    // (DB Row 입력 테스트 API)
-//    fun insertDataSample(
-//        httpServletResponse: HttpServletResponse,
-//        inputVo: BoardController.InsertDataSampleInputVo
-//    ): BoardController.InsertDataSampleOutputVo?
-//
-//
+    // (DB Row 입력 테스트 API)
+    fun createBoard(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: BoardController.CreateBoardInputVo
+    ): BoardController.CreateBoardOutputVo?
+
+
+    ////
+    // (게시글 리스트 (페이징))
+    fun getBoardsPage(
+        httpServletResponse: HttpServletResponse,
+        page: Int,
+        pageElementsCount: Int
+    ): BoardController.GetBoardsPageOutputVo?
+
+
+    ////
+    // (Get 요청 테스트 (Path Parameter))
+    fun getBoardDetail(
+        httpServletResponse: HttpServletResponse,
+        boardUid: Long
+    ): BoardController.GetBoardDetailOutputVo?
+
+
 //    ////
 //    // (DB Rows 삭제 테스트 API)
 //    fun deleteRowsSample(httpServletResponse: HttpServletResponse, deleteLogically: Boolean)

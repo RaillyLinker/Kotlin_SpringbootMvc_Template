@@ -4,14 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.raillylinker.module_portfolio_board.services.BoardService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
-import io.swagger.v3.oas.annotations.headers.Header
-import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.MediaType
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 
@@ -26,83 +25,218 @@ class BoardController(
 
     // ---------------------------------------------------------------------------------------------
     // <매핑 함수 공간>
-//    @Operation(
-//        summary = "DB Row 입력 테스트 API",
-//        description = "테스트 테이블에 Row 를 입력합니다.\n\n"
-//    )
-//    @ApiResponses(
-//        value = [
-//            ApiResponse(
-//                responseCode = "200",
-//                description = "정상 동작"
-//            )
-//        ]
-//    )
-//    @PostMapping(
-//        path = ["/row"],
-//        consumes = [MediaType.APPLICATION_JSON_VALUE],
-//        produces = [MediaType.APPLICATION_JSON_VALUE]
-//    )
-//    @ResponseBody
-//    fun insertDataSample(
-//        @Parameter(hidden = true)
-//        httpServletResponse: HttpServletResponse,
-//        @RequestBody
-//        inputVo: InsertDataSampleInputVo
-//    ): InsertDataSampleOutputVo? {
-//        return service.insertDataSample(httpServletResponse, inputVo)
-//    }
-//
-//    data class InsertDataSampleInputVo(
-//        @Schema(description = "글 본문", required = true, example = "테스트 텍스트입니다.")
-//        @JsonProperty("content")
-//        val content: String,
-//        @Schema(
-//            description = "원하는 날짜(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//            required = true,
-//            example = "2024_05_02_T_15_14_49_552_KST"
-//        )
-//        @JsonProperty("dateString")
-//        val dateString: String
-//    )
-//
-//    data class InsertDataSampleOutputVo(
-//        @Schema(description = "글 고유번호", required = true, example = "1234")
-//        @JsonProperty("uid")
-//        val uid: Long,
-//        @Schema(description = "글 본문", required = true, example = "테스트 텍스트입니다.")
-//        @JsonProperty("content")
-//        val content: String,
-//        @Schema(description = "자동 생성 숫자", required = true, example = "21345")
-//        @JsonProperty("randomNum")
-//        val randomNum: Int,
-//        @Schema(
-//            description = "테스트용 일시 데이터(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//            required = true,
-//            example = "2024_05_02_T_15_14_49_552_KST"
-//        )
-//        @JsonProperty("testDatetime")
-//        val testDatetime: String,
-//        @Schema(
-//            description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//            required = true,
-//            example = "2024_05_02_T_15_14_49_552_KST"
-//        )
-//        @JsonProperty("createDate")
-//        val createDate: String,
-//        @Schema(
-//            description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//            required = true,
-//            example = "2024_05_02_T_15_14_49_552_KST"
-//        )
-//        @JsonProperty("updateDate")
-//        val updateDate: String,
-//        @Schema(description = "글 삭제일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, Null 이면 /)", required = true, example = "/")
-//        @JsonProperty("deleteDate")
-//        val deleteDate: String
-//    )
-//
-//
+    @Operation(
+        summary = "게시글 입력 API",
+        description = "게시글을 입력합니다.\n\n"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/board"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    fun createBoard(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @RequestBody
+        inputVo: CreateBoardInputVo
+    ): CreateBoardOutputVo? {
+        return service.createBoard(httpServletResponse, authorization!!, inputVo)
+    }
+
+    data class CreateBoardInputVo(
+        @Schema(description = "글 타이틀", required = true, example = "테스트 타이틀입니다.")
+        @JsonProperty("title")
+        val title: String,
+        @Schema(description = "글 본문", required = true, example = "테스트 본문입니다.")
+        @JsonProperty("content")
+        val content: String
+    )
+
+    data class CreateBoardOutputVo(
+        @Schema(description = "글 고유번호", required = true, example = "1234")
+        @JsonProperty("uid")
+        val uid: Long
+    )
+
+
+    ////
+    @Operation(
+        summary = "게시글 리스트 (페이징)",
+        description = "게시글 테이블의 정보를 페이징하여 반환합니다.\n\n"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @GetMapping(
+        path = ["/boards-page"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun getBoardsPage(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(name = "page", description = "원하는 페이지(1 부터 시작)", example = "1")
+        @RequestParam("page")
+        page: Int,
+        @Parameter(name = "pageElementsCount", description = "페이지 아이템 개수", example = "10")
+        @RequestParam("pageElementsCount")
+        pageElementsCount: Int,
+        @Parameter(
+            name = "sortingTypeEnum",
+            description = """
+                정렬 기준(
+                    CREATE_DATE : 게시글 작성 시간,
+                    UPDATE_DATE : 게시글 수정 시간,
+                    TITLE : 게시글 제목,
+                    CONTENT : 게시글 본문,
+                    WRITER_USER_NICKNAME : 게시글 작성자 닉네임
+                )
+            """,
+            example = "CREATE_DATE"
+        )
+        @RequestParam("sortingTypeEnum")
+        sortingTypeEnum: GetBoardsPageSortingTypeEnum,
+        @Parameter(
+            name = "sortingDirectionEnum",
+            description = """
+                정렬 방향(
+                    DESC : 내림차순,
+                    UPDATE_DATE : 오름차순
+                )
+            """,
+            example = "DESC"
+        )
+        @RequestParam("sortingDirectionEnum")
+        sortingDirectionEnum: GetBoardsPageSortingDirectionEnum
+    ): GetBoardsPageOutputVo? {
+        return service.getBoardsPage(httpServletResponse, page, pageElementsCount)
+    }
+
+    enum class GetBoardsPageSortingTypeEnum {
+        CREATE_DATE,
+        UPDATE_DATE,
+        TITLE,
+        CONTENT,
+        WRITER_USER_NICKNAME
+    }
+
+    enum class GetBoardsPageSortingDirectionEnum {
+        DESC,
+        ASC
+    }
+
+    data class GetBoardsPageOutputVo(
+        @Schema(description = "아이템 전체 개수", required = true, example = "100")
+        @JsonProperty("totalElements")
+        val totalElements: Long,
+        @Schema(description = "게시판 아이템 리스트", required = true)
+        @JsonProperty("boardItemVoList")
+        val boardItemVoList: List<BoardItemVo>
+    ) {
+        @Schema(description = "게시판 아이템")
+        data class BoardItemVo(
+            @Schema(description = "글 고유번호", required = true, example = "1234")
+            @JsonProperty("boardUid")
+            val boardUid: Long,
+            @Schema(description = "글 제목", required = true, example = "테스트 텍스트입니다.")
+            @JsonProperty("title")
+            val title: String,
+            @Schema(
+                description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+                required = true,
+                example = "2024_05_02_T_15_14_49_552_KST"
+            )
+            @JsonProperty("createDate")
+            val createDate: String,
+            @Schema(
+                description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+                required = true,
+                example = "2024_05_02_T_15_14_49_552_KST"
+            )
+            @JsonProperty("updateDate")
+            val updateDate: String,
+            @Schema(description = "글 조회수", required = true, example = "1234")
+            @JsonProperty("viewCount")
+            val viewCount: Long,
+            @Schema(description = "글 작성자 고유번호", required = true, example = "1234")
+            @JsonProperty("writerUserUid")
+            val writerUserUid: Long,
+            @Schema(description = "글 작성자 닉네임", required = true, example = "홍길동")
+            @JsonProperty("writerUserNickname")
+            val writerUserNickname: Long,
+            @Schema(description = "글 작성자 프로필 Full Url", required = true, example = "https://test-profile/1.jpg")
+            @JsonProperty("writerUserProfileFullUrl")
+            val writerUserProfileFullUrl: String
+        )
+    }
+
+
+    ////
+    @Operation(
+        summary = "게시판 상세 화면",
+        description = "게시판 상세 화면의 정보를 요청합니다.\n\n"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @GetMapping(
+        path = ["/board/{boardUid}"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun getBoardDetail(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(name = "boardUid", description = "게시글 고유번호", example = "1")
+        @PathVariable("boardUid")
+        boardUid: Long
+    ): GetBoardDetailOutputVo? {
+        return service.getBoardDetail(
+            httpServletResponse,
+            boardUid
+        )
+    }
+
+    // todo 게시글 상세 (+ 댓글)
+    data class GetBoardDetailOutputVo(
+        @Schema(description = "입력한 게시글 고유번호", required = true, example = "1")
+        @JsonProperty("boardUid")
+        val boardUid: Long
+    )
+
+    // todo 게시글 수정
+    // todo 게시글 조회수 추가
+    // todo 게시글 삭제
+    // todo 댓글 작성
+    // todo 댓글 수정
+    // todo 댓글 삭제
+
+
 //    ////
 //    @Operation(
 //        summary = "DB Rows 삭제 테스트 API",

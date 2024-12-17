@@ -1,11 +1,13 @@
 package com.raillylinker.module_portfolio_board.services.impls
 
+import com.raillylinker.module_portfolio_board.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+import com.raillylinker.module_portfolio_board.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR
 import com.raillylinker.module_portfolio_board.controllers.BoardController
 import com.raillylinker.module_portfolio_board.services.BoardService
 import com.raillylinker.module_portfolio_board.configurations.jpa_configs.Db1MainConfig
-import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.entities.*
 import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.repositories.*
 import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.repositories_dsl.Db1_Template_RepositoryDsl
+import com.raillylinker.module_portfolio_board.util_components.JwtTokenUtil
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -15,23 +17,22 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 
 @Service
 class BoardServiceImpl(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
 
+    private val jwtTokenUtil: JwtTokenUtil,
+
     // (Database Repository)
     private val db1NativeRepository: Db1_Native_Repository,
-//    private val db1TemplateTestsRepository: Db1_Template_Tests_Repository,
-//    private val db1TemplateFkTestParentRepository: Db1_Template_FkTestParent_Repository,
-//    private val db1TemplateFkTestManyToOneChildRepository: Db1_Template_FkTestManyToOneChild_Repository,
-//    private val db1TemplateLogicalDeleteUniqueDataRepository: Db1_Template_LogicalDeleteUniqueData_Repository,
-//    private val db1TemplateJustBooleanTestRepository: Db1_Template_JustBooleanTest_Repository,
+    private val db1RaillyLinkerCompanySampleBoardRepository: Db1_RaillyLinkerCompany_SampleBoard_Repository,
+    private val db1RaillyLinkerCompanySampleBoardCommentRepository: Db1_RaillyLinkerCompany_SampleBoardComment_Repository,
+    private val db1RaillyLinkerCompanyTotalAuthMemberRepository: Db1_RaillyLinkerCompany_TotalAuthMember_Repository,
+    private val db1RaillyLinkerCompanyTotalAuthMemberEmailRepository: Db1_RaillyLinkerCompany_TotalAuthMemberEmail_Repository,
+    private val db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository: Db1_RaillyLinkerCompany_TotalAuthMemberPhone_Repository,
+    private val db1RaillyLinkerCompanyTotalAuthMemberProfileRepository: Db1_RaillyLinkerCompany_TotalAuthMemberProfile_Repository,
 
     // (Database Repository DSL)
     private val db1TemplateRepositoryDsl: Db1_Template_RepositoryDsl
@@ -42,36 +43,77 @@ class BoardServiceImpl(
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
-//    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-//    override fun insertDataSample(
-//        httpServletResponse: HttpServletResponse,
-//        inputVo: BoardController.InsertDataSampleInputVo
-//    ): BoardController.InsertDataSampleOutputVo? {
-//        val result = db1TemplateTestsRepository.save(
-//            Db1_Template_TestData(
-//                inputVo.content,
-//                (0..99999999).random(),
-//                ZonedDateTime.parse(inputVo.dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-//                    .toLocalDateTime()
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    override fun createBoard(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: BoardController.CreateBoardInputVo
+    ): BoardController.CreateBoardOutputVo? {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+        // todo
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return BoardController.CreateBoardOutputVo(
+            1 // todo
+        )
+    }
+
+
+    ////
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    override fun getBoardsPage(
+        httpServletResponse: HttpServletResponse,
+        page: Int,
+        pageElementsCount: Int
+    ): BoardController.GetBoardsPageOutputVo? {
+        val pageable: Pageable = PageRequest.of(page - 1, pageElementsCount)
+//        val entityList = db1TemplateTestsRepository.findAllByRowDeleteDateStrOrderByRowCreateDate(
+//            "/",
+//            pageable
+//        )
+
+        val boardItemVoList =
+            ArrayList<BoardController.GetBoardsPageOutputVo.BoardItemVo>()
+//        for (entity in entityList) {
+//            testEntityVoList.add(
+//                BoardController.SelectRowsPageSampleOutputVo.TestEntityVo(
+//                    entity.uid!!,
+//                    entity.content,
+//                    entity.randomNum,
+//                    entity.testDatetime.atZone(ZoneId.systemDefault())
+//                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+//                    entity.rowCreateDate!!.atZone(ZoneId.systemDefault())
+//                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+//                    entity.rowUpdateDate!!.atZone(ZoneId.systemDefault())
+//                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+//                )
 //            )
-//        )
-//
-//        httpServletResponse.status = HttpStatus.OK.value()
-//        return BoardController.InsertDataSampleOutputVo(
-//            result.uid!!,
-//            result.content,
-//            result.randomNum,
-//            result.testDatetime.atZone(ZoneId.systemDefault())
-//                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//            result.rowCreateDate!!.atZone(ZoneId.systemDefault())
-//                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//            result.rowUpdateDate!!.atZone(ZoneId.systemDefault())
-//                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//            result.rowDeleteDateStr
-//        )
-//    }
-//
-//
+//        }
+        // todo
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return BoardController.GetBoardsPageOutputVo(
+            1, // todo
+            boardItemVoList
+        )
+    }
+
+
+    ////
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    override fun getBoardDetail(
+        httpServletResponse: HttpServletResponse,
+        boardUid: Long
+    ): BoardController.GetBoardDetailOutputVo? {
+        httpServletResponse.status = HttpStatus.OK.value()
+        return BoardController.GetBoardDetailOutputVo(boardUid)
+    }
+
+
 //    ////
 //    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
 //    override fun deleteRowsSample(httpServletResponse: HttpServletResponse, deleteLogically: Boolean) {
