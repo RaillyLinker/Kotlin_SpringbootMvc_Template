@@ -165,6 +165,40 @@ class BoardServiceImpl(
     }
 
 
+    ////
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    override fun deleteBoard(
+        httpServletResponse: HttpServletResponse,
+        authorization: String?,
+        testTableUid: Long
+    ) {
+        // todo
+
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    ////
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    override fun createComment(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: BoardController.CreateCommentInputVo
+    ): BoardController.CreateCommentOutputVo? {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+        // todo
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return BoardController.CreateCommentOutputVo(
+            1 // todo
+        )
+    }
+
+
 //    ////
 //    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
 //    override fun deleteRowsSample(httpServletResponse: HttpServletResponse, deleteLogically: Boolean) {

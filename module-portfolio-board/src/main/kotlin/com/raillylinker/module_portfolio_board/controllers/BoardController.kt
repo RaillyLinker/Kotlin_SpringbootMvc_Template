@@ -68,7 +68,7 @@ class BoardController(
     )
 
     data class CreateBoardOutputVo(
-        @Schema(description = "글 고유번호", required = true, example = "1234")
+        @Schema(description = "생성된 게시글 고유번호", required = true, example = "1234")
         @JsonProperty("uid")
         val uid: Long
     )
@@ -295,7 +295,7 @@ class BoardController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : testTableUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.\n\n",
+                                "1 : boardUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.\n\n",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -384,8 +384,106 @@ class BoardController(
     }
 
 
-    // todo 게시글 삭제
-    // todo 댓글 작성
+    ////
+    @Operation(
+        summary = "게시글 삭제",
+        description = "게시글을 삭제합니다.\n\n" +
+                "본인 게시글이 아니라면 204 코드 1 이 반환\n\n"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.\n\n" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required\n\n" +
+                                "1 : testTableUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.\n\n",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            )
+        ]
+    )
+    @DeleteMapping(
+        path = ["/board/{boardUid}"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    fun deleteBoard(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "boardUid", description = "삭제할 게시글 고유번호", example = "1")
+        @PathVariable("boardUid")
+        boardUid: Long
+    ) {
+        return service.deleteBoard(httpServletResponse, authorization, boardUid)
+    }
+
+
+    ////
+    @Operation(
+        summary = "댓글 입력 API",
+        description = "댓글을 입력합니다.\n\n"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/comment"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    fun createComment(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @RequestBody
+        inputVo: CreateCommentInputVo
+    ): CreateCommentOutputVo? {
+        return service.createComment(httpServletResponse, authorization!!, inputVo)
+    }
+
+    data class CreateCommentInputVo(
+        @Schema(description = "댓글을 달 게시글 고유번호", required = true, example = "1")
+        @JsonProperty("boardUid")
+        val boardUid: Long,
+        @Schema(description = "댓글을 달 댓글 고유번호(댓글에 다는 댓글이 아니면 null)", required = false, example = "1")
+        @JsonProperty("commentUid")
+        val commentUid: Long?,
+        @Schema(description = "글 본문", required = true, example = "테스트 본문입니다.")
+        @JsonProperty("content")
+        val content: String
+    )
+
+    data class CreateCommentOutputVo(
+        @Schema(description = "생성된 댓글 고유번호", required = true, example = "1234")
+        @JsonProperty("uid")
+        val uid: Long
+    )
+
+
     // todo 댓글 페이징
     // todo 대댓글 페이징
     // todo 댓글 수정

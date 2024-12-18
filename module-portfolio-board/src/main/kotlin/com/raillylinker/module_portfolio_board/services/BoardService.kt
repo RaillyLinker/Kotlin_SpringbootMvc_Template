@@ -4,7 +4,7 @@ import com.raillylinker.module_portfolio_board.controllers.BoardController
 import jakarta.servlet.http.HttpServletResponse
 
 interface BoardService {
-    // (DB Row 입력 테스트 API)
+    // (게시글 입력 API)
     fun createBoard(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -46,6 +46,23 @@ interface BoardService {
         authorization: String?,
         testTableUid: Long
     )
+
+
+    ////
+    // (게시글 삭제)
+    fun deleteBoard(
+        httpServletResponse: HttpServletResponse,
+        authorization: String?,
+        testTableUid: Long
+    )
+
+
+    // (댓글 입력 API)
+    fun createComment(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: BoardController.CreateCommentInputVo
+    ): BoardController.CreateCommentOutputVo?
 
 
 //    ////
