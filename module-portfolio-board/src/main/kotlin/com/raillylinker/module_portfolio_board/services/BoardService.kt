@@ -22,11 +22,30 @@ interface BoardService {
 
 
     ////
-    // (Get 요청 테스트 (Path Parameter))
+    // (게시판 상세 화면)
     fun getBoardDetail(
         httpServletResponse: HttpServletResponse,
         boardUid: Long
     ): BoardController.GetBoardDetailOutputVo?
+
+
+    ////
+    // (게시글 수정)
+    fun updateBoard(
+        httpServletResponse: HttpServletResponse,
+        authorization: String?,
+        testTableUid: Long,
+        inputVo: BoardController.UpdateBoardInputVo
+    )
+
+
+    ////
+    // (게시글 조회수 1 상승)
+    fun updateBoardViewCount1Up(
+        httpServletResponse: HttpServletResponse,
+        authorization: String?,
+        testTableUid: Long
+    )
 
 
 //    ////

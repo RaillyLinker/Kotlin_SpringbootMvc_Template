@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.raillylinker.module_portfolio_board.services.BoardService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.headers.Header
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -152,7 +154,7 @@ class BoardController(
         @JsonProperty("boardItemVoList")
         val boardItemVoList: List<BoardItemVo>
     ) {
-        @Schema(description = "게시판 아이템")
+        @Schema(description = "게시글 아이템")
         data class BoardItemVo(
             @Schema(description = "글 고유번호", required = true, example = "1234")
             @JsonProperty("boardUid")
@@ -200,6 +202,20 @@ class BoardController(
             ApiResponse(
                 responseCode = "200",
                 description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.\n\n" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required\n\n" +
+                                "1 : boardUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.\n\n",
+                        schema = Schema(type = "string")
+                    )
+                ]
             )
         ]
     )
@@ -222,17 +238,156 @@ class BoardController(
         )
     }
 
-    // todo 게시글 상세 (+ 댓글)
     data class GetBoardDetailOutputVo(
-        @Schema(description = "입력한 게시글 고유번호", required = true, example = "1")
-        @JsonProperty("boardUid")
-        val boardUid: Long
+        @Schema(description = "글 제목", required = true, example = "테스트 텍스트입니다.")
+        @JsonProperty("title")
+        val title: String,
+        @Schema(description = "글 본문", required = true, example = "테스트 텍스트입니다.")
+        @JsonProperty("content")
+        val content: String,
+        @Schema(
+            description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("createDate")
+        val createDate: String,
+        @Schema(
+            description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("updateDate")
+        val updateDate: String,
+        @Schema(description = "글 조회수", required = true, example = "1234")
+        @JsonProperty("viewCount")
+        val viewCount: Long,
+        @Schema(description = "글 작성자 고유번호", required = true, example = "1234")
+        @JsonProperty("writerUserUid")
+        val writerUserUid: Long,
+        @Schema(description = "글 작성자 닉네임", required = true, example = "홍길동")
+        @JsonProperty("writerUserNickname")
+        val writerUserNickname: Long,
+        @Schema(description = "글 작성자 프로필 Full Url", required = true, example = "https://test-profile/1.jpg")
+        @JsonProperty("writerUserProfileFullUrl")
+        val writerUserProfileFullUrl: String
     )
 
-    // todo 게시글 수정
-    // todo 게시글 조회수 추가
+
+    ////
+    @Operation(
+        summary = "게시글 수정",
+        description = "게시글 하나를 수정합니다.\n\n" +
+                "본인 게시글이 아니라면 204 코드 1 이 반환\n\n"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.\n\n" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required\n\n" +
+                                "1 : testTableUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.\n\n",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            )
+        ]
+    )
+    @PutMapping(
+        path = ["/board/{boardUid}"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    fun updateBoard(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "boardUid", description = "수정할 게시글 고유번호", example = "1")
+        @PathVariable("boardUid")
+        boardUid: Long,
+        @RequestBody
+        inputVo: UpdateBoardInputVo
+    ) {
+        return service.updateBoard(httpServletResponse, authorization, boardUid, inputVo)
+    }
+
+    data class UpdateBoardInputVo(
+        @Schema(description = "글 타이틀", required = true, example = "테스트 타이틀입니다.")
+        @JsonProperty("title")
+        val title: String,
+        @Schema(description = "글 본문", required = true, example = "테스트 본문입니다.")
+        @JsonProperty("content")
+        val content: String
+    )
+
+
+    ////
+    // todo 중복 up 가능한지 여부
+    @Operation(
+        summary = "게시글 조회수 1 상승",
+        description = "게시글 조회수를 1 상승시킵니다.\n\n" +
+                "본인 게시글이 아니라면 204 코드 1 이 반환\n\n"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.\n\n" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required\n\n" +
+                                "1 : testTableUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.\n\n",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            )
+        ]
+    )
+    @PatchMapping(
+        path = ["/board/{boardUid}/view_count_1up"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    fun updateBoardViewCount1Up(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "boardUid", description = "수정할 게시글 고유번호", example = "1")
+        @PathVariable("boardUid")
+        boardUid: Long
+    ) {
+        return service.updateBoardViewCount1Up(httpServletResponse, authorization, boardUid)
+    }
+
+
     // todo 게시글 삭제
     // todo 댓글 작성
+    // todo 댓글 페이징
+    // todo 대댓글 페이징
     // todo 댓글 수정
     // todo 댓글 삭제
 

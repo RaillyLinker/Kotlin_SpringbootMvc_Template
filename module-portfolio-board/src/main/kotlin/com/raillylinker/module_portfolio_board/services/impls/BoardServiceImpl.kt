@@ -110,7 +110,58 @@ class BoardServiceImpl(
         boardUid: Long
     ): BoardController.GetBoardDetailOutputVo? {
         httpServletResponse.status = HttpStatus.OK.value()
-        return BoardController.GetBoardDetailOutputVo(boardUid)
+        // todo
+        return BoardController.GetBoardDetailOutputVo(
+            "null",
+            "null",
+            "null",
+            "null",
+            1,
+            1,
+            1,
+            "null"
+        )
+    }
+
+
+    ////
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    override fun updateBoard(
+        httpServletResponse: HttpServletResponse,
+        authorization: String?,
+        testTableUid: Long,
+        inputVo: BoardController.UpdateBoardInputVo
+    ) {
+//        val oldEntity = db1TemplateTestsRepository.findByUidAndRowDeleteDateStr(testTableUid, "/")
+//
+//        if (oldEntity == null || oldEntity.rowDeleteDateStr != "/") {
+//            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+//            httpServletResponse.setHeader("api-result-code", "1")
+//            return null
+//        }
+//
+//        oldEntity.content = inputVo.content
+//        oldEntity.testDatetime =
+//            ZonedDateTime.parse(inputVo.dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+//                .toLocalDateTime()
+//
+//        val result = db1TemplateTestsRepository.save(oldEntity)
+        // todo
+
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    ////
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    override fun updateBoardViewCount1Up(
+        httpServletResponse: HttpServletResponse,
+        authorization: String?,
+        testTableUid: Long
+    ) {
+        // todo
+
+        httpServletResponse.status = HttpStatus.OK.value()
     }
 
 
