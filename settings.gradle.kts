@@ -74,3 +74,6 @@ include("module-sample-quartz")
 
 // 시큐리티 필터 적용 테스트 샘플 (12013)
 include("module-sample-just-security")
+
+// 게시판 샘플 (13000)
+include("module-portfolio-board")
