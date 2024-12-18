@@ -88,12 +88,12 @@ class BoardController(
         ]
     )
     @GetMapping(
-        path = ["/boards-page"],
+        path = ["/board-page"],
         consumes = [MediaType.ALL_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @ResponseBody
-    fun getBoardsPage(
+    fun getBoardPage(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(name = "page", description = "원하는 페이지(1 부터 시작)", example = "1")
@@ -116,7 +116,7 @@ class BoardController(
             example = "CREATE_DATE"
         )
         @RequestParam("sortingTypeEnum")
-        sortingTypeEnum: GetBoardsPageSortingTypeEnum,
+        sortingTypeEnum: GetBoardPageSortingTypeEnum,
         @Parameter(
             name = "sortingDirectionEnum",
             description = """
@@ -128,12 +128,18 @@ class BoardController(
             example = "DESC"
         )
         @RequestParam("sortingDirectionEnum")
-        sortingDirectionEnum: GetBoardsPageSortingDirectionEnum
-    ): GetBoardsPageOutputVo? {
-        return service.getBoardsPage(httpServletResponse, page, pageElementsCount)
+        sortingDirectionEnum: GetBoardPageSortingDirectionEnum
+    ): GetBoardPageOutputVo? {
+        return service.getBoardPage(
+            httpServletResponse,
+            page,
+            pageElementsCount,
+            sortingTypeEnum,
+            sortingDirectionEnum
+        )
     }
 
-    enum class GetBoardsPageSortingTypeEnum {
+    enum class GetBoardPageSortingTypeEnum {
         CREATE_DATE,
         UPDATE_DATE,
         TITLE,
@@ -141,12 +147,12 @@ class BoardController(
         WRITER_USER_NICKNAME
     }
 
-    enum class GetBoardsPageSortingDirectionEnum {
+    enum class GetBoardPageSortingDirectionEnum {
         DESC,
         ASC
     }
 
-    data class GetBoardsPageOutputVo(
+    data class GetBoardPageOutputVo(
         @Schema(description = "아이템 전체 개수", required = true, example = "100")
         @JsonProperty("totalElements")
         val totalElements: Long,

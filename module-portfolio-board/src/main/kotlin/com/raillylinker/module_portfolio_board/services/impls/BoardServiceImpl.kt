@@ -65,11 +65,13 @@ class BoardServiceImpl(
 
     ////
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-    override fun getBoardsPage(
+    override fun getBoardPage(
         httpServletResponse: HttpServletResponse,
         page: Int,
-        pageElementsCount: Int
-    ): BoardController.GetBoardsPageOutputVo? {
+        pageElementsCount: Int,
+        sortingTypeEnum: BoardController.GetBoardPageSortingTypeEnum,
+        sortingDirectionEnum: BoardController.GetBoardPageSortingDirectionEnum
+    ): BoardController.GetBoardPageOutputVo? {
         val pageable: Pageable = PageRequest.of(page - 1, pageElementsCount)
 //        val entityList = db1TemplateTestsRepository.findAllByRowDeleteDateStrOrderByRowCreateDate(
 //            "/",
@@ -77,7 +79,7 @@ class BoardServiceImpl(
 //        )
 
         val boardItemVoList =
-            ArrayList<BoardController.GetBoardsPageOutputVo.BoardItemVo>()
+            ArrayList<BoardController.GetBoardPageOutputVo.BoardItemVo>()
 //        for (entity in entityList) {
 //            testEntityVoList.add(
 //                BoardController.SelectRowsPageSampleOutputVo.TestEntityVo(
@@ -96,7 +98,7 @@ class BoardServiceImpl(
         // todo
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return BoardController.GetBoardsPageOutputVo(
+        return BoardController.GetBoardPageOutputVo(
             1, // todo
             boardItemVoList
         )

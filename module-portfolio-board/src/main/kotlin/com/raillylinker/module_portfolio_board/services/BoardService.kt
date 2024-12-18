@@ -14,11 +14,13 @@ interface BoardService {
 
     ////
     // (게시글 리스트 (페이징))
-    fun getBoardsPage(
+    fun getBoardPage(
         httpServletResponse: HttpServletResponse,
         page: Int,
-        pageElementsCount: Int
-    ): BoardController.GetBoardsPageOutputVo?
+        pageElementsCount: Int,
+        sortingTypeEnum: BoardController.GetBoardPageSortingTypeEnum,
+        sortingDirectionEnum: BoardController.GetBoardPageSortingDirectionEnum
+    ): BoardController.GetBoardPageOutputVo?
 
 
     ////
