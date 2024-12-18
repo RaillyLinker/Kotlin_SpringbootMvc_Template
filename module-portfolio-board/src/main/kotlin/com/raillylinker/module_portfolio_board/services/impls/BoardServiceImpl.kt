@@ -5,6 +5,7 @@ import com.raillylinker.module_portfolio_board.configurations.SecurityConfig.Aut
 import com.raillylinker.module_portfolio_board.controllers.BoardController
 import com.raillylinker.module_portfolio_board.services.BoardService
 import com.raillylinker.module_portfolio_board.configurations.jpa_configs.Db1MainConfig
+import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_SampleBoard
 import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.repositories.*
 import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.repositories_dsl.Db1_Template_RepositoryDsl
 import com.raillylinker.module_portfolio_board.util_components.JwtTokenUtil
@@ -54,11 +55,21 @@ class BoardServiceImpl(
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
             AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
         )
-        // todo
+        val memberData =
+            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        val db1RaillyLinkerCompanySampleBoard = db1RaillyLinkerCompanySampleBoardRepository.save(
+            Db1_RaillyLinkerCompany_SampleBoard(
+                memberData,
+                inputVo.title,
+                inputVo.content,
+                0L
+            )
+        )
 
         httpServletResponse.status = HttpStatus.OK.value()
         return BoardController.CreateBoardOutputVo(
-            1 // todo
+            db1RaillyLinkerCompanySampleBoard.uid!!
         )
     }
 

@@ -29,7 +29,7 @@ class Db1_RaillyLinkerCompany_SampleBoard(
 
     @Column(name = "view_count", nullable = false, columnDefinition = "BIGINT")
     @Comment("조회수")
-    var viewCount: Boolean
+    var viewCount: Long
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
