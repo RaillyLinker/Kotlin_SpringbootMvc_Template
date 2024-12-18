@@ -18,6 +18,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Service
 class BoardServiceImpl(
@@ -84,33 +86,34 @@ class BoardServiceImpl(
         sortingDirectionEnum: BoardController.GetBoardPageSortingDirectionEnum
     ): BoardController.GetBoardPageOutputVo? {
         val pageable: Pageable = PageRequest.of(page - 1, pageElementsCount)
-//        val entityList = db1TemplateTestsRepository.findAllByRowDeleteDateStrOrderByRowCreateDate(
-//            "/",
-//            pageable
-//        )
+        val entityList = db1TemplateRepositoryDsl.findPageAllFromBoardByNotDeleted(
+            sortingTypeEnum,
+            sortingDirectionEnum,
+            pageable
+        )
 
         val boardItemVoList =
             ArrayList<BoardController.GetBoardPageOutputVo.BoardItemVo>()
-//        for (entity in entityList) {
-//            testEntityVoList.add(
-//                BoardController.SelectRowsPageSampleOutputVo.TestEntityVo(
-//                    entity.uid!!,
-//                    entity.content,
-//                    entity.randomNum,
-//                    entity.testDatetime.atZone(ZoneId.systemDefault())
-//                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//                    entity.rowCreateDate!!.atZone(ZoneId.systemDefault())
-//                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-//                    entity.rowUpdateDate!!.atZone(ZoneId.systemDefault())
-//                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-//                )
-//            )
-//        }
-        // todo
+        for (entity in entityList) {
+            boardItemVoList.add(
+                BoardController.GetBoardPageOutputVo.BoardItemVo(
+                    entity.boardUid,
+                    entity.title,
+                    entity.createDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    entity.updateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    entity.viewCount,
+                    entity.writerUserUid,
+                    entity.writerUserNickname,
+                    entity.writerUserProfileFullUrl
+                )
+            )
+        }
 
         httpServletResponse.status = HttpStatus.OK.value()
         return BoardController.GetBoardPageOutputVo(
-            1, // todo
+            entityList.totalElements,
             boardItemVoList
         )
     }

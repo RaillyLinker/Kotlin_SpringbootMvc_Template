@@ -109,7 +109,6 @@ class BoardController(
                     CREATE_DATE : 게시글 작성 시간,
                     UPDATE_DATE : 게시글 수정 시간,
                     TITLE : 게시글 제목,
-                    CONTENT : 게시글 본문,
                     WRITER_USER_NICKNAME : 게시글 작성자 닉네임
                 )
             """,
@@ -143,7 +142,7 @@ class BoardController(
         CREATE_DATE,
         UPDATE_DATE,
         TITLE,
-        CONTENT,
+        VIEW_COUNT,
         WRITER_USER_NICKNAME
     }
 
@@ -190,7 +189,7 @@ class BoardController(
             val writerUserUid: Long,
             @Schema(description = "글 작성자 닉네임", required = true, example = "홍길동")
             @JsonProperty("writerUserNickname")
-            val writerUserNickname: Long,
+            val writerUserNickname: String,
             @Schema(description = "글 작성자 프로필 Full Url", required = true, example = "https://test-profile/1.jpg")
             @JsonProperty("writerUserProfileFullUrl")
             val writerUserProfileFullUrl: String
