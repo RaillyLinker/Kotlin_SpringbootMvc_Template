@@ -99,7 +99,7 @@ class MediaResourceProcessService(
     }
 
 
-    ////
+    // ----
     // (서버에 저장된 움직이는 Gif 이미지 파일에서 프레임을 PNG 이미지 파일로 분리한 후 by_product_files/test 폴더 안에 저장)
     fun splitAnimatedGif(
         httpServletResponse: HttpServletResponse
@@ -142,7 +142,7 @@ class MediaResourceProcessService(
     }
 
 
-    ////
+    // ----
     // (서버에 저장된 움직이는 PNG 이미지 프레임들을 움직이는 Gif 파일로 병합 후 by_product_files/test 폴더 안에 저장)
     fun mergeImagesToAnimatedGif(httpServletResponse: HttpServletResponse) {
         // 프로젝트 루트 경로 (프로젝트 settings.gradle 이 있는 경로)
@@ -192,7 +192,7 @@ class MediaResourceProcessService(
     }
 
 
-    ////
+    // ----
     // (동적 GIF 이미지 파일을 업로드 하여 리사이징 후 다운)
     fun resizeGifImage(
         inputVo: MediaResourceProcessController.ResizeGifImageInputVo,
@@ -244,7 +244,7 @@ class MediaResourceProcessService(
     }
 
 
-    ////
+    // ----
     // (서명 생성 테스트)
     fun createSignature(
         httpServletResponse: HttpServletResponse,

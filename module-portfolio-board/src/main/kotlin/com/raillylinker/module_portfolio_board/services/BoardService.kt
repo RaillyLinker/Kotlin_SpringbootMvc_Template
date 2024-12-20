@@ -76,7 +76,7 @@ class BoardService(
     }
 
 
-    ////
+    // ----
     // (게시글 리스트 (페이징))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun getBoardPage(
@@ -120,7 +120,7 @@ class BoardService(
     }
 
 
-    ////
+    // ----
     // (게시판 상세 화면)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun getBoardDetail(
@@ -142,7 +142,7 @@ class BoardService(
     }
 
 
-    ////
+    // ----
     // (게시글 수정)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun updateBoard(
@@ -171,7 +171,7 @@ class BoardService(
     }
 
 
-    ////
+    // ----
     // (게시글 조회수 1 상승)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun updateBoardViewCount1Up(
@@ -185,7 +185,7 @@ class BoardService(
     }
 
 
-    ////
+    // ----
     // (게시글 삭제)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteBoard(
@@ -199,7 +199,7 @@ class BoardService(
     }
 
 
-    ////
+    // ----
     // (댓글 입력 API)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun createComment(
@@ -221,7 +221,7 @@ class BoardService(
     }
 
 
-    ////
+    // ----
     // (댓글 리스트 (페이징))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun getCommentPage(
@@ -241,7 +241,7 @@ class BoardService(
     }
 
 
-    ////
+    // ----
     // (댓글 수정)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun updateComment(
@@ -256,7 +256,7 @@ class BoardService(
     }
 
 
-    ////
+    // ----
     // (댓글 삭제)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteComment(

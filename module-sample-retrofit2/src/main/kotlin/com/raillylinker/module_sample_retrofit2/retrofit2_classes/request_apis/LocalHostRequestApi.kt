@@ -17,7 +17,7 @@ interface LocalHostRequestApi {
     fun getMyServiceTkSampleRequestTest(): Call<String?>
 
 
-    ////
+    // ----
     // [요청 Redirect 테스트 API]
     // 이 API 를 요청하면 /api-test 로 Redirect 됩니다.
     // (api-result-code)
@@ -25,7 +25,7 @@ interface LocalHostRequestApi {
     fun getMyServiceTkSampleRequestTestRedirectToBlank(): Call<String?>
 
 
-    ////
+    // ----
     // [요청 Forward 테스트 API]
     // 이 API 를 요청하면 /api-test 로 Forward 됩니다.
     // (api-result-code)
@@ -33,7 +33,7 @@ interface LocalHostRequestApi {
     fun getMyServiceTkSampleRequestTestForwardToBlank(): Call<String?>
 
 
-    ////
+    // ----
     // [Get 요청(Query Parameter) 테스트 API]
     // Query Parameter 를 받는 Get 메소드 요청 테스트
     // (api-result-code)
@@ -85,7 +85,7 @@ interface LocalHostRequestApi {
     )
 
 
-    ////
+    // ----
     // [Get 요청(Path Parameter) 테스트 API]
     // Path Parameter 를 받는 Get 메소드 요청 테스트
     // (api-result-code)
@@ -101,7 +101,7 @@ interface LocalHostRequestApi {
     )
 
 
-    ////
+    // ----
     // [Post 요청(Application-Json) 테스트 API]
     // application-json 형태의 Request Body 를 받는 Post 메소드 요청 테스트
     // (api-result-code)
@@ -177,7 +177,7 @@ interface LocalHostRequestApi {
     )
 
 
-    ////
+    // ----
     // [Post 요청(x-www-form-urlencoded) 테스트 API]
     // x-www-form-urlencoded 형태의 Request Body 를 받는 Post 메소드 요청 테스트
     // (api-result-code)
@@ -230,7 +230,7 @@ interface LocalHostRequestApi {
     )
 
 
-    ////
+    // ----
     // [Post 요청(multipart/form-data) 테스트 API]
     // multipart/form-data 형태의 Request Body 를 받는 Post 메소드 요청 테스트(Multipart File List)
     // MultipartFile 파라미터가 null 이 아니라면 저장
@@ -286,7 +286,7 @@ interface LocalHostRequestApi {
     )
 
 
-    ////
+    // ----
     // [Post 요청(multipart/form-data list) 테스트 API]
     // multipart/form-data 형태의 Request Body 를 받는 Post 메소드 요청 테스트(Multipart File List)
     // 파일 리스트가 null 이 아니라면 저장
@@ -342,7 +342,7 @@ interface LocalHostRequestApi {
     )
 
 
-    ////
+    // ----
     // [Post 요청(multipart/form-data list) 테스트 API]
     // multipart/form-data 형태의 Request Body 를 받는 Post 메소드 요청 테스트(Multipart File List)
     // 파일 리스트가 null 이 아니라면 저장
@@ -412,7 +412,7 @@ interface LocalHostRequestApi {
     )
 
 
-    ////
+    // ----
     // [인위적 에러 발생 테스트 API]
     // 요청 받으면 인위적인 서버 에러를 발생시킵니다.(Http Response Status 500)
     // (api-result-code)
@@ -420,7 +420,7 @@ interface LocalHostRequestApi {
     fun postMyServiceTkSampleRequestTestGenerateError(): Call<Unit?>
 
 
-    ////
+    // ----
     // [결과 코드 발생 테스트 API]
     // Response Header 에 api-result-code 를 반환하는 테스트 API
     //(api-result-code)
@@ -439,7 +439,7 @@ interface LocalHostRequestApi {
     }
 
 
-    ////
+    // ----
     // [인위적 타임아웃 에러 발생 테스트]
     // 타임아웃 에러를 발생시키기 위해 임의로 응답 시간을 지연시킵니다.
     // (api-result-code)
@@ -449,7 +449,7 @@ interface LocalHostRequestApi {
     ): Call<Unit?>
 
 
-    ////
+    // ----
     // [text/string 반환 샘플]
     // text/string 형식의 Response Body 를 반환합니다.
     // (api-result-code)
@@ -458,7 +458,7 @@ interface LocalHostRequestApi {
     fun getMyServiceTkSampleRequestTestReturnTextString(): Call<String>
 
 
-    ////
+    // ----
     // [text/html 반환 샘플]
     // text/html 형식의 Response Body 를 반환합니다.
     // (api-result-code)
@@ -467,7 +467,7 @@ interface LocalHostRequestApi {
     fun getMyServiceTkSampleRequestTestReturnTextHtml(): Call<String>
 
 
-    ////
+    // ----
     // [비동기 처리 결과 반환 샘플]
     // API 호출시 함수 내에서 별도 스레드로 작업을 수행하고,
     // 비동기 작업 완료 후 그 처리 결과가 반환됨

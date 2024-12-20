@@ -52,7 +52,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (요청 Redirect 테스트)
     fun redirectTest(httpServletResponse: HttpServletResponse): ModelAndView? {
         val mv = ModelAndView()
@@ -62,7 +62,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (요청 Forward 테스트)
     fun forwardTest(httpServletResponse: HttpServletResponse): ModelAndView? {
         val mv = ModelAndView()
@@ -72,7 +72,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (Get 요청 테스트 (Query Parameter))
     fun getRequestTest(
         httpServletResponse: HttpServletResponse,
@@ -103,7 +103,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (Get 요청 테스트 (Path Parameter))
     fun getRequestTestWithPathParam(
         httpServletResponse: HttpServletResponse,
@@ -114,7 +114,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (Post 요청 테스트 (application-json))
     fun postRequestTestWithApplicationJsonTypeRequestBody(
         httpServletResponse: HttpServletResponse,
@@ -136,7 +136,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (Post 요청 테스트 (application-json, 객체 파라미터 포함))
     fun postRequestTestWithApplicationJsonTypeRequestBody2(
         httpServletResponse: HttpServletResponse,
@@ -200,7 +200,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (Post 요청 테스트 (입출력값 없음))
     fun postRequestTestWithNoInputAndOutput(
         httpServletResponse: HttpServletResponse
@@ -209,7 +209,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (Post 요청 테스트 (x-www-form-urlencoded))
     fun postRequestTestWithFormTypeRequestBody(
         httpServletResponse: HttpServletResponse,
@@ -231,7 +231,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (Post 요청 테스트 (multipart/form-data))
     fun postRequestTestWithMultipartFormTypeRequestBody(
         httpServletResponse: HttpServletResponse,
@@ -328,7 +328,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (Post 요청 테스트2 (multipart/form-data))
     fun postRequestTestWithMultipartFormTypeRequestBody2(
         httpServletResponse: HttpServletResponse,
@@ -429,7 +429,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (Post 요청 테스트 (multipart/form-data - JsonString))
     fun postRequestTestWithMultipartFormTypeRequestBody3(
         httpServletResponse: HttpServletResponse,
@@ -535,14 +535,14 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (인위적 에러 발생 테스트)
     fun generateErrorTest(httpServletResponse: HttpServletResponse) {
         throw RuntimeException("Test Error")
     }
 
 
-    ////
+    // ----
     // (결과 코드 발생 테스트)
     fun returnResultCodeThroughHeaders(
         httpServletResponse: HttpServletResponse,
@@ -571,7 +571,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (인위적 응답 지연 테스트)
     fun responseDelayTest(httpServletResponse: HttpServletResponse, delayTimeSec: Long) {
         val endTime = System.currentTimeMillis() + (delayTimeSec * 1000)
@@ -585,7 +585,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (text/string 반환 샘플)
     fun returnTextStringTest(httpServletResponse: HttpServletResponse): String? {
         httpServletResponse.status = HttpStatus.OK.value()
@@ -593,7 +593,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (text/html 반환 샘플)
     fun returnTextHtmlTest(httpServletResponse: HttpServletResponse): ModelAndView? {
         val modelAndView = ModelAndView()
@@ -604,7 +604,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (byte 반환 샘플)
     fun returnByteDataTest(httpServletResponse: HttpServletResponse): Resource? {
         httpServletResponse.status = HttpStatus.OK.value()
@@ -621,7 +621,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (비디오 스트리밍 샘플)
     fun videoStreamingTest(
         videoHeight: ApiTestController.VideoStreamingTestVideoHeight,
@@ -665,7 +665,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (오디오 스트리밍 샘플)
     fun audioStreamingTest(httpServletResponse: HttpServletResponse): Resource? {
         // 프로젝트 루트 경로 (프로젝트 settings.gradle 이 있는 경로)
@@ -687,7 +687,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (비동기 처리 결과 반환 샘플)
     fun asynchronousResponseTest(httpServletResponse: HttpServletResponse): DeferredResult<ApiTestController.AsynchronousResponseTestOutputVo>? {
         // 연결 타임아웃 밀리초
@@ -713,7 +713,7 @@ class ApiTestService(
 
 
     // todo
-//    ////
+//    // ----
 //    // (클라이언트가 특정 SSE 이벤트를 구독)
 //    // api20 에서 발급한 Emitter 객체
 //    private val api20SseEmitterWrapperMbr = SseEmitterWrapper()
@@ -726,7 +726,7 @@ class ApiTestService(
 //    }
 //
 //
-//    ////
+//    // ----
 //    // (SSE 이벤트 전송 트리거 테스트)
 //    private var api21TriggerTestCountMbr = 0
 //    fun sseTestEventTrigger(httpServletResponse: HttpServletResponse) {
@@ -742,7 +742,7 @@ class ApiTestService(
 //    }
 
 
-    ////
+    // ----
     // (빈 리스트 받기 테스트)
     fun emptyListRequestTest(
         httpServletResponse: HttpServletResponse,
@@ -757,7 +757,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (by_product_files 폴더로 파일 업로드)
     fun uploadToServerTest(
         httpServletResponse: HttpServletResponse,
@@ -806,7 +806,7 @@ class ApiTestService(
     }
 
 
-    ////
+    // ----
     // (by_product_files 폴더에서 파일 다운받기)
     fun fileDownloadTest(
         httpServletResponse: HttpServletResponse,

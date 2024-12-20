@@ -100,7 +100,7 @@ class MongoDbTestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "DB Rows 삭제 테스트 API",
         description = "테스트 테이블의 모든 Row 를 모두 삭제합니다.\n\n"
@@ -127,7 +127,7 @@ class MongoDbTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "DB Row 삭제 테스트",
         description = "테스트 테이블의 Row 하나를 삭제합니다.\n\n"
@@ -171,7 +171,7 @@ class MongoDbTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "DB Rows 조회 테스트",
         description = "테스트 테이블의 모든 Rows 를 반환합니다.\n\n"
@@ -234,7 +234,7 @@ class MongoDbTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "트랜젝션 동작 테스트",
         description = "정보 입력 후 Exception 이 발생했을 때 롤백되어 데이터가 저장되지 않는지를 테스트하는 API\n\n"
@@ -261,7 +261,7 @@ class MongoDbTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "트랜젝션 비동작 테스트",
         description = "트랜젝션 처리를 하지 않았을 때, DB 정보 입력 후 Exception 이 발생 했을 때 의 테스트 API\n\n"

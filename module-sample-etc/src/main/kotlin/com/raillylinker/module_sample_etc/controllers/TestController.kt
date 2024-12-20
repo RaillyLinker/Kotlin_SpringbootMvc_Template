@@ -79,7 +79,7 @@ class TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "HTML 이메일 발송 테스트",
         description = "HTML 로 이루어진 이메일 발송 테스트\n\n"
@@ -130,7 +130,7 @@ class TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Naver API SMS 발송 샘플",
         description = "Naver API 를 사용한 SMS 발송 샘플\n\n" +
@@ -169,7 +169,7 @@ class TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Naver API AlimTalk 발송 샘플",
         description = "Naver API 를 사용한 AlimTalk 발송 샘플\n\n" +
@@ -214,7 +214,7 @@ class TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "액셀 파일을 받아서 해석 후 데이터 반환",
         description = "액셀 파일을 받아서 해석 후 데이터 반환\n\n"
@@ -274,7 +274,7 @@ class TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "액셀 파일 쓰기",
         description = "받은 데이터를 기반으로 액셀 파일을 만들어 by_product_files/test 폴더에 저장\n\n"
@@ -301,7 +301,7 @@ class TestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "HTML 을 기반으로 PDF 를 생성",
         description = "준비된 HTML 1.0(strict), CSS 2.1 을 기반으로 PDF 를 생성\n\n"
@@ -328,7 +328,7 @@ class TestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "입력받은 HTML 을 기반으로 PDF 를 생성 후 반환",
         description = "입력받은 HTML 1.0(strict), CSS 2.1 을 기반으로 PDF 를 생성 후 반환\n\n" +
@@ -409,7 +409,7 @@ class TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "by_product_files/uploads/fonts 폴더에서 파일 다운받기",
         description = "by_product_files/uploads/fonts 경로의 파일을 다운로드\n\n"
@@ -453,7 +453,7 @@ class TestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "ProcessBuilder 샘플",
         description = "ProcessBuilder 를 이용하여 준비된 jar 파일을 실행시킵니다.\n\n" +
@@ -497,7 +497,7 @@ class TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "입력받은 폰트 파일의 내부 이름을 반환",
         description = "입력받은 폰트 파일의 내부 이름을 반환\n\n"
@@ -539,7 +539,7 @@ class TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "AES256 암호화 테스트",
         description = "입력받은 텍스트를 암호화 하여 반환합니다.\n\n"
@@ -598,7 +598,7 @@ class TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "AES256 복호화 테스트",
         description = "입력받은 텍스트를 복호화 하여 반환합니다.\n\n"
@@ -657,7 +657,7 @@ class TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Jsoup 태그 조작 테스트",
         description = "Jsoup 을 이용하여, HTML 태그를 조작하여 반환합니다.\n\n"

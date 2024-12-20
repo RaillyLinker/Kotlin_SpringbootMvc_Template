@@ -92,7 +92,7 @@ class MediaResourceProcessController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "서버에 저장된 움직이는 Gif 이미지 파일에서 프레임을 PNG 이미지 파일로 분리한 후 by_product_files/test 폴더 안에 저장",
         description = "서버에 저장된 움직이는 Gif 이미지 파일에서 프레임을 PNG 이미지 파일로 분리한 후 by_product_files/test 폴더 안에 저장\n\n"
@@ -119,7 +119,7 @@ class MediaResourceProcessController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "서버에 저장된 움직이는 PNG 이미지 프레임들을 움직이는 Gif 파일로 병합 후 by_product_files/test 폴더 안에 저장",
         description = "서버에 저장된 움직이는 PNG 이미지 프레임들을 움직이는 Gif 파일로 병합 후 by_product_files/test 폴더 안에 저장\n\n"
@@ -146,7 +146,7 @@ class MediaResourceProcessController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "동적 GIF 이미지 파일을 업로드 하여 리사이징 후 다운",
         description = "multipart File 로 받은 움직이는 GIF 이미지 파일을 업로드 하여 리사이징 후 다운\n\n"
@@ -202,7 +202,7 @@ class MediaResourceProcessController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "서명 생성 테스트",
         description = "입력받은 문자열을 투명 배경 서명 이미지로 만들어 by_product_files/test 폴더에 저장\n\n"

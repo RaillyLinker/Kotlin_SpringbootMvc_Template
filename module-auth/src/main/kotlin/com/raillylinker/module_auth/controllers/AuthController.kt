@@ -58,7 +58,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "로그인 진입 테스트 <>",
         description = "로그인 되어 있어야 진입 가능\n\n"
@@ -94,7 +94,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "ADMIN 권한 진입 테스트 <'ADMIN'>",
         description = "ADMIN 권한이 있어야 진입 가능\n\n"
@@ -135,7 +135,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "Developer 권한 진입 테스트 <'ADMIN' or 'Developer'>",
         description = "Developer 권한이 있어야 진입 가능\n\n"
@@ -176,7 +176,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "특정 회원의 발행된 Access 토큰 만료 처리",
         description = "특정 회원의 발행된 Access 토큰 만료 처리를 하여 Reissue 로 재검증을 하도록 만듭니다.\n\n" +
@@ -234,7 +234,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "계정 비밀번호 로그인",
         description = "계정 아이디 + 비밀번호를 사용하는 로그인 요청\n\n"
@@ -384,7 +384,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "OAuth2 Code 로 OAuth2 AccessToken 발급",
         description = "OAuth2 Code 를 사용하여 얻은 OAuth2 AccessToken 발급\n\n"
@@ -453,7 +453,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "OAuth2 로그인 (Access Token)",
         description = "OAuth2 Access Token 으로 로그인 요청\n\n"
@@ -515,7 +515,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "OAuth2 로그인 (ID Token)",
         description = "OAuth2 ID Token 으로 로그인 요청\n\n"
@@ -577,7 +577,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "로그아웃 처리 <>",
         description = "로그아웃 처리\n\n"
@@ -611,7 +611,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "토큰 재발급 <>",
         description = "엑세스 토큰 및 리프레시 토큰 재발행\n\n"
@@ -667,7 +667,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "멤버의 현재 발행된 모든 토큰 비활성화 (= 모든 기기에서 로그아웃) <>",
         description = "멤버의 현재 발행된 모든 토큰을 비활성화 (= 모든 기기에서 로그아웃) 하는 API\n\n"
@@ -703,7 +703,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "회원 정보 가져오기 <>",
         description = "회원 정보 반환\n\n" +
@@ -838,7 +838,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "아이디 중복 검사",
         description = "아이디 중복 여부 반환\n\n"
@@ -877,7 +877,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "아이디 수정하기 <>",
         description = "아이디 수정하기\n\n"
@@ -934,7 +934,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "테스트 회원 회원가입",
         description = "테스트용으로, 입력받은 정보를 가지고 회원가입 처리\n\n"
@@ -1027,7 +1027,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "이메일 회원가입 본인 인증 이메일 발송",
         description = "이메일 회원가입시 본인 이메일 확인 메일 발송\n\n" +
@@ -1094,7 +1094,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "이메일 회원가입 본인 확인 이메일에서 받은 코드 검증하기",
         description = "이메일 회원가입시 본인 이메일에 보내진 코드를 입력하여 일치 결과 확인\n\n"
@@ -1146,7 +1146,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "이메일 회원가입",
         description = "이메일 회원가입 처리\n\n"
@@ -1240,7 +1240,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "전화번호 회원가입 본인 인증 문자 발송",
         description = "전화번호 회원가입시 본인 전화번호 확인 문자 발송\n\n" +
@@ -1309,7 +1309,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "전화번호 회원가입 본인 확인 문자에서 받은 코드 검증하기",
         description = "전화번호 회원가입시 본인 전화번호에 보내진 코드를 입력하여 일치 결과 확인\n\n"
@@ -1361,7 +1361,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "전화번호 회원가입",
         description = "전화번호 회원가입 처리\n\n"
@@ -1455,7 +1455,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "OAuth2 AccessToken 으로 회원가입 검증",
         description = "OAuth2 AccessToken 으로 회원가입 검증\n\n"
@@ -1551,7 +1551,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "OAuth2 IdToken 으로 회원가입 검증",
         description = "OAuth2 IdToken 으로 회원가입 검증\n\n"
@@ -1647,7 +1647,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "OAuth2 회원가입",
         description = "OAuth2 회원가입 처리\n\n"
@@ -1741,7 +1741,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "계정 비밀번호 변경 <>",
         description = "계정 비밀번호 변경\n\n" +
@@ -1805,7 +1805,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "이메일 비밀번호 찾기 본인 인증 이메일 발송",
         description = "이메일 비밀번호 찾기 본인 이메일 확인 메일 발송\n\n" +
@@ -1872,7 +1872,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "이메일 비밀번호 찾기 본인 확인 이메일에서 받은 코드 검증하기",
         description = "이메일 비밀번호 찾기 시 본인 이메일에 보내진 코드를 입력하여 일치 결과 확인\n\n"
@@ -1929,7 +1929,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "이메일 비밀번호 찾기 완료",
         description = "계정 비밀번호를 랜덤 값으로 변경 후 인증한 이메일로 발송\n\n" +
@@ -1998,7 +1998,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "전화번호 비밀번호 찾기 본인 인증 문자 발송",
         description = "전화번호 비밀번호 찾기 본인 전화번호 확인 문자 발송\n\n" +
@@ -2066,7 +2066,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "전화번호 비밀번호 찾기 본인 확인 문자에서 받은 코드 검증하기",
         description = "전화번호 비밀번호 찾기 시 본인 전와번호에 보내진 코드를 입력하여 일치 결과 확인\n\n"
@@ -2123,7 +2123,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "전화번호 비밀번호 찾기 완료",
         description = "계정 비밀번호를 랜덤 값으로 변경 후 인증한 전화번호로 발송\n\n" +
@@ -2192,7 +2192,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "내 이메일 리스트 가져오기 <>",
         description = "내 이메일 리스트 가져오기\n\n"
@@ -2247,7 +2247,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "내 전화번호 리스트 가져오기 <>",
         description = "내 전화번호 리스트 가져오기\n\n"
@@ -2302,7 +2302,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "내 OAuth2 로그인 리스트 가져오기 <>",
         description = "내 OAuth2 로그인 리스트 가져오기\n\n"
@@ -2361,7 +2361,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "이메일 추가하기 본인 인증 이메일 발송 <>",
         description = "이메일 추가하기 본인 이메일 확인 메일 발송\n\n" +
@@ -2438,7 +2438,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "이메일 추가하기 본인 확인 이메일에서 받은 코드 검증하기 <>",
         description = "이메일 추가하기 본인 이메일에 보내진 코드를 입력하여 일치 결과 확인\n\n"
@@ -2505,7 +2505,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "이메일 추가하기 <>",
         description = "내 계정에 이메일 추가\n\n"
@@ -2596,7 +2596,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "내 이메일 제거하기 <>",
         description = "내 계정에서 이메일 제거\n\n"
@@ -2650,7 +2650,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "전화번호 추가하기 본인 인증 문자 발송 <>",
         description = "전화번호 추가하기 본인 전화번호 확인 문자 발송\n\n" +
@@ -2727,7 +2727,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "전화번호 추가하기 본인 확인 문자에서 받은 코드 검증하기 <>",
         description = "전화번호 추가하기 본인 전화번호에 보내진 코드를 입력하여 일치 결과 확인\n\n"
@@ -2794,7 +2794,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "전화번호 추가하기 <>",
         description = "내 계정에 전화번호 추가\n\n"
@@ -2885,7 +2885,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "내 전화번호 제거하기 <>",
         description = "내 계정에서 전화번호 제거\n\n"
@@ -2939,7 +2939,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "OAuth2 추가하기 (Access Token) <>",
         description = "내 계정에 OAuth2 Access Token 으로 인증 추가\n\n"
@@ -3010,7 +3010,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "OAuth2 추가하기 (Id Token) <>",
         description = "내 계정에 OAuth2 Id Token 으로 인증 추가\n\n"
@@ -3081,7 +3081,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "내 OAuth2 제거하기 <>",
         description = "내 계정에서 OAuth2 제거\n\n"
@@ -3135,7 +3135,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "회원탈퇴 <>",
         description = "회원탈퇴 요청\n\n" +
@@ -3172,7 +3172,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "내 Profile 이미지 정보 리스트 가져오기 <>",
         description = "내 Profile 이미지 정보 리스트 가져오기\n\n"
@@ -3227,7 +3227,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "내 대표 Profile 이미지 정보 가져오기 <>",
         description = "내 대표 Profile 이미지 정보 가져오기\n\n"
@@ -3279,7 +3279,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "내 대표 프로필 설정하기 <>",
         description = "내가 등록한 프로필들 중 대표 프로필 설정하기\n\n"
@@ -3336,7 +3336,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "내 프로필 삭제 <>",
         description = "내가 등록한 프로필들 중 하나를 삭제합니다.\n\n" +
@@ -3390,7 +3390,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "내 프로필 이미지 추가 <>",
         description = "내 프로필 이미지 추가\n\n"
@@ -3447,7 +3447,7 @@ class AuthController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "by_product_files/member/profile 폴더에서 파일 다운받기",
         description = "프로필 이미지를 by_product_files/member/profile 위치에 저장했을 때 파일을 가져오기 위한 API 로,\n\n" +
@@ -3492,7 +3492,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "내 대표 이메일 정보 가져오기 <>",
         description = "내 대표 이메일 정보 가져오기\n\n"
@@ -3544,7 +3544,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "내 대표 이메일 설정하기 <>",
         description = "내가 등록한 이메일들 중 대표 이메일 설정하기\n\n"
@@ -3601,7 +3601,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "내 대표 전화번호 정보 가져오기 <>",
         description = "내 대표 전화번호 정보 가져오기\n\n"
@@ -3653,7 +3653,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "내 대표 전화번호 설정하기 <>",
         description = "내가 등록한 전화번호들 중 대표 전화번호 설정하기\n\n"
@@ -3710,7 +3710,7 @@ class AuthController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "Redis Key-Value 모두 조회 테스트",
         description = "Redis1_Service1ForceExpireAuthorizationSet 에 저장된 모든 Key-Value 를 조회합니다.\n\n"

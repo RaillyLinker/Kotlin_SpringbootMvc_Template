@@ -57,7 +57,7 @@ class ApiTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "요청 Redirect 테스트 API",
         description = "이 API 를 요청하면 /my-service/tk/sample/request-test 로 Redirect 됩니다.\n\n"
@@ -83,7 +83,7 @@ class ApiTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "요청 Forward 테스트 API",
         description = "이 API 를 요청하면 /my-service/tk/sample/request-test 로 Forward 됩니다.\n\n"
@@ -109,7 +109,7 @@ class ApiTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "Get 요청 테스트 (Query Parameter)",
         description = "Query Parameter 를 받는 Get 메소드 요청 테스트\n\n"
@@ -230,7 +230,7 @@ class ApiTestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Get 요청 테스트 (Path Parameter)",
         description = "Path Parameter 를 받는 Get 메소드 요청 테스트\n\n"
@@ -269,7 +269,7 @@ class ApiTestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Post 요청 테스트 (application-json)",
         description = "application-json 형태의 Request Body 를 받는 Post 메소드 요청 테스트\n\n"
@@ -379,7 +379,7 @@ class ApiTestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Post 요청 테스트 (application-json, 객체 파라미터 포함)",
         description = "application-json 형태의 Request Body(객체 파라미터 포함) 를 받는 Post 메소드 요청 테스트\n\n"
@@ -495,7 +495,7 @@ class ApiTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "Post 요청 테스트 (입출력값 없음)",
         description = "입출력값이 없는 Post 메소드 요청 테스트\n\n"
@@ -524,7 +524,7 @@ class ApiTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "Post 요청 테스트 (x-www-form-urlencoded)",
         description = "x-www-form-urlencoded 형태의 Request Body 를 받는 Post 메소드 요청 테스트\n\n"
@@ -632,7 +632,7 @@ class ApiTestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Post 요청 테스트 (multipart/form-data)",
         description = "multipart/form-data 형태의 Request Body 를 받는 Post 메소드 요청 테스트\n\n" +
@@ -747,7 +747,7 @@ class ApiTestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Post 요청 테스트2 (multipart/form-data)",
         description = "multipart/form-data 형태의 Request Body 를 받는 Post 메소드 요청 테스트(Multipart File List)\n\n" +
@@ -862,7 +862,7 @@ class ApiTestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Post 요청 테스트 (multipart/form-data - JsonString)",
         description = "multipart/form-data 형태의 Request Body 를 받는 Post 메소드 요청 테스트\n\n" +
@@ -1044,7 +1044,7 @@ class ApiTestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "인위적 에러 발생 테스트",
         description = "요청 받으면 인위적인 서버 에러를 발생시킵니다.(Http Response Status 500)\n\n"
@@ -1071,7 +1071,7 @@ class ApiTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "결과 코드 발생 테스트",
         description = "Response Header 에 api-result-code 를 반환하는 테스트 API\n\n"
@@ -1123,7 +1123,7 @@ class ApiTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "인위적 응답 지연 테스트",
         description = "임의로 응답 시간을 지연시킵니다.\n\n"
@@ -1153,7 +1153,7 @@ class ApiTestController(
     }
 
 
-    ////
+    // ----
     // UTF-8 설정을 적용하려면,
     // produces = ["text/plain;charset=utf-8"]
     // produces = ["text/html;charset=utf-8"]
@@ -1185,7 +1185,7 @@ class ApiTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "text/html 반환 샘플",
         description = "text/html 형식의 Response Body 를 반환합니다.\n\n"
@@ -1214,7 +1214,7 @@ class ApiTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "byte 반환 샘플",
         description = " byte array('a', .. , 'f') 에서 아래와 같은 요청으로 원하는 바이트를 요청 가능\n\n" +
@@ -1249,7 +1249,7 @@ class ApiTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "비디오 스트리밍 샘플",
         description = "비디오 스트리밍 샘플\n\n" +
@@ -1286,7 +1286,7 @@ class ApiTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "오디오 스트리밍 샘플",
         description = "오디오 스트리밍 샘플\n\n" +
@@ -1314,7 +1314,7 @@ class ApiTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "비동기 처리 결과 반환 샘플",
         description = "API 호출시 함수 내에서 별도 스레드로 작업을 수행하고,\n\n" +
@@ -1348,7 +1348,7 @@ class ApiTestController(
 
 
     // todo
-//    ////
+//    // ----
 //    @Operation(
 //        summary = "클라이언트가 특정 SSE 이벤트를 구독",
 //        description = "구독 수신 중 연결이 끊어질 경우, 클라이언트가 헤더에 Last-Event-ID 라는 값을 넣어서 다시 요청함\n\n" +
@@ -1381,7 +1381,7 @@ class ApiTestController(
 //    }
 //
 //
-//    ////
+//    // ----
 //    @Operation(
 //        summary = "SSE 이벤트 전송 트리거 테스트",
 //        description = "어떠한 사건이 일어나면 알림을 위하여 SSE 이벤트 전송을 한다고 가정\n\n"
@@ -1407,7 +1407,7 @@ class ApiTestController(
 //    }
 
 
-    ////
+    // ----
     /*
          결론적으로 아래 파라미터는, Query Param 의 경우는 리스트 입력이 ?stringList=string&stringList=string 이런식이므로,
          리스트 파라미터가 Not NULL 이라면 빈 리스트를 보낼 수 없으며,
@@ -1467,7 +1467,7 @@ class ApiTestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "by_product_files 폴더로 파일 업로드",
         description = "multipart File 을 하나 업로드하여 서버의 by_product_files 폴더에 저장\n\n"
@@ -1512,7 +1512,7 @@ class ApiTestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "by_product_files 폴더에서 파일 다운받기",
         description = "업로드 API 를 사용하여 by_product_files 로 업로드한 파일을 다운로드\n\n"

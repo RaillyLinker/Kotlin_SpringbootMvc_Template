@@ -84,7 +84,7 @@ class FileTestService(
     }
 
 
-    ////
+    // ----
     // (폴더 zip 압축 테스트)
     fun folderToZipTest(httpServletResponse: HttpServletResponse) {
         // 프로젝트 루트 경로 (프로젝트 settings.gradle 이 있는 경로)
@@ -119,7 +119,7 @@ class FileTestService(
     }
 
 
-    ////
+    // ----
     // (zip 압축 파일 해제 테스트)
     fun unzipTest(httpServletResponse: HttpServletResponse) {
         // 프로젝트 루트 경로 (프로젝트 settings.gradle 이 있는 경로)
@@ -148,7 +148,7 @@ class FileTestService(
     }
 
 
-    ////
+    // ----
     // (클라이언트 이미지 표시 테스트용 API)
     fun forClientSideImageTest(
         httpServletResponse: HttpServletResponse,
@@ -177,7 +177,7 @@ class FileTestService(
     }
 
 
-    ////
+    // ----
     // (AWS S3 로 파일 업로드)
     fun awsS3UploadTest(
         httpServletResponse: HttpServletResponse,
@@ -224,7 +224,7 @@ class FileTestService(
     }
 
 
-    ////
+    // ----
     // (AWS S3 파일의 내용을 String 으로 가져오기)
     fun getFileContentToStringTest(
         httpServletResponse: HttpServletResponse,
@@ -245,7 +245,7 @@ class FileTestService(
     }
 
 
-    ////
+    // ----
     // (AWS S3 파일을 삭제하기)
     fun deleteAwsS3FileTest(httpServletResponse: HttpServletResponse, deleteFileName: String) {
         // AWS 파일 삭제

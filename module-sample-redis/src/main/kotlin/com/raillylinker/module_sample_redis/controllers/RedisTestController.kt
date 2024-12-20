@@ -75,7 +75,7 @@ class RedisTestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Redis Key-Value 조회 테스트",
         description = "Redis Table 에 저장된 Key-Value 를 조회합니다.\n\n"
@@ -134,7 +134,7 @@ class RedisTestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Redis Key-Value 모두 조회 테스트",
         description = "Redis Table 에 저장된 모든 Key-Value 를 조회합니다.\n\n"
@@ -186,7 +186,7 @@ class RedisTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "Redis Key-Value 삭제 테스트",
         description = "Redis Table 에 저장된 Key 를 삭제합니다.\n\n"
@@ -230,7 +230,7 @@ class RedisTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "Redis Key-Value 모두 삭제 테스트",
         description = "Redis Table 에 저장된 모든 Key 를 삭제합니다.\n\n"
@@ -257,7 +257,7 @@ class RedisTestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "Redis Lock 테스트",
         description = "Redis Lock 을 요청합니다.\n\n"
@@ -304,7 +304,7 @@ class RedisTestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Redis unLock 테스트",
         description = "Redis unLock 을 요청합니다.\n\n"

@@ -57,7 +57,7 @@ class Retrofit2TestService(
     }
 
 
-    ////
+    // ----
     // (Redirect 테스트)
     fun redirectTest(httpServletResponse: HttpServletResponse): String? {
         try {
@@ -84,7 +84,7 @@ class Retrofit2TestService(
     }
 
 
-    ////
+    // ----
     // (Forward 테스트)
     fun forwardTest(httpServletResponse: HttpServletResponse): String? {
         try {
@@ -111,7 +111,7 @@ class Retrofit2TestService(
     }
 
 
-    ////
+    // ----
     // (Get 요청 테스트 (Query Parameter))
     fun getRequestTest(httpServletResponse: HttpServletResponse): Retrofit2TestController.GetRequestTestOutputVo? {
         try {
@@ -160,7 +160,7 @@ class Retrofit2TestService(
     }
 
 
-    ////
+    // ----
     // (Get 요청 테스트 (Path Parameter))
     fun getRequestTestWithPathParam(httpServletResponse: HttpServletResponse): Retrofit2TestController.GetRequestTestWithPathParamOutputVo? {
         try {
@@ -192,7 +192,7 @@ class Retrofit2TestService(
     }
 
 
-    ////
+    // ----
     // (Post 요청 테스트 (Request Body, application/json))
     fun postRequestTestWithApplicationJsonTypeRequestBody(httpServletResponse: HttpServletResponse): Retrofit2TestController.PostRequestTestWithApplicationJsonTypeRequestBodyOutputVo? {
         try {
@@ -244,7 +244,7 @@ class Retrofit2TestService(
     }
 
 
-    ////
+    // ----
     // (Post 요청 테스트 (Request Body, x-www-form-urlencoded))
     fun postRequestTestWithFormTypeRequestBody(httpServletResponse: HttpServletResponse): Retrofit2TestController.PostRequestTestWithFormTypeRequestBodyOutputVo? {
         try {
@@ -294,7 +294,7 @@ class Retrofit2TestService(
     }
 
 
-    ////
+    // ----
     // (Post 요청 테스트 (Request Body, multipart/form-data))
     fun postRequestTestWithMultipartFormTypeRequestBody(httpServletResponse: HttpServletResponse): Retrofit2TestController.PostRequestTestWithMultipartFormTypeRequestBodyOutputVo? {
         try {
@@ -370,7 +370,7 @@ class Retrofit2TestService(
     }
 
 
-    ////
+    // ----
     // (Post 요청 테스트 (Request Body, multipart/form-data, MultipartFile List))
     fun postRequestTestWithMultipartFormTypeRequestBody2(httpServletResponse: HttpServletResponse): Retrofit2TestController.PostRequestTestWithMultipartFormTypeRequestBody2OutputVo? {
         try {
@@ -461,7 +461,7 @@ class Retrofit2TestService(
     }
 
 
-    ////
+    // ----
     // (Post 요청 테스트 (Request Body, multipart/form-data, with jsonString))
     fun postRequestTestWithMultipartFormTypeRequestBody3(httpServletResponse: HttpServletResponse): Retrofit2TestController.PostRequestTestWithMultipartFormTypeRequestBody3OutputVo? {
         try {
@@ -531,7 +531,7 @@ class Retrofit2TestService(
     }
 
 
-    ////
+    // ----
     // (에러 발생 테스트)
     fun generateErrorTest(httpServletResponse: HttpServletResponse) {
         try {
@@ -555,7 +555,7 @@ class Retrofit2TestService(
     }
 
 
-    ////
+    // ----
     // (api-result-code 반환 테스트)
     fun returnResultCodeThroughHeaders(httpServletResponse: HttpServletResponse) {
         try {
@@ -609,7 +609,7 @@ class Retrofit2TestService(
     }
 
 
-    ////
+    // ----
     // (응답 지연 발생 테스트)
     fun responseDelayTest(httpServletResponse: HttpServletResponse, delayTimeSec: Long) {
         try {
@@ -634,7 +634,7 @@ class Retrofit2TestService(
     }
 
 
-    ////
+    // ----
     // (text/string 형식 Response 받아오기)
     fun returnTextStringTest(httpServletResponse: HttpServletResponse): String? {
         try {
@@ -661,7 +661,7 @@ class Retrofit2TestService(
     }
 
 
-    ////
+    // ----
     // (text/html 형식 Response 받아오기)
     fun returnTextHtmlTest(httpServletResponse: HttpServletResponse): String? {
         try {
@@ -688,7 +688,7 @@ class Retrofit2TestService(
     }
 
 
-    ////
+    // ----
     // (DeferredResult Get 요청 테스트)
     fun asynchronousResponseTest(httpServletResponse: HttpServletResponse): Retrofit2TestController.AsynchronousResponseTestOutputVo? {
         try {
@@ -719,7 +719,7 @@ class Retrofit2TestService(
 
 
     // todo
-    ////
+    // ----
     // (SSE 구독 테스트)
 //    fun sseSubscribeTest(httpServletResponse: HttpServletResponse) {
 //        // SSE Subscribe Url 연결 객체 생성
@@ -779,7 +779,7 @@ class Retrofit2TestService(
 //    }
 
 
-    ////
+    // ----
     // (WebSocket 연결 테스트)
     fun websocketConnectTest(httpServletResponse: HttpServletResponse) {
         val client = OkHttpClient()

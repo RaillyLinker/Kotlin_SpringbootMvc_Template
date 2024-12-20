@@ -70,7 +70,7 @@ class Retrofit2TestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "Redirect 테스트",
         description = "Redirect 되었을 때의 응답 테스트입니다.\n\n"
@@ -112,7 +112,7 @@ class Retrofit2TestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "Forward 테스트",
         description = "Forward 되었을 때의 응답 테스트입니다.\n\n"
@@ -154,7 +154,7 @@ class Retrofit2TestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "Get 요청 테스트 (Query Parameter)",
         description = "Query 파라미터를 받는 Get 요청 테스트\n\n"
@@ -237,7 +237,7 @@ class Retrofit2TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Get 요청 테스트 (Path Parameter)",
         description = "Path 파라미터를 받는 Get 요청 테스트\n\n"
@@ -285,7 +285,7 @@ class Retrofit2TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Post 요청 테스트 (Request Body, application/json)",
         description = "application/json 형식의 Request Body 를 받는 Post 요청 테스트\n\n"
@@ -368,7 +368,7 @@ class Retrofit2TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Post 요청 테스트 (Request Body, x-www-form-urlencoded)",
         description = "x-www-form-urlencoded 형식의 Request Body 를 받는 Post 요청 테스트\n\n"
@@ -451,7 +451,7 @@ class Retrofit2TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Post 요청 테스트 (Request Body, multipart/form-data)",
         description = "multipart/form-data 형식의 Request Body 를 받는 Post 요청 테스트\n\n"
@@ -534,7 +534,7 @@ class Retrofit2TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Post 요청 테스트 (Request Body, multipart/form-data, MultipartFile List)",
         description = "multipart/form-data 형식의 Request Body 를 받는 Post 요청 테스트\n\n" +
@@ -618,7 +618,7 @@ class Retrofit2TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "Post 요청 테스트 (Request Body, multipart/form-data, with jsonString)",
         description = "multipart/form-data 형식의 Request Body 를 받는 Post 요청 테스트\n\n" +
@@ -702,7 +702,7 @@ class Retrofit2TestController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "에러 발생 테스트",
         description = "요청시 에러가 발생했을 때의 테스트입니다.\n\n"
@@ -744,7 +744,7 @@ class Retrofit2TestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "api-result-code 반환 테스트",
         description = "api-result-code 가 Response Header 로 반환되는 테스트입니다.\n\n"
@@ -789,7 +789,7 @@ class Retrofit2TestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "응답 지연 발생 테스트",
         description = "요청을 보내어 인위적으로 응답이 지연 되었을 때를 테스트합니다.\n\n"
@@ -834,7 +834,7 @@ class Retrofit2TestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "text/string 형식 Response 받아오기",
         description = "text/string 형식 Response 를 받아옵니다.\n\n"
@@ -878,7 +878,7 @@ class Retrofit2TestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "text/html 형식 Response 받아오기",
         description = "text/html 형식 Response 를 받아옵니다.\n\n"
@@ -922,7 +922,7 @@ class Retrofit2TestController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "DeferredResult Get 요청 테스트",
         description = "결과 반환 지연 Get 메소드 요청 테스트\n\n"
@@ -973,7 +973,7 @@ class Retrofit2TestController(
 
 
     // todo
-//    ////
+//    // ----
 //    @Operation(
 //        summary = "SSE 구독 테스트",
 //        description = "SSE 구독 요청 테스트\n\n" +
@@ -1018,7 +1018,7 @@ class Retrofit2TestController(
 //    }
 
 
-    ////
+    // ----
     @Operation(
         summary = "WebSocket 연결 테스트",
         description = "WebSocket 연결 요청 테스트\n\n" +

@@ -72,7 +72,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (DB Rows 삭제 테스트 API)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteRowsSample(httpServletResponse: HttpServletResponse, deleteLogically: Boolean) {
@@ -92,7 +92,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (DB Row 삭제 테스트)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteRowSample(httpServletResponse: HttpServletResponse, index: Long, deleteLogically: Boolean) {
@@ -117,7 +117,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (DB Rows 조회 테스트)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectRowsSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectRowsSampleOutputVo? {
@@ -171,7 +171,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (DB 테이블의 random_num 컬럼 근사치 기준으로 정렬한 리스트 조회 API)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectRowsOrderByRandomNumSample(
@@ -207,7 +207,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (DB 테이블의 row_create_date 컬럼 근사치 기준으로 정렬한 리스트 조회 API)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectRowsOrderByRowCreateDateSample(
@@ -246,7 +246,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (DB Rows 조회 테스트 (페이징))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectRowsPageSample(
@@ -286,7 +286,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (DB Rows 조회 테스트 (네이티브 쿼리 페이징))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectRowsNativeQueryPageSample(
@@ -328,7 +328,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (DB Row 수정 테스트)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun updateRowSample(
@@ -366,7 +366,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (DB Row 수정 테스트 (네이티브 쿼리))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun updateRowNativeQuerySample(
@@ -397,7 +397,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (DB 정보 검색 테스트)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectRowWhereSearchingKeywordSample(
@@ -438,7 +438,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (트랜젝션 동작 테스트)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun transactionTest(
@@ -456,7 +456,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (트랜젝션 비동작 테스트)
     fun nonTransactionTest(httpServletResponse: HttpServletResponse) {
         db1TemplateTestsRepository.save(
@@ -471,7 +471,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (트랜젝션 비동작 테스트(try-catch))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun tryCatchNonTransactionTest(httpServletResponse: HttpServletResponse) {
@@ -493,7 +493,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (DB Rows 조회 테스트 (중복 없는 네이티브 쿼리 페이징))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectRowsNoDuplicatePagingSample(
@@ -536,7 +536,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (DB Rows 조회 테스트 (카운팅))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectRowsCountSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectRowsCountSampleOutputVo? {
@@ -547,7 +547,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (DB Rows 조회 테스트 (네이티브 카운팅))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectRowsCountByNativeQuerySample(httpServletResponse: HttpServletResponse): JpaTestController.SelectRowsCountByNativeQuerySampleOutputVo? {
@@ -558,7 +558,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (DB Row 조회 테스트 (네이티브))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectRowByNativeQuerySample(
@@ -588,7 +588,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (유니크 테스트 테이블 Row 입력 API)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun insertUniqueTestTableRowSample(
@@ -614,7 +614,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (유니크 테스트 테이블 Rows 조회 테스트)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectUniqueTestTableRowsSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectUniqueTestTableRowsSampleOutputVo? {
@@ -662,7 +662,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (유니크 테스트 테이블 Row 수정 테스트)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun updateUniqueTestTableRowSample(
@@ -708,7 +708,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (유니크 테스트 테이블 Row 삭제 테스트)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteUniqueTestTableRowSample(httpServletResponse: HttpServletResponse, index: Long) {
@@ -729,7 +729,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (외래키 부모 테이블 Row 입력 API)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun insertFkParentRowSample(
@@ -754,7 +754,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (외래키 부모 테이블 아래에 자식 테이블의 Row 입력 API)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun insertFkChildRowSample(
@@ -792,7 +792,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (외래키 관련 테이블 Rows 조회 테스트)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectFkTestTableRowsSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTestTableRowsSampleOutputVo? {
@@ -844,7 +844,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (외래키 관련 테이블 Rows 조회 테스트(Native Join))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectFkTestTableRowsByNativeQuerySample(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo? {
@@ -874,7 +874,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (Native Query 반환값 테스트)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun getNativeQueryReturnValueTest(
@@ -907,7 +907,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (SQL Injection 테스트)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun sqlInjectionTest(
@@ -1001,7 +1001,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (외래키 관련 테이블 Rows 조회 (네이티브 쿼리, 부모 테이블을 자식 테이블의 가장 최근 데이터만 Join))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectFkTableRowsWithLatestChildSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTableRowsWithLatestChildSampleOutputVo? {
@@ -1041,7 +1041,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (외래키 관련 테이블 Rows 조회 (QueryDsl))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectFkTableRowsWithQueryDsl(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTableRowsWithQueryDslOutputVo? {
@@ -1087,7 +1087,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (외래키 관련 테이블 Rows 조회 및 부모 테이블 이름으로 필터링 (QueryDsl))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectFkTableRowsByParentNameFilterWithQueryDsl(
@@ -1136,7 +1136,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (외래키 관련 테이블 부모 테이블 고유번호로 자식 테이블 리스트 검색 (QueryDsl))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectFkTableChildListWithQueryDsl(
@@ -1168,7 +1168,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (외래키 자식 테이블 Row 삭제 테스트)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteFkChildRowSample(httpServletResponse: HttpServletResponse, index: Long) {
@@ -1186,7 +1186,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (외래키 부모 테이블 Row 삭제 테스트 (Cascade 기능 확인))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteFkParentRowSample(httpServletResponse: HttpServletResponse, index: Long) {
@@ -1204,7 +1204,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (외래키 테이블 트랜젝션 동작 테스트)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun fkTableTransactionTest(
@@ -1234,7 +1234,7 @@ class JpaTestService(
     }
 
 
-    ////
+    // ----
     // (외래키 테이블 트랜젝션 비동작 테스트)
     fun fkTableNonTransactionTest(httpServletResponse: HttpServletResponse) {
         val parentEntity = db1TemplateFkTestParentRepository.save(

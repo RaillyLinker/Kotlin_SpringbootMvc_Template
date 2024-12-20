@@ -49,7 +49,7 @@ class RootController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "현재 시간 반환 API",
         description = "서버의 현재 시간을 반환합니다.\n\n"

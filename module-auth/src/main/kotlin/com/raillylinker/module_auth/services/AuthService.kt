@@ -109,7 +109,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (로그인 진입 테스트 <>)
     fun loggedInAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
@@ -123,7 +123,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (ADMIN 권한 진입 테스트 <'ADMIN'>)
     fun adminAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
@@ -137,7 +137,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (Developer 권한 진입 테스트 <'ADMIN' or 'Developer'>)
     fun developerAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
@@ -151,7 +151,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (특정 회원의 발행된 Access 토큰 만료 처리)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun doExpireAccessToken(
@@ -215,7 +215,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (계정 비밀번호 로그인)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun loginWithPassword(
@@ -386,7 +386,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (OAuth2 Code 로 OAuth2 AccessToken 발급)
     fun getOAuth2AccessToken(
         httpServletResponse: HttpServletResponse,
@@ -498,7 +498,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (OAuth2 로그인 (Access Token))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun loginWithOAuth2AccessToken(
@@ -694,7 +694,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (OAuth2 로그인 (ID Token))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun loginWithOAuth2IdToken(
@@ -841,7 +841,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (로그아웃 처리 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun logout(authorization: String, httpServletResponse: HttpServletResponse) {
@@ -892,7 +892,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (토큰 재발급 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun reissueJwt(
@@ -1211,7 +1211,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (멤버의 현재 발행된 모든 토큰 비활성화 (= 모든 기기에서 로그아웃) <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteAllJwtOfAMember(authorization: String, httpServletResponse: HttpServletResponse) {
@@ -1265,7 +1265,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (회원 정보 가져오기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun getMemberInfo(
@@ -1372,7 +1372,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (아이디 중복 검사)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun checkIdDuplicate(
@@ -1386,7 +1386,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (아이디 수정하기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun updateId(httpServletResponse: HttpServletResponse, authorization: String, id: String) {
@@ -1413,7 +1413,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (테스트 회원 회원가입)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun joinTheMembershipForTest(
@@ -1568,7 +1568,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (이메일 회원가입 본인 인증 이메일 발송)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun sendEmailVerificationForJoin(
@@ -1624,7 +1624,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (이메일 회원가입 본인 확인 이메일에서 받은 코드 검증하기)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun checkEmailVerificationForJoin(
@@ -1670,7 +1670,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (이메일 회원가입)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun joinTheMembershipWithEmail(
@@ -1826,7 +1826,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (전화번호 회원가입 본인 인증 문자 발송)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun sendPhoneVerificationForJoin(
@@ -1888,7 +1888,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (전화번호 회원가입 본인 확인 문자에서 받은 코드 검증하기)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun checkPhoneVerificationForJoin(
@@ -1934,7 +1934,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (전화번호 회원가입)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun joinTheMembershipWithPhoneNumber(
@@ -2092,7 +2092,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (OAuth2 AccessToken 으로 회원가입 검증)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun checkOauth2AccessTokenVerificationForJoin(
@@ -2268,7 +2268,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (OAuth2 IdToken 으로 회원가입 검증)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun checkOauth2IdTokenVerificationForJoin(
@@ -2342,7 +2342,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (OAuth2 회원가입)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun joinTheMembershipWithOauth2(
@@ -2523,7 +2523,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (계정 비밀번호 변경 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun updateAccountPassword(
@@ -2620,7 +2620,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (이메일 비밀번호 찾기 본인 인증 이메일 발송)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun sendEmailVerificationForFindPassword(
@@ -2674,7 +2674,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (이메일 비밀번호 찾기 본인 확인 이메일에서 받은 코드 검증하기)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun checkEmailVerificationForFindPassword(
@@ -2722,7 +2722,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (이메일 비밀번호 찾기 완료)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun findPasswordWithEmail(
@@ -2845,7 +2845,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (전화번호 비밀번호 찾기 본인 인증 문자 발송)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun sendPhoneVerificationForFindPassword(
@@ -2905,7 +2905,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (전화번호 비밀번호 찾기 본인 확인 문자에서 받은 코드 검증하기)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun checkPhoneVerificationForFindPassword(
@@ -2953,7 +2953,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (전화번호 비밀번호 찾기 완료)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun findPasswordWithPhoneNumber(
@@ -3083,7 +3083,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (내 이메일 리스트 가져오기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun getMyEmailList(
@@ -3121,7 +3121,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (내 전화번호 리스트 가져오기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun getMyPhoneNumberList(
@@ -3159,7 +3159,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (내 OAuth2 로그인 리스트 가져오기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun getMyOauth2List(
@@ -3197,7 +3197,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (이메일 추가하기 본인 인증 이메일 발송 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun sendEmailVerificationForAddNewEmail(
@@ -3262,7 +3262,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (이메일 추가하기 본인 확인 이메일에서 받은 코드 검증하기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun checkEmailVerificationForAddNewEmail(
@@ -3318,7 +3318,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (이메일 추가하기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun addNewEmail(
@@ -3406,7 +3406,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (내 이메일 제거하기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteMyEmail(
@@ -3489,7 +3489,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (전화번호 추가하기 본인 인증 문자 발송 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun sendPhoneVerificationForAddNewPhoneNumber(
@@ -3561,7 +3561,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (전화번호 추가하기 본인 확인 문자에서 받은 코드 검증하기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun checkPhoneVerificationForAddNewPhoneNumber(
@@ -3616,7 +3616,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (전화번호 추가하기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun addNewPhoneNumber(
@@ -3706,7 +3706,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (내 전화번호 제거하기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteMyPhoneNumber(
@@ -3788,7 +3788,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (OAuth2 추가하기 (Access Token) <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun addNewOauth2WithAccessToken(
@@ -3899,7 +3899,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (OAuth2 추가하기 (Id Token) <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun addNewOauth2WithIdToken(
@@ -3968,7 +3968,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (내 OAuth2 제거하기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteMyOauth2(
@@ -4045,7 +4045,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (회원탈퇴 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun withdrawalMembership(
@@ -4180,7 +4180,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (내 Profile 이미지 정보 리스트 가져오기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun getMyProfileList(
@@ -4220,7 +4220,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (내 대표 Profile 이미지 정보 가져오기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun getMyFrontProfile(
@@ -4259,7 +4259,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (내 대표 프로필 설정하기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun setMyFrontProfile(
@@ -4320,7 +4320,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (내 프로필 삭제 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteMyProfile(
@@ -4367,7 +4367,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (내 프로필 이미지 추가 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun addNewProfile(
@@ -4450,7 +4450,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (by_product_files/member/profile 폴더에서 파일 다운받기)
     fun downloadProfileFile(
         httpServletResponse: HttpServletResponse,
@@ -4493,7 +4493,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (내 대표 이메일 정보 가져오기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun getMyFrontEmail(
@@ -4532,7 +4532,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (내 대표 이메일 설정하기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun setMyFrontEmail(
@@ -4593,7 +4593,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (내 대표 전화번호 정보 가져오기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun getMyFrontPhoneNumber(
@@ -4632,7 +4632,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (내 대표 전화번호 설정하기 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun setMyFrontPhoneNumber(
@@ -4693,7 +4693,7 @@ class AuthService(
     }
 
 
-    ////
+    // ----
     // (Redis Key-Value 모두 조회 테스트)
     fun selectAllRedisKeyValueSample(httpServletResponse: HttpServletResponse): AuthController.SelectAllRedisKeyValueSampleOutputVo? {
         // 전체 조회 테스트

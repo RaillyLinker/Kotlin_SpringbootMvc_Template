@@ -74,7 +74,7 @@ class BoardController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "게시글 리스트 (페이징)",
         description = "게시글 테이블의 정보를 페이징하여 반환합니다.\n\n"
@@ -197,7 +197,7 @@ class BoardController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "게시판 상세 화면",
         description = "게시판 상세 화면의 정보를 요청합니다.\n\n"
@@ -279,7 +279,7 @@ class BoardController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "게시글 수정",
         description = "게시글 하나를 수정합니다.\n\n" +
@@ -339,7 +339,7 @@ class BoardController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "게시글 조회수 1 상승",
         description = "게시글 조회수를 1 상승시킵니다.\n\n" +
@@ -388,7 +388,7 @@ class BoardController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "게시글 삭제",
         description = "게시글을 삭제합니다.\n\n" +
@@ -437,7 +437,7 @@ class BoardController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "댓글 입력 API",
         description = "댓글을 입력합니다.\n\n"
@@ -488,7 +488,7 @@ class BoardController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "댓글 리스트 (페이징)",
         description = "댓글 정보를 페이징하여 반환합니다.\n\n" +
@@ -579,7 +579,7 @@ class BoardController(
     }
 
 
-    ////
+    // ----
     @Operation(
         summary = "댓글 수정",
         description = "댓글 하나를 수정합니다.\n\n" +
@@ -636,7 +636,7 @@ class BoardController(
     )
 
 
-    ////
+    // ----
     @Operation(
         summary = "댓글 삭제",
         description = "댓글을 삭제합니다.\n\n" +

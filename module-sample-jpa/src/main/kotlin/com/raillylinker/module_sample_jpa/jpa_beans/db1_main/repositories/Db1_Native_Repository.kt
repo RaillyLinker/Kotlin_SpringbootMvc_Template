@@ -59,7 +59,7 @@ interface Db1_Native_Repository : JpaRepository<Db1_Template_TestData, Long> {
     }
 
 
-    ////
+    // ----
     @Query(
         nativeQuery = true,
         value = """
@@ -94,7 +94,7 @@ interface Db1_Native_Repository : JpaRepository<Db1_Template_TestData, Long> {
     }
 
 
-    ////
+    // ----
     @Query(
         nativeQuery = true,
         value = """
@@ -138,7 +138,7 @@ interface Db1_Native_Repository : JpaRepository<Db1_Template_TestData, Long> {
     }
 
 
-    ////
+    // ----
     @Modifying // Native Query 에서 Delete, Update 문은 이것을 붙여야함
     @Query(
         nativeQuery = true,
@@ -159,7 +159,7 @@ interface Db1_Native_Repository : JpaRepository<Db1_Template_TestData, Long> {
     )
 
 
-    ////
+    // ----
     // like 문을 사용할 때, replace 로 검색어와 탐색 정보의 공백을 없애줌으로써 공백에 유연한 검색이 가능
     @Query(
         nativeQuery = true,
@@ -204,7 +204,7 @@ interface Db1_Native_Repository : JpaRepository<Db1_Template_TestData, Long> {
     }
 
 
-    ////
+    // ----
     /*
         [중복 없는 페이징 구현 쿼리 설명]
         - 아래 방법은, 논리적 삭제를 사용하는 테이블에만 사용이 가능하며,
@@ -312,7 +312,7 @@ interface Db1_Native_Repository : JpaRepository<Db1_Template_TestData, Long> {
     }
 
 
-    ////
+    // ----
     /*
         forC7N14 에 대해서 전체 카운팅 쿼리를 따로 만들어야 합니다.
         forC7N14 에서 From 문에서 사용하는 서브 쿼리를 제거하고,
@@ -333,7 +333,7 @@ interface Db1_Native_Repository : JpaRepository<Db1_Template_TestData, Long> {
     fun countFromTemplateTestDataByNotDeleted(): Long
 
 
-    ////
+    // ----
     @Query(
         nativeQuery = true,
         value = """
@@ -365,7 +365,7 @@ interface Db1_Native_Repository : JpaRepository<Db1_Template_TestData, Long> {
     }
 
 
-    ////
+    // ----
     @Query(
         nativeQuery = true,
         value = """
@@ -399,7 +399,7 @@ interface Db1_Native_Repository : JpaRepository<Db1_Template_TestData, Long> {
     }
 
 
-    ////
+    // ----
     @Query(
         nativeQuery = true,
         value = """
@@ -445,7 +445,7 @@ interface Db1_Native_Repository : JpaRepository<Db1_Template_TestData, Long> {
     }
 
 
-    ////
+    // ----
     @Query(
         nativeQuery = true,
         value = """
@@ -478,7 +478,7 @@ interface Db1_Native_Repository : JpaRepository<Db1_Template_TestData, Long> {
     }
 
 
-    ////
+    // ----
     /*
         [가장 최근의 자식 테이블만 Join 쿼리 설명]
         1. 가장 외곽의 From 부분은 부모 테이블을 이용하여 정상적으로 필터링을 하면 됩니다.

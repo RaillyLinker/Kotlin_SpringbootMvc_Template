@@ -19,7 +19,7 @@ class Db1_Template_RepositoryDsl(entityManager: EntityManager) {
     private val queryFactory: JPAQueryFactory = JPAQueryFactory(entityManager)
 
 
-    ////
+    // ----
     // (railly_linker_company.sample_board 테이블 페이징)
     fun findPageAllFromBoardByNotDeleted(
         sortingType: GetBoardPageSortingTypeEnum,

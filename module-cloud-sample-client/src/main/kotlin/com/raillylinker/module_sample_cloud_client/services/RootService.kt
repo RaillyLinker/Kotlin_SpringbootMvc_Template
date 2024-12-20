@@ -48,7 +48,7 @@ class RootService(
     )
 
 
-    ////
+    // ----
     // (현재 시간 반환 API)
     fun getCurrentTime(
         httpServletResponse: HttpServletResponse

@@ -72,7 +72,7 @@ class MapCoordinateCalculationService(
     }
 
 
-    ////
+    // ----
     // (두 좌표 사이의 거리를 반환(하버사인 공식))
     fun getDistanceMeterBetweenTwoCoordinate(
         httpServletResponse: HttpServletResponse,
@@ -91,7 +91,7 @@ class MapCoordinateCalculationService(
     }
 
 
-    ////
+    // ----
     // (두 좌표 사이의 거리를 반환(Vincenty 공식))
     fun getDistanceMeterBetweenTwoCoordinateVincenty(
         httpServletResponse: HttpServletResponse,
@@ -110,7 +110,7 @@ class MapCoordinateCalculationService(
     }
 
 
-    ////
+    // ----
     // (좌표들 사이의 중심 좌표를 반환)
     fun returnCenterCoordinate(
         httpServletResponse: HttpServletResponse,
@@ -136,7 +136,7 @@ class MapCoordinateCalculationService(
     }
 
 
-    ////
+    // ----
     // (DB 의 좌표 테이블에 좌표 정보를 저장)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun insertCoordinateDataToDatabase(
@@ -182,7 +182,7 @@ class MapCoordinateCalculationService(
     }
 
 
-    ////
+    // ----
     // (DB 의 좌표 테이블의 모든 데이터 삭제)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteAllCoordinateDataFromDatabase(httpServletResponse: HttpServletResponse) {
@@ -192,7 +192,7 @@ class MapCoordinateCalculationService(
     }
 
 
-    ////
+    // ----
     // (DB 에 저장된 좌표들을 SQL 을 사용하여, 기준 좌표의 N Km 내의 결과만 필터)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectCoordinateDataRowsInRadiusKiloMeterSample(
@@ -228,7 +228,7 @@ class MapCoordinateCalculationService(
     }
 
 
-    ////
+    // ----
     // (DB 에 저장된 좌표들을 SQL 을 사용하여, 북서 좌표에서 남동 좌표까지의 사각 영역 안에 들어오는 좌표들만 필터링하여 반환)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectCoordinateDataRowsInCoordinateBoxSample(

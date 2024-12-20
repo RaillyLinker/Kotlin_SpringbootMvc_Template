@@ -1,6 +1,5 @@
 package com.raillylinker.module_sample_retrofit2.services
 
-import com.raillylinker.module_sample_retrofit2.services.RootService
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

@@ -51,7 +51,7 @@ class SecurityService(
     }
 
 
-    ////
+    // ----
     // (로그인 진입 테스트 <>)
     fun loggedInAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
@@ -65,7 +65,7 @@ class SecurityService(
     }
 
 
-    ////
+    // ----
     // (ADMIN 권한 진입 테스트 <'ADMIN'>)
     fun adminAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
@@ -79,7 +79,7 @@ class SecurityService(
     }
 
 
-    ////
+    // ----
     // (Developer 권한 진입 테스트 <'ADMIN' or 'Developer'>)
     fun developerAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
