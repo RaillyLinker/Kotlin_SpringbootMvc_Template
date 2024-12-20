@@ -112,40 +112,30 @@ class LoggingFilter : OncePerRequestFilter() {
             } else ""
 
             // 로깅 처리
-            // !!!로그 시작 문자 설정!!!
-            val loggingStart = ">>ApiFilterLog>>"
+            val logMessage =
+                """
+                        >>ApiFilterLog>>
+                        {
+                            "request_info" : {
+                                "request_time" : "$requestTime",
+                                "end_point" : "$endpoint",
+                                "client_ip" : "$clientAddressIp",
+                                "request_headers" : "$requestHeaders",
+                                "request_body" : "$requestBody"
+                            },
+                            "response_info" :{
+                                "response_status" : "$responseStatus $responseStatusPhrase",
+                                "processing_duration_ms" : "${Duration.between(requestTime, LocalDateTime.now()).toMillis()}",
+                                "response_headers" : "$responseHeaders",
+                                "response_body" : "$responseBody"
+                            }
+                        }
+                    """.trimIndent()
+
             if (isError) {
-                classLogger.error(
-                    "${loggingStart}\n" + // API 필터로 인한 로그
-                            "requestTime : $requestTime\n" +
-                            "endPoint : $endpoint\n" +
-                            "client Ip : $clientAddressIp\n" +
-                            "request Headers : $requestHeaders\n" +
-                            "request Body : $requestBody\n" +
-                            "->\n" +
-                            "response Status : $responseStatus $responseStatusPhrase\n" +
-                            "processing duration(ms) : ${
-                                Duration.between(requestTime, LocalDateTime.now()).toMillis()
-                            }\n" +
-                            "response Headers : $responseHeaders\n" +
-                            "response Body : $responseBody\n"
-                )
+                classLogger.error(logMessage)
             } else {
-                classLogger.info(
-                    "${loggingStart}\n" + // API 필터로 인한 로그
-                            "requestTime : $requestTime\n" +
-                            "endPoint : $endpoint\n" +
-                            "client Ip : $clientAddressIp\n" +
-                            "request Headers : $requestHeaders\n" +
-                            "request Body : $requestBody\n" +
-                            "->\n" +
-                            "response Status : $responseStatus $responseStatusPhrase\n" +
-                            "processing duration(ms) : ${
-                                Duration.between(requestTime, LocalDateTime.now()).toMillis()
-                            }\n" +
-                            "response Headers : $responseHeaders\n" +
-                            "response Body : $responseBody\n"
-                )
+                classLogger.info(logMessage)
             }
 
             // response 복사
