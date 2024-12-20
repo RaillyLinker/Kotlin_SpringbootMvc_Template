@@ -76,7 +76,7 @@ class SwaggerConfig(
                         "400",
                         ApiResponse()
                             .description(
-                                "클라이언트에서 전달한 Request 변수의 형식이 잘못되었습니다.\n\n" +
+                                "클라이언트에서 전달한 Request 변수의 형식이 잘못되었습니다.<br>" +
                                         "입력 데이터를 다시 한번 확인해주세요"
                             )
                     )
@@ -84,7 +84,7 @@ class SwaggerConfig(
                         "500",
                         ApiResponse()
                             .description(
-                                "서버에서 런타임 에러가 발생하였습니다.\n\n" +
+                                "서버에서 런타임 에러가 발생하였습니다.<br>" +
                                         "서버 개발자에게 에러 상황, 에러 로그 등의 정보를 알려주세요."
                             )
                     )
