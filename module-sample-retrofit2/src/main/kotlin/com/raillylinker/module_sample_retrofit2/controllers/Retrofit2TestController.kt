@@ -31,7 +31,7 @@ class Retrofit2TestController(
     // <매핑 함수 공간>
     @Operation(
         summary = "기본 요청 테스트",
-        description = "기본적인 Get 메소드 요청 테스트입니다.\n\n"
+        description = "기본적인 Get 메소드 요청 테스트입니다."
     )
     @ApiResponses(
         value = [
@@ -42,14 +42,14 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+                                "2 : API 요청시 서버 에러가 발생하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -73,7 +73,7 @@ class Retrofit2TestController(
     // ----
     @Operation(
         summary = "Redirect 테스트",
-        description = "Redirect 되었을 때의 응답 테스트입니다.\n\n"
+        description = "Redirect 되었을 때의 응답 테스트입니다."
     )
     @ApiResponses(
         value = [
@@ -84,14 +84,14 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+                                "2 : API 요청시 서버 에러가 발생하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -115,7 +115,7 @@ class Retrofit2TestController(
     // ----
     @Operation(
         summary = "Forward 테스트",
-        description = "Forward 되었을 때의 응답 테스트입니다.\n\n"
+        description = "Forward 되었을 때의 응답 테스트입니다."
     )
     @ApiResponses(
         value = [
@@ -126,14 +126,14 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+                                "2 : API 요청시 서버 에러가 발생하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -157,7 +157,7 @@ class Retrofit2TestController(
     // ----
     @Operation(
         summary = "Get 요청 테스트 (Query Parameter)",
-        description = "Query 파라미터를 받는 Get 요청 테스트\n\n"
+        description = "Query 파라미터를 받는 Get 요청 테스트"
     )
     @ApiResponses(
         value = [
@@ -168,14 +168,14 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+                                "2 : API 요청시 서버 에러가 발생하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -240,7 +240,7 @@ class Retrofit2TestController(
     // ----
     @Operation(
         summary = "Get 요청 테스트 (Path Parameter)",
-        description = "Path 파라미터를 받는 Get 요청 테스트\n\n"
+        description = "Path 파라미터를 받는 Get 요청 테스트"
     )
     @ApiResponses(
         value = [
@@ -251,14 +251,14 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+                                "2 : API 요청시 서버 에러가 발생하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -288,7 +288,7 @@ class Retrofit2TestController(
     // ----
     @Operation(
         summary = "Post 요청 테스트 (Request Body, application/json)",
-        description = "application/json 형식의 Request Body 를 받는 Post 요청 테스트\n\n"
+        description = "application/json 형식의 Request Body 를 받는 Post 요청 테스트"
     )
     @ApiResponses(
         value = [
@@ -299,14 +299,14 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+                                "2 : API 요청시 서버 에러가 발생하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -371,7 +371,7 @@ class Retrofit2TestController(
     // ----
     @Operation(
         summary = "Post 요청 테스트 (Request Body, x-www-form-urlencoded)",
-        description = "x-www-form-urlencoded 형식의 Request Body 를 받는 Post 요청 테스트\n\n"
+        description = "x-www-form-urlencoded 형식의 Request Body 를 받는 Post 요청 테스트"
     )
     @ApiResponses(
         value = [
@@ -382,14 +382,14 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+                                "2 : API 요청시 서버 에러가 발생하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -454,7 +454,7 @@ class Retrofit2TestController(
     // ----
     @Operation(
         summary = "Post 요청 테스트 (Request Body, multipart/form-data)",
-        description = "multipart/form-data 형식의 Request Body 를 받는 Post 요청 테스트\n\n"
+        description = "multipart/form-data 형식의 Request Body 를 받는 Post 요청 테스트"
     )
     @ApiResponses(
         value = [
@@ -465,14 +465,14 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+                                "2 : API 요청시 서버 에러가 발생하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -537,8 +537,8 @@ class Retrofit2TestController(
     // ----
     @Operation(
         summary = "Post 요청 테스트 (Request Body, multipart/form-data, MultipartFile List)",
-        description = "multipart/form-data 형식의 Request Body 를 받는 Post 요청 테스트\n\n" +
-                "MultipartFile 파라미터를 List 로 받습니다.\n\n"
+        description = "multipart/form-data 형식의 Request Body 를 받는 Post 요청 테스트<br>" +
+                "MultipartFile 파라미터를 List 로 받습니다."
     )
     @ApiResponses(
         value = [
@@ -549,14 +549,14 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+                                "2 : API 요청시 서버 에러가 발생하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -621,8 +621,8 @@ class Retrofit2TestController(
     // ----
     @Operation(
         summary = "Post 요청 테스트 (Request Body, multipart/form-data, with jsonString)",
-        description = "multipart/form-data 형식의 Request Body 를 받는 Post 요청 테스트\n\n" +
-                "파일 외의 파라미터를 JsonString 형식으로 받습니다.\n\n"
+        description = "multipart/form-data 형식의 Request Body 를 받는 Post 요청 테스트<br>" +
+                "파일 외의 파라미터를 JsonString 형식으로 받습니다."
     )
     @ApiResponses(
         value = [
@@ -633,14 +633,14 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+                                "2 : API 요청시 서버 에러가 발생하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -705,7 +705,7 @@ class Retrofit2TestController(
     // ----
     @Operation(
         summary = "에러 발생 테스트",
-        description = "요청시 에러가 발생했을 때의 테스트입니다.\n\n"
+        description = "요청시 에러가 발생했을 때의 테스트입니다."
     )
     @ApiResponses(
         value = [
@@ -716,14 +716,14 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+                                "2 : API 요청시 서버 에러가 발생하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -747,7 +747,7 @@ class Retrofit2TestController(
     // ----
     @Operation(
         summary = "api-result-code 반환 테스트",
-        description = "api-result-code 가 Response Header 로 반환되는 테스트입니다.\n\n"
+        description = "api-result-code 가 Response Header 로 반환되는 테스트입니다."
     )
     @ApiResponses(
         value = [
@@ -758,17 +758,17 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : 네트워크 에러\n\n" +
-                                "2 : 서버 에러\n\n" +
-                                "3 : errorType 을 A 로 보냈습니다.\n\n" +
-                                "4 : errorType 을 B 로 보냈습니다.\n\n" +
-                                "5 : errorType 을 C 로 보냈습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : 네트워크 에러<br>" +
+                                "2 : 서버 에러<br>" +
+                                "3 : errorType 을 A 로 보냈습니다.<br>" +
+                                "4 : errorType 을 B 로 보냈습니다.<br>" +
+                                "5 : errorType 을 C 로 보냈습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -792,7 +792,7 @@ class Retrofit2TestController(
     // ----
     @Operation(
         summary = "응답 지연 발생 테스트",
-        description = "요청을 보내어 인위적으로 응답이 지연 되었을 때를 테스트합니다.\n\n"
+        description = "요청을 보내어 인위적으로 응답이 지연 되었을 때를 테스트합니다."
     )
     @ApiResponses(
         value = [
@@ -803,14 +803,14 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+                                "2 : API 요청시 서버 에러가 발생하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -837,7 +837,7 @@ class Retrofit2TestController(
     // ----
     @Operation(
         summary = "text/string 형식 Response 받아오기",
-        description = "text/string 형식 Response 를 받아옵니다.\n\n"
+        description = "text/string 형식 Response 를 받아옵니다."
     )
     @ApiResponses(
         value = [
@@ -848,14 +848,14 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+                                "2 : API 요청시 서버 에러가 발생하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -881,7 +881,7 @@ class Retrofit2TestController(
     // ----
     @Operation(
         summary = "text/html 형식 Response 받아오기",
-        description = "text/html 형식 Response 를 받아옵니다.\n\n"
+        description = "text/html 형식 Response 를 받아옵니다."
     )
     @ApiResponses(
         value = [
@@ -892,14 +892,14 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+                                "2 : API 요청시 서버 에러가 발생하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -925,7 +925,7 @@ class Retrofit2TestController(
     // ----
     @Operation(
         summary = "DeferredResult Get 요청 테스트",
-        description = "결과 반환 지연 Get 메소드 요청 테스트\n\n"
+        description = "결과 반환 지연 Get 메소드 요청 테스트"
     )
     @ApiResponses(
         value = [
@@ -936,14 +936,14 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+                                "2 : API 요청시 서버 에러가 발생하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -976,8 +976,8 @@ class Retrofit2TestController(
 //    // ----
 //    @Operation(
 //        summary = "SSE 구독 테스트",
-//        description = "SSE 구독 요청 테스트\n\n" +
-//                "SSE 를 구독하여 백그라운드에서 실행합니다.\n\n"
+//        description = "SSE 구독 요청 테스트<br>" +
+//                "SSE 를 구독하여 백그라운드에서 실행합니다."
 //    )
 //    @ApiResponses(
 //        value = [
@@ -988,14 +988,14 @@ class Retrofit2TestController(
 //            ApiResponse(
 //                responseCode = "204",
 //                content = [Content()],
-//                description = "Response Body 가 없습니다.\n\n" +
+//                description = "Response Body 가 없습니다.<br>" +
 //                        "Response Headers 를 확인하세요.",
 //                headers = [
 //                    Header(
 //                        name = "api-result-code",
-//                        description = "(Response Code 반환 원인) - Required\n\n" +
-//                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-//                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+//                        description = "(Response Code 반환 원인) - Required<br>" +
+//                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+//                                "2 : API 요청시 서버 에러가 발생하였습니다.",
 //                        schema = Schema(type = "string")
 //                    )
 //                ]
@@ -1021,8 +1021,8 @@ class Retrofit2TestController(
     // ----
     @Operation(
         summary = "WebSocket 연결 테스트",
-        description = "WebSocket 연결 요청 테스트\n\n" +
-                "WebSocket 을 연결 하여 백그라운드에서 실행합니다.\n\n"
+        description = "WebSocket 연결 요청 테스트<br>" +
+                "WebSocket 을 연결 하여 백그라운드에서 실행합니다."
     )
     @ApiResponses(
         value = [
@@ -1033,14 +1033,14 @@ class Retrofit2TestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : API 요청시 네트워크 에러가 발생하였습니다.\n\n" +
-                                "2 : API 요청시 서버 에러가 발생하였습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : API 요청시 네트워크 에러가 발생하였습니다.<br>" +
+                                "2 : API 요청시 서버 에러가 발생하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]

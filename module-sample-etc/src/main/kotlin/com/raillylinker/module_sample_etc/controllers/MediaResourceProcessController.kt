@@ -35,8 +35,8 @@ class MediaResourceProcessController(
     // <매핑 함수 공간>
     @Operation(
         summary = "정적 이미지 파일(지원 타입은 description 에 후술)을 업로드 하여 리사이징 후 다운",
-        description = "multipart File 로 받은 이미지 파일을 업로드 하여 리사이징 후 다운\n\n" +
-                "지원 타입 : jpg, jpeg, bmp, png, gif(움직이지 않는 타입)\n\n"
+        description = "multipart File 로 받은 이미지 파일을 업로드 하여 리사이징 후 다운<br>" +
+                "지원 타입 : jpg, jpeg, bmp, png, gif(움직이지 않는 타입)"
     )
     @ApiResponses(
         value = [
@@ -47,13 +47,13 @@ class MediaResourceProcessController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : multipartImageFile 이 지원하는 타입의 이미지 파일이 아닙니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : multipartImageFile 이 지원하는 타입의 이미지 파일이 아닙니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -95,7 +95,7 @@ class MediaResourceProcessController(
     // ----
     @Operation(
         summary = "서버에 저장된 움직이는 Gif 이미지 파일에서 프레임을 PNG 이미지 파일로 분리한 후 by_product_files/test 폴더 안에 저장",
-        description = "서버에 저장된 움직이는 Gif 이미지 파일에서 프레임을 PNG 이미지 파일로 분리한 후 by_product_files/test 폴더 안에 저장\n\n"
+        description = "서버에 저장된 움직이는 Gif 이미지 파일에서 프레임을 PNG 이미지 파일로 분리한 후 by_product_files/test 폴더 안에 저장"
     )
     @ApiResponses(
         value = [
@@ -122,7 +122,7 @@ class MediaResourceProcessController(
     // ----
     @Operation(
         summary = "서버에 저장된 움직이는 PNG 이미지 프레임들을 움직이는 Gif 파일로 병합 후 by_product_files/test 폴더 안에 저장",
-        description = "서버에 저장된 움직이는 PNG 이미지 프레임들을 움직이는 Gif 파일로 병합 후 by_product_files/test 폴더 안에 저장\n\n"
+        description = "서버에 저장된 움직이는 PNG 이미지 프레임들을 움직이는 Gif 파일로 병합 후 by_product_files/test 폴더 안에 저장"
     )
     @ApiResponses(
         value = [
@@ -149,7 +149,7 @@ class MediaResourceProcessController(
     // ----
     @Operation(
         summary = "동적 GIF 이미지 파일을 업로드 하여 리사이징 후 다운",
-        description = "multipart File 로 받은 움직이는 GIF 이미지 파일을 업로드 하여 리사이징 후 다운\n\n"
+        description = "multipart File 로 받은 움직이는 GIF 이미지 파일을 업로드 하여 리사이징 후 다운"
     )
     @ApiResponses(
         value = [
@@ -160,13 +160,13 @@ class MediaResourceProcessController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : multipartImageFile 이 지원하는 타입의 이미지 파일이 아닙니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : multipartImageFile 이 지원하는 타입의 이미지 파일이 아닙니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -205,7 +205,7 @@ class MediaResourceProcessController(
     // ----
     @Operation(
         summary = "서명 생성 테스트",
-        description = "입력받은 문자열을 투명 배경 서명 이미지로 만들어 by_product_files/test 폴더에 저장\n\n"
+        description = "입력받은 문자열을 투명 배경 서명 이미지로 만들어 by_product_files/test 폴더에 저장"
     )
     @ApiResponses(
         value = [

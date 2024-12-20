@@ -26,7 +26,7 @@ class SecurityController(
     // <매핑 함수 공간>
     @Operation(
         summary = "비 로그인 접속 테스트",
-        description = "비 로그인 접속 테스트용 API\n\n"
+        description = "비 로그인 접속 테스트용 API"
     )
     @ApiResponses(
         value = [
@@ -53,7 +53,7 @@ class SecurityController(
     // ----
     @Operation(
         summary = "로그인 진입 테스트 <>",
-        description = "로그인 되어 있어야 진입 가능\n\n"
+        description = "로그인 되어 있어야 진입 가능"
     )
     @ApiResponses(
         value = [
@@ -64,7 +64,7 @@ class SecurityController(
             ApiResponse(
                 responseCode = "401",
                 content = [Content()],
-                description = "인증되지 않은 접근입니다.\n\n"
+                description = "인증되지 않은 접근입니다."
             )
         ]
     )
@@ -89,7 +89,7 @@ class SecurityController(
     // ----
     @Operation(
         summary = "ADMIN 권한 진입 테스트 <'ADMIN'>",
-        description = "ADMIN 권한이 있어야 진입 가능\n\n"
+        description = "ADMIN 권한이 있어야 진입 가능"
     )
     @ApiResponses(
         value = [
@@ -100,7 +100,7 @@ class SecurityController(
             ApiResponse(
                 responseCode = "401",
                 content = [Content()],
-                description = "인증되지 않은 접근입니다.\n\n"
+                description = "인증되지 않은 접근입니다."
             ),
             ApiResponse(
                 responseCode = "403",
@@ -130,7 +130,7 @@ class SecurityController(
     // ----
     @Operation(
         summary = "Developer 권한 진입 테스트 <'ADMIN' or 'Developer'>",
-        description = "Developer 권한이 있어야 진입 가능\n\n"
+        description = "Developer 권한이 있어야 진입 가능"
     )
     @ApiResponses(
         value = [
@@ -141,7 +141,7 @@ class SecurityController(
             ApiResponse(
                 responseCode = "401",
                 content = [Content()],
-                description = "인증되지 않은 접근입니다.\n\n"
+                description = "인증되지 않은 접근입니다."
             ),
             ApiResponse(
                 responseCode = "403",

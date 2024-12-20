@@ -38,7 +38,7 @@ class RedisTestController(
     // <매핑 함수 공간>
     @Operation(
         summary = "Redis Key-Value 입력 테스트",
-        description = "Redis 테이블에 Key-Value 를 입력합니다.\n\n"
+        description = "Redis 테이블에 Key-Value 를 입력합니다."
     )
     @ApiResponses(
         value = [
@@ -78,7 +78,7 @@ class RedisTestController(
     // ----
     @Operation(
         summary = "Redis Key-Value 조회 테스트",
-        description = "Redis Table 에 저장된 Key-Value 를 조회합니다.\n\n"
+        description = "Redis Table 에 저장된 Key-Value 를 조회합니다."
     )
     @ApiResponses(
         value = [
@@ -89,13 +89,13 @@ class RedisTestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : key 에 저장된 데이터가 존재하지 않습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : key 에 저장된 데이터가 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -137,7 +137,7 @@ class RedisTestController(
     // ----
     @Operation(
         summary = "Redis Key-Value 모두 조회 테스트",
-        description = "Redis Table 에 저장된 모든 Key-Value 를 조회합니다.\n\n"
+        description = "Redis Table 에 저장된 모든 Key-Value 를 조회합니다."
     )
     @ApiResponses(
         value = [
@@ -189,7 +189,7 @@ class RedisTestController(
     // ----
     @Operation(
         summary = "Redis Key-Value 삭제 테스트",
-        description = "Redis Table 에 저장된 Key 를 삭제합니다.\n\n"
+        description = "Redis Table 에 저장된 Key 를 삭제합니다."
     )
     @ApiResponses(
         value = [
@@ -200,13 +200,13 @@ class RedisTestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : key 에 저장된 데이터가 존재하지 않습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : key 에 저장된 데이터가 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -233,7 +233,7 @@ class RedisTestController(
     // ----
     @Operation(
         summary = "Redis Key-Value 모두 삭제 테스트",
-        description = "Redis Table 에 저장된 모든 Key 를 삭제합니다.\n\n"
+        description = "Redis Table 에 저장된 모든 Key 를 삭제합니다."
     )
     @ApiResponses(
         value = [
@@ -260,7 +260,7 @@ class RedisTestController(
     // ----
     @Operation(
         summary = "Redis Lock 테스트",
-        description = "Redis Lock 을 요청합니다.\n\n"
+        description = "Redis Lock 을 요청합니다."
     )
     @ApiResponses(
         value = [
@@ -271,13 +271,13 @@ class RedisTestController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : Redis Lock 상태\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : Redis Lock 상태",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -307,7 +307,7 @@ class RedisTestController(
     // ----
     @Operation(
         summary = "Redis unLock 테스트",
-        description = "Redis unLock 을 요청합니다.\n\n"
+        description = "Redis unLock 을 요청합니다."
     )
     @ApiResponses(
         value = [

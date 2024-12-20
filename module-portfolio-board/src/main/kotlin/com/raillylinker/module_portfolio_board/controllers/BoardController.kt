@@ -29,7 +29,7 @@ class BoardController(
     // <매핑 함수 공간>
     @Operation(
         summary = "게시글 입력 API",
-        description = "게시글을 입력합니다.\n\n"
+        description = "게시글을 입력합니다."
     )
     @ApiResponses(
         value = [
@@ -77,7 +77,7 @@ class BoardController(
     // ----
     @Operation(
         summary = "게시글 리스트 (페이징)",
-        description = "게시글 테이블의 정보를 페이징하여 반환합니다.\n\n"
+        description = "게시글 테이블의 정보를 페이징하여 반환합니다."
     )
     @ApiResponses(
         value = [
@@ -200,7 +200,7 @@ class BoardController(
     // ----
     @Operation(
         summary = "게시판 상세 화면",
-        description = "게시판 상세 화면의 정보를 요청합니다.\n\n"
+        description = "게시판 상세 화면의 정보를 요청합니다."
     )
     @ApiResponses(
         value = [
@@ -211,13 +211,13 @@ class BoardController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : boardUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : boardUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -282,8 +282,8 @@ class BoardController(
     // ----
     @Operation(
         summary = "게시글 수정",
-        description = "게시글 하나를 수정합니다.\n\n" +
-                "본인 게시글이 아니라면 204 코드 1 이 반환\n\n"
+        description = "게시글 하나를 수정합니다.<br>" +
+                "본인 게시글이 아니라면 204 코드 1 이 반환"
     )
     @ApiResponses(
         value = [
@@ -294,13 +294,13 @@ class BoardController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : boardUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : boardUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -342,9 +342,9 @@ class BoardController(
     // ----
     @Operation(
         summary = "게시글 조회수 1 상승",
-        description = "게시글 조회수를 1 상승시킵니다.\n\n" +
-                "본인 게시글이 아니라면 204 코드 1 이 반환\n\n" +
-                "동일 ip 의 상승은 몇시간 후에 가능\n\n"
+        description = "게시글 조회수를 1 상승시킵니다.<br>" +
+                "본인 게시글이 아니라면 204 코드 1 이 반환<br>" +
+                "동일 ip 의 상승은 몇시간 후에 가능"
     )
     @ApiResponses(
         value = [
@@ -355,13 +355,13 @@ class BoardController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : testTableUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : testTableUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -391,8 +391,8 @@ class BoardController(
     // ----
     @Operation(
         summary = "게시글 삭제",
-        description = "게시글을 삭제합니다.\n\n" +
-                "본인 게시글이 아니라면 204 코드 1 이 반환\n\n"
+        description = "게시글을 삭제합니다.<br>" +
+                "본인 게시글이 아니라면 204 코드 1 이 반환"
     )
     @ApiResponses(
         value = [
@@ -403,13 +403,13 @@ class BoardController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : boardUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : boardUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -440,7 +440,7 @@ class BoardController(
     // ----
     @Operation(
         summary = "댓글 입력 API",
-        description = "댓글을 입력합니다.\n\n"
+        description = "댓글을 입력합니다."
     )
     @ApiResponses(
         value = [
@@ -491,8 +491,8 @@ class BoardController(
     // ----
     @Operation(
         summary = "댓글 리스트 (페이징)",
-        description = "댓글 정보를 페이징하여 반환합니다.\n\n" +
-                "댓글 리스트는 최신순, 대댓글 리스트는 오래된 순으로 정렬\n\n"
+        description = "댓글 정보를 페이징하여 반환합니다.<br>" +
+                "댓글 리스트는 최신순, 대댓글 리스트는 오래된 순으로 정렬"
     )
     @ApiResponses(
         value = [
@@ -582,8 +582,8 @@ class BoardController(
     // ----
     @Operation(
         summary = "댓글 수정",
-        description = "댓글 하나를 수정합니다.\n\n" +
-                "본인 댓글이 아니라면 204 코드 1 이 반환\n\n"
+        description = "댓글 하나를 수정합니다.<br>" +
+                "본인 댓글이 아니라면 204 코드 1 이 반환"
     )
     @ApiResponses(
         value = [
@@ -594,13 +594,13 @@ class BoardController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : commentUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : commentUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -639,8 +639,8 @@ class BoardController(
     // ----
     @Operation(
         summary = "댓글 삭제",
-        description = "댓글을 삭제합니다.\n\n" +
-                "본인 댓글이 아니라면 204 코드 1 이 반환\n\n"
+        description = "댓글을 삭제합니다.<br>" +
+                "본인 댓글이 아니라면 204 코드 1 이 반환"
     )
     @ApiResponses(
         value = [
@@ -651,13 +651,13 @@ class BoardController(
             ApiResponse(
                 responseCode = "204",
                 content = [Content()],
-                description = "Response Body 가 없습니다.\n\n" +
+                description = "Response Body 가 없습니다.<br>" +
                         "Response Headers 를 확인하세요.",
                 headers = [
                     Header(
                         name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required\n\n" +
-                                "1 : commentUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.\n\n",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : commentUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]

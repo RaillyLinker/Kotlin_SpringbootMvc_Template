@@ -31,7 +31,7 @@ class KafkaTestController(
     // <매핑 함수 공간>
     @Operation(
         summary = "Kafka 토픽 메세지 발행 테스트",
-        description = "Kafka 토픽 메세지를 발행합니다.\n\n"
+        description = "Kafka 토픽 메세지를 발행합니다."
     )
     @ApiResponses(
         value = [
