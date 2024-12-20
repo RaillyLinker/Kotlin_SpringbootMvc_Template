@@ -26,7 +26,7 @@ class RootController(
     // <매핑 함수 공간>
     @Operation(
         summary = "루트 홈페이지",
-        description = "루트 홈페이지를 반환합니다.\n\n"
+        description = "루트 홈페이지를 반환합니다."
     )
     @ApiResponses(
         value = [
@@ -52,7 +52,7 @@ class RootController(
     // ----
     @Operation(
         summary = "현재 시간 반환 API",
-        description = "서버의 현재 시간을 반환합니다.\n\n"
+        description = "서버의 현재 시간을 반환합니다."
     )
     @ApiResponses(
         value = [
