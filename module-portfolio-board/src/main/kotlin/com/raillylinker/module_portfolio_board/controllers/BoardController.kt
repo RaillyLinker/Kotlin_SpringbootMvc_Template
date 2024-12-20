@@ -127,14 +127,32 @@ class BoardController(
             example = "DESC"
         )
         @RequestParam("sortingDirectionEnum")
-        sortingDirectionEnum: GetBoardPageSortingDirectionEnum
+        sortingDirectionEnum: GetBoardPageSortingDirectionEnum,
+        @Parameter(
+            name = "searchTypeEnum",
+            description = """
+                검색 기준(
+                    WRITER : 게시글 작성자,
+                    TITLE : 게시글 제목,
+                    TITLE_OR_CONTENT : 게시글 제목 혹은 본문 내용
+                )
+            """,
+            example = "WRITER"
+        )
+        @RequestParam("searchTypeEnum")
+        searchTypeEnum: GetBoardPageSearchTypeEnum?,
+        @Parameter(name = "searchKeyword", description = "검색 키워드", example = "테스트")
+        @RequestParam("searchKeyword")
+        searchKeyword: String?
     ): GetBoardPageOutputVo? {
         return service.getBoardPage(
             httpServletResponse,
             page,
             pageElementsCount,
             sortingTypeEnum,
-            sortingDirectionEnum
+            sortingDirectionEnum,
+            searchTypeEnum,
+            searchKeyword
         )
     }
 
@@ -144,6 +162,12 @@ class BoardController(
         TITLE,
         VIEW_COUNT,
         WRITER_USER_NICKNAME
+    }
+
+    enum class GetBoardPageSearchTypeEnum {
+        WRITER,
+        TITLE,
+        TITLE_OR_CONTENT
     }
 
     enum class GetBoardPageSortingDirectionEnum {

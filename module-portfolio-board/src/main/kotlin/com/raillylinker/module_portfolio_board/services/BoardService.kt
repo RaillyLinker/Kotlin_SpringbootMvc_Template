@@ -84,13 +84,17 @@ class BoardService(
         page: Int,
         pageElementsCount: Int,
         sortingTypeEnum: BoardController.GetBoardPageSortingTypeEnum,
-        sortingDirectionEnum: BoardController.GetBoardPageSortingDirectionEnum
+        sortingDirectionEnum: BoardController.GetBoardPageSortingDirectionEnum,
+        searchTypeEnum: BoardController.GetBoardPageSearchTypeEnum?,
+        searchKeyword: String?
     ): BoardController.GetBoardPageOutputVo? {
         val pageable: Pageable = PageRequest.of(page - 1, pageElementsCount)
         val entityList = db1TemplateRepositoryDsl.findPageAllFromBoardByNotDeleted(
             sortingTypeEnum,
             sortingDirectionEnum,
-            pageable
+            pageable,
+            searchTypeEnum,
+            searchKeyword
         )
 
         val boardItemVoList =

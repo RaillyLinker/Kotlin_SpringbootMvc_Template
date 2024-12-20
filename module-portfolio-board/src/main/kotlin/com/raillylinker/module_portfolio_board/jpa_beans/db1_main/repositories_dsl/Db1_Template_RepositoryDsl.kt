@@ -1,7 +1,9 @@
 package com.raillylinker.module_portfolio_board.jpa_beans.db1_main.repositories_dsl
 
 import com.querydsl.core.types.Projections
+import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
+import com.raillylinker.module_portfolio_board.controllers.BoardController
 import com.raillylinker.module_portfolio_board.controllers.BoardController.GetBoardPageSortingDirectionEnum
 import com.raillylinker.module_portfolio_board.controllers.BoardController.GetBoardPageSortingTypeEnum
 import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.entities.QDb1_RaillyLinkerCompany_SampleBoard
@@ -24,7 +26,9 @@ class Db1_Template_RepositoryDsl(entityManager: EntityManager) {
     fun findPageAllFromBoardByNotDeleted(
         sortingType: GetBoardPageSortingTypeEnum,
         sortingDirection: GetBoardPageSortingDirectionEnum,
-        pageable: Pageable
+        pageable: Pageable,
+        searchTypeEnum: BoardController.GetBoardPageSearchTypeEnum?,
+        searchKeyword: String?
     ): Page<FindPageAllFromTemplateTestDataByNotDeletedWithRandomNumDistanceOutputVo> {
         // Q 엔티티
         val sampleBoard = QDb1_RaillyLinkerCompany_SampleBoard.db1_RaillyLinkerCompany_SampleBoard
@@ -46,6 +50,24 @@ class Db1_Template_RepositoryDsl(entityManager: EntityManager) {
         } else {
             orderBy.desc()
         }
+
+        // 동적 검색 조건 생성
+        val searchCondition: BooleanExpression? = when (searchTypeEnum) {
+            BoardController.GetBoardPageSearchTypeEnum.WRITER -> totalAuthMember.accountId.containsIgnoreCase(
+                searchKeyword
+            )
+
+            BoardController.GetBoardPageSearchTypeEnum.TITLE -> sampleBoard.boardTitle.containsIgnoreCase(searchKeyword)
+            BoardController.GetBoardPageSearchTypeEnum.TITLE_OR_CONTENT -> sampleBoard.boardTitle.containsIgnoreCase(
+                searchKeyword
+            )
+                .or(sampleBoard.boardContent.containsIgnoreCase(searchKeyword))
+
+            null -> null
+        }
+
+        // 기본 조건
+        val baseCondition = sampleBoard.rowDeleteDateStr.eq("/")
 
         val query = queryFactory.select(
             Projections.bean(
@@ -69,7 +91,7 @@ class Db1_Template_RepositoryDsl(entityManager: EntityManager) {
                 totalAuthMemberProfile.rowDeleteDateStr.eq("/")
                     .and(totalAuthMemberProfile.eq(totalAuthMember.frontTotalAuthMemberProfile))
             )
-            .where(sampleBoard.rowDeleteDateStr.eq("/"))
+            .where(baseCondition.and(searchCondition))
             .orderBy(orderSpecifier)
 
         // Pageable 처리
@@ -82,9 +104,14 @@ class Db1_Template_RepositoryDsl(entityManager: EntityManager) {
         val results = queryWithPagination.fetch()
 
         // 전체 데이터 수 가져오기
-        val totalCount = queryFactory.selectFrom(sampleBoard)
-            .where(sampleBoard.rowDeleteDateStr.eq("/"))
-            .fetchCount()
+        val totalCount = queryFactory.select(sampleBoard.count())
+            .from(sampleBoard)
+            .innerJoin(totalAuthMember).on(
+                totalAuthMember.rowDeleteDateStr.eq("/")
+                    .and(totalAuthMember.eq(sampleBoard.totalAuthMember))
+            )
+            .where(baseCondition.and(searchCondition))
+            .fetchOne() ?: 0L
 
         return PageImpl(results, pageable, totalCount)
     }
