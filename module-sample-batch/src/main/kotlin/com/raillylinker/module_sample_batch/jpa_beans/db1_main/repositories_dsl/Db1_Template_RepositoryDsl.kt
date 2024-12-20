@@ -1,4 +1,10 @@
 package com.raillylinker.module_sample_batch.jpa_beans.db1_main.repositories_dsl
 
-interface Db1_Template_RepositoryDsl {
+import com.querydsl.jpa.impl.JPAQueryFactory
+import jakarta.persistence.EntityManager
+import org.springframework.stereotype.Repository
+
+@Repository
+class Db1_Template_RepositoryDsl(entityManager: EntityManager) {
+    private val queryFactory: JPAQueryFactory = JPAQueryFactory(entityManager)
 }
