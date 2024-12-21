@@ -135,7 +135,7 @@ class RedisTestService(
     // ----
     // (Redis Lock 테스트)
     fun tryRedisLockSample(httpServletResponse: HttpServletResponse): RedisTestController.TryRedisLockSampleOutputVo? {
-        val lockKey = redis1LockTest.tryLock(100000)
+        val lockKey = redis1LockTest.tryLock("test", 100000)
         if (lockKey == null) {
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
@@ -150,7 +150,7 @@ class RedisTestService(
     // ----
     // (Redis unLock 테스트)
     fun unLockRedisLockSample(httpServletResponse: HttpServletResponse, lockKey: String) {
-        redis1LockTest.unlock(lockKey)
+        redis1LockTest.unlock("test", lockKey)
         httpServletResponse.status = HttpStatus.OK.value()
     }
 }

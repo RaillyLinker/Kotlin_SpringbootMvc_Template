@@ -12,8 +12,14 @@ abstract class BasicRedisLock(
 
     // <공개 메소드 공간>
     // (락 획득 메소드 - Lua 스크립트 적용)
-    fun tryLock(expireTimeMs: Long): String? {
+    fun tryLock(
+        key: String,
+        expireTimeMs: Long
+    ): String? {
         val uuid = UUID.randomUUID().toString()
+
+        // Redis Storage 에 실제로 저장 되는 키 (map 이름과 키를 합친 String)
+        val innerKey = "$mapName:${key}" // 실제 저장되는 키 = 그룹명:키
 
         val scriptResult = if (expireTimeMs < 0) {
             // 만료시간 무한
@@ -28,7 +34,7 @@ abstract class BasicRedisLock(
                     """.trimIndent(),
                     Long::class.java
                 ),
-                listOf(mapName),
+                listOf(innerKey),
                 uuid
             )
         } else {
@@ -45,7 +51,7 @@ abstract class BasicRedisLock(
                     """.trimIndent(),
                     Long::class.java
                 ),
-                listOf(mapName),
+                listOf(innerKey),
                 uuid,
                 expireTimeMs.toString()
             )
@@ -61,7 +67,13 @@ abstract class BasicRedisLock(
     }
 
     // (락 해제 메소드 - Lua 스크립트 적용)
-    fun unlock(uuid: String) {
+    fun unlock(
+        key: String,
+        uuid: String
+    ) {
+        // Redis Storage 에 실제로 저장 되는 키 (map 이름과 키를 합친 String)
+        val innerKey = "$mapName:${key}" // 실제 저장되는 키 = 그룹명:키
+
         redisTemplateObj.execute(
             RedisScript.of(
                 """
@@ -73,13 +85,17 @@ abstract class BasicRedisLock(
                 """.trimIndent(),
                 Long::class.java
             ),
-            listOf(mapName),
+            listOf(innerKey),
             uuid
         )
     }
 
     // (락 강제 삭제)
-    fun deleteLock() {
-        redisTemplateObj.delete(mapName)
+    fun deleteLock(
+        key: String
+    ) {
+        val innerKey = "$mapName:${key}" // 실제 저장되는 키 = 그룹명:키
+
+        redisTemplateObj.delete(innerKey)
     }
 }
