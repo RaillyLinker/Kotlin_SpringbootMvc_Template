@@ -617,10 +617,10 @@ class ApiTestService(
             )
         }
 
-        val inputObjectList: ArrayList<ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody4InputVo.InputObject> = arrayListOf()
+        val inputObjectList: ArrayList<ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody4OutputVo.InputObject> = arrayListOf()
         for (inputObject in inputVo.inputObjectList) {
             inputObjectList.add(
-                ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody4InputVo.InputObject(
+                ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody4OutputVo.InputObject(
                     inputObject.requestFormString,
                     inputObject.requestFormInt
                 )
