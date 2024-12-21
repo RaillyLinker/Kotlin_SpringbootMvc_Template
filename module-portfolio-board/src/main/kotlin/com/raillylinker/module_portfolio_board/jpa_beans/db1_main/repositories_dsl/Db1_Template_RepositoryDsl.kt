@@ -52,18 +52,25 @@ class Db1_Template_RepositoryDsl(entityManager: EntityManager) {
         }
 
         // 동적 검색 조건 생성
-        val searchCondition: BooleanExpression? = when (searchTypeEnum) {
-            BoardController.GetBoardPageSearchTypeEnum.WRITER -> totalAuthMember.accountId.containsIgnoreCase(
-                searchKeyword
-            )
+        val searchCondition: BooleanExpression? = if (searchKeyword == null) {
+            null
+        } else {
+            when (searchTypeEnum) {
+                BoardController.GetBoardPageSearchTypeEnum.WRITER -> totalAuthMember.accountId.containsIgnoreCase(
+                    searchKeyword
+                )
 
-            BoardController.GetBoardPageSearchTypeEnum.TITLE -> sampleBoard.boardTitle.containsIgnoreCase(searchKeyword)
-            BoardController.GetBoardPageSearchTypeEnum.TITLE_OR_CONTENT -> sampleBoard.boardTitle.containsIgnoreCase(
-                searchKeyword
-            )
-                .or(sampleBoard.boardContent.containsIgnoreCase(searchKeyword))
+                BoardController.GetBoardPageSearchTypeEnum.TITLE -> sampleBoard.boardTitle.containsIgnoreCase(
+                    searchKeyword
+                )
 
-            null -> null
+                BoardController.GetBoardPageSearchTypeEnum.TITLE_OR_CONTENT -> sampleBoard.boardTitle.containsIgnoreCase(
+                    searchKeyword
+                )
+                    .or(sampleBoard.boardContent.containsIgnoreCase(searchKeyword))
+
+                null -> null
+            }
         }
 
         // 기본 조건

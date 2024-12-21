@@ -1,6 +1,8 @@
 package com.raillylinker.module_portfolio_board.jpa_beans.db1_main.repositories
 
+import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_SampleBoard
 import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_SampleBoardComment
+import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_TotalAuthMember
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
@@ -9,4 +11,15 @@ import org.springframework.stereotype.Repository
 @Repository
 interface Db1_RaillyLinkerCompany_SampleBoardComment_Repository :
     JpaRepository<Db1_RaillyLinkerCompany_SampleBoardComment, Long> {
+    fun findByUidAndSampleBoardAndRowDeleteDateStr(
+        uid: Long,
+        sampleBoard: Db1_RaillyLinkerCompany_SampleBoard,
+        rowDeleteDateStr: String
+    ): Db1_RaillyLinkerCompany_SampleBoardComment?
+
+    fun findByUidAndTotalAuthMemberAndRowDeleteDateStr(
+        uid: Long,
+        totalAuthMember: Db1_RaillyLinkerCompany_TotalAuthMember,
+        rowDeleteDateStr: String
+    ): Db1_RaillyLinkerCompany_SampleBoardComment?
 }

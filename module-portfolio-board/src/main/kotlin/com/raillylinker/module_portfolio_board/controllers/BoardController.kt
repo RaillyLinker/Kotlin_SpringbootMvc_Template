@@ -36,6 +36,11 @@ class BoardController(
             ApiResponse(
                 responseCode = "200",
                 description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
             )
         ]
     )
@@ -304,7 +309,6 @@ class BoardController(
 
 
     // ----
-    // todo
     @Operation(
         summary = "게시글 수정",
         description = "게시글 하나를 수정합니다.<br>" +
@@ -329,13 +333,18 @@ class BoardController(
                         schema = Schema(type = "string")
                     )
                 ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
             )
         ]
     )
     @PutMapping(
         path = ["/board/{boardUid}"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
+        produces = [MediaType.ALL_VALUE]
     )
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
@@ -351,7 +360,7 @@ class BoardController(
         @RequestBody
         inputVo: UpdateBoardInputVo
     ) {
-        return service.updateBoard(httpServletResponse, authorization, boardUid, inputVo)
+        return service.updateBoard(httpServletResponse, authorization!!, boardUid, inputVo)
     }
 
     data class UpdateBoardInputVo(
@@ -396,8 +405,8 @@ class BoardController(
     )
     @PatchMapping(
         path = ["/board/{boardUid}/view_count_1up"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.ALL_VALUE]
     )
     @ResponseBody
     fun updateBoardViewCount1Up(
@@ -410,12 +419,11 @@ class BoardController(
         @PathVariable("boardUid")
         boardUid: Long
     ) {
-        return service.updateBoardViewCount1Up(httpServletResponse, authorization, boardUid)
+        return service.updateBoardViewCount1Up(httpServletResponse, authorization!!, boardUid)
     }
 
 
     // ----
-    // todo
     @Operation(
         summary = "게시글 삭제",
         description = "게시글을 삭제합니다.<br>" +
@@ -440,13 +448,18 @@ class BoardController(
                         schema = Schema(type = "string")
                     )
                 ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
             )
         ]
     )
     @DeleteMapping(
         path = ["/board/{boardUid}"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.ALL_VALUE]
     )
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
@@ -460,12 +473,11 @@ class BoardController(
         @PathVariable("boardUid")
         boardUid: Long
     ) {
-        return service.deleteBoard(httpServletResponse, authorization, boardUid)
+        return service.deleteBoard(httpServletResponse, authorization!!, boardUid)
     }
 
 
     // ----
-    // todo
     @Operation(
         summary = "댓글 입력 API",
         description = "댓글을 입력합니다."
@@ -475,6 +487,26 @@ class BoardController(
             ApiResponse(
                 responseCode = "200",
                 description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : boardUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : commentUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
             )
         ]
     )
@@ -609,7 +641,6 @@ class BoardController(
 
 
     // ----
-    // todo
     @Operation(
         summary = "댓글 수정",
         description = "댓글 하나를 수정합니다.<br>" +
@@ -634,13 +665,18 @@ class BoardController(
                         schema = Schema(type = "string")
                     )
                 ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
             )
         ]
     )
     @PutMapping(
         path = ["/comment/{commentUid}"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
+        produces = [MediaType.ALL_VALUE]
     )
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
@@ -656,7 +692,7 @@ class BoardController(
         @RequestBody
         inputVo: UpdateCommentInputVo
     ) {
-        return service.updateComment(httpServletResponse, authorization, commentUid, inputVo)
+        return service.updateComment(httpServletResponse, authorization!!, commentUid, inputVo)
     }
 
     data class UpdateCommentInputVo(
@@ -667,7 +703,6 @@ class BoardController(
 
 
     // ----
-    // todo
     @Operation(
         summary = "댓글 삭제",
         description = "댓글을 삭제합니다.<br>" +
@@ -692,13 +727,18 @@ class BoardController(
                         schema = Schema(type = "string")
                     )
                 ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
             )
         ]
     )
     @DeleteMapping(
         path = ["/comment/{commentUid}"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.ALL_VALUE]
     )
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
@@ -712,6 +752,6 @@ class BoardController(
         @PathVariable("commentUid")
         commentUid: Long
     ) {
-        return service.deleteComment(httpServletResponse, authorization, commentUid)
+        return service.deleteComment(httpServletResponse, authorization!!, commentUid)
     }
 }

@@ -1,6 +1,7 @@
 package com.raillylinker.module_portfolio_board.jpa_beans.db1_main.repositories
 
 import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_SampleBoard
+import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_TotalAuthMember
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
@@ -11,6 +12,12 @@ interface Db1_RaillyLinkerCompany_SampleBoard_Repository :
     JpaRepository<Db1_RaillyLinkerCompany_SampleBoard, Long> {
     fun findByUidAndRowDeleteDateStr(
         uid: Long,
+        rowDeleteDateStr: String
+    ): Db1_RaillyLinkerCompany_SampleBoard?
+
+    fun findByUidAndTotalAuthMemberAndRowDeleteDateStr(
+        uid: Long,
+        totalAuthMember: Db1_RaillyLinkerCompany_TotalAuthMember,
         rowDeleteDateStr: String
     ): Db1_RaillyLinkerCompany_SampleBoard?
 }

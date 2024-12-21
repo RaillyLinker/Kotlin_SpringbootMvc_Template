@@ -5,6 +5,7 @@ import com.raillylinker.module_portfolio_board.configurations.SecurityConfig.Aut
 import com.raillylinker.module_portfolio_board.controllers.BoardController
 import com.raillylinker.module_portfolio_board.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_SampleBoard
+import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_SampleBoardComment
 import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.repositories.*
 import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.repositories_dsl.Db1_Template_RepositoryDsl
 import com.raillylinker.module_portfolio_board.util_components.JwtTokenUtil
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -167,25 +169,34 @@ class BoardService(
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun updateBoard(
         httpServletResponse: HttpServletResponse,
-        authorization: String?,
-        testTableUid: Long,
+        authorization: String,
+        boardUid: Long,
         inputVo: BoardController.UpdateBoardInputVo
     ) {
-//        val oldEntity = db1TemplateTestsRepository.findByUidAndRowDeleteDateStr(testTableUid, "/")
-//
-//        if (oldEntity == null || oldEntity.rowDeleteDateStr != "/") {
-//            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-//            httpServletResponse.setHeader("api-result-code", "1")
-//            return null
-//        }
-//
-//        oldEntity.content = inputVo.content
-//        oldEntity.testDatetime =
-//            ZonedDateTime.parse(inputVo.dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-//                .toLocalDateTime()
-//
-//        val result = db1TemplateTestsRepository.save(oldEntity)
-        // todo
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+        val memberData =
+            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        val boardEntity = db1RaillyLinkerCompanySampleBoardRepository.findByUidAndTotalAuthMemberAndRowDeleteDateStr(
+            boardUid,
+            memberData,
+            "/"
+        )
+
+        if (boardEntity == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        boardEntity.boardTitle = inputVo.title
+        boardEntity.boardContent = inputVo.content
+
+        db1RaillyLinkerCompanySampleBoardRepository.save(boardEntity)
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
@@ -196,7 +207,7 @@ class BoardService(
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun updateBoardViewCount1Up(
         httpServletResponse: HttpServletResponse,
-        authorization: String?,
+        authorization: String,
         testTableUid: Long
     ) {
         // todo
@@ -210,10 +221,34 @@ class BoardService(
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteBoard(
         httpServletResponse: HttpServletResponse,
-        authorization: String?,
-        testTableUid: Long
+        authorization: String,
+        boardUid: Long
     ) {
-        // todo
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+        val memberData =
+            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        val boardEntity = db1RaillyLinkerCompanySampleBoardRepository.findByUidAndTotalAuthMemberAndRowDeleteDateStr(
+            boardUid,
+            memberData,
+            "/"
+        )
+
+        if (boardEntity == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        boardEntity.rowDeleteDateStr =
+            LocalDateTime.now().atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+
+        db1RaillyLinkerCompanySampleBoardRepository.save(boardEntity)
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
@@ -232,11 +267,52 @@ class BoardService(
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
             AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
         )
-        // todo
+        val memberData =
+            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        val boardEntity = db1RaillyLinkerCompanySampleBoardRepository.findByUidAndTotalAuthMemberAndRowDeleteDateStr(
+            inputVo.boardUid,
+            memberData,
+            "/"
+        )
+
+        if (boardEntity == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        val commentEntity = if (inputVo.commentUid == null) {
+            null
+        } else {
+            val commentResult =
+                db1RaillyLinkerCompanySampleBoardCommentRepository.findByUidAndSampleBoardAndRowDeleteDateStr(
+                    inputVo.commentUid,
+                    boardEntity,
+                    "/"
+                )
+
+            if (commentResult == null) {
+                httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                httpServletResponse.setHeader("api-result-code", "2")
+                return null
+            }
+
+            commentResult
+        }
+
+        val db1RaillylinkerCompanySampleBoardComment = db1RaillyLinkerCompanySampleBoardCommentRepository.save(
+            Db1_RaillyLinkerCompany_SampleBoardComment(
+                memberData,
+                boardEntity,
+                commentEntity,
+                inputVo.content
+            )
+        )
 
         httpServletResponse.status = HttpStatus.OK.value()
         return BoardController.CreateCommentOutputVo(
-            1 // todo
+            db1RaillylinkerCompanySampleBoardComment.uid!!
         )
     }
 
@@ -266,11 +342,34 @@ class BoardService(
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun updateComment(
         httpServletResponse: HttpServletResponse,
-        authorization: String?,
+        authorization: String,
         commentUid: Long,
         inputVo: BoardController.UpdateCommentInputVo
     ) {
-        // todo
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+        val memberData =
+            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        val commentEntity =
+            db1RaillyLinkerCompanySampleBoardCommentRepository.findByUidAndTotalAuthMemberAndRowDeleteDateStr(
+                commentUid,
+                memberData,
+                "/"
+            )
+
+        if (commentEntity == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        commentEntity.commentContent = inputVo.content
+
+        db1RaillyLinkerCompanySampleBoardCommentRepository.save(commentEntity)
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
@@ -281,10 +380,35 @@ class BoardService(
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteComment(
         httpServletResponse: HttpServletResponse,
-        authorization: String?,
+        authorization: String,
         commentUid: Long
     ) {
-        // todo
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+        val memberData =
+            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        val commentEntity =
+            db1RaillyLinkerCompanySampleBoardCommentRepository.findByUidAndTotalAuthMemberAndRowDeleteDateStr(
+                commentUid,
+                memberData,
+                "/"
+            )
+
+        if (commentEntity == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        commentEntity.rowDeleteDateStr =
+            LocalDateTime.now().atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+
+        db1RaillyLinkerCompanySampleBoardCommentRepository.save(commentEntity)
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
