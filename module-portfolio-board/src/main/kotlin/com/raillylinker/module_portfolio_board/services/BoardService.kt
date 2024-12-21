@@ -327,12 +327,35 @@ class BoardService(
         page: Int,
         pageElementsCount: Int
     ): BoardController.GetCommentPageOutputVo? {
-        // todo
+        val pageable: Pageable = PageRequest.of(page - 1, pageElementsCount)
+        val entityList = db1TemplateRepositoryDsl.findPageAllFromBoardCommentByNotDeleted(
+            boardUid,
+            commentUid,
+            pageable
+        )
+
+        val boardCommentItemVoList =
+            ArrayList<BoardController.GetCommentPageOutputVo.CommentItemVo>()
+        for (entity in entityList) {
+            boardCommentItemVoList.add(
+                BoardController.GetCommentPageOutputVo.CommentItemVo(
+                    entity.commentUid,
+                    entity.content,
+                    entity.createDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    entity.updateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    entity.writerUserUid,
+                    entity.writerUserNickname,
+                    entity.writerUserProfileFullUrl
+                )
+            )
+        }
 
         httpServletResponse.status = HttpStatus.OK.value()
         return BoardController.GetCommentPageOutputVo(
-            1, // todo
-            listOf()
+            entityList.totalElements,
+            boardCommentItemVoList
         )
     }
 
