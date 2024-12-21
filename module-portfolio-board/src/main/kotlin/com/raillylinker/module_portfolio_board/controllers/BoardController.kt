@@ -374,7 +374,6 @@ class BoardController(
 
 
     // ----
-    // todo
     @Operation(
         summary = "게시글 조회수 1 상승",
         description = "게시글 조회수를 1 상승시킵니다.<br>" +
@@ -412,14 +411,11 @@ class BoardController(
     fun updateBoardViewCount1Up(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
         @Parameter(name = "boardUid", description = "수정할 게시글 고유번호", example = "1")
         @PathVariable("boardUid")
         boardUid: Long
     ) {
-        return service.updateBoardViewCount1Up(httpServletResponse, authorization!!, boardUid)
+        return service.updateBoardViewCount1Up(httpServletResponse, boardUid)
     }
 
 

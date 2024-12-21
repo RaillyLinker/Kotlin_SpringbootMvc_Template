@@ -8,6 +8,7 @@ import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.entities.Db1_R
 import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_SampleBoardComment
 import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.repositories.*
 import com.raillylinker.module_portfolio_board.jpa_beans.db1_main.repositories_dsl.Db1_Template_RepositoryDsl
+import com.raillylinker.module_portfolio_board.redis_map_components.redis1_main.Redis1_Lock_BoardView
 import com.raillylinker.module_portfolio_board.util_components.JwtTokenUtil
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
@@ -21,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 @Service
 class BoardService(
@@ -39,10 +42,15 @@ class BoardService(
     private val db1RaillyLinkerCompanyTotalAuthMemberProfileRepository: Db1_RaillyLinkerCompany_TotalAuthMemberProfile_Repository,
 
     // (Database Repository DSL)
-    private val db1TemplateRepositoryDsl: Db1_Template_RepositoryDsl
+    private val db1TemplateRepositoryDsl: Db1_Template_RepositoryDsl,
+
+    private val redis1LockBoardView: Redis1_Lock_BoardView
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
+
+    // (스레드 풀)
+    private val executorService: ExecutorService = Executors.newCachedThreadPool()
 
 
     // ---------------------------------------------------------------------------------------------
@@ -204,15 +212,52 @@ class BoardService(
 
     // ----
     // (게시글 조회수 1 상승)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun updateBoardViewCount1Up(
         httpServletResponse: HttpServletResponse,
-        authorization: String,
-        testTableUid: Long
+        boardUid: Long
     ) {
-        // todo
+        // 바로 업데이트 작업 위임
+        executorService.execute {
+            updateBoardViewCount1UpInAsync(boardUid)
+        }
 
         httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+    // 게시글 조회수 상승 공유락 처리 함수
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun updateBoardViewCount1UpInAsync(
+        boardUid: Long
+    ) {
+        var lockKey: String? = null
+
+        while (lockKey == null) {
+            // 공유 락을 얻을 때 까지 반복
+            lockKey = redis1LockBoardView.tryLock("$boardUid", 100000)
+            if (lockKey == null) {
+                // 공유 락을 못 얻었다면 0.5초 대기
+                Thread.sleep(500L)
+            }
+        }
+
+        try {
+            // 락 획득 후 기존 viewCount 조회 후 수정
+            val boardEntity = db1RaillyLinkerCompanySampleBoardRepository.findByUidAndRowDeleteDateStr(
+                boardUid,
+                "/"
+            )
+
+            if (boardEntity == null) {
+                return
+            }
+
+            boardEntity.viewCount += 1
+
+            db1RaillyLinkerCompanySampleBoardRepository.save(boardEntity)
+        } finally {
+            // 작업 완료로 인한 락 반납
+            redis1LockBoardView.unlock("$boardUid", lockKey)
+        }
     }
 
 
