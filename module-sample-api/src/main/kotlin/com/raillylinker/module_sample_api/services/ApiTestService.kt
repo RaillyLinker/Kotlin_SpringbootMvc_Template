@@ -536,6 +536,105 @@ class ApiTestService(
 
 
     // ----
+    // (Post 요청 테스트 (multipart/form-data - ObjectList))
+    fun postRequestTestWithMultipartFormTypeRequestBody4(
+        httpServletResponse: HttpServletResponse,
+        inputVo: ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody4InputVo
+    ): ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody4OutputVo? {
+        // 파일 저장 기본 디렉토리 경로
+        val saveDirectoryPath: Path = Paths.get("./by_product_files/sample_api/test").toAbsolutePath().normalize()
+
+        // 파일 저장 기본 디렉토리 생성
+        Files.createDirectories(saveDirectoryPath)
+
+        // 원본 파일명(with suffix)
+        val multiPartFileNameString = StringUtils.cleanPath(inputVo.multipartFile.originalFilename!!)
+
+        // 파일 확장자 구분 위치
+        val fileExtensionSplitIdx = multiPartFileNameString.lastIndexOf('.')
+
+        // 확장자가 없는 파일명
+        val fileNameWithOutExtension: String
+        // 확장자
+        val fileExtension: String
+
+        if (fileExtensionSplitIdx == -1) {
+            fileNameWithOutExtension = multiPartFileNameString
+            fileExtension = ""
+        } else {
+            fileNameWithOutExtension = multiPartFileNameString.substring(0, fileExtensionSplitIdx)
+            fileExtension =
+                multiPartFileNameString.substring(fileExtensionSplitIdx + 1, multiPartFileNameString.length)
+        }
+
+        // multipartFile 을 targetPath 에 저장
+        inputVo.multipartFile.transferTo(
+            // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
+            saveDirectoryPath.resolve(
+                "${fileNameWithOutExtension}(${
+                    LocalDateTime.now().atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                }).$fileExtension"
+            ).normalize()
+        )
+
+        if (inputVo.multipartFileNullable != null) {
+            // 원본 파일명(with suffix)
+            val multiPartFileNullableNameString =
+                StringUtils.cleanPath(inputVo.multipartFileNullable.originalFilename!!)
+
+            // 파일 확장자 구분 위치
+            val nullableFileExtensionSplitIdx = multiPartFileNullableNameString.lastIndexOf('.')
+
+            // 확장자가 없는 파일명
+            val nullableFileNameWithOutExtension: String
+            // 확장자
+            val nullableFileExtension: String
+
+            if (nullableFileExtensionSplitIdx == -1) {
+                nullableFileNameWithOutExtension = multiPartFileNullableNameString
+                nullableFileExtension = ""
+            } else {
+                nullableFileNameWithOutExtension =
+                    multiPartFileNullableNameString.substring(0, nullableFileExtensionSplitIdx)
+                nullableFileExtension =
+                    multiPartFileNullableNameString.substring(
+                        nullableFileExtensionSplitIdx + 1,
+                        multiPartFileNullableNameString.length
+                    )
+            }
+
+            // multipartFile 을 targetPath 에 저장
+            inputVo.multipartFileNullable.transferTo(
+                // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
+                saveDirectoryPath.resolve(
+                    "${nullableFileNameWithOutExtension}(${
+                        LocalDateTime.now().format(
+                            DateTimeFormatter.ofPattern("yyyy-MM-dd-HH_mm-ss-SSS")
+                        )
+                    }).$nullableFileExtension"
+                ).normalize()
+            )
+        }
+
+        val inputObjectList: ArrayList<ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody4InputVo.InputObject> = arrayListOf()
+        for (inputObject in inputVo.inputObjectList) {
+            inputObjectList.add(
+                ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody4InputVo.InputObject(
+                    inputObject.requestFormString,
+                    inputObject.requestFormInt
+                )
+            )
+        }
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return ApiTestController.PostRequestTestWithMultipartFormTypeRequestBody4OutputVo(
+            inputObjectList
+        )
+    }
+
+
+    // ----
     // (인위적 에러 발생 테스트)
     fun generateErrorTest(httpServletResponse: HttpServletResponse) {
         throw RuntimeException("Test Error")

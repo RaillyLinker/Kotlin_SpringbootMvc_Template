@@ -1048,6 +1048,82 @@ class ApiTestController(
 
     // ----
     @Operation(
+        summary = "Post 요청 테스트 (multipart/form-data - ObjectList)",
+        description = "multipart/form-data 형태의 Request Body 를 받는 Post 메소드 요청 테스트<br>" +
+                "Form Data 의 Input Body 에는 Object 리스트 타입은 Swagger 테스터에서는 사용 불가능입니다.<br>" +
+                "테스트 시에는 postman 과 같은 테스터에서 inputObjectList[0].requestFormString 이렇게 하여 값을 입력하면 됩니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/post-request-multipart-form-data-object-list"],
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun postRequestTestWithMultipartFormTypeRequestBody4(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @ModelAttribute
+        @RequestBody
+        inputVo: PostRequestTestWithMultipartFormTypeRequestBody4InputVo
+    ): PostRequestTestWithMultipartFormTypeRequestBody4OutputVo? {
+        return service.postRequestTestWithMultipartFormTypeRequestBody4(httpServletResponse, inputVo)
+    }
+
+    data class PostRequestTestWithMultipartFormTypeRequestBody4InputVo(
+        @Schema(
+            description = "Object List",
+            required = true
+        )
+        @JsonProperty("inputObjectList")
+        val inputObjectList: List<InputObject>,
+        @Schema(description = "멀티 파트 파일", required = true)
+        @JsonProperty("multipartFile")
+        val multipartFile: MultipartFile,
+        @Schema(description = "멀티 파트 파일 Nullable", required = false)
+        @JsonProperty("multipartFileNullable")
+        val multipartFileNullable: MultipartFile?
+    ) {
+        @Schema(description = "InputObject")
+        data class InputObject(
+            @Schema(description = "String Form 파라미터", required = true, example = "testString")
+            @JsonProperty("requestFormString")
+            val requestFormString: String,
+            @Schema(description = "Int Form 파라미터", required = true, example = "1")
+            @JsonProperty("requestFormInt")
+            val requestFormInt: Int
+        )
+    }
+
+    data class PostRequestTestWithMultipartFormTypeRequestBody4OutputVo(
+        @Schema(
+            description = "Object List",
+            required = true
+        )
+        @JsonProperty("inputObjectList")
+        val inputObjectList: List<InputObject>
+    ) {
+        @Schema(description = "InputObject")
+        data class InputObject(
+            @Schema(description = "String Form 파라미터", required = true, example = "testString")
+            @JsonProperty("requestFormString")
+            val requestFormString: String,
+            @Schema(description = "Int Form 파라미터", required = true, example = "1")
+            @JsonProperty("requestFormInt")
+            val requestFormInt: Int
+        )
+    }
+
+
+    // ----
+    @Operation(
         summary = "인위적 에러 발생 테스트",
         description = "요청 받으면 인위적인 서버 에러를 발생시킵니다.(Http Response Status 500)"
     )
