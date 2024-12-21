@@ -124,6 +124,6 @@ class Db1_Template_RepositoryDsl(entityManager: EntityManager) {
         var viewCount: Long = 0L,
         var writerUserUid: Long = 0L,
         var writerUserNickname: String = "",
-        var writerUserProfileFullUrl: String = ""
+        var writerUserProfileFullUrl: String? = null
     )
 }

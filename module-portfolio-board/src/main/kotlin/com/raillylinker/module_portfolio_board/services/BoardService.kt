@@ -131,17 +131,33 @@ class BoardService(
         httpServletResponse: HttpServletResponse,
         boardUid: Long
     ): BoardController.GetBoardDetailOutputVo? {
+        val boardEntity = db1RaillyLinkerCompanySampleBoardRepository.findByUidAndRowDeleteDateStr(
+            boardUid,
+            "/"
+        )
+
+        if (boardEntity == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo
         return BoardController.GetBoardDetailOutputVo(
-            "null",
-            "null",
-            "null",
-            "null",
-            1,
-            1,
-            1,
-            "null"
+            boardEntity.boardTitle,
+            boardEntity.boardContent,
+            boardEntity.rowCreateDate!!.atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+            boardEntity.rowUpdateDate!!.atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+            boardEntity.viewCount,
+            boardEntity.totalAuthMember.uid!!,
+            boardEntity.totalAuthMember.accountId,
+            if (boardEntity.totalAuthMember.frontTotalAuthMemberProfile == null) {
+                null
+            } else {
+                boardEntity.totalAuthMember.frontTotalAuthMemberProfile!!.imageFullUrl
+            }
         )
     }
 
