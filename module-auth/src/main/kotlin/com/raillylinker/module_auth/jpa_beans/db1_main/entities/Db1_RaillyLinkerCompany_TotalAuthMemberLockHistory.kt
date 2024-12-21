@@ -36,7 +36,7 @@ class Db1_RaillyLinkerCompany_TotalAuthMemberLockHistory(
     var lockReason: String,
 
     @Column(name = "early_release", nullable = true, columnDefinition = "DATETIME(3)")
-    @Comment("수동으로 계정 정지를 해제한 시간 (이 값이 null 이 아니라면 계정 정지 헤제로 봅니다.)")
+    @Comment("수동으로 계정 정지를 해제한 시간 (이 값이 null 이 아니라면 계정 정지 해제로 봅니다.)")
     var earlyRelease: LocalDateTime?
 ) {
     @Id

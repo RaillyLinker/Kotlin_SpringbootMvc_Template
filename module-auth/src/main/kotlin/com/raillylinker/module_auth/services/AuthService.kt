@@ -14,6 +14,7 @@ import com.raillylinker.module_auth.configurations.SecurityConfig.AuthTokenFilte
 import com.raillylinker.module_auth.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_REFRESH_TOKEN_EXPIRATION_TIME_SEC
 import com.raillylinker.module_auth.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_SECRET_KEY_STRING
 import com.raillylinker.module_auth.controllers.AuthController
+import com.raillylinker.module_auth.jpa_beans.db1_main.repositories_dsl.Db1_RaillyLinkerCompany_RepositoryDsl
 import com.raillylinker.module_auth.util_components.AppleOAuthHelperUtil
 import com.raillylinker.module_auth.util_components.JwtTokenUtil
 import jakarta.servlet.http.HttpServletResponse
@@ -70,7 +71,9 @@ class AuthService(
     private val db1RaillyLinkerCompanyTotalAuthAddPhoneVerificationRepository: Db1_RaillyLinkerCompany_TotalAuthAddPhoneVerification_Repository,
     private val db1RaillyLinkerCompanyTotalAuthMemberProfileRepository: Db1_RaillyLinkerCompany_TotalAuthMemberProfile_Repository,
     private val db1RaillyLinkerCompanyTotalAuthLogInTokenHistoryRepository: Db1_RaillyLinkerCompany_TotalAuthLogInTokenHistory_Repository,
-    private val db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepository: Db1_RaillyLinkerCompany_TotalAuthMemberLockHistory_Repository
+    private val db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepository: Db1_RaillyLinkerCompany_TotalAuthMemberLockHistory_Repository,
+
+    private val db1RaillyLinkerCompanyRepositoryDsl: Db1_RaillyLinkerCompany_RepositoryDsl
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -288,7 +291,8 @@ class AuthService(
         }
 
         // 계정 정지 검증
-        val lockList = db1NativeRepository.findAllNowActivateMemberLockInfo(memberData.uid!!, LocalDateTime.now())
+        val lockList =
+            db1RaillyLinkerCompanyRepositoryDsl.findAllNowActivateMemberLockInfo(memberData.uid!!, LocalDateTime.now())
         if (lockList.isNotEmpty()) {
             // 계정 정지 당한 상황
             val lockedOutputList: MutableList<AuthController.LoginOutputVo.LockedOutput> =
@@ -593,7 +597,7 @@ class AuthService(
 
         // 계정 정지 검증
         val lockList =
-            db1NativeRepository.findAllNowActivateMemberLockInfo(
+            db1RaillyLinkerCompanyRepositoryDsl.findAllNowActivateMemberLockInfo(
                 snsOauth2.totalAuthMember.uid!!,
                 LocalDateTime.now()
             )
@@ -740,7 +744,7 @@ class AuthService(
 
         // 계정 정지 검증
         val lockList =
-            db1NativeRepository.findAllNowActivateMemberLockInfo(
+            db1RaillyLinkerCompanyRepositoryDsl.findAllNowActivateMemberLockInfo(
                 snsOauth2.totalAuthMember.uid!!,
                 LocalDateTime.now()
             )
@@ -978,7 +982,7 @@ class AuthService(
 
                 // 정지 여부 파악
                 val lockList =
-                    db1NativeRepository.findAllNowActivateMemberLockInfo(
+                    db1RaillyLinkerCompanyRepositoryDsl.findAllNowActivateMemberLockInfo(
                         memberData.uid!!,
                         LocalDateTime.now()
                     )

@@ -2,10 +2,7 @@ package com.raillylinker.module_auth.jpa_beans.db1_main.repositories
 
 import com.raillylinker.module_auth.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_TotalAuthMember
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Query
-import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
-import java.time.LocalDateTime
 
 // 주의 : NativeRepository 의 반환값으로 기본 Entity 객체는 매핑되지 않으므로 OutputVo Interface 를 작성하여 사용할것.
 // Output Interface 변수에 is 로 시작되는 변수는 매핑이 안되므로 사용하지 말것.
@@ -21,49 +18,49 @@ import java.time.LocalDateTime
  */
 @Repository
 interface Db1_Native_Repository : JpaRepository<Db1_RaillyLinkerCompany_TotalAuthMember, Long> {
-    @Query(
-        nativeQuery = true,
-        value = """
-            SELECT 
-            total_auth_member_lock_history.uid AS uid, 
-            total_auth_member_lock_history.lock_reason_code AS lockReasonCode, 
-            total_auth_member_lock_history.lock_reason AS lockReason, 
-            total_auth_member_lock_history.lock_start AS lockStart, 
-            total_auth_member_lock_history.lock_before AS lockBefore, 
-            total_auth_member_lock_history.early_release AS earlyRelease, 
-            total_auth_member_lock_history.row_create_date AS rowCreateDate, 
-            total_auth_member_lock_history.row_update_date AS rowUpdateDate 
-            FROM 
-            railly_linker_company.total_auth_member_lock_history AS total_auth_member_lock_history 
-            WHERE 
-            total_auth_member_lock_history.row_delete_date_str = '/' AND 
-            total_auth_member_lock_history.total_auth_member_uid = :totalAuthMemberUid AND 
-            (
-                total_auth_member_lock_history.early_release IS NULL OR 
-                total_auth_member_lock_history.early_release > :currentTime 
-            ) AND 
-            (
-                total_auth_member_lock_history.lock_before IS NULL OR 
-                total_auth_member_lock_history.lock_before > :currentTime 
-            ) AND 
-            total_auth_member_lock_history.lock_start <= :currentTime 
-            ORDER BY 
-            total_auth_member_lock_history.row_create_date DESC
-            """
-    )
-    fun findAllNowActivateMemberLockInfo(
-        @Param(value = "totalAuthMemberUid") totalAuthMemberUid: Long,
-        @Param("currentTime") currentTime: LocalDateTime
-    ): List<FindAllNowActivateMemberLockInfoOutputVo>
-
-    interface FindAllNowActivateMemberLockInfoOutputVo {
-        var uid: Long
-        var lockReasonCode: Byte
-        var lockReason: String
-        var lockStart: LocalDateTime
-        var lockBefore: LocalDateTime?
-        var earlyRelease: LocalDateTime
-        var rowCreateDate: LocalDateTime
-        var rowUpdateDate: LocalDateTime
-    }
+//    @Query(
+//        nativeQuery = true,
+//        value = """
+//            SELECT
+//            total_auth_member_lock_history.uid AS uid,
+//            total_auth_member_lock_history.lock_reason_code AS lockReasonCode,
+//            total_auth_member_lock_history.lock_reason AS lockReason,
+//            total_auth_member_lock_history.lock_start AS lockStart,
+//            total_auth_member_lock_history.lock_before AS lockBefore,
+//            total_auth_member_lock_history.early_release AS earlyRelease,
+//            total_auth_member_lock_history.row_create_date AS rowCreateDate,
+//            total_auth_member_lock_history.row_update_date AS rowUpdateDate
+//            FROM
+//            railly_linker_company.total_auth_member_lock_history AS total_auth_member_lock_history
+//            WHERE
+//            total_auth_member_lock_history.row_delete_date_str = '/' AND
+//            total_auth_member_lock_history.total_auth_member_uid = :totalAuthMemberUid AND
+//            (
+//                total_auth_member_lock_history.early_release IS NULL OR
+//                total_auth_member_lock_history.early_release > :currentTime
+//            ) AND
+//            (
+//                total_auth_member_lock_history.lock_before IS NULL OR
+//                total_auth_member_lock_history.lock_before > :currentTime
+//            ) AND
+//            total_auth_member_lock_history.lock_start <= :currentTime
+//            ORDER BY
+//            total_auth_member_lock_history.row_create_date DESC
+//            """
+//    )
+//    fun findAllNowActivateMemberLockInfo(
+//        @Param(value = "totalAuthMemberUid") totalAuthMemberUid: Long,
+//        @Param("currentTime") currentTime: LocalDateTime
+//    ): List<FindAllNowActivateMemberLockInfoOutputVo>
+//
+//    interface FindAllNowActivateMemberLockInfoOutputVo {
+//        var uid: Long
+//        var lockReasonCode: Byte
+//        var lockReason: String
+//        var lockStart: LocalDateTime
+//        var lockBefore: LocalDateTime?
+//        var earlyRelease: LocalDateTime
+//        var rowCreateDate: LocalDateTime
+//        var rowUpdateDate: LocalDateTime
+//    }
 }
