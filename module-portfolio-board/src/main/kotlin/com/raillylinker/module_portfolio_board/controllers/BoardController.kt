@@ -214,9 +214,9 @@ class BoardController(
             @Schema(description = "글 작성자 닉네임", required = true, example = "홍길동")
             @JsonProperty("writerUserNickname")
             val writerUserNickname: String,
-            @Schema(description = "글 작성자 프로필 Full Url", required = true, example = "https://test-profile/1.jpg")
+            @Schema(description = "글 작성자 프로필 Full Url", required = false, example = "https://test-profile/1.jpg")
             @JsonProperty("writerUserProfileFullUrl")
-            val writerUserProfileFullUrl: String
+            val writerUserProfileFullUrl: String?
         )
     }
 
@@ -296,14 +296,15 @@ class BoardController(
         val writerUserUid: Long,
         @Schema(description = "글 작성자 닉네임", required = true, example = "홍길동")
         @JsonProperty("writerUserNickname")
-        val writerUserNickname: Long,
-        @Schema(description = "글 작성자 프로필 Full Url", required = true, example = "https://test-profile/1.jpg")
+        val writerUserNickname: String,
+        @Schema(description = "글 작성자 프로필 Full Url", required = false, example = "https://test-profile/1.jpg")
         @JsonProperty("writerUserProfileFullUrl")
-        val writerUserProfileFullUrl: String
+        val writerUserProfileFullUrl: String?
     )
 
 
     // ----
+    // todo
     @Operation(
         summary = "게시글 수정",
         description = "게시글 하나를 수정합니다.<br>" +
@@ -364,6 +365,7 @@ class BoardController(
 
 
     // ----
+    // todo
     @Operation(
         summary = "게시글 조회수 1 상승",
         description = "게시글 조회수를 1 상승시킵니다.<br>" +
@@ -413,6 +415,7 @@ class BoardController(
 
 
     // ----
+    // todo
     @Operation(
         summary = "게시글 삭제",
         description = "게시글을 삭제합니다.<br>" +
@@ -462,6 +465,7 @@ class BoardController(
 
 
     // ----
+    // todo
     @Operation(
         summary = "댓글 입력 API",
         description = "댓글을 입력합니다."
@@ -513,6 +517,7 @@ class BoardController(
 
 
     // ----
+    // todo
     @Operation(
         summary = "댓글 리스트 (페이징)",
         description = "댓글 정보를 페이징하여 반환합니다.<br>" +
@@ -604,6 +609,7 @@ class BoardController(
 
 
     // ----
+    // todo
     @Operation(
         summary = "댓글 수정",
         description = "댓글 하나를 수정합니다.<br>" +
@@ -661,6 +667,7 @@ class BoardController(
 
 
     // ----
+    // todo
     @Operation(
         summary = "댓글 삭제",
         description = "댓글을 삭제합니다.<br>" +
