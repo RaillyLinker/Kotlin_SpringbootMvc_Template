@@ -1,6 +1,10 @@
 package com.raillylinker.module_sample_etc.services
 
+import com.raillylinker.module_sample_etc.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.module_sample_etc.controllers.TestController
+import com.raillylinker.module_sample_etc.jpa_beans.db1_main.entities.Db1_Template_TestBank
+import com.raillylinker.module_sample_etc.jpa_beans.db1_main.repositories.Db1_Template_TestBank_Repository
+import com.raillylinker.module_sample_etc.redis_map_components.redis1_main.Redis1_Lock_TestBank
 import com.raillylinker.module_sample_etc.util_components.*
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.fontbox.ttf.TTFParser
@@ -18,6 +22,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.StringUtils
 import java.io.*
 import java.nio.charset.StandardCharsets
@@ -27,6 +32,9 @@ import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import kotlin.math.pow
 
 @Service
 class TestService(
@@ -48,10 +56,17 @@ class TestService(
     private val naverSmsSenderComponent: NaverSmsSenderComponent,
 
     private var serverProperties: ServerProperties,
-    private val resourceLoader: ResourceLoader
+    private val resourceLoader: ResourceLoader,
+
+    private val db1TemplateTestBankRepository: Db1_Template_TestBank_Repository,
+
+    private val redis1LockTestBank: Redis1_Lock_TestBank
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
+
+    // (스레드 풀)
+    private val executorService: ExecutorService = Executors.newCachedThreadPool()
 
 
     // ---------------------------------------------------------------------------------------------
@@ -609,6 +624,107 @@ class TestService(
         } else {
             httpServletResponse.status = HttpStatus.OK.value()
             return htmlString
+        }
+    }
+
+
+    // ----
+    var lockIdx = 1000L
+
+    // (은행 잔고 처리 테스트)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun bankAmountTest(httpServletResponse: HttpServletResponse) {
+        if (lockIdx < 1000L) {
+            // 현재 진행중이라면 함수 빠져나가기
+            return
+        }
+
+        // 상태값 초기화
+        lockIdx = 0L
+
+        // 데이터베이스 상태 초기화
+        val testUserIdx = 1L
+        val testBank = db1TemplateTestBankRepository.findByUserIdxAndRowDeleteDateStr(testUserIdx, "/")
+        if (testBank == null) {
+            // 기존 데이터가 없으면 생성
+            db1TemplateTestBankRepository.save(
+                Db1_Template_TestBank(
+                    testUserIdx,
+                    0L
+                )
+            )
+        } else if (testBank.amount != 0L) {
+            testBank.amount = 0L
+            db1TemplateTestBankRepository.save(testBank)
+        }
+
+        // update 작업 반복
+        for (idx in 1..1000) {
+            val price = if (idx % 2 == 0) {
+                -1000L
+            } else {
+                1000L
+            }
+
+            executorService.execute {
+                // 비동기적으로 update 함수 실행
+                updateAmountInAsync(idx, testUserIdx, price)
+            }
+        }
+
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+    // 잔고 값 공유락 처리 함수
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun updateAmountInAsync(
+        taskIdx: Int,
+        testUserIdx: Long,
+        price: Long
+    ) {
+        var lockKey: String? = null
+        var attempt = 0 // 재시도 횟수
+
+        while (lockKey == null) {
+            // 공유 락을 얻을 때 까지 반복
+            lockKey = redis1LockTestBank.tryLock("$testUserIdx", 100000)
+            if (lockKey == null) {
+                // 공유 락을 못 얻었다면 대기 시간 증가(불발 횟수에 따라 대기 시간 증가 처리)
+                attempt++
+
+                val baseWaitTime = 50L // 기본 대기 시간
+                val incrementalFactor = 1.1 // 증가 비율
+                val maxWaitTime = 300L // 최대 대기 시간
+
+                val waitTime =
+                    baseWaitTime + (baseWaitTime * (attempt - 1) * incrementalFactor).toLong().coerceAtMost(maxWaitTime)
+
+                Thread.sleep(waitTime)
+            }
+        }
+
+        // lock 획득 idx 증가
+        lockIdx += 1
+
+        try {
+            // 락 획득 후 기존 잔고 조회 후 수정
+            val testBank = db1TemplateTestBankRepository.findByUserIdxAndRowDeleteDateStr(
+                testUserIdx,
+                "/"
+            )
+
+            if (testBank == null) {
+                return
+            }
+
+            classLogger.info("lockIdx : $lockIdx, taskIdx : $taskIdx, price : $price")
+            testBank.amount += price
+
+            db1TemplateTestBankRepository.save(testBank)
+        } finally {
+            // 작업 완료로 인한 락 반납
+            classLogger.info("lock Release : $lockIdx")
+            redis1LockTestBank.unlock("$testUserIdx", lockKey)
         }
     }
 }

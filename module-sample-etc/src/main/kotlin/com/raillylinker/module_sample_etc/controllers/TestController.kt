@@ -688,4 +688,33 @@ class TestController(
             fix
         )
     }
+
+
+    // ----
+    @Operation(
+        summary = "은행 잔고 처리 테스트",
+        description = "비동기적으로 1000 번을 빠르게 Plus, Minus 해서 결과 0 이 되는 것을 확인"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @GetMapping(
+        path = ["/bank-amount-test"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @ResponseBody
+    fun bankAmountTest(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse
+    ) {
+        service.bankAmountTest(
+            httpServletResponse
+        )
+    }
 }
