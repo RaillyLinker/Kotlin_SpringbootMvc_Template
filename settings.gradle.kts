@@ -77,3 +77,6 @@ include("module-sample-just-security")
 
 // 게시판 샘플 (13000)
 include("module-portfolio-board")
+
+// 예약 샘플 (13001)
+include("module-portfolio-reservation")
