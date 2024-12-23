@@ -42,12 +42,26 @@ class Db1_Raillylinker_Reservation(
     var reservationApprovalDeadlineDatetime: LocalDateTime,
 
     @Column(name = "payment_complete_datetime", nullable = true, columnDefinition = "DATETIME")
-    @Comment("결재 완료 일시 (deadline 보다 반단 우선순위가 높음)")
+    @Comment("결재 완료 일시 (deadline 보다 결재 완료 여부 판단 우선순위가 높음)")
     var paymentCompleteDatetime: LocalDateTime?,
 
     @Column(name = "reservation_approval_datetime", nullable = true, columnDefinition = "DATETIME")
-    @Comment("예약 승인 일시 (deadline 보다 반단 우선순위가 높음)")
-    var reservationApprovalDatetime: LocalDateTime?
+    @Comment("예약 승인 일시 (deadline 보다 예약 승인 여부 판단 우선순위가 높음)")
+    var reservationApprovalDatetime: LocalDateTime?,
+
+    @Column(name = "refund_datetime", nullable = true, columnDefinition = "DATETIME")
+    @Comment("환불 완료 일시 (환불 완료된 시점 이후에는 본 예약 상태는 결코 되돌릴 수 없음)")
+    var refundDatetime: LocalDateTime?,
+
+    @Column(name = "cancel_request_datetime", nullable = true, columnDefinition = "DATETIME")
+    @Comment("예약 취소 신청 일시 (예약 취소 신청은 한 예약당 한번만 가능 = 이 컬럼이 null 이 아니라면 취소 신청 불가)")
+    var cancelRequestDatetime: LocalDateTime?,
+
+    @Column(name = "cancel_request_complete_datetime", nullable = true, columnDefinition = "DATETIME")
+    @Comment("예약 취소 신청 완료 일시 (예약 취소 신청이 승인되어 취소 상태가 되었을 때의 일시, 자동 취소 간주시에는 이곳에 기입하지 않음)")
+    var cancelRequestCompleteDatetime: LocalDateTime?
+
+    // todo 예약 취소 신청 관련 상태값 추가 (reason 등 숨어있는 값도 추가하기)
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
