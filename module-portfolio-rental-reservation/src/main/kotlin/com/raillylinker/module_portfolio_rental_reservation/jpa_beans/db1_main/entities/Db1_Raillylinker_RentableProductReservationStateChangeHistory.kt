@@ -30,10 +30,10 @@ class Db1_Raillylinker_RentableProductReservationStateChangeHistory(
         2 : 결재 완료,
         3 : 예약 승인,
         4 : 예약 거부,
-        6 : 예약 취소 신청,
-        7 : 예약 취소 승인,
-        8 : 예약 취소 거부,
-        9 : 예약 취소 후 환불 완료
+        5 : 예약 취소 신청,
+        6 : 예약 취소 승인,
+        7 : 예약 취소 거부,
+        8 : 예약 취소 후 환불 완료
     """
     )
     var stateCode: Int,
