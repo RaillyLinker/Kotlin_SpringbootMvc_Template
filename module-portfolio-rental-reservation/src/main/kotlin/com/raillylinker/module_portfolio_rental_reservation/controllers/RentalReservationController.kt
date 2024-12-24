@@ -84,4 +84,7 @@ class RentalReservationController(
     ): String? {
         return service.loggedInAccessTest(httpServletResponse, authorization!!)
     }
+
+
+    // todo : 상품 예약 신청
 }
