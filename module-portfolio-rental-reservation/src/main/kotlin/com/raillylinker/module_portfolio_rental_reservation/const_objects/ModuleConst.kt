@@ -7,5 +7,5 @@ package com.raillylinker.module_portfolio_rental_reservation.const_objects
 object ModuleConst {
     // (DatabaseConfig)
     // !!!모듈 패키지명 작성!!!
-    const val PACKAGE_NAME = "com.raillylinker.module_portfolio_reservation"
+    const val PACKAGE_NAME = "com.raillylinker.module_portfolio_rental_reservation"
 }

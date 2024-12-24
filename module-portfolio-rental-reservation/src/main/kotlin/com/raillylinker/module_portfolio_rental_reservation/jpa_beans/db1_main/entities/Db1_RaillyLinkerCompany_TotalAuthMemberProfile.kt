@@ -7,28 +7,21 @@ import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 
-// Fk 관계 중 OneToOne 은 논리적 삭제를 적용할시 사용이 불가능합니다.
-//     이때는, One to One 역시 Many to One 을 사용하며, 합성 Unique 로 FK 변수를 유니크 처리 한 후,
-//     로직상으로 활성화된 행이 한개 뿐이라고 처리하면 됩니다.
 @Entity
 @Table(
-    name = "rentable_product_reservation_state_change_history",
+    name = "total_auth_member_profile",
     catalog = "railly_linker_company"
 )
-@Comment("대여 가능 상품 예약 상태 변경 히스토리")
-class Db1_Raillylinker_RentableProductReservationStateChangeHistory(
+@Comment("통합 로그인 계정 회원 프로필 정보 테이블")
+class Db1_RaillyLinkerCompany_TotalAuthMemberProfile(
     @ManyToOne
-    @JoinColumn(name = "rentable_product_reservation_info_uid", nullable = false)
-    @Comment("rentable_product_reservation_info 테이블 고유번호 (railly_linker_company.rentable_product_reservation_info.uid)")
-    var rentableProductReservationInfo: Db1_Raillylinker_RentableProductReservationInfo,
+    @JoinColumn(name = "total_auth_member_uid", nullable = false)
+    @Comment("멤버 고유번호(railly_linker_company.total_auth_member.uid)")
+    var totalAuthMember: Db1_RaillyLinkerCompany_TotalAuthMember,
 
-    @Column(name = "state_code", nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    @Comment("예약 상태 코드 (1 : 예약 신청, 2 : 결재 완료, 3 : 예약 승인, 4 : 예약 거부, 5 : 예약 취소 신청, 6 : 예약 취소 승인, 7 : 예약 취소 거부, 8 : 예약 취소 후 환불 완료)")
-    var stateCode: Int,
-
-    @Column(name = "state_change_desc", nullable = false, columnDefinition = "VARCHAR(600)")
-    @Comment("상태 변경 상세")
-    var stateDesc: String
+    @Column(name = "image_full_url", nullable = false, columnDefinition = "VARCHAR(200)")
+    @Comment("프로필 이미지 Full URL")
+    var imageFullUrl: String
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,6 +43,11 @@ class Db1_Raillylinker_RentableProductReservationStateChangeHistory(
     @ColumnDefault("'/'")
     @Comment("행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)")
     var rowDeleteDateStr: String = "/"
+
+    // ---------------------------------------------------------------------------------------------
+    // [@OneToMany 변수들]
+    @OneToMany(mappedBy = "frontTotalAuthMemberProfile", fetch = FetchType.LAZY)
+    var totalAuthMemberList: MutableList<Db1_RaillyLinkerCompany_TotalAuthMember> = mutableListOf()
 
 
     // ---------------------------------------------------------------------------------------------

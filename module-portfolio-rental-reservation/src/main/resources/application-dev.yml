@@ -4,7 +4,7 @@
 spring:
   application:
     # Eureka 에 등록될 서비스 이름 (복제 서버는 같은 이름으로 설정하여 로드밸런싱)
-    name: PORTFOLIO-RESERVATION-DEV
+    name: PORTFOLIO-RENTAL-RESERVATION-DEV
 
   config:
     activate: # 프로필명 설정

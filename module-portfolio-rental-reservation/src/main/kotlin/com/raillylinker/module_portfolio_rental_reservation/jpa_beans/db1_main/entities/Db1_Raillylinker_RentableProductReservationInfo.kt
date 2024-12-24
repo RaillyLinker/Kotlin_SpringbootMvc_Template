@@ -22,13 +22,10 @@ class Db1_Raillylinker_RentableProductReservationInfo(
     @Comment("rentable_product_info 테이블 고유번호 (railly_linker_company.rentable_product_info.uid)")
     var rentableProductInfo: Db1_Raillylinker_RentableProductInfo,
 
-    @Column(name = "customer_name", nullable = false, columnDefinition = "VARCHAR(90)")
-    @Comment("예약자 이름")
-    var customerName: String,
-
-    @Column(name = "customer_phone_number", nullable = false, columnDefinition = "VARCHAR(45)")
-    @Comment("예약자 전화번호(국가번호 + 전화번호)")
-    var customerPhoneNumber: String,
+    @ManyToOne
+    @JoinColumn(name = "total_auth_member_uid", nullable = false)
+    @Comment("멤버 고유번호(railly_linker_company.total_auth_member.uid)")
+    var totalAuthMember: Db1_RaillyLinkerCompany_TotalAuthMember,
 
     @Column(name = "rental_start_datetime", nullable = false, columnDefinition = "DATETIME")
     @Comment("대여가 시작되는 일시")
