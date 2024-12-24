@@ -113,7 +113,7 @@ class RentalReservationAdminController(
         @JsonProperty("addressDetail")
         val addressDetail: String,
         @Schema(
-            description = "상품 예약이 가능한 최초 일시(콘서트 티켓 예매 선공개와 기능을 가정)(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            description = "상품 예약이 가능한 최초 일시(콘서트 티켓 예매 선공개 기능을 가정)(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
             required = true,
             example = "2024_05_02_T_15_14_49_552_KST"
         )
@@ -429,9 +429,8 @@ class RentalReservationAdminController(
     )
 
 
-    // todo : 아래에는 예약 상태에 따라 처리하기
-
     // todo : 대여 가능 상품 정보 수정 (except now_reservable)
+    //     해당 상품에 대해 하나라도 예약 승인이 된 정보가 있다면 수정 불가. 예약 신청은 모두 취소 처리
 
     // todo : 대여 가능 상품 삭제
 
