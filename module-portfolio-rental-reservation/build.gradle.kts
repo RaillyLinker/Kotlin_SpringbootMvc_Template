@@ -69,6 +69,25 @@ dependencies {
     kapt("com.querydsl:querydsl-apt:5.1.0:jakarta")
     kapt("jakarta.annotation:jakarta.annotation-api:3.0.0")
     kapt("jakarta.persistence:jakarta.persistence-api:3.2.0")
+
+    // (Spring Security)
+    // : 스프링 부트 보안
+    implementation("org.springframework.boot:spring-boot-starter-security:3.4.0")
+    testImplementation("org.springframework.security:spring-security-test:6.4.1")
+
+    // (GSON)
+    // : Json - Object 라이브러리
+    implementation("com.google.code.gson:gson:2.11.0")
+
+    // (JWT)
+    // : JWT 인증 토큰 라이브러리
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+    implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
+
+    // (Redis)
+    // : 메모리 키 값 데이터 구조 스토어
+    implementation("org.springframework.boot:spring-boot-starter-data-redis:3.4.0")
 }
 
 tasks.withType<Test> {
