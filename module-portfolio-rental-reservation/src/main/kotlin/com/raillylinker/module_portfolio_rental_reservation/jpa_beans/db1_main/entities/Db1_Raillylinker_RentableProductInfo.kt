@@ -21,9 +21,10 @@ class Db1_Raillylinker_RentableProductInfo(
     @Comment("고객에게 보일 상품명")
     var productName: String,
 
-    @Column(name = "product_category", nullable = false, columnDefinition = "VARCHAR(600)")
-    @Comment("상품 카테고리 (ex : 동물|개과|치와와, 예시와 같이 |로 대분류 -> 소분류 순으로 구분)")
-    var productCategory: String,
+    @ManyToOne
+    @JoinColumn(name = "rentable_product_category_uid", nullable = true)
+    @Comment("rentable_product_category 테이블 고유번호 (railly_linker_company.rentable_product_category.uid)")
+    var rentableProductCategory: Db1_Raillylinker_RentableProductCategory?,
 
     @Column(name = "product_intro", nullable = false, columnDefinition = "VARCHAR(6000)")
     @Comment("고객에게 보일 상품 소개")
