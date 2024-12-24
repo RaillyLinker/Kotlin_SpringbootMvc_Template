@@ -3,6 +3,7 @@ package com.raillylinker.module_portfolio_rental_reservation.services
 import com.raillylinker.module_portfolio_rental_reservation.util_components.JwtTokenUtil
 import com.raillylinker.module_portfolio_rental_reservation.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 import com.raillylinker.module_portfolio_rental_reservation.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR
+import com.raillylinker.module_portfolio_rental_reservation.controllers.RentalReservationAdminController
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -44,15 +45,81 @@ class RentalReservationAdminService(
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
-    // (ADMIN 권한 진입 테스트 <'ADMIN'>)
-    fun adminAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
+    // (대여 가능 상품 등록)
+    fun postRentableProductInfo(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: RentalReservationAdminController.PostRentableProductInfoInputVo
+    ): RentalReservationAdminController.PostRentableProductInfoOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
             AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
         )
 
+        // todo
         httpServletResponse.status = HttpStatus.OK.value()
-        return "Member No.$memberUid : Test Success"
+        return RentalReservationAdminController.PostRentableProductInfoOutputVo(
+            1L // todo
+        )
+    }
+
+
+    // ----
+    // (대여 가능 상품 추가 예약 가능 설정 수정)
+    fun patchRentableProductInfoReservable(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductInfoUid: Long,
+        inputVo: RentalReservationAdminController.PatchRentableProductInfoReservableInputVo
+    ) {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
+    // (대여 가능 상품 재고 등록)
+    fun postRentableProductStockInfo(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: RentalReservationAdminController.PostRentableProductStockInfoInputVo
+    ): RentalReservationAdminController.PostRentableProductStockInfoOutputVo? {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationAdminController.PostRentableProductStockInfoOutputVo(
+            1L // todo
+        )
+    }
+
+
+    // ----
+    // (대여 가능 상품 재고 추가 예약 가능 설정 수정)
+    fun patchRentableProductStockInfoReservable(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductStockInfoUid: Long,
+        inputVo: RentalReservationAdminController.PatchRentableProductStockInfoReservableInputVo
+    ) {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
     }
 }
