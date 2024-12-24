@@ -439,13 +439,7 @@ class RentalReservationAdminController(
 
     // todo : 대여 가능 상품 재고 삭제
 
-
-
-
     // todo : 대여 가능 상품 예약 상태 변경 히스토리 등록 (현 상태에 따라 상태 변화 가능한 방향으로만 변경 가능, 삭제 및 수정 불가)
-
-
-
 
     // todo : Admin 관련 필요 정보 Read API 궁리
 }
