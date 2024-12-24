@@ -17,13 +17,19 @@ import java.time.LocalDateTime
 )
 @Comment("대여 가능 상품 재고 정보")
 class Db1_RaillyLinkerCompany_RentableProductStockInfo(
+    @ManyToOne
+    @JoinColumn(name = "rentable_product_stock_category_uid", nullable = true)
+    @Comment("rentable_product_stock_category 테이블 고유번호 (railly_linker_company.rentable_product_stock_category.uid)")
+    var rentableProductStockCategory: Db1_RaillyLinkerCompany_RentableProductStockCategory?,
+
     @Column(name = "product_desc", nullable = false, columnDefinition = "VARCHAR(3000)")
     @Comment("대여 가능 상품 개별 설명")
     var productDesc: String,
 
-    @Column(name = "thumbnail_image_full_url", nullable = true, columnDefinition = "VARCHAR(100)")
-    @Comment("대여 가능 상품 개별 썸네일 Full URL")
-    var thumbnailImageFullUrl: String?,
+    @ManyToOne
+    @JoinColumn(name = "front_rentable_product_stock_image_uid", nullable = true)
+    @Comment("개별 상품 대표 이미지 rentable_product_stock_image 테이블 고유번호 (railly_linker_company.rentable_product_stock_image.uid)")
+    var frontRentableProductStockImage: Db1_RaillyLinkerCompany_RentableProductStockImage?,
 
     @Column(name = "first_rentable_datetime", nullable = false, columnDefinition = "DATETIME")
     @Comment("제품 대여(손님에게 제공)가 가능한 최초 일시")
@@ -66,6 +72,13 @@ class Db1_RaillyLinkerCompany_RentableProductStockInfo(
 
     // ---------------------------------------------------------------------------------------------
     // <중첩 클래스 공간>
+    @OneToMany(
+        mappedBy = "rentableProductStockInfo",
+        fetch = FetchType.LAZY
+    )
+    var rentableProductStockImageList: MutableList<Db1_RaillyLinkerCompany_RentableProductStockImage> =
+        mutableListOf()
+
     @OneToMany(
         mappedBy = "rentableProductStockInfo",
         fetch = FetchType.LAZY,

@@ -108,6 +108,13 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
         mappedBy = "rentableProductInfo",
         fetch = FetchType.LAZY
     )
+    var rentableProductImageList: MutableList<Db1_RaillyLinkerCompany_RentableProductImage> =
+        mutableListOf()
+
+    @OneToMany(
+        mappedBy = "rentableProductInfo",
+        fetch = FetchType.LAZY
+    )
     var rentableProductStockInfoList: MutableList<Db1_RaillyLinkerCompany_RentableProductStockInfo> = mutableListOf()
 
     @OneToMany(
