@@ -16,7 +16,7 @@ import java.time.LocalDateTime
     catalog = "railly_linker_company"
 )
 @Comment("대여 가능 상품 정보")
-class Db1_Raillylinker_RentableProductInfo(
+class Db1_RaillyLinkerCompany_RentableProductInfo(
     @Column(name = "product_name", nullable = false, columnDefinition = "VARCHAR(90)")
     @Comment("고객에게 보일 상품명")
     var productName: String,
@@ -24,15 +24,16 @@ class Db1_Raillylinker_RentableProductInfo(
     @ManyToOne
     @JoinColumn(name = "rentable_product_category_uid", nullable = true)
     @Comment("rentable_product_category 테이블 고유번호 (railly_linker_company.rentable_product_category.uid)")
-    var rentableProductCategory: Db1_Raillylinker_RentableProductCategory?,
+    var rentableProductCategory: Db1_RaillyLinkerCompany_RentableProductCategory?,
 
     @Column(name = "product_intro", nullable = false, columnDefinition = "VARCHAR(6000)")
     @Comment("고객에게 보일 상품 소개")
     var productIntro: String,
 
-    @Column(name = "thumbnail_image_full_url", nullable = true, columnDefinition = "VARCHAR(100)")
-    @Comment("고객에게 보일 상품 썸네일 Full URL")
-    var thumbnailImageFullUrl: String?,
+    @ManyToOne
+    @JoinColumn(name = "front_rentable_product_image_uid", nullable = true)
+    @Comment("상품 대표 이미지 rentable_product_image 테이블 고유번호 (railly_linker_company.rentable_product_image.uid)")
+    var frontRentableProductImage: Db1_RaillyLinkerCompany_RentableProductImage?,
 
     @Column(name = "address_country", nullable = false, columnDefinition = "VARCHAR(60)")
     @Comment("상품이 위치한 주소 (대여 가능 위치의 기준으로 사용됨) - 국가")
@@ -68,12 +69,10 @@ class Db1_Raillylinker_RentableProductInfo(
 
     @Column(name = "preparation_minute", nullable = false, columnDefinition = "BIGINT UNSIGNED")
     @Comment(
-        """
-            대여 상품 반납일시로부터 다음 대여까지 걸리는 시간
-            (분, 회수 시간, 준비 시간, 평균 지연 시간을 포함하여 반납 후 다음 대여 사이의 시간,
-            식당 예약으로 치면, 고객이 식사를 마치고 나온 이후 식탁 정리 등 테이블 세팅에 들어가는 시간.
-            이 시간을 기반으로 다음 대여 가능 시간을 가늠하므로 다음 대여한 고객에게 피해를 끼치지 않도록 넉넉히 설정할것)
-        """
+        "대여 상품 반납일시로부터 다음 대여까지 걸리는 시간. " +
+                "(분, 회수 시간, 준비 시간, 평균 지연 시간을 포함하여 반납 후 다음 대여 사이의 시간, " +
+                "식당 예약으로 치면, 고객이 식사를 마치고 나온 이후 식탁 정리 등 테이블 세팅에 들어가는 시간. " +
+                "이 시간을 기반으로 다음 대여 가능 시간을 가늠하므로 다음 대여한 고객에게 피해를 끼치지 않도록 넉넉히 설정할것)"
     )
     var preparationMinute: Long,
 
@@ -109,12 +108,12 @@ class Db1_Raillylinker_RentableProductInfo(
         mappedBy = "rentableProductInfo",
         fetch = FetchType.LAZY
     )
-    var rentableProductStockInfoList: MutableList<Db1_Raillylinker_RentableProductStockInfo> = mutableListOf()
+    var rentableProductStockInfoList: MutableList<Db1_RaillyLinkerCompany_RentableProductStockInfo> = mutableListOf()
 
     @OneToMany(
         mappedBy = "rentableProductInfo",
         fetch = FetchType.LAZY
     )
-    var rentableProductReservationInfoList: MutableList<Db1_Raillylinker_RentableProductReservationInfo> =
+    var rentableProductReservationInfoList: MutableList<Db1_RaillyLinkerCompany_RentableProductReservationInfo> =
         mutableListOf()
 }

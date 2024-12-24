@@ -16,7 +16,7 @@ import java.time.LocalDateTime
     catalog = "railly_linker_company"
 )
 @Comment("대여 가능 상품 재고 정보")
-class Db1_Raillylinker_RentableProductStockInfo(
+class Db1_RaillyLinkerCompany_RentableProductStockInfo(
     @Column(name = "product_desc", nullable = false, columnDefinition = "VARCHAR(3000)")
     @Comment("대여 가능 상품 개별 설명")
     var productDesc: String,
@@ -36,7 +36,7 @@ class Db1_Raillylinker_RentableProductStockInfo(
     @ManyToOne
     @JoinColumn(name = "rentable_product_info_uid", nullable = false)
     @Comment("rentable_product_info 테이블 고유번호 (railly_linker_company.rentable_product_info.uid)")
-    var rentableProductInfo: Db1_Raillylinker_RentableProductInfo,
+    var rentableProductInfo: Db1_RaillyLinkerCompany_RentableProductInfo,
 
     @Column(name = "now_reservable", nullable = false, columnDefinition = "BIT(1)")
     @Comment("상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정")
@@ -71,6 +71,6 @@ class Db1_Raillylinker_RentableProductStockInfo(
         fetch = FetchType.LAZY,
         cascade = [CascadeType.ALL]
     )
-    var rentableProductStockReservationInfoList: MutableList<Db1_Raillylinker_RentableProductStockReservationInfo> =
+    var rentableProductStockReservationInfoList: MutableList<Db1_RaillyLinkerCompany_RentableProductStockReservationInfo> =
         mutableListOf()
 }

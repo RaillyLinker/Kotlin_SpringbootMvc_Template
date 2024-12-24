@@ -1,6 +1,6 @@
 package com.raillylinker.module_portfolio_rental_reservation.jpa_beans.db1_main.repositories
 
-import com.raillylinker.module_portfolio_rental_reservation.jpa_beans.db1_main.entities.Db1_Raillylinker_RentableProductInfo
+import com.raillylinker.module_portfolio_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductInfo
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
@@ -17,5 +17,5 @@ import org.springframework.stereotype.Repository
     7. ORDER BY 절: 결과 집합을 정렬합니다. ORDER BY 절은 SELECT 문이 실행된 후에 적용됩니다.
  */
 @Repository
-interface Db1_Native_Repository : JpaRepository<Db1_Raillylinker_RentableProductInfo, Long> {
+interface Db1_Native_Repository : JpaRepository<Db1_RaillyLinkerCompany_RentableProductInfo, Long> {
 }

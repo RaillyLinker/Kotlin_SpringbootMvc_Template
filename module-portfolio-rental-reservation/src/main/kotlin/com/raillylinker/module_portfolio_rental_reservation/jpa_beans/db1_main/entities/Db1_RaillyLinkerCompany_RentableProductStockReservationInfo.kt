@@ -12,23 +12,20 @@ import java.time.LocalDateTime
 //     로직상으로 활성화된 행이 한개 뿐이라고 처리하면 됩니다.
 @Entity
 @Table(
-    name = "rentable_product_reservation_state_change_history",
+    name = "rentable_product_stock_reservation_info",
     catalog = "railly_linker_company"
 )
-@Comment("대여 가능 상품 예약 상태 변경 히스토리")
-class Db1_Raillylinker_RentableProductReservationStateChangeHistory(
+@Comment("개별 상품 예약 정보")
+class Db1_RaillyLinkerCompany_RentableProductStockReservationInfo(
+    @ManyToOne
+    @JoinColumn(name = "rentable_product_stock_info_uid", nullable = false)
+    @Comment("rentable_product_stock_info 테이블 고유번호 (railly_linker_company.rentable_product_stock_info.uid)")
+    var rentableProductStockInfo: Db1_RaillyLinkerCompany_RentableProductStockInfo,
+
     @ManyToOne
     @JoinColumn(name = "rentable_product_reservation_info_uid", nullable = false)
     @Comment("rentable_product_reservation_info 테이블 고유번호 (railly_linker_company.rentable_product_reservation_info.uid)")
-    var rentableProductReservationInfo: Db1_Raillylinker_RentableProductReservationInfo,
-
-    @Column(name = "state_code", nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    @Comment("예약 상태 코드 (1 : 예약 신청, 2 : 결재 완료, 3 : 예약 승인, 4 : 예약 거부, 5 : 예약 취소 신청, 6 : 예약 취소 승인, 7 : 예약 취소 거부, 8 : 예약 취소 후 환불 완료, 9 : 조기 반납)")
-    var stateCode: Int,
-
-    @Column(name = "state_change_desc", nullable = false, columnDefinition = "VARCHAR(600)")
-    @Comment("상태 변경 상세")
-    var stateDesc: String
+    var rentableProductReservationInfo: Db1_RaillyLinkerCompany_RentableProductReservationInfo
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -12,20 +12,19 @@ import java.time.LocalDateTime
 //     로직상으로 활성화된 행이 한개 뿐이라고 처리하면 됩니다.
 @Entity
 @Table(
-    name = "rentable_product_stock_reservation_info",
+    name = "rentable_product_category",
     catalog = "railly_linker_company"
 )
-@Comment("개별 상품 예약 정보")
-class Db1_Raillylinker_RentableProductStockReservationInfo(
-    @ManyToOne
-    @JoinColumn(name = "rentable_product_stock_info_uid", nullable = false)
-    @Comment("rentable_product_stock_info 테이블 고유번호 (railly_linker_company.rentable_product_stock_info.uid)")
-    var rentableProductStockInfo: Db1_Raillylinker_RentableProductStockInfo,
+@Comment("대여 가능 상품 카테고리")
+class Db1_RaillyLinkerCompany_RentableProductCategory(
+    @Column(name = "category_name", nullable = false, columnDefinition = "VARCHAR(90)")
+    @Comment("카테고리 이름")
+    var categoryName: String,
 
     @ManyToOne
-    @JoinColumn(name = "rentable_product_reservation_info_uid", nullable = false)
-    @Comment("rentable_product_reservation_info 테이블 고유번호 (railly_linker_company.rentable_product_reservation_info.uid)")
-    var rentableProductReservationInfo: Db1_Raillylinker_RentableProductReservationInfo
+    @JoinColumn(name = "parent_rentable_product_category_uid", nullable = true)
+    @Comment("부모 카테고리 rentable_product_category 테이블 고유번호 (railly_linker_company.rentable_product_category.uid)")
+    var parentRentableProductCategory: Db1_RaillyLinkerCompany_RentableProductCategory?
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,5 +50,16 @@ class Db1_Raillylinker_RentableProductStockReservationInfo(
 
     // ---------------------------------------------------------------------------------------------
     // <중첩 클래스 공간>
+    @OneToMany(
+        mappedBy = "parentRentableProductCategory",
+        fetch = FetchType.LAZY,
+        cascade = [CascadeType.ALL]
+    )
+    var childRentableProductCategoryList: MutableList<Db1_RaillyLinkerCompany_RentableProductCategory> = mutableListOf()
 
+    @OneToMany(
+        mappedBy = "rentableProductCategory",
+        fetch = FetchType.LAZY
+    )
+    var rentableProductInfoList: MutableList<Db1_RaillyLinkerCompany_RentableProductInfo> = mutableListOf()
 }

@@ -74,7 +74,7 @@ class Db1_RaillyLinkerCompany_TotalAuthMember(
     var totalAuthMemberEmailList: MutableList<Db1_RaillyLinkerCompany_TotalAuthMemberEmail> = mutableListOf()
 
     @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    var rentableProductReservationInfoList: MutableList<Db1_Raillylinker_RentableProductReservationInfo> =
+    var rentableProductReservationInfoList: MutableList<Db1_RaillyLinkerCompany_RentableProductReservationInfo> =
         mutableListOf()
 
 

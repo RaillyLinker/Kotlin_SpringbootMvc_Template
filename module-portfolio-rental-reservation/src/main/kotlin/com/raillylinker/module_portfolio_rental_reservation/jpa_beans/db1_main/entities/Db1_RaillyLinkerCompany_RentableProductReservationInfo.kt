@@ -16,11 +16,11 @@ import java.time.LocalDateTime
     catalog = "railly_linker_company"
 )
 @Comment("대여 가능 상품 예약 정보")
-class Db1_Raillylinker_RentableProductReservationInfo(
+class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
     @ManyToOne
     @JoinColumn(name = "rentable_product_info_uid", nullable = false)
     @Comment("rentable_product_info 테이블 고유번호 (railly_linker_company.rentable_product_info.uid)")
-    var rentableProductInfo: Db1_Raillylinker_RentableProductInfo,
+    var rentableProductInfo: Db1_RaillyLinkerCompany_RentableProductInfo,
 
     @ManyToOne
     @JoinColumn(name = "total_auth_member_uid", nullable = false)
@@ -76,7 +76,7 @@ class Db1_Raillylinker_RentableProductReservationInfo(
         fetch = FetchType.LAZY,
         cascade = [CascadeType.ALL]
     )
-    var rentableProductStockReservationInfoList: MutableList<Db1_Raillylinker_RentableProductStockReservationInfo> =
+    var rentableProductStockReservationInfoList: MutableList<Db1_RaillyLinkerCompany_RentableProductStockReservationInfo> =
         mutableListOf()
 
 
@@ -85,6 +85,6 @@ class Db1_Raillylinker_RentableProductReservationInfo(
         fetch = FetchType.LAZY,
         cascade = [CascadeType.ALL]
     )
-    var rentableProductReservationStateChangeHistoryList: MutableList<Db1_Raillylinker_RentableProductReservationStateChangeHistory> =
+    var rentableProductReservationStateChangeHistoryList: MutableList<Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory> =
         mutableListOf()
 }
