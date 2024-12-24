@@ -17,9 +17,9 @@ import java.time.LocalDateTime
 )
 @Comment("대여 가능 상품 재고 정보")
 class Db1_Raillylinker_RentableProductStockInfo(
-    @Column(name = "product_intro", nullable = false, columnDefinition = "VARCHAR(6000)")
+    @Column(name = "product_desc", nullable = false, columnDefinition = "VARCHAR(3000)")
     @Comment("대여 가능 상품 개별 설명")
-    var productIntro: String,
+    var productDesc: String,
 
     @Column(name = "thumbnail_image_full_url", nullable = true, columnDefinition = "VARCHAR(100)")
     @Comment("대여 가능 상품 개별 썸네일 Full URL")
