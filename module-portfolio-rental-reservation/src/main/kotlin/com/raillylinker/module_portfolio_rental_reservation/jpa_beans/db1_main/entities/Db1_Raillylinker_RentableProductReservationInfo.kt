@@ -48,51 +48,7 @@ class Db1_Raillylinker_RentableProductReservationInfo(
 
     @Column(name = "reservation_approval_deadline_datetime", nullable = false, columnDefinition = "DATETIME")
     @Comment("관리자 승인 기한 (이 시점이 지났고, reservation_approval_datetime 가 충족되지 않았다면 취소로 간주)")
-    var reservationApprovalDeadlineDatetime: LocalDateTime,
-
-
-    @Column(name = "payment_complete_datetime", nullable = true, columnDefinition = "DATETIME")
-    @Comment("결재 완료 일시 (deadline 보다 결재 완료 여부 판단 우선순위가 높음)")
-    var paymentCompleteDatetime: LocalDateTime?,
-
-    @Column(name = "reservation_approved_datetime", nullable = true, columnDefinition = "DATETIME")
-    @Comment("예약 승인 일시 (deadline 보다 예약 승인 여부 판단 우선순위가 높음)")
-    var reservationApprovedDatetime: LocalDateTime?,
-
-    @Column(name = "reservation_approval_deny_datetime", nullable = true, columnDefinition = "DATETIME")
-    @Comment("예약 거부 일시 (reservation_approved_datetime 보다 예약 거부 여부 판단 우선순위가 높음)")
-    var reservationApprovalDenyDatetime: LocalDateTime?,
-
-    @Column(name = "reservation_approval_deny_reason", nullable = false, columnDefinition = "VARCHAR(600)")
-    @Comment("예약 거부 이유")
-    @ColumnDefault("''")
-    var reservationApprovalDenyReason: String,
-
-    @Column(name = "refund_datetime", nullable = true, columnDefinition = "DATETIME")
-    @Comment("환불 완료 일시 (환불 완료된 시점 이후에는 본 예약 상태는 결코 되돌릴 수 없음)")
-    var refundDatetime: LocalDateTime?,
-
-    @Column(name = "cancel_request_datetime", nullable = true, columnDefinition = "DATETIME")
-    @Comment("예약 취소 신청 일시 (예약 취소 신청은 한 예약당 한번만 가능 = 이 컬럼이 null 이 아니라면 취소 신청 불가)")
-    var cancelRequestDatetime: LocalDateTime?,
-
-    @Column(name = "cancel_request_reason", nullable = false, columnDefinition = "VARCHAR(600)")
-    @Comment("예약 취소 신청 이유")
-    @ColumnDefault("''")
-    var cancelRequestReason: String,
-
-    @Column(name = "cancel_request_complete_datetime", nullable = true, columnDefinition = "DATETIME")
-    @Comment("예약 취소 신청 완료 일시 (예약 취소 신청이 승인되어 취소 상태가 되었을 때의 일시, 자동 취소 간주시에는 이곳에 기입하지 않음)")
-    var cancelRequestCompleteDatetime: LocalDateTime?,
-
-    @Column(name = "cancel_request_approval_deny_datetime", nullable = true, columnDefinition = "DATETIME")
-    @Comment("예약 취소 신청 거부 일시 (cancel_request_complete_datetime 보다 예약 거부 여부 판단 우선순위가 높음)")
-    var cancelRequestApprovalDenyDatetime: LocalDateTime?,
-
-    @Column(name = "cancel_request_approval_deny_reason", nullable = false, columnDefinition = "VARCHAR(600)")
-    @Comment("예약 취소 신청 거부 이유")
-    @ColumnDefault("''")
-    var cancelRequestApprovalDenyReason: String
+    var reservationApprovalDeadlineDatetime: LocalDateTime
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
