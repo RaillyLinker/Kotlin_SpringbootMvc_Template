@@ -77,7 +77,7 @@ class Db1_Raillylinker_RentableProductInfo(
     var preparationMinute: Long,
 
     @Column(name = "now_reservable", nullable = false, columnDefinition = "BIT(1)")
-    @Comment("재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정")
+    @Comment("재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정 = 활성/비활성 플래그")
     var nowReservable: Boolean
 ) {
     @Id

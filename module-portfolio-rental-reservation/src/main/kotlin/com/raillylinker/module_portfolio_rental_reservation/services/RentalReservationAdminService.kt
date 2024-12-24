@@ -45,7 +45,7 @@ class RentalReservationAdminService(
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
-    // (대여 가능 상품 등록)
+    // (대여 가능 상품 등록 <ADMIN>)
     fun postRentableProductInfo(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -66,7 +66,7 @@ class RentalReservationAdminService(
 
 
     // ----
-    // (대여 가능 상품 추가 예약 가능 설정 수정)
+    // (대여 가능 상품 추가 예약 가능 설정 수정 <ADMIN>)
     fun patchRentableProductInfoReservable(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -85,7 +85,45 @@ class RentalReservationAdminService(
 
 
     // ----
-    // (대여 가능 상품 재고 등록)
+    // (대여 가능 상품 최소 예약 횟수, 최대 예약 횟수 설정 수정 <ADMIN>)
+    fun patchRentableProductInfoMinMaxReservationUnitCount(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductInfoUid: Long,
+        inputVo: RentalReservationAdminController.PatchRentableProductInfoMinMaxReservationUnitCountInputVo
+    ) {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
+    // (대여 가능 상품 회수 준비 시간 설정 수정 <ADMIN>)
+    fun patchRentableProductInfoPreparationMinute(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductInfoUid: Long,
+        inputVo: RentalReservationAdminController.PatchRentableProductInfoPreparationMinuteInputVo
+    ) {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
+    // (대여 가능 상품 재고 등록 <ADMIN>)
     fun postRentableProductStockInfo(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -106,7 +144,7 @@ class RentalReservationAdminService(
 
 
     // ----
-    // (대여 가능 상품 재고 추가 예약 가능 설정 수정)
+    // (대여 가능 상품 재고 추가 예약 가능 설정 수정 <ADMIN>)
     fun patchRentableProductStockInfoReservable(
         httpServletResponse: HttpServletResponse,
         authorization: String,

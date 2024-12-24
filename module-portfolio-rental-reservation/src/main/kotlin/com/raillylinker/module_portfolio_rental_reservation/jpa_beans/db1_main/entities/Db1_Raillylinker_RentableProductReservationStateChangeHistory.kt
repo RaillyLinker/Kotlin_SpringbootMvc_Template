@@ -23,7 +23,7 @@ class Db1_Raillylinker_RentableProductReservationStateChangeHistory(
     var rentableProductReservationInfo: Db1_Raillylinker_RentableProductReservationInfo,
 
     @Column(name = "state_code", nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    @Comment("예약 상태 코드 (1 : 예약 신청, 2 : 결재 완료, 3 : 예약 승인, 4 : 예약 거부, 5 : 예약 취소 신청, 6 : 예약 취소 승인, 7 : 예약 취소 거부, 8 : 예약 취소 후 환불 완료)")
+    @Comment("예약 상태 코드 (1 : 예약 신청, 2 : 결재 완료, 3 : 예약 승인, 4 : 예약 거부, 5 : 예약 취소 신청, 6 : 예약 취소 승인, 7 : 예약 취소 거부, 8 : 예약 취소 후 환불 완료, 9 : 조기 반납)")
     var stateCode: Int,
 
     @Column(name = "state_change_desc", nullable = false, columnDefinition = "VARCHAR(600)")
