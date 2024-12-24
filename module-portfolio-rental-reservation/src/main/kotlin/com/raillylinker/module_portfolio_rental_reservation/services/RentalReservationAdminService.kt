@@ -44,44 +44,8 @@ class RentalReservationAdminService(
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
-    // (비 로그인 접속 테스트)
-    fun noLoggedInAccessTest(httpServletResponse: HttpServletResponse): String? {
-        httpServletResponse.status = HttpStatus.OK.value()
-        return externalAccessAddress
-    }
-
-
-    // ----
-    // (로그인 진입 테스트 <>)
-    fun loggedInAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-
-        httpServletResponse.status = HttpStatus.OK.value()
-        return "Member No.$memberUid : Test Success"
-    }
-
-
-    // ----
     // (ADMIN 권한 진입 테스트 <'ADMIN'>)
     fun adminAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-
-        httpServletResponse.status = HttpStatus.OK.value()
-        return "Member No.$memberUid : Test Success"
-    }
-
-
-    // ----
-    // (Developer 권한 진입 테스트 <'ADMIN' or 'Developer'>)
-    fun developerAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
