@@ -376,29 +376,13 @@ class BoardController(
     // ----
     @Operation(
         summary = "게시글 조회수 1 상승",
-        description = "게시글 조회수를 1 상승시킵니다.<br>" +
-                "본인 게시글이 아니라면 204 코드 1 이 반환<br>" +
-                "동일 ip 의 상승은 몇시간 후에 가능"
+        description = "게시글 조회수를 1 상승시킵니다."
     )
     @ApiResponses(
         value = [
             ApiResponse(
                 responseCode = "200",
                 description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : testTableUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
             )
         ]
     )
