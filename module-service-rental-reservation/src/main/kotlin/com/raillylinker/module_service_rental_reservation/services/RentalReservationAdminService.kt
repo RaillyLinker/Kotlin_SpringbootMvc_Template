@@ -219,6 +219,40 @@ class RentalReservationAdminService(
 
 
     // ----
+    // (대여 가능 상품 이미지 등록 <ADMIN>)
+    fun postRentableProductImage(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: RentalReservationAdminController.PostRentableProductImageInputVo
+    ): RentalReservationAdminController.PostRentableProductImageOutputVo? {
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationAdminController.PostRentableProductImageOutputVo(
+            1L // todo
+        )
+    }
+
+
+    // ----
+    // (대여 가능 상품 이미지 삭제 <ADMIN>)
+    fun deleteRentableProductImage(httpServletResponse: HttpServletResponse, authorization: String) {
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
+    // (대여 가능 상품 대표 상품 이미지 수정 <ADMIN>)
+    fun patchRentableProductInfoFrontImage(httpServletResponse: HttpServletResponse, authorization: String, rentableProductInfoUid: Long, inputVo: RentalReservationAdminController.PatchRentableProductInfoFrontImageInputVo) {
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
     // (대여 가능 상품 재고 등록 <ADMIN>)
     fun postRentableProductStockInfo(
         httpServletResponse: HttpServletResponse,
