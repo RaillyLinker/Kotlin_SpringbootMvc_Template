@@ -75,8 +75,8 @@ include("module-sample-quartz")
 // 시큐리티 필터 적용 테스트 샘플 (12013)
 include("module-sample-just-security")
 
-// 게시판 샘플 (13000)
-include("module-portfolio-board")
+// 게시판 서비스 (13000)
+include("module-service-board")
 
-// 예약 대여 샘플 (13001)
-include("module-portfolio-rental-reservation")
+// 예약 대여 서비스 (13001)
+include("module-service-rental-reservation")
