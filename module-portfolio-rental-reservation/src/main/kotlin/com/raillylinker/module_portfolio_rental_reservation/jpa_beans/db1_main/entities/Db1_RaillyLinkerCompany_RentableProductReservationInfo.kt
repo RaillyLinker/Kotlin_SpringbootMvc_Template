@@ -45,7 +45,47 @@ class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
 
     @Column(name = "reservation_approval_deadline_datetime", nullable = false, columnDefinition = "DATETIME")
     @Comment("관리자 승인 기한 (이 시점이 지났고, reservation_approval_datetime 가 충족되지 않았다면 취소로 간주)")
-    var reservationApprovalDeadlineDatetime: LocalDateTime
+    var reservationApprovalDeadlineDatetime: LocalDateTime,
+
+    // 아래는 예약 당시 영수증으로서의 기능을 하는 컬럼
+    @Column(name = "product_name", nullable = false, columnDefinition = "VARCHAR(90)")
+    @Comment("고객에게 보일 상품명")
+    var productName: String,
+
+    @ManyToOne
+    @JoinColumn(name = "rentable_product_category_uid", nullable = true)
+    @Comment("rentable_product_category 테이블 고유번호 (railly_linker_company.rentable_product_category.uid)")
+    var rentableProductCategory: Db1_RaillyLinkerCompany_RentableProductCategory?,
+
+    @Column(name = "product_intro", nullable = false, columnDefinition = "VARCHAR(6000)")
+    @Comment("고객에게 보일 상품 소개")
+    var productIntro: String,
+
+    @ManyToOne
+    @JoinColumn(name = "front_rentable_product_image_uid", nullable = true)
+    @Comment("상품 대표 이미지 rentable_product_image 테이블 고유번호 (railly_linker_company.rentable_product_image.uid)")
+    var frontRentableProductImage: Db1_RaillyLinkerCompany_RentableProductImage?,
+
+    @Column(name = "address_country", nullable = false, columnDefinition = "VARCHAR(60)")
+    @Comment("상품이 위치한 주소 (대여 가능 위치의 기준으로 사용됨) - 국가")
+    var addressCountry: String,
+
+    @Column(name = "address_main", nullable = false, columnDefinition = "VARCHAR(300)")
+    @Comment("상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 국가와 상세 주소를 제외")
+    var addressMain: String,
+
+    @Column(name = "address_detail", nullable = false, columnDefinition = "VARCHAR(300)")
+    @Comment("상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 상세")
+    var addressDetail: String,
+
+    @Column(name = "preparation_minute", nullable = false, columnDefinition = "BIGINT UNSIGNED")
+    @Comment(
+        "대여 상품 반납일시로부터 다음 대여까지 걸리는 시간. " +
+                "(분, 회수 시간, 준비 시간, 평균 지연 시간을 포함하여 반납 후 다음 대여 사이의 시간, " +
+                "식당 예약으로 치면, 고객이 식사를 마치고 나온 이후 식탁 정리 등 테이블 세팅에 들어가는 시간. " +
+                "이 시간을 기반으로 다음 대여 가능 시간을 가늠하므로 다음 대여한 고객에게 피해를 끼치지 않도록 넉넉히 설정할것)"
+    )
+    var preparationMinute: Long,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

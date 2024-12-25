@@ -173,8 +173,7 @@ class RentalReservationAdminController(
     // ----
     @Operation(
         summary = "대여 가능 상품 추가 예약 가능 설정 수정 <ADMIN> (더미)", // todo
-        description = "대여 가능 상품을 현 시간부로 예약 가능하게 할 것인지에 대한 스위치 플래그 수정<br>" +
-                "기존 예약 정보에는 영향을 끼치지 않으므로 언제든 수정 가능"
+        description = "대여 가능 상품을 현 시간부로 예약 가능하게 할 것인지에 대한 스위치 플래그 수정"
     )
     @ApiResponses(
         value = [
