@@ -28,6 +28,7 @@ class RentalReservationAdminController(
 
     // ---------------------------------------------------------------------------------------------
     // <매핑 함수 공간>
+    // todo 최소 최대 추가 횟수 검증, 글자수 검증, 날짜 타입 검증, 숫자 unsigned 검증
     @Operation(
         summary = "대여 가능 상품 등록 <ADMIN> (더미)", // todo
         description = "대여 상품 정보를 등록합니다."
@@ -172,6 +173,160 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
+        summary = "대여 가능 상품 수정 <ADMIN> (더미)", // todo
+        description = "대여 상품 정보를 수정합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PutMapping(
+        path = ["/rentable-product-info/{rentableProductInfoUid}"],
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun putRentableProductInfo(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "rentableProductInfoUid", description = "rentableProductInfo 고유값", example = "1")
+        @PathVariable("rentableProductInfoUid")
+        rentableProductInfoUid: Long,
+        @ModelAttribute
+        @RequestBody
+        inputVo: PutRentableProductInfoInputVo
+    ) {
+        service.putRentableProductInfo(httpServletResponse, authorization!!, rentableProductInfoUid, inputVo)
+    }
+
+    data class PutRentableProductInfoInputVo(
+        @Schema(description = "고객에게 보일 상품명", required = true, example = "testString")
+        @JsonProperty("productName")
+        val productName: String,
+        @Schema(
+            description = "상품 카테고리 (ex : 동물|개과|치와와, 예시와 같이 |로 대분류 -> 소분류 순으로 구분)",
+            required = true,
+            example = "동물|개과|치와와"
+        )
+        @JsonProperty("productCategory")
+        val productCategory: String,
+        @Schema(
+            description = "고객에게 보일 상품 소개",
+            required = true,
+            example = "예약해주세요."
+        )
+        @JsonProperty("productIntro")
+        val productIntro: String,
+        @Schema(description = "고객에게 보일 상품 썸네일 이미지", required = false)
+        @JsonProperty("thumbnailImage")
+        val thumbnailImage: MultipartFile?,
+        @Schema(
+            description = "상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 국가",
+            required = true,
+            example = "대한민국"
+        )
+        @JsonProperty("addressCountry")
+        val addressCountry: String,
+        @Schema(
+            description = "상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 국가와 상세 주소를 제외",
+            required = true,
+            example = "서울시 은평구 불광동 미래혁신센터"
+        )
+        @JsonProperty("addressMain")
+        val addressMain: String,
+        @Schema(
+            description = "상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 상세",
+            required = true,
+            example = "200 동 109 호"
+        )
+        @JsonProperty("addressDetail")
+        val addressDetail: String,
+        @Schema(
+            description = "상품 예약이 가능한 최초 일시(콘서트 티켓 예매 선공개 기능을 가정)(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("firstReservableDatetime")
+        val firstReservableDatetime: String,
+        @Schema(
+            description = "예약 추가 할 수 있는 최소 시간 단위 (분)",
+            required = true,
+            example = "60"
+        )
+        @JsonProperty("reservationUnitMinute")
+        val reservationUnitMinute: Long,
+        @Schema(
+            description = "단위 예약 시간을 대여일 기준에서 최소 몇번 추가 해야 하는지",
+            required = true,
+            example = "1"
+        )
+        @JsonProperty("minimumReservationUnitCount")
+        val minimumReservationUnitCount: Long,
+        @Schema(
+            description = "단위 예약 시간을 대여일 기준에서 최대 몇번 추가 가능한지 (Null 이라면 제한 없음)",
+            required = false,
+            example = "3"
+        )
+        @JsonProperty("maximumReservationUnitCount")
+        val maximumReservationUnitCount: Long?,
+        @Schema(
+            description = "단위 예약 시간에 대한 가격 (예약 시간 / 단위 예약 시간 * 예약 단가 = 예약 최종가)",
+            required = true,
+            example = "10000"
+        )
+        @JsonProperty("reservationUnitPrice")
+        val reservationUnitPrice: Long,
+        @Schema(
+            description = "회수 준비 시간 (분, 대여 상품 반납일시로부터 다음 대여까지 걸리는 시간)",
+            required = true,
+            example = "10"
+        )
+        @JsonProperty("preparationMinute")
+        val preparationMinute: Long,
+        @Schema(
+            description = "예약 가능 설정 (재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정)",
+            required = true,
+            example = "true"
+        )
+        @JsonProperty("nowReservable")
+        val nowReservable: Boolean
+    )
+
+
+    // ----
+    @Operation(
         summary = "대여 가능 상품 추가 예약 가능 설정 수정 <ADMIN> (더미)", // todo
         description = "대여 가능 상품을 현 시간부로 예약 가능하게 할 것인지에 대한 스위치 플래그 수정"
     )
@@ -246,10 +401,87 @@ class RentalReservationAdminController(
 
 
     // ----
+    // todo 최소 최대 추가 횟수 검증, 숫자 unsigned 검증
     @Operation(
-        summary = "대여 가능 상품 최소 예약 횟수, 최대 예약 횟수 설정 수정 <ADMIN> (더미)", // todo
-        description = "대여 가능 상품의 현 시간부로의 최소 예약 횟수, 최대 예약 횟수 설정 수정<br>" +
-                "기존 예약 정보에는 영향을 끼치지 않으므로 언제든 수정 가능"
+        summary = "대여 가능 상품 최소 예약 횟수 설정 수정 <ADMIN> (더미)", // todo
+        description = "대여 가능 상품의 현 시간부로의 최소 예약 횟수 설정 수정"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 최소 예약 횟수는 최대 예약 횟수보다 작거나 같아야 합니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PatchMapping(
+        path = ["/rentable-product-info/{rentableProductInfoUid}/min-reservation-unit-count"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun patchRentableProductInfoMinReservationUnitCount(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "rentableProductInfoUid", description = "rentableProductInfo 고유값", example = "1")
+        @PathVariable("rentableProductInfoUid")
+        rentableProductInfoUid: Long,
+        @RequestBody
+        inputVo: PatchRentableProductInfoMinReservationUnitCountInputVo
+    ) {
+        service.patchRentableProductInfoMinReservationUnitCount(
+            httpServletResponse,
+            authorization!!,
+            rentableProductInfoUid,
+            inputVo
+        )
+    }
+
+    data class PatchRentableProductInfoMinReservationUnitCountInputVo(
+        @Schema(
+            description = "단위 예약 시간을 대여일 기준에서 최소 몇번 추가 해야 하는지",
+            required = true,
+            example = "1"
+        )
+        @JsonProperty("minimumReservationUnitCount")
+        val minimumReservationUnitCount: Long
+    )
+
+
+    // ----
+    // todo 최소 최대 추가 횟수 검증, 숫자 unsigned 검증
+    @Operation(
+        summary = "대여 가능 상품 최대 예약 횟수 설정 수정 <ADMIN> (더미)", // todo
+        description = "대여 가능 상품의 현 시간부로의 최대 예약 횟수 설정 수정"
     )
     @ApiResponses(
         value = [
@@ -284,13 +516,13 @@ class RentalReservationAdminController(
         ]
     )
     @PatchMapping(
-        path = ["/rentable-product-info/{rentableProductInfoUid}/min-max-reservation-unit-count"],
+        path = ["/rentable-product-info/{rentableProductInfoUid}/max-reservation-unit-count"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.ALL_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun patchRentableProductInfoMinMaxReservationUnitCount(
+    fun patchRentableProductInfoMaxReservationUnitCount(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
@@ -300,9 +532,9 @@ class RentalReservationAdminController(
         @PathVariable("rentableProductInfoUid")
         rentableProductInfoUid: Long,
         @RequestBody
-        inputVo: PatchRentableProductInfoMinMaxReservationUnitCountInputVo
+        inputVo: PatchRentableProductInfoMaxReservationUnitCountInputVo
     ) {
-        service.patchRentableProductInfoMinMaxReservationUnitCount(
+        service.patchRentableProductInfoMaxReservationUnitCount(
             httpServletResponse,
             authorization!!,
             rentableProductInfoUid,
@@ -310,29 +542,22 @@ class RentalReservationAdminController(
         )
     }
 
-    data class PatchRentableProductInfoMinMaxReservationUnitCountInputVo(
+    data class PatchRentableProductInfoMaxReservationUnitCountInputVo(
         @Schema(
-            description = "단위 예약 시간을 대여일 기준에서 최소 몇번 추가 해야 하는지",
+            description = "단위 예약 시간을 대여일 기준에서 최대 몇번 추가 해야 하는지",
             required = true,
             example = "1"
         )
-        @JsonProperty("minimumReservationUnitCount")
-        val minimumReservationUnitCount: Long,
-        @Schema(
-            description = "단위 예약 시간을 대여일 기준에서 최대 몇번 추가 가능한지 (Null 이라면 제한 없음)",
-            required = false,
-            example = "3"
-        )
         @JsonProperty("maximumReservationUnitCount")
-        val maximumReservationUnitCount: Long?,
+        val maximumReservationUnitCount: Long
     )
 
 
     // ----
+    // todo 숫자 unsigned 검증
     @Operation(
         summary = "대여 가능 상품 회수 준비 시간 설정 수정 <ADMIN> (더미)", // todo
-        description = "대여 가능 상품의 현 시간부로의 회수 준비 시간 설정 수정<br>" +
-                "기존 예약 정보에는 영향을 끼치지 않으므로 언제든 수정 가능"
+        description = "대여 가능 상품의 현 시간부로의 회수 준비 시간 설정 수정"
     )
     @ApiResponses(
         value = [
@@ -516,8 +741,7 @@ class RentalReservationAdminController(
     // ----
     @Operation(
         summary = "대여 가능 상품 추가 예약 가능 설정 수정 <ADMIN> (더미)", // todo
-        description = "대여 가능 상품을 현 시간부로 예약 가능하게 할 것인지에 대한 스위치 플래그 수정<br>" +
-                "기존 예약 정보에는 영향을 끼치지 않으므로 언제든 수정 가능"
+        description = "대여 가능 상품을 현 시간부로 예약 가능하게 할 것인지에 대한 스위치 플래그 수정"
     )
     @ApiResponses(
         value = [
@@ -589,7 +813,6 @@ class RentalReservationAdminController(
     )
 
 
-    // todo : 영수증을 위해서 정보들 백업 및 버전 처리
     // todo : 대여 가능 상품 삭제(활성 플래그를 넣을지 말지)
 
     // todo : 대여 가능 상품 재고 정보 수정 (except now_reservable)

@@ -66,6 +66,25 @@ class RentalReservationAdminService(
 
 
     // ----
+    // (대여 가능 상품 수정 <ADMIN>)
+    fun putRentableProductInfo(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductInfoUid: Long,
+        inputVo: RentalReservationAdminController.PutRentableProductInfoInputVo
+    ) {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
     // (대여 가능 상품 추가 예약 가능 설정 수정 <ADMIN>)
     fun patchRentableProductInfoReservable(
         httpServletResponse: HttpServletResponse,
@@ -85,12 +104,31 @@ class RentalReservationAdminService(
 
 
     // ----
-    // (대여 가능 상품 최소 예약 횟수, 최대 예약 횟수 설정 수정 <ADMIN>)
-    fun patchRentableProductInfoMinMaxReservationUnitCount(
+    // (대여 가능 상품 최소 예약 횟수 설정 수정 <ADMIN>)
+    fun patchRentableProductInfoMinReservationUnitCount(
         httpServletResponse: HttpServletResponse,
         authorization: String,
         rentableProductInfoUid: Long,
-        inputVo: RentalReservationAdminController.PatchRentableProductInfoMinMaxReservationUnitCountInputVo
+        inputVo: RentalReservationAdminController.PatchRentableProductInfoMinReservationUnitCountInputVo
+    ) {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
+    // (대여 가능 상품 최대 예약 횟수 설정 수정 <ADMIN>)
+    fun patchRentableProductInfoMaxReservationUnitCount(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductInfoUid: Long,
+        inputVo: RentalReservationAdminController.PatchRentableProductInfoMaxReservationUnitCountInputVo
     ) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
