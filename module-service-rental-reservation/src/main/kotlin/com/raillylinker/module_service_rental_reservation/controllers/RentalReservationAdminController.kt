@@ -241,12 +241,7 @@ class RentalReservationAdminController(
     }
 
 
-    // todo 카테고리 정보 R
-    // todo 이미지 정보 CUDR
-
-
     // ----
-    // todo 최소 최대 추가 횟수 검증, 글자수 검증, 날짜 타입 검증, 숫자 unsigned 검증
     @Operation(
         summary = "대여 가능 상품 등록 <ADMIN> (더미)", // todo
         description = "대여 상품 정보를 등록합니다."
@@ -256,6 +251,20 @@ class RentalReservationAdminController(
             ApiResponse(
                 responseCode = "200",
                 description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
             ),
             ApiResponse(
                 responseCode = "401",
@@ -294,12 +303,12 @@ class RentalReservationAdminController(
         @JsonProperty("productName")
         val productName: String,
         @Schema(
-            description = "상품 카테고리 (ex : 동물|개과|치와와, 예시와 같이 |로 대분류 -> 소분류 순으로 구분)",
+            description = "상품 카테고리 고유값",
             required = true,
-            example = "동물|개과|치와와"
+            example = "1"
         )
-        @JsonProperty("productCategory")
-        val productCategory: String,
+        @JsonProperty("rentableProductCategoryUid")
+        val rentableProductCategoryUid: Long?,
         @Schema(
             description = "고객에게 보일 상품 소개",
             required = true,
@@ -307,9 +316,13 @@ class RentalReservationAdminController(
         )
         @JsonProperty("productIntro")
         val productIntro: String,
-        @Schema(description = "고객에게 보일 상품 썸네일 이미지", required = false)
-        @JsonProperty("thumbnailImage")
-        val thumbnailImage: MultipartFile?,
+        @Schema(
+            description = "고객에게 보일 상품 썸네일 이미지 리스트<br>" +
+                    "0번째 이미지가 대표 이미지로 설정",
+            required = false
+        )
+        @JsonProperty("thumbnailImageList")
+        val thumbnailImageList: List<MultipartFile>?,
         @Schema(
             description = "상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 국가",
             required = true,
@@ -409,7 +422,8 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -454,12 +468,12 @@ class RentalReservationAdminController(
         @JsonProperty("productName")
         val productName: String,
         @Schema(
-            description = "상품 카테고리 (ex : 동물|개과|치와와, 예시와 같이 |로 대분류 -> 소분류 순으로 구분)",
+            description = "상품 카테고리 고유값",
             required = true,
-            example = "동물|개과|치와와"
+            example = "1"
         )
-        @JsonProperty("productCategory")
-        val productCategory: String,
+        @JsonProperty("rentableProductCategoryUid")
+        val rentableProductCategoryUid: Long?,
         @Schema(
             description = "고객에게 보일 상품 소개",
             required = true,
@@ -467,9 +481,13 @@ class RentalReservationAdminController(
         )
         @JsonProperty("productIntro")
         val productIntro: String,
-        @Schema(description = "고객에게 보일 상품 썸네일 이미지", required = false)
-        @JsonProperty("thumbnailImage")
-        val thumbnailImage: MultipartFile?,
+        @Schema(
+            description = "고객에게 보일 상품 썸네일 이미지 리스트<br>" +
+                    "0번째 이미지가 대표 이미지로 설정",
+            required = false
+        )
+        @JsonProperty("thumbnailImageList")
+        val thumbnailImageList: List<MultipartFile>?,
         @Schema(
             description = "상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 국가",
             required = true,
@@ -1040,4 +1058,10 @@ class RentalReservationAdminController(
     // todo : 대여 가능 상품 예약 상태 변경 히스토리 등록 (현 상태에 따라 상태 변화 가능한 방향으로만 변경 가능, 삭제 및 수정 불가)
 
     // todo : Admin 관련 필요 정보 Read API 궁리
+
+    // todo 이미지 정보 R
+    // todo 카테고리 정보 R
+
+
+    // todo 이미지 정보 CUD
 }
