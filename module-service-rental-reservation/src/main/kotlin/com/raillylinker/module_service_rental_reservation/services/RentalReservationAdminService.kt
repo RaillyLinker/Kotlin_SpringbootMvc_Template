@@ -45,6 +45,64 @@ class RentalReservationAdminService(
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
+    // (예약 상품 카테고리 정보 등록 <ADMIN>)
+    fun postRentableProductCategory(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: RentalReservationAdminController.PostRentableProductCategoryInputVo
+    ): RentalReservationAdminController.PostRentableProductCategoryOutputVo? {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationAdminController.PostRentableProductCategoryOutputVo(
+            1L // todo
+        )
+    }
+
+
+    // ----
+    // (예약 상품 카테고리 정보 수정 <ADMIN>)
+    fun putRentableProductCategory(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductCategoryUid: Long,
+        inputVo: RentalReservationAdminController.PutRentableProductCategoryInputVo
+    ) {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
+    // (예약 상품 카테고리 정보 삭제 <ADMIN>)
+    fun deleteRentableProductCategory(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductCategoryUid: Long
+    ) {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
     // (대여 가능 상품 등록 <ADMIN>)
     fun postRentableProductInfo(
         httpServletResponse: HttpServletResponse,

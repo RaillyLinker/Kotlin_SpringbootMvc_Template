@@ -28,6 +28,224 @@ class RentalReservationAdminController(
 
     // ---------------------------------------------------------------------------------------------
     // <매핑 함수 공간>
+    @Operation(
+        summary = "예약 상품 카테고리 정보 등록 <ADMIN> (더미)", // todo
+        description = "예약 상품의 카테고리 정보를 등록합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : parentRentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/rentable-product-category"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun postRentableProductCategory(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @RequestBody
+        inputVo: PostRentableProductCategoryInputVo
+    ): PostRentableProductCategoryOutputVo? {
+        return service.postRentableProductCategory(
+            httpServletResponse,
+            authorization!!,
+            inputVo
+        )
+    }
+
+    data class PostRentableProductCategoryInputVo(
+        @Schema(description = "부모 카테고리 고유번호", required = false, example = "1")
+        @JsonProperty("parentRentableProductCategoryUid")
+        val parentRentableProductCategoryUid: Long?,
+        @Schema(description = "카테고리 이름", required = true, example = "유머")
+        @JsonProperty("categoryName")
+        val categoryName: String
+    )
+
+    data class PostRentableProductCategoryOutputVo(
+        @Schema(description = "rentableProductInfo 고유값", required = true, example = "1")
+        @JsonProperty("rentableProductInfoUid")
+        val rentableProductInfoUid: Long
+    )
+
+
+    // ----
+    @Operation(
+        summary = "예약 상품 카테고리 정보 수정 <ADMIN> (더미)", // todo
+        description = "예약 상품의 카테고리 정보를 수정합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "1 : parentRentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PutMapping(
+        path = ["/rentable-product-category/{rentableProductCategoryUid}"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun putRentableProductCategory(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "rentableProductCategoryUid", description = "rentableProductCategory 고유값", example = "1")
+        @PathVariable("rentableProductCategoryUid")
+        rentableProductCategoryUid: Long,
+        @RequestBody
+        inputVo: PutRentableProductCategoryInputVo
+    ) {
+        service.putRentableProductCategory(
+            httpServletResponse,
+            authorization!!,
+            rentableProductCategoryUid,
+            inputVo
+        )
+    }
+
+    data class PutRentableProductCategoryInputVo(
+        @Schema(description = "부모 카테고리 고유번호", required = false, example = "1")
+        @JsonProperty("parentRentableProductCategoryUid")
+        val parentRentableProductCategoryUid: Long?,
+        @Schema(description = "카테고리 이름", required = true, example = "유머")
+        @JsonProperty("categoryName")
+        val categoryName: String
+    )
+
+
+    // ----
+    @Operation(
+        summary = "예약 상품 카테고리 정보 삭제 <ADMIN> (더미)", // todo
+        description = "예약 상품의 카테고리 정보를 삭제합니다.<br>" +
+                "하위 카테고리들은 모두 자동 삭제됩니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @DeleteMapping(
+        path = ["/rentable-product-category/{rentableProductCategoryUid}"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun deleteRentableProductCategory(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "rentableProductCategoryUid", description = "rentableProductCategory 고유값", example = "1")
+        @PathVariable("rentableProductCategoryUid")
+        rentableProductCategoryUid: Long
+    ) {
+        service.deleteRentableProductCategory(
+            httpServletResponse,
+            authorization!!,
+            rentableProductCategoryUid
+        )
+    }
+
+
+    // todo 카테고리 정보 R
+    // todo 이미지 정보 CUDR
+
+
+    // ----
     // todo 최소 최대 추가 횟수 검증, 글자수 검증, 날짜 타입 검증, 숫자 unsigned 검증
     @Operation(
         summary = "대여 가능 상품 등록 <ADMIN> (더미)", // todo
