@@ -47,6 +47,7 @@ class Db1_RaillyLinkerCompany_RentableProductStockImage(
 
     // ---------------------------------------------------------------------------------------------
     // <중첩 클래스 공간>
+    // 이미지 삭제시 이미지 설정 null 처리
     @OneToMany(
         mappedBy = "frontRentableProductStockImage",
         fetch = FetchType.LAZY

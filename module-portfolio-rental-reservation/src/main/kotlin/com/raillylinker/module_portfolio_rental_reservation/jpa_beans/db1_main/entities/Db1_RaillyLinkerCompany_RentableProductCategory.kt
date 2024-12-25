@@ -50,6 +50,7 @@ class Db1_RaillyLinkerCompany_RentableProductCategory(
 
     // ---------------------------------------------------------------------------------------------
     // <중첩 클래스 공간>
+    // 상위 카테고리가 삭제되면 하위 카테고리도 삭제
     @OneToMany(
         mappedBy = "parentRentableProductCategory",
         fetch = FetchType.LAZY,
@@ -57,15 +58,10 @@ class Db1_RaillyLinkerCompany_RentableProductCategory(
     )
     var childRentableProductCategoryList: MutableList<Db1_RaillyLinkerCompany_RentableProductCategory> = mutableListOf()
 
+    // 카테고리 삭제시 카테고리 설정을 null 로 변경
     @OneToMany(
         mappedBy = "rentableProductCategory",
         fetch = FetchType.LAZY
     )
     var rentableProductInfoList: MutableList<Db1_RaillyLinkerCompany_RentableProductInfo> = mutableListOf()
-
-    @OneToMany(
-        mappedBy = "rentableProductCategory",
-        fetch = FetchType.LAZY
-    )
-    var rentableProductReservationInfoList: MutableList<Db1_RaillyLinkerCompany_RentableProductReservationInfo> = mutableListOf()
 }

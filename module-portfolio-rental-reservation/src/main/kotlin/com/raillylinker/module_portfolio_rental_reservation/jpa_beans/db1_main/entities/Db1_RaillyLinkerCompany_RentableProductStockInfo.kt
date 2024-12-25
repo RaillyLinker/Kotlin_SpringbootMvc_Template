@@ -72,13 +72,16 @@ class Db1_RaillyLinkerCompany_RentableProductStockInfo(
 
     // ---------------------------------------------------------------------------------------------
     // <중첩 클래스 공간>
+    // 상품 정보 삭제시 이미지 삭제
     @OneToMany(
         mappedBy = "rentableProductStockInfo",
-        fetch = FetchType.LAZY
+        fetch = FetchType.LAZY,
+        cascade = [CascadeType.ALL]
     )
     var rentableProductStockImageList: MutableList<Db1_RaillyLinkerCompany_RentableProductStockImage> =
         mutableListOf()
 
+    // 상품 정보 삭제시 상품 예약 내역 삭제
     @OneToMany(
         mappedBy = "rentableProductStockInfo",
         fetch = FetchType.LAZY,

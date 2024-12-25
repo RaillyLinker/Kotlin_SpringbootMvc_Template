@@ -47,6 +47,7 @@ class Db1_RaillyLinkerCompany_RentableProductImage(
 
     // ---------------------------------------------------------------------------------------------
     // <중첩 클래스 공간>
+    // 이미지 삭제시 이미지 설정을 null 로 변경
     @OneToMany(
         mappedBy = "frontRentableProductImage",
         fetch = FetchType.LAZY
@@ -54,6 +55,7 @@ class Db1_RaillyLinkerCompany_RentableProductImage(
     var rentableProductInfoList: MutableList<Db1_RaillyLinkerCompany_RentableProductInfo> =
         mutableListOf()
 
+    // 이미지 삭제시 이미지 설정을 null 로 변경
     @OneToMany(
         mappedBy = "frontRentableProductImage",
         fetch = FetchType.LAZY

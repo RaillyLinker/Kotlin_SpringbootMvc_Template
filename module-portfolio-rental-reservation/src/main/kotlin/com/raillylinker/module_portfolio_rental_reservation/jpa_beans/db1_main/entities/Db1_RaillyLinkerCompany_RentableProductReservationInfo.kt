@@ -18,9 +18,9 @@ import java.time.LocalDateTime
 @Comment("대여 가능 상품 예약 정보")
 class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
     @ManyToOne
-    @JoinColumn(name = "rentable_product_info_uid", nullable = false)
+    @JoinColumn(name = "rentable_product_info_uid", nullable = true)
     @Comment("rentable_product_info 테이블 고유번호 (railly_linker_company.rentable_product_info.uid)")
-    var rentableProductInfo: Db1_RaillyLinkerCompany_RentableProductInfo,
+    var rentableProductInfo: Db1_RaillyLinkerCompany_RentableProductInfo?,
 
     @ManyToOne
     @JoinColumn(name = "total_auth_member_uid", nullable = false)
@@ -51,11 +51,6 @@ class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
     @Column(name = "product_name", nullable = false, columnDefinition = "VARCHAR(90)")
     @Comment("고객에게 보일 상품명")
     var productName: String,
-
-    @ManyToOne
-    @JoinColumn(name = "rentable_product_category_uid", nullable = true)
-    @Comment("rentable_product_category 테이블 고유번호 (railly_linker_company.rentable_product_category.uid)")
-    var rentableProductCategory: Db1_RaillyLinkerCompany_RentableProductCategory?,
 
     @Column(name = "product_intro", nullable = false, columnDefinition = "VARCHAR(6000)")
     @Comment("고객에게 보일 상품 소개")
@@ -111,6 +106,7 @@ class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
 
     // ---------------------------------------------------------------------------------------------
     // <중첩 클래스 공간>
+    // 예약 정보가 삭제되면 개별 예약 내역 삭제
     @OneToMany(
         mappedBy = "rentableProductReservationInfo",
         fetch = FetchType.LAZY,
@@ -119,7 +115,7 @@ class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
     var rentableProductStockReservationInfoList: MutableList<Db1_RaillyLinkerCompany_RentableProductStockReservationInfo> =
         mutableListOf()
 
-
+    // 예약 정보가 삭제되면 예약 정보 히스토리 삭제
     @OneToMany(
         mappedBy = "rentableProductReservationInfo",
         fetch = FetchType.LAZY,
