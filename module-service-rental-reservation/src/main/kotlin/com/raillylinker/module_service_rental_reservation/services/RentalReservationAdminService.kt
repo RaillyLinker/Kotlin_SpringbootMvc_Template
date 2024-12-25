@@ -245,7 +245,60 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 대표 상품 이미지 수정 <ADMIN>)
-    fun patchRentableProductInfoFrontImage(httpServletResponse: HttpServletResponse, authorization: String, rentableProductInfoUid: Long, inputVo: RentalReservationAdminController.PatchRentableProductInfoFrontImageInputVo) {
+    fun patchRentableProductInfoFrontImage(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductInfoUid: Long,
+        inputVo: RentalReservationAdminController.PatchRentableProductInfoFrontImageInputVo
+    ) {
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
+    // (대여 가능 상품 대표 상품 이미지 설정 수정 <ADMIN>)
+    fun postRentableProductStockCategory(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: RentalReservationAdminController.PostRentableProductStockCategoryInputVo
+    ): RentalReservationAdminController.PostRentableProductStockCategoryOutputVo? {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationAdminController.PostRentableProductStockCategoryOutputVo(
+            1L // todo
+        )
+    }
+
+
+    // ----
+    // (예약 상품 재고 카테고리 정보 수정 <ADMIN>)
+    fun putRentableProductStockCategory(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductStockCategoryUid: Long,
+        inputVo: RentalReservationAdminController.PutRentableProductStockCategoryInputVo
+    ) {
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
+    // (예약 상품 재고 카테고리 정보 삭제 <ADMIN>)
+    fun deleteRentableProductStockCategory(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductStockCategoryUid: Long
+    ) {
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
