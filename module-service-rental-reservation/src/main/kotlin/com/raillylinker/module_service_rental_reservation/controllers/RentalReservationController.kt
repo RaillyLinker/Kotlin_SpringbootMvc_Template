@@ -87,4 +87,9 @@ class RentalReservationController(
 
 
     // todo : 상품 예약 신청
+    // todo : 예약 취소 신청
+    // todo : 조기 반납 신청
+    // todo : 결재 모듈 추가하기
+
+    // todo : 필요 정보 Read API 궁리
 }
