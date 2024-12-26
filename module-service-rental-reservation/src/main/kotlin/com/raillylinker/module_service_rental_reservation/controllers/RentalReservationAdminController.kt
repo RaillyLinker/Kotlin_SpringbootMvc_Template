@@ -2442,5 +2442,5 @@ class RentalReservationAdminController(
         val nextReadyDatetime: String
     )
 
-    // todo : Admin 관련 필요 정보 Read API 궁리
+    // todo : Admin 관련 필요 정보 조회 API 들 추가
 }

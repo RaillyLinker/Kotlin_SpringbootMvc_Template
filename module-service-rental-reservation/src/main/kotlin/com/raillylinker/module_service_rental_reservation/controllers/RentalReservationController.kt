@@ -92,5 +92,5 @@ class RentalReservationController(
 
     // todo : 결재 모듈 추가하기?
 
-    // todo : 필요 정보 Read API 궁리
+    // todo : 필요 정보 조회 API 들 추가
 }
