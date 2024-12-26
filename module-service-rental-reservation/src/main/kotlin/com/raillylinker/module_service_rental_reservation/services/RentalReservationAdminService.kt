@@ -236,7 +236,11 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 이미지 삭제 <ADMIN>)
-    fun deleteRentableProductImage(httpServletResponse: HttpServletResponse, authorization: String) {
+    fun deleteRentableProductImage(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductImageUid: Long
+    ) {
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()

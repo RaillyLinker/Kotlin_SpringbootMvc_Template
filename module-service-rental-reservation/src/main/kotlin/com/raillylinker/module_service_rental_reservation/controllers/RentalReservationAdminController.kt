@@ -975,7 +975,7 @@ class RentalReservationAdminController(
         @PathVariable("rentableProductImageUid")
         rentableProductImageUid: Long
     ) {
-        service.deleteRentableProductImage(httpServletResponse, authorization!!)
+        service.deleteRentableProductImage(httpServletResponse, authorization!!, rentableProductImageUid)
     }
 
 
