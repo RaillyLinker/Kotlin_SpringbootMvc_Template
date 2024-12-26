@@ -71,16 +71,7 @@ class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
 
     @Column(name = "address_detail", nullable = false, columnDefinition = "VARCHAR(300)")
     @Comment("상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 상세")
-    var addressDetail: String,
-
-    @Column(name = "preparation_minute", nullable = false, columnDefinition = "BIGINT UNSIGNED")
-    @Comment(
-        "대여 상품 반납일시로부터 다음 대여까지 걸리는 시간. " +
-                "(분, 회수 시간, 준비 시간, 평균 지연 시간을 포함하여 반납 후 다음 대여 사이의 시간, " +
-                "식당 예약으로 치면, 고객이 식사를 마치고 나온 이후 식탁 정리 등 테이블 세팅에 들어가는 시간. " +
-                "이 시간을 기반으로 다음 대여 가능 시간을 가늠하므로 다음 대여한 고객에게 피해를 끼치지 않도록 넉넉히 설정할것)"
-    )
-    var preparationMinute: Long,
+    var addressDetail: String
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

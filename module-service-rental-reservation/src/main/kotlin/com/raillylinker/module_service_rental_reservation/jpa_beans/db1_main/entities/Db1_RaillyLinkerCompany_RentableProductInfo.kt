@@ -67,15 +67,6 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
     @Comment("단위 예약 시간에 대한 가격 (예약 시간 / 단위 예약 시간 * 예약 단가 = 예약 최종가)")
     var reservationUnitPrice: Long,
 
-    @Column(name = "preparation_minute", nullable = false, columnDefinition = "BIGINT UNSIGNED")
-    @Comment(
-        "대여 상품 반납일시로부터 다음 대여까지 걸리는 시간. " +
-                "(분, 회수 시간, 준비 시간, 평균 지연 시간을 포함하여 반납 후 다음 대여 사이의 시간, " +
-                "식당 예약으로 치면, 고객이 식사를 마치고 나온 이후 식탁 정리 등 테이블 세팅에 들어가는 시간. " +
-                "이 시간을 기반으로 다음 대여 가능 시간을 가늠하므로 다음 대여한 고객에게 피해를 끼치지 않도록 넉넉히 설정할것)"
-    )
-    var preparationMinute: Long,
-
     @Column(name = "now_reservable", nullable = false, columnDefinition = "BIT(1)")
     @Comment("재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정 = 활성/비활성 플래그")
     var nowReservable: Boolean
