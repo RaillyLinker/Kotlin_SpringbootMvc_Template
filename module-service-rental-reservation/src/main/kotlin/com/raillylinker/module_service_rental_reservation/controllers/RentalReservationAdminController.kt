@@ -535,7 +535,8 @@ class RentalReservationAdminController(
     // ----
     @Operation(
         summary = "대여 가능 상품 추가 예약 가능 설정 수정 <ADMIN> (더미)", // todo
-        description = "대여 가능 상품을 현 시간부로 예약 가능하게 할 것인지에 대한 스위치 플래그 수정"
+        description = "대여 가능 상품을 현 시간부로 예약 가능하게 할 것인지에 대한 스위치 플래그 수정<br>" +
+                "update_version_seq 증가는 하지 않습니다."
     )
     @ApiResponses(
         value = [
@@ -610,7 +611,8 @@ class RentalReservationAdminController(
     // ----
     @Operation(
         summary = "대여 가능 상품 최소 예약 횟수 설정 수정 <ADMIN> (더미)", // todo
-        description = "대여 가능 상품의 현 시간부로의 최소 예약 횟수 설정 수정"
+        description = "대여 가능 상품의 현 시간부로의 최소 예약 횟수 설정 수정<br>" +
+                "update_version_seq 증가는 하지 않습니다."
     )
     @ApiResponses(
         value = [
@@ -686,7 +688,8 @@ class RentalReservationAdminController(
     // ----
     @Operation(
         summary = "대여 가능 상품 최대 예약 횟수 설정 수정 <ADMIN> (더미)", // todo
-        description = "대여 가능 상품의 현 시간부로의 최대 예약 횟수 설정 수정"
+        description = "대여 가능 상품의 현 시간부로의 최대 예약 횟수 설정 수정<br>" +
+                "update_version_seq 증가는 하지 않습니다."
     )
     @ApiResponses(
         value = [
@@ -761,7 +764,8 @@ class RentalReservationAdminController(
     // ----
     @Operation(
         summary = "대여 가능 상품 이미지 등록 <ADMIN> (더미)", // todo
-        description = "대여 상품 이미지를 등록합니다."
+        description = "대여 상품 이미지를 등록합니다.<br>" +
+                "이미지 관련 상품 정보 변경에는 update_version_seq 가 증가 하지 않습니다."
     )
     @ApiResponses(
         value = [
@@ -835,7 +839,8 @@ class RentalReservationAdminController(
     @Operation(
         summary = "대여 가능 상품 이미지 삭제 <ADMIN> (더미)", // todo
         description = "대여 상품 이미지를 삭제합니다.<br>" +
-                "상품 정보에 대표 이미지로 설정되어 있다면 대표 이미지 설정이 null 이 됩니다."
+                "상품 정보에 대표 이미지로 설정되어 있다면 대표 이미지 설정이 null 이 됩니다.<br>" +
+                "이미지 관련 상품 정보 변경에는 update_version_seq 가 증가 하지 않습니다."
     )
     @ApiResponses(
         value = [
@@ -893,7 +898,8 @@ class RentalReservationAdminController(
     // ----
     @Operation(
         summary = "대여 가능 상품 대표 상품 이미지 설정 수정 <ADMIN> (더미)", // todo
-        description = "대여 가능 상품의 대표 상품 이미지 설정을 수정합니다."
+        description = "대여 가능 상품의 대표 상품 이미지 설정을 수정합니다.<br>" +
+                "이미지 관련 상품 정보 변경에는 update_version_seq 가 증가 하지 않습니다."
     )
     @ApiResponses(
         value = [
@@ -1395,12 +1401,12 @@ class RentalReservationAdminController(
         @JsonProperty("firstRentableDatetime")
         val firstRentableDatetime: String,
         @Schema(
-            description = "제품을 최종 회수하는 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, 본 제품 소유 기한이 정해져서 이 시간까지 회수가 이루어져야 하는 경우 입력)",
+            description = "제품 대여 마지막 일시 (yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, 이때가 대여 마지막 날)",
             required = false,
             example = "2024_05_02_T_15_14_49_552_KST"
         )
-        @JsonProperty("storageDatetime")
-        val storageDatetime: String?,
+        @JsonProperty("lastRentableDatetime")
+        val lastRentableDatetime: String?,
         @Schema(
             description = "예약 가능 설정 (재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정)",
             required = true,
@@ -2137,7 +2143,7 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 예약 거부 처리가 가능한 상태가 아닙니다.",
+                                "2 : 환불 완료 처리가 가능한 상태가 아닙니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -2221,7 +2227,7 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 예약 거부 처리가 가능한 상태가 아닙니다.",
+                                "2 : 조기 반납 확인 처리가 가능한 상태가 아닙니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -2354,6 +2360,86 @@ class RentalReservationAdminController(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
         val stateChangeDesc: String
+    )
+
+
+    // ----
+    @Operation(
+        summary = "개별 상품 예약 정보 다음 준비 예정일 수정 <ADMIN> (더미)", // todo
+        description = "개별 상품 예약 정보의 다음 준비 예정일을 수정합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 준비 예정일이 현재 상태와 맞지 않습니다.(현재 예약 상태를 파악해서 반납이 이루어지지 않았을 때)",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PatchMapping(
+        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/next-ready-datetime"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun patchRentableProductStockReservationInfoNextReadyDatetime(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(
+            name = "rentableProductStockReservationInfoUid",
+            description = "rentableProductStockReservationInfo 고유값",
+            example = "1"
+        )
+        @PathVariable("rentableProductStockReservationInfoUid")
+        rentableProductStockReservationInfoUid: Long,
+        @RequestBody
+        inputVo: PatchRentableProductStockReservationInfoNextReadyDatetimeInputVo
+    ) {
+        service.patchRentableProductStockReservationInfoNextReadyDatetime(
+            httpServletResponse,
+            authorization!!,
+            rentableProductStockReservationInfoUid,
+            inputVo
+        )
+    }
+
+    data class PatchRentableProductStockReservationInfoNextReadyDatetimeInputVo(
+        @Schema(
+            description = "개별 상품 예약 정보 다음 준비 예정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("nextReadyDatetime")
+        val nextReadyDatetime: String
     )
 
     // todo : Admin 관련 필요 정보 Read API 궁리

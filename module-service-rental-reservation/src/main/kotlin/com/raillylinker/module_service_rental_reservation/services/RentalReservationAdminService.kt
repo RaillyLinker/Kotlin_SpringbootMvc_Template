@@ -200,25 +200,6 @@ class RentalReservationAdminService(
 
 
     // ----
-    // (대여 가능 상품 회수 준비 시간 설정 수정 <ADMIN>)
-    fun patchRentableProductInfoPreparationMinute(
-        httpServletResponse: HttpServletResponse,
-        authorization: String,
-        rentableProductInfoUid: Long,
-        inputVo: RentalReservationAdminController.PatchRentableProductInfoPreparationMinuteInputVo
-    ) {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-
-        // todo
-        httpServletResponse.status = HttpStatus.OK.value()
-    }
-
-
-    // ----
     // (대여 가능 상품 이미지 등록 <ADMIN>)
     fun postRentableProductImage(
         httpServletResponse: HttpServletResponse,
@@ -593,5 +574,24 @@ class RentalReservationAdminService(
         return RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo(
             1L
         )
+    }
+
+
+    // ----
+    // (개별 상품 예약 정보 다음 준비 예정일 수정 <ADMIN>)
+    fun patchRentableProductStockReservationInfoNextReadyDatetime(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductStockReservationInfoUid: Long,
+        inputVo: RentalReservationAdminController.PatchRentableProductStockReservationInfoNextReadyDatetimeInputVo
+    ) {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
     }
 }
