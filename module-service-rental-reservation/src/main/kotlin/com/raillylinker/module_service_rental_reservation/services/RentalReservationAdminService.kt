@@ -418,4 +418,180 @@ class RentalReservationAdminService(
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
     }
+
+
+    // ----
+    // (대여 가능 상품 예약 정보의 결재 완료 처리 <ADMIN>)
+    fun postRentableProductReservationInfoPaymentComplete(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductReservationInfoUid: Long,
+        inputVo: RentalReservationAdminController.PostRentableProductReservationInfoPaymentCompleteInputVo
+    ): RentalReservationAdminController.PostRentableProductReservationInfoPaymentCompleteOutputVo {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationAdminController.PostRentableProductReservationInfoPaymentCompleteOutputVo(
+            1L
+        )
+    }
+
+
+    // ----
+    // (대여 가능 상품 예약 정보의 예약 승인 처리 <ADMIN>)
+    fun postRentableProductReservationInfoReservationApprove(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductReservationInfoUid: Long,
+        inputVo: RentalReservationAdminController.PostRentableProductReservationInfoReservationApproveInputVo
+    ): RentalReservationAdminController.PostRentableProductReservationInfoReservationApproveOutputVo {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationAdminController.PostRentableProductReservationInfoReservationApproveOutputVo(
+            1L
+        )
+    }
+
+
+    // ----
+    // (대여 가능 상품 예약 정보의 예약 거부 처리 <ADMIN>)
+    fun postRentableProductReservationInfoReservationDeny(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductReservationInfoUid: Long,
+        inputVo: RentalReservationAdminController.PostRentableProductReservationInfoReservationDenyInputVo
+    ): RentalReservationAdminController.PostRentableProductReservationInfoReservationDenyOutputVo {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationAdminController.PostRentableProductReservationInfoReservationDenyOutputVo(
+            1L
+        )
+    }
+
+
+    // ----
+    // (대여 가능 상품 예약 정보의 예약 취소 승인 처리 <ADMIN>)
+    fun postRentableProductReservationInfoReservationCancelApprove(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductReservationInfoUid: Long,
+        inputVo: RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelApproveInputVo
+    ): RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelApproveOutputVo {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelApproveOutputVo(
+            1L
+        )
+    }
+
+
+    // ----
+    // (대여 가능 상품 예약 정보의 예약 취소 거부 처리 <ADMIN>)
+    fun postRentableProductReservationInfoReservationCancelDeny(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductReservationInfoUid: Long,
+        inputVo: RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelDenyInputVo
+    ): RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelDenyOutputVo {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelDenyOutputVo(
+            1L
+        )
+    }
+
+
+    // ----
+    // (대여 가능 상품 예약 정보의 환불 완료 처리 <ADMIN>)
+    fun postRentableProductReservationInfoRefundComplete(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductReservationInfoUid: Long,
+        inputVo: RentalReservationAdminController.PostRentableProductReservationInfoRefundCompleteInputVo
+    ): RentalReservationAdminController.PostRentableProductReservationInfoRefundCompleteOutputVo {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationAdminController.PostRentableProductReservationInfoRefundCompleteOutputVo(
+            1L
+        )
+    }
+
+
+    // ----
+    // (대여 가능 상품 예약 정보의 환불 완료 처리 <ADMIN>)
+    fun postRentableProductReservationInfoEarlyReturnComplete(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductReservationInfoUid: Long,
+        inputVo: RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteInputVo
+    ): RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo(
+            1L
+        )
+    }
+
+
+    // ----
+    // (대여 가능 상품 예약 상태 테이블의 상세 설명 수정 <ADMIN>)
+    fun patchReservationStateChangeHistoryStateChangeDesc(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        reservationStateChangeHistoryUid: Long,
+        inputVo: RentalReservationAdminController.PatchReservationStateChangeHistoryStateChangeDescInputVo
+    ): RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo(
+            1L
+        )
+    }
 }
