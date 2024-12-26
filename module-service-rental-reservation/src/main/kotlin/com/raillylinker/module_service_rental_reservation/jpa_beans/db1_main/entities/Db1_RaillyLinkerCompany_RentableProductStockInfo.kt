@@ -35,9 +35,9 @@ class Db1_RaillyLinkerCompany_RentableProductStockInfo(
     @Comment("제품 대여(손님에게 제공)가 가능한 최초 일시")
     var firstRentableDatetime: LocalDateTime,
 
-    @Column(name = "storage_datetime", nullable = true, columnDefinition = "DATETIME")
-    @Comment("제품을 최종 회수하는 일시 (본 제품을 일회용품, 대여품이라 가정했을 때, 반납하기 위한 일시 - 반납 가능 상태가 되는 것을 가정하므로 예약 로직상 회수시간, 반납 준비 시간 등을 고려할 것)")
-    var storageDatetime: LocalDateTime?,
+    @Column(name = "last_rentable_datetime", nullable = true, columnDefinition = "DATETIME")
+    @Comment("제품 대여 마지막 일시 (이때가 대여 마지막 날)")
+    var lastRentableDatetime: LocalDateTime?,
 
     @ManyToOne
     @JoinColumn(name = "rentable_product_info_uid", nullable = false)

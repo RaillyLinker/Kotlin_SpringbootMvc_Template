@@ -372,13 +372,6 @@ class RentalReservationAdminController(
         @JsonProperty("reservationUnitPrice")
         val reservationUnitPrice: Long,
         @Schema(
-            description = "회수 준비 시간 (분, 대여 상품 반납일시로부터 다음 대여까지 걸리는 시간)",
-            required = true,
-            example = "10"
-        )
-        @JsonProperty("preparationMinute")
-        val preparationMinute: Long,
-        @Schema(
             description = "예약 가능 설정 (재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정)",
             required = true,
             example = "true"
@@ -529,13 +522,6 @@ class RentalReservationAdminController(
         )
         @JsonProperty("reservationUnitPrice")
         val reservationUnitPrice: Long,
-        @Schema(
-            description = "회수 준비 시간 (분, 대여 상품 반납일시로부터 다음 대여까지 걸리는 시간)",
-            required = true,
-            example = "10"
-        )
-        @JsonProperty("preparationMinute")
-        val preparationMinute: Long,
         @Schema(
             description = "예약 가능 설정 (재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정)",
             required = true,
@@ -769,81 +755,6 @@ class RentalReservationAdminController(
         )
         @JsonProperty("maximumReservationUnitCount")
         val maximumReservationUnitCount: Long
-    )
-
-
-    // ----
-    @Operation(
-        summary = "대여 가능 상품 회수 준비 시간 설정 수정 <ADMIN> (더미)", // todo
-        description = "대여 가능 상품의 현 시간부로의 회수 준비 시간 설정 수정"
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PatchMapping(
-        path = ["/rentable-product-info/{rentableProductInfoUid}/preparation-minute"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun patchRentableProductInfoPreparationMinute(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(name = "rentableProductInfoUid", description = "rentableProductInfo 고유값", example = "1")
-        @PathVariable("rentableProductInfoUid")
-        rentableProductInfoUid: Long,
-        @RequestBody
-        inputVo: PatchRentableProductInfoPreparationMinuteInputVo
-    ) {
-        service.patchRentableProductInfoPreparationMinute(
-            httpServletResponse,
-            authorization!!,
-            rentableProductInfoUid,
-            inputVo
-        )
-    }
-
-    data class PatchRentableProductInfoPreparationMinuteInputVo(
-        @Schema(
-            description = "회수 준비 시간 (분, 대여 상품 반납일시로부터 다음 대여까지 걸리는 시간)",
-            required = true,
-            example = "10"
-        )
-        @JsonProperty("preparationMinute")
-        val preparationMinute: Long
     )
 
 
@@ -1365,12 +1276,12 @@ class RentalReservationAdminController(
         @JsonProperty("firstRentableDatetime")
         val firstRentableDatetime: String,
         @Schema(
-            description = "제품을 최종 회수하는 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, 본 제품 소유 기한이 정해져서 이 시간까지 회수가 이루어져야 하는 경우 입력)",
+            description = "제품 대여 마지막 일시 (yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, 이때가 대여 마지막 날)",
             required = false,
             example = "2024_05_02_T_15_14_49_552_KST"
         )
-        @JsonProperty("storageDatetime")
-        val storageDatetime: String?,
+        @JsonProperty("lastRentableDatetime")
+        val lastRentableDatetime: String?,
         @Schema(
             description = "예약 가능 설정 (재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정)",
             required = true,
