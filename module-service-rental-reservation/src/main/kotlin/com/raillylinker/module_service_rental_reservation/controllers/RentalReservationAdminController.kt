@@ -1293,7 +1293,8 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : rentableProductStockCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -1312,7 +1313,7 @@ class RentalReservationAdminController(
     )
     @PostMapping(
         path = ["/rentable-product-stock-info"],
-        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
@@ -1343,15 +1344,19 @@ class RentalReservationAdminController(
         @JsonProperty("rentableProductInfoUid")
         val rentableProductInfoUid: Long,
         @Schema(
+            description = "상품 재고 카테고리 고유값",
+            required = true,
+            example = "1"
+        )
+        @JsonProperty("rentableProductStockCategoryUid")
+        val rentableProductStockCategoryUid: Long?,
+        @Schema(
             description = "대여 가능 상품 개별 설명",
             required = true,
             example = "상태 양호"
         )
         @JsonProperty("productDesc")
         val productDesc: String,
-        @Schema(description = "대여 가능 상품 개별 썸네일", required = false)
-        @JsonProperty("thumbnailImage")
-        val thumbnailImage: MultipartFile?,
         @Schema(
             description = "제품 대여(손님에게 제공)가 가능한 최초 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
             required = true,
@@ -1379,6 +1384,119 @@ class RentalReservationAdminController(
         @Schema(description = "rentableProductStockInfo 고유값", required = true, example = "1")
         @JsonProperty("rentableProductStockInfoUid")
         val rentableProductStockInfoUid: Long
+    )
+
+
+    // ----
+    @Operation(
+        summary = "대여 가능 상품 재고 수정 <ADMIN> (더미)", // todo
+        description = "대여 가능 상품에 속하는 상품 재고 정보를 수정합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductStockInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "3 : rentableProductStockCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PutMapping(
+        path = ["/rentable-product-stock-info/{rentableProductStockInfoUid}"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun putRentableProductStockInfo(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "rentableProductStockInfoUid", description = "rentableProductStockInfo 고유값", example = "1")
+        @PathVariable("rentableProductStockInfoUid")
+        rentableProductStockInfoUid: Long,
+        @ModelAttribute
+        @RequestBody
+        inputVo: PutRentableProductStockInfoInputVo
+    ) {
+        service.putRentableProductStockInfo(
+            httpServletResponse,
+            authorization!!,
+            rentableProductStockInfoUid,
+            inputVo
+        )
+    }
+
+    data class PutRentableProductStockInfoInputVo(
+        @Schema(
+            description = "rentableProductInfo 고유값",
+            required = true,
+            example = "1"
+        )
+        @JsonProperty("rentableProductInfoUid")
+        val rentableProductInfoUid: Long,
+        @Schema(
+            description = "상품 재고 카테고리 고유값",
+            required = true,
+            example = "1"
+        )
+        @JsonProperty("rentableProductStockCategoryUid")
+        val rentableProductStockCategoryUid: Long?,
+        @Schema(
+            description = "대여 가능 상품 개별 설명",
+            required = true,
+            example = "상태 양호"
+        )
+        @JsonProperty("productDesc")
+        val productDesc: String,
+        @Schema(
+            description = "제품 대여(손님에게 제공)가 가능한 최초 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("firstRentableDatetime")
+        val firstRentableDatetime: String,
+        @Schema(
+            description = "제품을 최종 회수하는 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, 본 제품 소유 기한이 정해져서 이 시간까지 회수가 이루어져야 하는 경우 입력)",
+            required = false,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("storageDatetime")
+        val storageDatetime: String?,
+        @Schema(
+            description = "예약 가능 설정 (재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정)",
+            required = true,
+            example = "true"
+        )
+        @JsonProperty("nowReservable")
+        val nowReservable: Boolean
     )
 
 
@@ -1457,16 +1575,214 @@ class RentalReservationAdminController(
     )
 
 
-    // todo : 대여 가능 상품 삭제(활성 플래그를 넣을지 말지)
+    // ----
+    @Operation(
+        summary = "대여 가능 상품 재고 이미지 등록 <ADMIN> (더미)", // todo
+        description = "대여 상품 재고 이미지를 등록합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductStockInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/rentable-product-stock-image"],
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun postRentableProductStockImage(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @ModelAttribute
+        @RequestBody
+        inputVo: PostRentableProductStockImageInputVo
+    ): PostRentableProductStockImageOutputVo? {
+        return service.postRentableProductStockImage(httpServletResponse, authorization!!, inputVo)
+    }
 
-    // todo : 대여 가능 상품 재고 정보 수정 (except now_reservable)
+    data class PostRentableProductStockImageInputVo(
+        @Schema(description = "rentableProductStockInfo 고유값", required = true)
+        @JsonProperty("rentableProductInfoStockUid")
+        val rentableProductInfoStockUid: Long,
+        @Schema(description = "고객에게 보일 상품 썸네일 이미지", required = true)
+        @JsonProperty("thumbnailImage")
+        val thumbnailImage: MultipartFile
+    )
 
-    // todo : 대여 가능 상품 재고 삭제
+    data class PostRentableProductStockImageOutputVo(
+        @Schema(description = "rentableProductStockImage 고유값", required = true, example = "1")
+        @JsonProperty("rentableProductStockImageUid")
+        val rentableProductStockImageUid: Long
+    )
+
+
+    // ----
+    @Operation(
+        summary = "대여 가능 상품 재고 이미지 삭제 <ADMIN> (더미)", // todo
+        description = "대여 상품 재고 이미지를 삭제합니다.<br>" +
+                "상품 정보에 대표 이미지로 설정되어 있다면 대표 이미지 설정이 null 이 됩니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductImageUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @DeleteMapping(
+        path = ["/rentable-product-stock-image/{rentableProductStockImageUid}"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun deleteRentableProductStockImage(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "rentableProductStockImageUid", description = "rentableProductStockImage 고유값", example = "1")
+        @PathVariable("rentableProductStockImageUid")
+        rentableProductStockImageUid: Long
+    ) {
+        service.deleteRentableProductStockImage(httpServletResponse, authorization!!, rentableProductStockImageUid)
+    }
+
+
+    // ----
+    @Operation(
+        summary = "대여 가능 상품 대표 상품 재고 이미지 설정 수정 <ADMIN> (더미)", // todo
+        description = "대여 가능 상품 재고의 대표 상품 이미지 설정을 수정합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductStockInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : rentableProductStockImageUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PatchMapping(
+        path = ["/rentable-product-stock-info/{rentableProductStockInfoUid}/front-image"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun patchRentableProductStockInfoFrontImage(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "rentableProductStockInfoUid", description = "rentableProductStockInfo 고유값", example = "1")
+        @PathVariable("rentableProductStockInfoUid")
+        rentableProductStockInfoUid: Long,
+        @RequestBody
+        inputVo: PatchRentableProductStockInfoFrontImageInputVo
+    ) {
+        service.patchRentableProductStockInfoFrontImage(
+            httpServletResponse,
+            authorization!!,
+            rentableProductStockInfoUid,
+            inputVo
+        )
+    }
+
+    data class PatchRentableProductStockInfoFrontImageInputVo(
+        @Schema(
+            description = "rentableProductStockImage 고유값 (null 이라면 대표 이미지를 설정하지 않음)",
+            required = false,
+            example = "1"
+        )
+        @JsonProperty("rentableProductStockImageUid")
+        val rentableProductStockImageUid: Long?
+    )
 
     // todo : 대여 가능 상품 예약 상태 변경 히스토리 등록 (현 상태에 따라 상태 변화 가능한 방향으로만 변경 가능, 삭제 및 수정 불가)
 
     // todo : Admin 관련 필요 정보 Read API 궁리
-
-    // todo 이미지 정보 R
-    // todo 카테고리 정보 R
 }

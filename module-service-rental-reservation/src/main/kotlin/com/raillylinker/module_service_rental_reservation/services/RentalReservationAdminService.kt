@@ -327,12 +327,83 @@ class RentalReservationAdminService(
 
 
     // ----
+    // (대여 가능 상품 재고 수정 <ADMIN>)
+    fun putRentableProductStockInfo(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductStockInfoUid: Long,
+        inputVo: RentalReservationAdminController.PutRentableProductStockInfoInputVo
+    ) {
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
     // (대여 가능 상품 재고 추가 예약 가능 설정 수정 <ADMIN>)
     fun patchRentableProductStockInfoReservable(
         httpServletResponse: HttpServletResponse,
         authorization: String,
         rentableProductStockInfoUid: Long,
         inputVo: RentalReservationAdminController.PatchRentableProductStockInfoReservableInputVo
+    ) {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
+    // (대여 가능 상품 재고 이미지 등록 <ADMIN>)
+    fun postRentableProductStockImage(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: RentalReservationAdminController.PostRentableProductStockImageInputVo
+    ): RentalReservationAdminController.PostRentableProductStockImageOutputVo? {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationAdminController.PostRentableProductStockImageOutputVo(
+            1L
+        )
+    }
+
+
+    // ----
+    // (대여 가능 상품 재고 이미지 삭제 <ADMIN>)
+    fun deleteRentableProductStockImage(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductStockImageUid: Long
+    ) {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
+    // (대여 가능 상품 대표 상품 재고 이미지 설정 수정 <ADMIN>)
+    fun patchRentableProductStockInfoFrontImage(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductStockInfoUid: Long,
+        inputVo: RentalReservationAdminController.PatchRentableProductStockInfoFrontImageInputVo
     ) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
