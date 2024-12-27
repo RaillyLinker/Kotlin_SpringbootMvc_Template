@@ -426,6 +426,25 @@ class RentalReservationAdminService(
 
 
     // ----
+    // (대여 가능 상품 삭제 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun deleteRentableProductInfo(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductInfoUid: Long
+    ) {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo 관련 테이블 처리에 주의
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
     // (대여 가능 상품 추가 예약 가능 설정 수정 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchRentableProductInfoReservable(
@@ -903,10 +922,11 @@ class RentalReservationAdminService(
         // 카테고리 트리 순회
         for (categoryTreeUid in categoryTreeUidList) {
             // 카테고리 객체 조회
-            val categoryBranch = db1RaillyLinkerCompanyRentableProductStockCategoryRepository.findByUidAndRowDeleteDateStr(
-                categoryTreeUid.uid,
-                "/"
-            )
+            val categoryBranch =
+                db1RaillyLinkerCompanyRentableProductStockCategoryRepository.findByUidAndRowDeleteDateStr(
+                    categoryTreeUid.uid,
+                    "/"
+                )
 
             if (categoryBranch != null) {
                 // branch 카테고리를 조회하는 모든 상품들 조회
@@ -956,6 +976,25 @@ class RentalReservationAdminService(
         return RentalReservationAdminController.PostRentableProductStockInfoOutputVo(
             1L
         )
+    }
+
+
+    // ----
+    // (대여 가능 상품 재고 삭제 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun deleteRentableProductStockInfo(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductStockInfoUid: Long
+    ) {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo 관련 테이블 처리에 주의
+        httpServletResponse.status = HttpStatus.OK.value()
     }
 
 

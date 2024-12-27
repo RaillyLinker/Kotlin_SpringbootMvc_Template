@@ -558,7 +558,63 @@ class RentalReservationAdminController(
         }
     }
 
-    // todo 대여 상품 삭제
+
+    // ----
+    @Operation(
+        summary = "대여 가능 상품 삭제 <ADMIN> (더미)", // todo
+        description = "대여 상품을 삭제 처리 합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @DeleteMapping(
+        path = ["/rentable-product-info/{rentableProductInfoUid}"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun deleteRentableProductInfo(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "rentableProductInfoUid", description = "rentableProductInfo 고유값", example = "1")
+        @PathVariable("rentableProductInfoUid")
+        rentableProductInfoUid: Long
+    ) {
+        service.deleteRentableProductInfo(httpServletResponse, authorization!!, rentableProductInfoUid)
+    }
 
 
     // ----
@@ -1365,7 +1421,63 @@ class RentalReservationAdminController(
         val rentableProductStockInfoUid: Long
     )
 
-    // todo : 상품 재고 삭제
+
+    // ----
+    @Operation(
+        summary = "대여 가능 상품 재고 삭제 <ADMIN> (더미)", // todo
+        description = "대여 상품 재고를 삭제 처리 합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductStockInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @DeleteMapping(
+        path = ["/rentable-product-stock-info/{rentableProductStockInfoUid}"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun deleteRentableProductStockInfo(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "rentableProductStockInfoUid", description = "rentableProductStockInfo 고유값", example = "1")
+        @PathVariable("rentableProductStockInfoUid")
+        rentableProductStockInfoUid: Long
+    ) {
+        service.deleteRentableProductStockInfo(httpServletResponse, authorization!!, rentableProductStockInfoUid)
+    }
 
 
     // ----
