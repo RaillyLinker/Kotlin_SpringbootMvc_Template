@@ -558,6 +558,8 @@ class RentalReservationAdminController(
         }
     }
 
+    // todo 대여 상품 삭제
+
 
     // ----
     @Operation(
@@ -1362,6 +1364,8 @@ class RentalReservationAdminController(
         @JsonProperty("rentableProductStockInfoUid")
         val rentableProductStockInfoUid: Long
     )
+
+    // todo : 상품 재고 삭제
 
 
     // ----
