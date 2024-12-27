@@ -1052,7 +1052,33 @@ class RentalReservationAdminService(
             AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
         )
 
-        // todo 관련 테이블 처리에 주의
+        val rentableProductStockInfo =
+            db1RaillyLinkerCompanyRentableProductStockInfoRepository.findByUidAndRowDeleteDateStr(
+                rentableProductStockInfoUid,
+                "/"
+            )
+
+        if (rentableProductStockInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        for (rentableProductStockImage in rentableProductStockInfo.rentableProductStockImageList) {
+            // todo 이미지 삭제
+
+        }
+
+        for (rentableProductStockReservationInfo in rentableProductStockInfo.rentableProductStockReservationInfoList) {
+            // todo 상품 예약 내역 삭제
+
+        }
+
+        // 테이블 삭제 처리
+        rentableProductStockInfo.rowDeleteDateStr =
+            LocalDateTime.now().atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+
         httpServletResponse.status = HttpStatus.OK.value()
     }
 

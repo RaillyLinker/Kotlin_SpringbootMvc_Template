@@ -12,4 +12,9 @@ interface Db1_RaillyLinkerCompany_RentableProductStockInfo_Repository :
         rentableProductStockCategory: Db1_RaillyLinkerCompany_RentableProductStockCategory?,
         rowDeleteDateStr: String
     ): List<Db1_RaillyLinkerCompany_RentableProductStockInfo>
+
+    fun findByUidAndRowDeleteDateStr(
+        uid: Long,
+        rowDeleteDateStr: String
+    ): Db1_RaillyLinkerCompany_RentableProductStockInfo?
 }
