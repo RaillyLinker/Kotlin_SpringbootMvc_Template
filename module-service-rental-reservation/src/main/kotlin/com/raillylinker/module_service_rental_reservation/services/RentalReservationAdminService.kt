@@ -6,6 +6,7 @@ import com.raillylinker.module_service_rental_reservation.configurations.Securit
 import com.raillylinker.module_service_rental_reservation.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.module_service_rental_reservation.controllers.RentalReservationAdminController
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductCategory
+import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductImage
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductInfo
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository.FindAllCategoryTreeUidListOutputVo
@@ -29,9 +30,20 @@ import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.InputStreamResource
+import org.springframework.core.io.Resource
+import org.springframework.http.ContentDisposition
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.util.StringUtils
+import java.io.File
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -76,12 +88,12 @@ class RentalReservationAdminService(
                     "http://127.0.0.1"
                 }
 
-                "dev8080" -> {
-                    "http://127.0.0.1:8080"
+                "dev13001" -> {
+                    "http://127.0.0.1:13001"
                 }
 
                 else -> {
-                    "http://127.0.0.1:8080"
+                    "http://127.0.0.1:13001"
                 }
             }
         }
@@ -539,12 +551,124 @@ class RentalReservationAdminService(
         authorization: String,
         inputVo: RentalReservationAdminController.PostRentableProductImageInputVo
     ): RentalReservationAdminController.PostRentableProductImageOutputVo? {
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
-        // todo
+        val rentableProduct = db1RaillyLinkerCompanyRentableProductInfoRepository.findByUidAndRowDeleteDateStr(
+            inputVo.rentableProductInfoUid,
+            "/"
+        )
+
+        if (rentableProduct == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        // 저장된 상품 이미지 파일을 다운로드 할 수 있는 URL
+        val savedProductImageUrl: String
+
+        // 상품 이미지 파일 저장
+
+        //----------------------------------------------------------------------------------------------------------
+        // 상품 이미지를 서버 스토리지에 저장할 때 사용하는 방식
+        // 파일 저장 기본 디렉토리 경로
+        val saveDirectoryPath: Path =
+            Paths.get("./by_product_files/service_rental_reservation/rentable_product/images")
+                .toAbsolutePath().normalize()
+
+        // 파일 저장 기본 디렉토리 생성
+        Files.createDirectories(saveDirectoryPath)
+
+        // 원본 파일명(with suffix)
+        val multiPartFileNameString = StringUtils.cleanPath(inputVo.thumbnailImage.originalFilename!!)
+
+        // 파일 확장자 구분 위치
+        val fileExtensionSplitIdx = multiPartFileNameString.lastIndexOf('.')
+
+        // 확장자가 없는 파일명
+        val fileNameWithOutExtension: String
+        // 확장자
+        val fileExtension: String
+
+        if (fileExtensionSplitIdx == -1) {
+            fileNameWithOutExtension = multiPartFileNameString
+            fileExtension = ""
+        } else {
+            fileNameWithOutExtension = multiPartFileNameString.substring(0, fileExtensionSplitIdx)
+            fileExtension =
+                multiPartFileNameString.substring(fileExtensionSplitIdx + 1, multiPartFileNameString.length)
+        }
+
+        val savedFileName = "${fileNameWithOutExtension}(${
+            LocalDateTime.now().atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+        }).$fileExtension"
+
+        // multipartFile 을 targetPath 에 저장
+        inputVo.thumbnailImage.transferTo(
+            // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
+            saveDirectoryPath.resolve(savedFileName).normalize()
+        )
+
+        savedProductImageUrl = "${externalAccessAddress}/rental-reservation-admin/product-image/$savedFileName"
+        //----------------------------------------------------------------------------------------------------------
+
+        val productImage = db1RaillyLinkerCompanyRentableProductImageRepository.save(
+            Db1_RaillyLinkerCompany_RentableProductImage(
+                rentableProduct,
+                savedProductImageUrl
+            )
+        )
+
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo
         return RentalReservationAdminController.PostRentableProductImageOutputVo(
-            1L
+            productImage.uid!!,
+            savedProductImageUrl
+        )
+    }
+
+
+    // ----
+    // (대여 가능 상품 이미지 파일 다운받기)
+    fun getProductImageFile(
+        httpServletResponse: HttpServletResponse,
+        fileName: String
+    ): ResponseEntity<Resource>? {
+        // 프로젝트 루트 경로 (프로젝트 settings.gradle 이 있는 경로)
+        val projectRootAbsolutePathString: String = File("").absolutePath
+
+        // 파일 절대 경로 및 파일명
+        val serverFilePathObject =
+            Paths.get("$projectRootAbsolutePathString/by_product_files/service_rental_reservation/rentable_product/images/$fileName")
+
+        when {
+            Files.isDirectory(serverFilePathObject) -> {
+                // 파일이 디렉토리일때
+                httpServletResponse.status = HttpStatus.NOT_FOUND.value()
+                return null
+            }
+
+            Files.notExists(serverFilePathObject) -> {
+                // 파일이 없을 때
+                httpServletResponse.status = HttpStatus.NOT_FOUND.value()
+                return null
+            }
+        }
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return ResponseEntity<Resource>(
+            InputStreamResource(Files.newInputStream(serverFilePathObject)),
+            HttpHeaders().apply {
+                this.contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(fileName, StandardCharsets.UTF_8)
+                    .build()
+                this.add(HttpHeaders.CONTENT_TYPE, Files.probeContentType(serverFilePathObject))
+            },
+            HttpStatus.OK
         )
     }
 

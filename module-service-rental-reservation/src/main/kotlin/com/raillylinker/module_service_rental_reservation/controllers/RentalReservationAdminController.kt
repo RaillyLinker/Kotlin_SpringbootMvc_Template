@@ -11,7 +11,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.core.io.Resource
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
@@ -789,7 +791,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 이미지 등록 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 이미지 등록 <ADMIN>",
         description = "대여 상품 이미지를 등록합니다.<br>" +
                 "이미지 관련 상품 정보 변경에는 update_version_seq 가 증가 하지 않습니다."
     )
@@ -846,7 +848,7 @@ class RentalReservationAdminController(
     }
 
     data class PostRentableProductImageInputVo(
-        @Schema(description = "rentableProductInfo 고유값", required = true)
+        @Schema(description = "rentableProductInfo 고유값", example = "1", required = true)
         @JsonProperty("rentableProductInfoUid")
         val rentableProductInfoUid: Long,
         @Schema(description = "고객에게 보일 상품 썸네일 이미지", required = true)
@@ -857,8 +859,41 @@ class RentalReservationAdminController(
     data class PostRentableProductImageOutputVo(
         @Schema(description = "rentableProductImage 고유값", required = true, example = "1")
         @JsonProperty("rentableProductImageUid")
-        val rentableProductImageUid: Long
+        val rentableProductImageUid: Long,
+        @Schema(description = "생성된 이미지 다운로드 경로", required = true, example = "https://testimage.com/sample.jpg")
+        @JsonProperty("productImageFullUrl")
+        val productImageFullUrl: String
     )
+
+
+    // ----
+    @Operation(
+        summary = "대여 가능 상품 이미지 파일 다운받기",
+        description = "대여 가능 상품 이미지를 by_product_files 위치에 저장했을 때 파일을 가져오기 위한 API"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @GetMapping(
+        path = ["/product-image/{fileName}"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE]
+    )
+    @ResponseBody
+    fun getProductImageFile(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(name = "fileName", description = "by_product_files 폴더 안의 파일명", example = "test.jpg")
+        @PathVariable("fileName")
+        fileName: String
+    ): ResponseEntity<Resource>? {
+        return service.getProductImageFile(httpServletResponse, fileName)
+    }
 
 
     // ----
