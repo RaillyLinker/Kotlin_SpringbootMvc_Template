@@ -401,7 +401,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 수정 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 수정 <ADMIN>",
         description = "대여 상품 정보를 수정합니다.<br>" +
                 "상품 수정시 update_version_seq 가 1 증가하며, 예약 요청시 고객이 보내온 update_version 이 일치하지 않는다면 진행되지 않습니다."
     )

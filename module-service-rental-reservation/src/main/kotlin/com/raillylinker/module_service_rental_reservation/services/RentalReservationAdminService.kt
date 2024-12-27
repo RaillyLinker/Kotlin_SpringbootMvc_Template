@@ -331,13 +331,62 @@ class RentalReservationAdminService(
         rentableProductInfoUid: Long,
         inputVo: RentalReservationAdminController.PutRentableProductInfoInputVo
     ) {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+
+        val rentableProduct = db1RaillyLinkerCompanyRentableProductInfoRepository.findByUidAndRowDeleteDateStr(
+            rentableProductInfoUid,
+            "/"
         )
 
-        // todo
+        if (rentableProduct == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        val rentableProductCategory =
+            if (inputVo.rentableProductCategoryUid == null) {
+                null
+            } else {
+                val rentableProductCategoryEntity =
+                    db1RaillyLinkerCompanyRentableProductCategoryRepository.findByUidAndRowDeleteDateStr(
+                        inputVo.rentableProductCategoryUid,
+                        "/"
+                    )
+
+                if (rentableProductCategoryEntity == null) {
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "2")
+                    return
+                }
+
+                rentableProductCategoryEntity
+            }
+
+        rentableProduct.updateVersionSeq += 1
+        rentableProduct.productName = inputVo.productName
+        rentableProduct.rentableProductCategory = rentableProductCategory
+        rentableProduct.productIntro = inputVo.productIntro
+        rentableProduct.addressCountry = inputVo.addressCountry
+        rentableProduct.addressMain = inputVo.addressMain
+        rentableProduct.addressDetail = inputVo.addressDetail
+        rentableProduct.firstReservableDatetime = ZonedDateTime.parse(
+            inputVo.firstReservableDatetime,
+            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+        ).toLocalDateTime()
+        rentableProduct.reservationUnitMinute = inputVo.reservationUnitMinute
+        rentableProduct.minimumReservationUnitCount = inputVo.minimumReservationUnitCount
+        rentableProduct.maximumReservationUnitCount = inputVo.maximumReservationUnitCount
+        rentableProduct.reservationUnitPrice = inputVo.reservationUnitPrice
+        rentableProduct.reservationUnitPriceCurrencyCode = inputVo.reservationUnitPriceCurrencyCode.name
+        rentableProduct.nowReservable = inputVo.nowReservable
+
+        db1RaillyLinkerCompanyRentableProductInfoRepository.save(rentableProduct)
+
         httpServletResponse.status = HttpStatus.OK.value()
     }
 
