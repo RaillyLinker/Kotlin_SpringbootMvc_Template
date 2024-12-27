@@ -181,7 +181,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "예약 상품 카테고리 정보 삭제 <ADMIN> (더미)", // todo
+        summary = "예약 상품 카테고리 정보 삭제 <ADMIN>",
         description = "예약 상품의 카테고리 정보를 삭제합니다.<br>" +
                 "하위 카테고리들은 모두 자동 삭제되며, 예약 상품 정보의 카테고리로 설정되어 있다면 null 로 재설정 됩니다."
     )

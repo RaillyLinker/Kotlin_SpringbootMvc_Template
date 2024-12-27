@@ -11,4 +11,9 @@ interface Db1_RaillyLinkerCompany_RentableProductCategory_Repository :
         uid: Long,
         rowDeleteDateStr: String
     ): Db1_RaillyLinkerCompany_RentableProductCategory?
+
+    fun existsByUidAndRowDeleteDateStr(
+        uid: Long,
+        rowDeleteDateStr: String
+    ): Boolean
 }

@@ -7,6 +7,7 @@ import com.raillylinker.module_service_rental_reservation.configurations.jpa_con
 import com.raillylinker.module_service_rental_reservation.controllers.RentalReservationAdminController
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductCategory
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository
+import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository.FindAllCategoryTreeUidListOutputVo
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_PaymentRefund_Repository
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_Payment_Repository
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_RentableProductCategory_Repository
@@ -30,6 +31,9 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Service
 class RentalReservationAdminService(
@@ -198,22 +202,58 @@ class RentalReservationAdminService(
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
 
-        val rentableCategoryEntity =
-            db1RaillyLinkerCompanyRentableProductCategoryRepository.findByUidAndRowDeleteDateStr(
+        // 데이터 존재 여부 확인
+        val rentableCategoryExists =
+            db1RaillyLinkerCompanyRentableProductCategoryRepository.existsByUidAndRowDeleteDateStr(
                 rentableProductCategoryUid,
                 "/"
             )
 
-        if (rentableCategoryEntity == null) {
+        if (!rentableCategoryExists) {
+            // 삭제 대상이 없으므로 204 return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
             return
         }
 
-//        rentableCategoryEntity.childRentableProductCategoryList
-//        rentableCategoryEntity.rentableProductInfoList
+        // 카테고리 트리 내 하위 카테고리들 모두 조회(최하위 컨테이너 우선 정렬)
+        val categoryTreeUidList: List<FindAllCategoryTreeUidListOutputVo> =
+            db1NativeRepository.findAllCategoryTreeUidList(
+                rentableProductCategoryUid
+            )
 
-        // todo
+        // 카테고리 트리 순회
+        for (categoryTreeUid in categoryTreeUidList) {
+            // 카테고리 객체 조회
+            val categoryBranch = db1RaillyLinkerCompanyRentableProductCategoryRepository.findByUidAndRowDeleteDateStr(
+                categoryTreeUid.uid,
+                "/"
+            )
+
+            if (categoryBranch != null) {
+                // branch 카테고리를 조회하는 모든 상품들 조회
+                val rentableProductList =
+                    db1RaillyLinkerCompanyRentableProductInfoRepository.findAllByRentableProductCategoryAndRowDeleteDateStr(
+                        categoryBranch,
+                        "/"
+                    )
+
+                // branch 카테고리를 조회하는 모든 상품들에서 카테고리 해제
+                for (rentableProduct in rentableProductList) {
+                    rentableProduct.rentableProductCategory = null
+                    db1RaillyLinkerCompanyRentableProductInfoRepository.save(
+                        rentableProduct
+                    )
+                }
+
+                // branch 카테고리 삭제처리
+                categoryBranch.rowDeleteDateStr =
+                    LocalDateTime.now().atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                db1RaillyLinkerCompanyRentableProductCategoryRepository.save(categoryBranch)
+            }
+        }
+
         httpServletResponse.status = HttpStatus.OK.value()
     }
 
