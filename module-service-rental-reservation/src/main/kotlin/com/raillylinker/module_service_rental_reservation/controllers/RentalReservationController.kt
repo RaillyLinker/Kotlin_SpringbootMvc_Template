@@ -85,12 +85,13 @@ class RentalReservationController(
         return service.loggedInAccessTest(httpServletResponse, authorization!!)
     }
 
-
     // todo : 상품 예약 신청
-    // todo : 예약 취소 신청
-    // todo : 조기 반납 신청
 
-    // todo : 결재 모듈 추가하기?
+    // todo : 상품 결재 처리(결재 모듈에서 처리한 결재 번호와 상품 번호, 환불은 환불 모듈에서)
+
+    // todo : 예약 취소 신청
+
+    // todo : 조기 반납 신청
 
     // todo : 필요 정보 조회 API 들 추가
 }
