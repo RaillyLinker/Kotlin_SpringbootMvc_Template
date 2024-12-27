@@ -3,6 +3,7 @@ package com.raillylinker.module_service_rental_reservation.services
 import com.raillylinker.module_service_rental_reservation.util_components.JwtTokenUtil
 import com.raillylinker.module_service_rental_reservation.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 import com.raillylinker.module_service_rental_reservation.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR
+import com.raillylinker.module_service_rental_reservation.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.module_service_rental_reservation.controllers.RentalReservationController
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_PaymentRefund_Repository
@@ -27,6 +28,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class RentalReservationService(
@@ -81,6 +83,7 @@ class RentalReservationService(
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
     // (상품 예약 신청하기 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postProductReservation(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -105,6 +108,7 @@ class RentalReservationService(
 
     // ----
     // (상품 결재 처리 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductReservationPaymentInfo(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -127,6 +131,7 @@ class RentalReservationService(
 
     // ----
     // (예약 취소 신청 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postCancelProductReservation(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -150,6 +155,7 @@ class RentalReservationService(
 
     // ----
     // (대여품 조기반납 신고 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentalProductEarlyReturn(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -172,6 +178,7 @@ class RentalReservationService(
 
     // ----
     // (대여품 조기반납 신고 취소 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentalProductEarlyReturnCancel(
         httpServletResponse: HttpServletResponse,
         authorization: String,

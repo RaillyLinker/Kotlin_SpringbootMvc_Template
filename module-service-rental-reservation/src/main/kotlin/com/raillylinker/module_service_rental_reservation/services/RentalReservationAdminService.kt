@@ -3,6 +3,7 @@ package com.raillylinker.module_service_rental_reservation.services
 import com.raillylinker.module_service_rental_reservation.util_components.JwtTokenUtil
 import com.raillylinker.module_service_rental_reservation.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 import com.raillylinker.module_service_rental_reservation.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR
+import com.raillylinker.module_service_rental_reservation.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.module_service_rental_reservation.controllers.RentalReservationAdminController
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductCategory
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class RentalReservationAdminService(
@@ -82,6 +84,7 @@ class RentalReservationAdminService(
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
     // (예약 상품 카테고리 정보 등록 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductCategory(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -128,6 +131,7 @@ class RentalReservationAdminService(
 
     // ----
     // (예약 상품 카테고리 정보 수정 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun putRentableProductCategory(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -182,16 +186,32 @@ class RentalReservationAdminService(
 
     // ----
     // (예약 상품 카테고리 정보 삭제 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteRentableProductCategory(
         httpServletResponse: HttpServletResponse,
         authorization: String,
         rentableProductCategoryUid: Long
     ) {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+
+        val rentableCategoryEntity =
+            db1RaillyLinkerCompanyRentableProductCategoryRepository.findByUidAndRowDeleteDateStr(
+                rentableProductCategoryUid,
+                "/"
+            )
+
+        if (rentableCategoryEntity == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+//        rentableCategoryEntity.childRentableProductCategoryList
+//        rentableCategoryEntity.rentableProductInfoList
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
@@ -200,6 +220,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 등록 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductInfo(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -222,6 +243,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 수정 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun putRentableProductInfo(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -241,6 +263,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 추가 예약 가능 설정 수정 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchRentableProductInfoReservable(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -260,6 +283,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 최소 예약 횟수 설정 수정 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchRentableProductInfoMinReservationUnitCount(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -279,6 +303,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 최대 예약 횟수 설정 수정 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchRentableProductInfoMaxReservationUnitCount(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -298,6 +323,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 이미지 등록 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductImage(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -315,6 +341,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 이미지 삭제 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteRentableProductImage(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -328,6 +355,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 대표 상품 이미지 수정 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchRentableProductInfoFrontImage(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -342,6 +370,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 대표 상품 이미지 설정 수정 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductStockCategory(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -364,6 +393,7 @@ class RentalReservationAdminService(
 
     // ----
     // (예약 상품 재고 카테고리 정보 수정 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun putRentableProductStockCategory(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -378,6 +408,7 @@ class RentalReservationAdminService(
 
     // ----
     // (예약 상품 재고 카테고리 정보 삭제 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteRentableProductStockCategory(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -391,6 +422,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 재고 등록 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductStockInfo(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -413,6 +445,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 재고 수정 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun putRentableProductStockInfo(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -426,6 +459,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 재고 추가 예약 가능 설정 수정 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchRentableProductStockInfoReservable(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -445,6 +479,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 재고 이미지 등록 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductStockImage(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -467,6 +502,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 재고 이미지 삭제 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteRentableProductStockImage(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -485,6 +521,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 대표 상품 재고 이미지 설정 수정 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchRentableProductStockInfoFrontImage(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -504,6 +541,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 예약 정보의 결재 완료 처리 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductReservationInfoPaymentComplete(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -527,6 +565,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 예약 정보의 예약 승인 처리 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductReservationInfoReservationApprove(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -550,6 +589,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 예약 정보의 예약 거부 처리 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductReservationInfoReservationDeny(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -573,6 +613,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 예약 정보의 예약 취소 승인 처리 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductReservationInfoReservationCancelApprove(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -596,6 +637,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 예약 정보의 예약 취소 거부 처리 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductReservationInfoReservationCancelDeny(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -619,6 +661,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 예약 정보의 환불 완료 처리 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductReservationInfoRefundComplete(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -642,6 +685,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 예약 정보의 환불 완료 처리 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductReservationInfoEarlyReturnComplete(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -665,6 +709,7 @@ class RentalReservationAdminService(
 
     // ----
     // (대여 가능 상품 예약 상태 테이블의 상세 설명 수정 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchReservationStateChangeHistoryStateChangeDesc(
         httpServletResponse: HttpServletResponse,
         authorization: String,
@@ -688,6 +733,7 @@ class RentalReservationAdminService(
 
     // ----
     // (개별 상품 예약 정보 다음 준비 예정일 수정 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchRentableProductStockReservationInfoNextReadyDatetime(
         httpServletResponse: HttpServletResponse,
         authorization: String,
