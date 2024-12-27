@@ -262,7 +262,8 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                                "1 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 최소,최대 예약 횟수는 0보다 크며, 최소 예약 횟수는 최대 예약 횟수보다 작거나 같아야 합니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -421,7 +422,8 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                                "2 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "3 : 최소,최대 예약 횟수는 0보다 크며, 최소 예약 횟수는 최대 예약 횟수보다 작거나 같아야 합니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -557,7 +559,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 추가 예약 가능 설정 수정 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 추가 예약 가능 설정 수정 <ADMIN>",
         description = "대여 가능 상품을 현 시간부로 예약 가능하게 할 것인지에 대한 스위치 플래그 수정<br>" +
                 "update_version_seq 증가는 하지 않습니다."
     )
@@ -633,7 +635,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 최소 예약 횟수 설정 수정 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 최소 예약 횟수 설정 수정 <ADMIN>",
         description = "대여 가능 상품의 현 시간부로의 최소 예약 횟수 설정 수정<br>" +
                 "update_version_seq 증가는 하지 않습니다."
     )
@@ -653,7 +655,7 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 최소 예약 횟수는 최대 예약 횟수보다 작거나 같아야 합니다.",
+                                "2 : 최소 예약 횟수는 0보다 크며, 최대 예약 횟수보다 작거나 같아야 합니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -710,7 +712,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 최대 예약 횟수 설정 수정 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 최대 예약 횟수 설정 수정 <ADMIN>",
         description = "대여 가능 상품의 현 시간부로의 최대 예약 횟수 설정 수정<br>" +
                 "update_version_seq 증가는 하지 않습니다."
     )
@@ -729,7 +731,8 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 최대 예약 횟수는 0보다 크며, 최소 예약 횟수보다 크거나 같아야 합니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -776,11 +779,11 @@ class RentalReservationAdminController(
     data class PatchRentableProductInfoMaxReservationUnitCountInputVo(
         @Schema(
             description = "단위 예약 시간을 대여일 기준에서 최대 몇번 추가 해야 하는지",
-            required = true,
+            required = false,
             example = "1"
         )
         @JsonProperty("maximumReservationUnitCount")
-        val maximumReservationUnitCount: Long
+        val maximumReservationUnitCount: Long?
     )
 
 

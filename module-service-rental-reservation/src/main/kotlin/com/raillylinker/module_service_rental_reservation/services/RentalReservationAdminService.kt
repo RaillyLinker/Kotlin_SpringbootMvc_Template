@@ -274,6 +274,16 @@ class RentalReservationAdminService(
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
 
+        if (inputVo.minimumReservationUnitCount < 0 ||
+            (inputVo.maximumReservationUnitCount != null &&
+                    (inputVo.maximumReservationUnitCount < 0 ||
+                            inputVo.minimumReservationUnitCount > inputVo.maximumReservationUnitCount))
+        ) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
         val rentableProductCategory =
             if (inputVo.rentableProductCategoryUid == null) {
                 null
@@ -336,6 +346,16 @@ class RentalReservationAdminService(
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
+
+        if (inputVo.minimumReservationUnitCount < 0 ||
+            (inputVo.maximumReservationUnitCount != null &&
+                    (inputVo.maximumReservationUnitCount < 0 ||
+                            inputVo.minimumReservationUnitCount > inputVo.maximumReservationUnitCount))
+        ) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return
+        }
 
         val rentableProduct = db1RaillyLinkerCompanyRentableProductInfoRepository.findByUidAndRowDeleteDateStr(
             rentableProductInfoUid,
@@ -400,13 +420,27 @@ class RentalReservationAdminService(
         rentableProductInfoUid: Long,
         inputVo: RentalReservationAdminController.PatchRentableProductInfoReservableInputVo
     ) {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+
+        val rentableProduct = db1RaillyLinkerCompanyRentableProductInfoRepository.findByUidAndRowDeleteDateStr(
+            rentableProductInfoUid,
+            "/"
         )
 
-        // todo
+        if (rentableProduct == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        rentableProduct.nowReservable = inputVo.nowReservable
+
+        db1RaillyLinkerCompanyRentableProductInfoRepository.save(rentableProduct)
+
         httpServletResponse.status = HttpStatus.OK.value()
     }
 
@@ -420,13 +454,36 @@ class RentalReservationAdminService(
         rentableProductInfoUid: Long,
         inputVo: RentalReservationAdminController.PatchRentableProductInfoMinReservationUnitCountInputVo
     ) {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+
+        val rentableProduct = db1RaillyLinkerCompanyRentableProductInfoRepository.findByUidAndRowDeleteDateStr(
+            rentableProductInfoUid,
+            "/"
         )
 
-        // todo
+        if (rentableProduct == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        if (inputVo.minimumReservationUnitCount < 0 ||
+            (rentableProduct.maximumReservationUnitCount != null &&
+                    inputVo.minimumReservationUnitCount > rentableProduct.maximumReservationUnitCount!!)
+        ) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return
+        }
+
+        rentableProduct.minimumReservationUnitCount = inputVo.minimumReservationUnitCount
+
+        db1RaillyLinkerCompanyRentableProductInfoRepository.save(rentableProduct)
+
         httpServletResponse.status = HttpStatus.OK.value()
     }
 
@@ -440,13 +497,36 @@ class RentalReservationAdminService(
         rentableProductInfoUid: Long,
         inputVo: RentalReservationAdminController.PatchRentableProductInfoMaxReservationUnitCountInputVo
     ) {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+
+        val rentableProduct = db1RaillyLinkerCompanyRentableProductInfoRepository.findByUidAndRowDeleteDateStr(
+            rentableProductInfoUid,
+            "/"
         )
 
-        // todo
+        if (rentableProduct == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        if (inputVo.maximumReservationUnitCount != null &&
+            (inputVo.maximumReservationUnitCount < 0 ||
+                    rentableProduct.minimumReservationUnitCount > inputVo.maximumReservationUnitCount)
+        ) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return
+        }
+
+        rentableProduct.maximumReservationUnitCount = inputVo.maximumReservationUnitCount
+
+        db1RaillyLinkerCompanyRentableProductInfoRepository.save(rentableProduct)
+
         httpServletResponse.status = HttpStatus.OK.value()
     }
 
