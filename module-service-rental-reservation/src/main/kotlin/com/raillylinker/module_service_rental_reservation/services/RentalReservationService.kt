@@ -59,10 +59,11 @@ class RentalReservationService(
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
+        // todo
         return RentalReservationController.PostProductReservationOutputVo(
-            1L, // todo
-            "2024_05_02_T_15_14_49_552_KST", // todo
-            "2024_05_02_T_15_14_49_552_KST" // todo
+            1L,
+            "2024_05_02_T_15_14_49_552_KST",
+            "2024_05_02_T_15_14_49_552_KST"
         )
     }
 
@@ -82,8 +83,76 @@ class RentalReservationService(
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
+        // todo
         return RentalReservationController.PostRentableProductReservationPaymentInfoOutputVo(
-            1L // todo
+            1L
+        )
+    }
+
+
+    // ----
+    // (예약 취소 신청 <>)
+    fun postCancelProductReservation(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: RentalReservationController.PostCancelProductReservationInputVo
+    ): RentalReservationController.PostCancelProductReservationOutputVo? {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        // todo
+        return RentalReservationController.PostCancelProductReservationOutputVo(
+            1L,
+            false
+        )
+    }
+
+
+    // ----
+    // (대여품 조기반납 신고 <>)
+    fun postRentalProductEarlyReturn(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: RentalReservationController.PostRentalProductEarlyReturnInputVo
+    ): RentalReservationController.PostRentalProductEarlyReturnOutputVo? {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        // todo
+        return RentalReservationController.PostRentalProductEarlyReturnOutputVo(
+            1L
+        )
+    }
+
+
+    // ----
+    // (대여품 조기반납 신고 취소 <>)
+    fun postRentalProductEarlyReturnCancel(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: RentalReservationController.PostRentalProductEarlyReturnCancelInputVo
+    ): RentalReservationController.PostRentalProductEarlyReturnCancelOutputVo? {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        // todo
+        return RentalReservationController.PostRentalProductEarlyReturnCancelOutputVo(
+            1L
         )
     }
 }

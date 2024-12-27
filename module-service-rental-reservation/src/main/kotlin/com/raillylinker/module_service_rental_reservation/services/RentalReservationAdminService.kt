@@ -59,8 +59,9 @@ class RentalReservationAdminService(
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
+        // todo
         return RentalReservationAdminController.PostRentableProductCategoryOutputVo(
-            1L // todo
+            1L
         )
     }
 
@@ -117,8 +118,9 @@ class RentalReservationAdminService(
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
+        // todo
         return RentalReservationAdminController.PostRentableProductInfoOutputVo(
-            1L // todo
+            1L
         )
     }
 
@@ -209,8 +211,9 @@ class RentalReservationAdminService(
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
+        // todo
         return RentalReservationAdminController.PostRentableProductImageOutputVo(
-            1L // todo
+            1L
         )
     }
 
@@ -257,8 +260,9 @@ class RentalReservationAdminService(
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
+        // todo
         return RentalReservationAdminController.PostRentableProductStockCategoryOutputVo(
-            1L // todo
+            1L
         )
     }
 
@@ -305,8 +309,9 @@ class RentalReservationAdminService(
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
+        // todo
         return RentalReservationAdminController.PostRentableProductStockInfoOutputVo(
-            1L // todo
+            1L
         )
     }
 
@@ -358,6 +363,7 @@ class RentalReservationAdminService(
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
+        // todo
         return RentalReservationAdminController.PostRentableProductStockImageOutputVo(
             1L
         )
@@ -417,6 +423,7 @@ class RentalReservationAdminService(
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
+        // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoPaymentCompleteOutputVo(
             1L
         )
@@ -439,6 +446,7 @@ class RentalReservationAdminService(
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
+        // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoReservationApproveOutputVo(
             1L
         )
@@ -461,6 +469,7 @@ class RentalReservationAdminService(
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
+        // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoReservationDenyOutputVo(
             1L
         )
@@ -483,6 +492,7 @@ class RentalReservationAdminService(
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
+        // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelApproveOutputVo(
             1L
         )
@@ -505,6 +515,7 @@ class RentalReservationAdminService(
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
+        // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelDenyOutputVo(
             1L
         )
@@ -527,6 +538,7 @@ class RentalReservationAdminService(
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
+        // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoRefundCompleteOutputVo(
             1L
         )
@@ -549,6 +561,7 @@ class RentalReservationAdminService(
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
+        // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo(
             1L
         )
@@ -571,6 +584,7 @@ class RentalReservationAdminService(
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
+        // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo(
             1L
         )
