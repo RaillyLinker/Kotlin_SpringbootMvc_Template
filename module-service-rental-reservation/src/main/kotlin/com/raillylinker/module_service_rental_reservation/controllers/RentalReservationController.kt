@@ -1,9 +1,12 @@
 package com.raillylinker.module_service_rental_reservation.controllers
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.raillylinker.module_service_rental_reservation.services.RentalReservationService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.headers.Header
 import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -25,35 +28,8 @@ class RentalReservationController(
     // ---------------------------------------------------------------------------------------------
     // <매핑 함수 공간>
     @Operation(
-        summary = "비 로그인 접속 테스트",
-        description = "비 로그인 접속 테스트용 API"
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            )
-        ]
-    )
-    @GetMapping(
-        path = ["/for-no-logged-in"],
-        consumes = [MediaType.ALL_VALUE],
-        produces = [MediaType.TEXT_PLAIN_VALUE]
-    )
-    @ResponseBody
-    fun noLoggedInAccessTest(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse
-    ): String? {
-        return service.noLoggedInAccessTest(httpServletResponse)
-    }
-
-
-    // ----
-    @Operation(
-        summary = "로그인 진입 테스트 <>",
-        description = "로그인 되어 있어야 진입 가능"
+        summary = "상품 예약 신청하기 <> (더미)", // todo
+        description = "상품에 대한 예약 신청을 합니다."
     )
     @ApiResponses(
         value = [
@@ -62,30 +38,92 @@ class RentalReservationController(
                 description = "정상 동작"
             ),
             ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : rentableProductVersionSeq 가 맞지 않습니다. (결재 시점에 테이블 정보가 수정됨)",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
                 responseCode = "401",
                 content = [Content()],
                 description = "인증되지 않은 접근입니다."
             )
         ]
     )
-    @GetMapping(
-        path = ["/for-logged-in"],
-        consumes = [MediaType.ALL_VALUE],
-        produces = [MediaType.TEXT_PLAIN_VALUE]
+    @PostMapping(
+        path = ["/product-reservation"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated()")
     @ResponseBody
-    fun loggedInAccessTest(
+    fun postProductReservation(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
-        authorization: String?
-    ): String? {
-        return service.loggedInAccessTest(httpServletResponse, authorization!!)
+        authorization: String?,
+        @RequestBody
+        inputVo: PostProductReservationInputVo
+    ): PostProductReservationOutputVo? {
+        return service.postProductReservation(
+            httpServletResponse,
+            authorization!!,
+            inputVo
+        )
     }
 
-    // todo : 상품 예약 신청
+    data class PostProductReservationInputVo(
+        @Schema(description = "예약 상품 고유번호", required = true, example = "1")
+        @JsonProperty("rentableProductInfoUid")
+        val rentableProductInfoUid: Long,
+        @Schema(description = "예약 상품 버전 시퀀스(현재 상품 테이블 버전과 맞지 않는다면 진행 불가)", required = true, example = "1")
+        @JsonProperty("rentableProductVersionSeq")
+        val rentableProductVersionSeq: Long,
+        @Schema(
+            description = "대여 시작 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("rentalStartDatetime")
+        val rentalStartDatetime: String,
+        @Schema(
+            description = "대여 끝 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("rentalEndDatetime")
+        val rentalEndDatetime: String
+    )
+
+    data class PostProductReservationOutputVo(
+        @Schema(description = "rentableProductReservationInfo 고유값", required = true, example = "1")
+        @JsonProperty("rentableProductReservationInfoUid")
+        val rentableProductReservationInfoUid: Long,
+        @Schema(
+            description = "결재 기한 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("paymentDeadlineDatetime")
+        val paymentDeadlineDatetime: String,
+        @Schema(
+            description = "취소 가능 기한 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("cancelableDeadlineDatetime")
+        val cancelableDeadlineDatetime: String
+    )
 
     // todo : 상품 결재 처리(결재 모듈에서 처리한 결재 번호와 상품 번호, 환불은 환불 모듈에서)
 

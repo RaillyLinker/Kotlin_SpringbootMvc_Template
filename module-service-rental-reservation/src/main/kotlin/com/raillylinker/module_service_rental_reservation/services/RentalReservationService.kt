@@ -3,6 +3,7 @@ package com.raillylinker.module_service_rental_reservation.services
 import com.raillylinker.module_service_rental_reservation.util_components.JwtTokenUtil
 import com.raillylinker.module_service_rental_reservation.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 import com.raillylinker.module_service_rental_reservation.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR
+import com.raillylinker.module_service_rental_reservation.controllers.RentalReservationController
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -44,23 +45,24 @@ class RentalReservationService(
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
-    // (비 로그인 접속 테스트)
-    fun noLoggedInAccessTest(httpServletResponse: HttpServletResponse): String? {
-        httpServletResponse.status = HttpStatus.OK.value()
-        return externalAccessAddress
-    }
-
-
-    // ----
-    // (로그인 진입 테스트 <>)
-    fun loggedInAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
+    // (상품 예약 신청하기 <>)
+    fun postProductReservation(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: RentalReservationController.PostProductReservationInputVo
+    ): RentalReservationController.PostProductReservationOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
             AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
         )
 
+        // todo
         httpServletResponse.status = HttpStatus.OK.value()
-        return "Member No.$memberUid : Test Success"
+        return RentalReservationController.PostProductReservationOutputVo(
+            1L, // todo
+            "2024_05_02_T_15_14_49_552_KST", // todo
+            "2024_05_02_T_15_14_49_552_KST" // todo
+        )
     }
 }
