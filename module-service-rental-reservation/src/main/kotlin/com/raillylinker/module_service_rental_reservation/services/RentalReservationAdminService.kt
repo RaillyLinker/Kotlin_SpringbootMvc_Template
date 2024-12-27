@@ -439,7 +439,55 @@ class RentalReservationAdminService(
             AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
         )
 
-        // todo 관련 테이블 처리에 주의
+        val rentableProductInfo: Db1_RaillyLinkerCompany_RentableProductInfo? =
+            db1RaillyLinkerCompanyRentableProductInfoRepository.findByUidAndRowDeleteDateStr(
+                rentableProductInfoUid,
+                "/"
+            )
+
+        if (rentableProductInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        for (rentableProductReservationInfo in rentableProductInfo.rentableProductReservationInfoList) {
+            // 예약 정보에서 고유값 null 처리
+            rentableProductReservationInfo.rentableProductInfo = null
+            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.save(rentableProductReservationInfo)
+        }
+
+        for (rentableProductImage in rentableProductInfo.rentableProductImageList) {
+            // 이미지를 참조하고 있던 테이블들 모두 null 처리
+            for (rentableProductInfo in rentableProductImage.rentableProductInfoList) {
+                rentableProductInfo.frontRentableProductImage = null
+                db1RaillyLinkerCompanyRentableProductInfoRepository.save(rentableProductInfo)
+            }
+
+            for (rentableProductReservationInfo in rentableProductImage.rentableProductReservationInfoList) {
+                rentableProductReservationInfo.frontRentableProductImage = null
+                db1RaillyLinkerCompanyRentableProductReservationInfoRepository.save(rentableProductReservationInfo)
+            }
+
+            rentableProductImage.rowDeleteDateStr =
+                LocalDateTime.now().atZone(ZoneId.systemDefault())
+                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+
+            db1RaillyLinkerCompanyRentableProductImageRepository.save(
+                rentableProductImage
+            )
+        }
+
+        for (rentableProductImage in rentableProductInfo.rentableProductStockInfoList) {
+            // todo 재고 삭제 처리
+
+        }
+
+        // 테이블 삭제 처리
+        rentableProductInfo.rowDeleteDateStr =
+            LocalDateTime.now().atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+
         httpServletResponse.status = HttpStatus.OK.value()
     }
 
@@ -717,6 +765,17 @@ class RentalReservationAdminService(
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
             return
+        }
+
+        // 이미지를 참조하고 있던 테이블들 모두 null 처리
+        for (rentableProductInfo in rentableProductImage.rentableProductInfoList) {
+            rentableProductInfo.frontRentableProductImage = null
+            db1RaillyLinkerCompanyRentableProductInfoRepository.save(rentableProductInfo)
+        }
+
+        for (rentableProductReservationInfo in rentableProductImage.rentableProductReservationInfoList) {
+            rentableProductReservationInfo.frontRentableProductImage = null
+            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.save(rentableProductReservationInfo)
         }
 
         rentableProductImage.rowDeleteDateStr =
