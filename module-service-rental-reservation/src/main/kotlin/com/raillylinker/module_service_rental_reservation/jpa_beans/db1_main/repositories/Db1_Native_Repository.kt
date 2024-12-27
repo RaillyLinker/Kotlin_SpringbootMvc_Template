@@ -61,4 +61,46 @@ interface Db1_Native_Repository : JpaRepository<Db1_RaillyLinkerCompany_Rentable
     interface FindAllCategoryTreeUidListOutputVo {
         var uid: Long
     }
+
+
+    // ----
+    @Query(
+        nativeQuery = true,
+        value = """
+            WITH RECURSIVE CategoryTree AS (
+                SELECT 
+                rentable_product_stock_category.*, 
+                0 AS depth
+                FROM railly_linker_company.rentable_product_stock_category as rentable_product_stock_category
+                WHERE 
+                rentable_product_stock_category.uid = :stockCategoryUid and 
+                rentable_product_stock_category.row_delete_date_str = "/"
+                UNION ALL
+                SELECT 
+                child.*, 
+                parent.depth + 1 AS depth
+                FROM railly_linker_company.rentable_product_stock_category as child
+                INNER JOIN 
+                CategoryTree as parent 
+                ON 
+                child.parent_rentable_product_stock_category_uid = parent.uid and 
+                parent.row_delete_date_str = "/"
+                WHERE 
+                child.row_delete_date_str = "/"
+            )
+            SELECT 
+            CategoryTree.uid
+            FROM 
+            CategoryTree
+            ORDER BY 
+            depth DESC
+            """
+    )
+    fun findAllStockCategoryTreeUidList(
+        @Param(value = "stockCategoryUid") stockCategoryUid: Long
+    ): List<FindAllStockCategoryTreeUidListOutputVo>
+
+    interface FindAllStockCategoryTreeUidListOutputVo {
+        var uid: Long
+    }
 }

@@ -1031,7 +1031,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "예약 상품 재고 카테고리 정보 등록 <ADMIN> (더미)", // todo
+        summary = "예약 상품 재고 카테고리 정보 등록 <ADMIN>",
         description = "예약 상품 재고의 카테고리 정보를 등록합니다."
     )
     @ApiResponses(
@@ -1107,7 +1107,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "예약 상품 재고 카테고리 정보 수정 <ADMIN> (더미)", // todo
+        summary = "예약 상품 재고 카테고리 정보 수정 <ADMIN>",
         description = "예약 상품 재고의 카테고리 정보를 수정합니다."
     )
     @ApiResponses(
@@ -1186,7 +1186,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "예약 상품 재고 카테고리 정보 삭제 <ADMIN> (더미)", // todo
+        summary = "예약 상품 재고 카테고리 정보 삭제 <ADMIN>",
         description = "예약 상품 재고의 카테고리 정보를 삭제합니다.<br>" +
                 "하위 카테고리들은 모두 자동 삭제되며, 예약 상품 재고 정보의 카테고리로 설정되어 있다면 null 로 재설정 됩니다."
     )
@@ -1609,7 +1609,7 @@ class RentalReservationAdminController(
     }
 
     data class PostRentableProductStockImageInputVo(
-        @Schema(description = "rentableProductStockInfo 고유값", required = true)
+        @Schema(description = "rentableProductStockInfo 고유값", example = "1", required = true)
         @JsonProperty("rentableProductInfoStockUid")
         val rentableProductInfoStockUid: Long,
         @Schema(description = "고객에게 보일 상품 썸네일 이미지", required = true)
@@ -1620,7 +1620,10 @@ class RentalReservationAdminController(
     data class PostRentableProductStockImageOutputVo(
         @Schema(description = "rentableProductStockImage 고유값", required = true, example = "1")
         @JsonProperty("rentableProductStockImageUid")
-        val rentableProductStockImageUid: Long
+        val rentableProductStockImageUid: Long,
+        @Schema(description = "생성된 이미지 다운로드 경로", required = true, example = "https://testimage.com/sample.jpg")
+        @JsonProperty("productStockImageFullUrl")
+        val productStockImageFullUrl: String
     )
 
 

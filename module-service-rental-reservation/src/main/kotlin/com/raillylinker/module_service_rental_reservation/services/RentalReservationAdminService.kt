@@ -8,8 +8,10 @@ import com.raillylinker.module_service_rental_reservation.controllers.RentalRese
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductCategory
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductImage
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductInfo
+import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockCategory
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository.FindAllCategoryTreeUidListOutputVo
+import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository.FindAllStockCategoryTreeUidListOutputVo
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_PaymentRefund_Repository
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_Payment_Repository
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_RentableProductCategory_Repository
@@ -770,17 +772,41 @@ class RentalReservationAdminService(
         authorization: String,
         inputVo: RentalReservationAdminController.PostRentableProductStockCategoryInputVo
     ): RentalReservationAdminController.PostRentableProductStockCategoryOutputVo? {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+
+        val parentCategoryEntity: Db1_RaillyLinkerCompany_RentableProductStockCategory? =
+            if (inputVo.parentRentableProductStockCategoryUid == null) {
+                null
+            } else {
+                val existsCategoryEntity =
+                    db1RaillyLinkerCompanyRentableProductStockCategoryRepository.findByUidAndRowDeleteDateStr(
+                        inputVo.parentRentableProductStockCategoryUid,
+                        "/"
+                    )
+
+                if (existsCategoryEntity == null) {
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "1")
+                    return null
+                }
+
+                existsCategoryEntity
+            }
+
+        val categoryEntity = db1RaillyLinkerCompanyRentableProductStockCategoryRepository.save(
+            Db1_RaillyLinkerCompany_RentableProductStockCategory(
+                inputVo.categoryName,
+                parentCategoryEntity
+            )
         )
 
-        // todo
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo
         return RentalReservationAdminController.PostRentableProductStockCategoryOutputVo(
-            1L
+            categoryEntity.uid!!
         )
     }
 
@@ -794,8 +820,48 @@ class RentalReservationAdminService(
         rentableProductStockCategoryUid: Long,
         inputVo: RentalReservationAdminController.PutRentableProductStockCategoryInputVo
     ) {
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
-        // todo
+        val rentableCategoryEntity =
+            db1RaillyLinkerCompanyRentableProductStockCategoryRepository.findByUidAndRowDeleteDateStr(
+                rentableProductStockCategoryUid,
+                "/"
+            )
+
+        if (rentableCategoryEntity == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        val parentCategoryEntity: Db1_RaillyLinkerCompany_RentableProductStockCategory? =
+            if (inputVo.parentRentableProductStockCategoryUid == null) {
+                null
+            } else {
+                val existsCategoryEntity =
+                    db1RaillyLinkerCompanyRentableProductStockCategoryRepository.findByUidAndRowDeleteDateStr(
+                        inputVo.parentRentableProductStockCategoryUid,
+                        "/"
+                    )
+
+                if (existsCategoryEntity == null) {
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "2")
+                    return
+                }
+
+                existsCategoryEntity
+            }
+
+        rentableCategoryEntity.categoryName = inputVo.categoryName
+        rentableCategoryEntity.parentRentableProductStockCategory = parentCategoryEntity
+
+        db1RaillyLinkerCompanyRentableProductStockCategoryRepository.save(rentableCategoryEntity)
+
         httpServletResponse.status = HttpStatus.OK.value()
     }
 
@@ -808,8 +874,64 @@ class RentalReservationAdminService(
         authorization: String,
         rentableProductStockCategoryUid: Long
     ) {
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
-        // todo
+        // 데이터 존재 여부 확인
+        val rentableCategoryExists =
+            db1RaillyLinkerCompanyRentableProductStockCategoryRepository.existsByUidAndRowDeleteDateStr(
+                rentableProductStockCategoryUid,
+                "/"
+            )
+
+        if (!rentableCategoryExists) {
+            // 삭제 대상이 없으므로 204 return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        // 카테고리 트리 내 하위 카테고리들 모두 조회(최하위 컨테이너 우선 정렬)
+        val categoryTreeUidList: List<FindAllStockCategoryTreeUidListOutputVo> =
+            db1NativeRepository.findAllStockCategoryTreeUidList(
+                rentableProductStockCategoryUid
+            )
+
+        // 카테고리 트리 순회
+        for (categoryTreeUid in categoryTreeUidList) {
+            // 카테고리 객체 조회
+            val categoryBranch = db1RaillyLinkerCompanyRentableProductStockCategoryRepository.findByUidAndRowDeleteDateStr(
+                categoryTreeUid.uid,
+                "/"
+            )
+
+            if (categoryBranch != null) {
+                // branch 카테고리를 조회하는 모든 상품들 조회
+                val rentableProductStockList =
+                    db1RaillyLinkerCompanyRentableProductStockInfoRepository.findAllByRentableProductStockCategoryAndRowDeleteDateStr(
+                        categoryBranch,
+                        "/"
+                    )
+
+                // branch 카테고리를 조회하는 모든 상품들에서 카테고리 해제
+                for (rentableProductStock in rentableProductStockList) {
+                    rentableProductStock.rentableProductStockCategory = null
+                    db1RaillyLinkerCompanyRentableProductStockInfoRepository.save(
+                        rentableProductStock
+                    )
+                }
+
+                // branch 카테고리 삭제처리
+                categoryBranch.rowDeleteDateStr =
+                    LocalDateTime.now().atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                db1RaillyLinkerCompanyRentableProductStockCategoryRepository.save(categoryBranch)
+            }
+        }
+
         httpServletResponse.status = HttpStatus.OK.value()
     }
 
@@ -889,7 +1011,8 @@ class RentalReservationAdminService(
         httpServletResponse.status = HttpStatus.OK.value()
         // todo
         return RentalReservationAdminController.PostRentableProductStockImageOutputVo(
-            1L
+            1L,
+            "https://testImage.com/sample.jpg"
         )
     }
 
