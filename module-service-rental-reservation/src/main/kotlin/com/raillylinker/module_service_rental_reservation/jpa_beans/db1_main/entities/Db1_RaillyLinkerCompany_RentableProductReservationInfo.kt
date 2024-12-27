@@ -71,7 +71,11 @@ class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
 
     @Column(name = "address_detail", nullable = false, columnDefinition = "VARCHAR(300)")
     @Comment("상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 상세")
-    var addressDetail: String
+    var addressDetail: String,
+
+    @Column(name = "payment_complete_datetime", nullable = false, columnDefinition = "DATETIME")
+    @Comment("결재가 완료 처리된 일시(null 이라면 미결재 상태)")
+    var paymentCompleteDatetime: LocalDateTime
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -113,5 +117,14 @@ class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
         cascade = [CascadeType.ALL]
     )
     var rentableProductReservationStateChangeHistoryList: MutableList<Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory> =
+        mutableListOf()
+
+    // 예약 정보가 삭제되면 예약 결재 정보 삭제
+    @OneToMany(
+        mappedBy = "rentableProductReservationInfo",
+        fetch = FetchType.LAZY,
+        cascade = [CascadeType.ALL]
+    )
+    var rentableProductReservationPaymentList: MutableList<Db1_RaillyLinkerCompany_RentableProductReservationPayment> =
         mutableListOf()
 }

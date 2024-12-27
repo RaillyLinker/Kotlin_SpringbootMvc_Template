@@ -24,7 +24,7 @@ class Db1_RaillyLinkerCompany_Payment(
     var paymentAmount: BigDecimal,
 
     @Column(name = "payment_complete_datetime", nullable = true, columnDefinition = "DATETIME(3)")
-    @Comment("결재 완료 일시")
+    @Comment("결재가 완료 및 확인 된 일시(Null 이라면 아직 완료 처리가 아님)")
     var paymentCompleteDatetime: LocalDateTime?,
 
     @Column(name = "payment_failed", nullable = false, columnDefinition = "BIT(1)")
@@ -54,13 +54,20 @@ class Db1_RaillyLinkerCompany_Payment(
 
     // ---------------------------------------------------------------------------------------------
     // [@OneToMany 변수들]
-    // 상위 카테고리가 삭제되면 하위 카테고리도 삭제
     @OneToMany(
         mappedBy = "payment",
         fetch = FetchType.LAZY,
         cascade = [CascadeType.ALL]
     )
     var paymentRefundList: MutableList<Db1_RaillyLinkerCompany_PaymentRefund> = mutableListOf()
+
+    @OneToMany(
+        mappedBy = "payment",
+        fetch = FetchType.LAZY,
+        cascade = [CascadeType.ALL]
+    )
+    var rentableProductReservationPaymentList: MutableList<Db1_RaillyLinkerCompany_RentableProductReservationPayment> =
+        mutableListOf()
 
 
     // ---------------------------------------------------------------------------------------------

@@ -5,6 +5,7 @@ import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 // Fk 관계 중 OneToOne 은 논리적 삭제를 적용할시 사용이 불가능합니다.
@@ -63,9 +64,9 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
     @Comment("단위 예약 시간을 대여일 기준에서 최대 몇번 추가 가능한지 (Null 이라면 제한 없음)")
     var maximumReservationUnitCount: Long?,
 
-    @Column(name = "reservation_unit_price", nullable = false, columnDefinition = "BIGINT UNSIGNED")
+    @Column(name = "reservation_unit_price", nullable = false, columnDefinition = "DECIMAL(15, 2) UNSIGNED")
     @Comment("단위 예약 시간에 대한 가격 (예약 시간 / 단위 예약 시간 * 예약 단가 = 예약 최종가)")
-    var reservationUnitPrice: Long,
+    var reservationUnitPrice: BigDecimal,
 
     @Column(name = "now_reservable", nullable = false, columnDefinition = "BIT(1)")
     @Comment("재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정 = 활성/비활성 플래그")
