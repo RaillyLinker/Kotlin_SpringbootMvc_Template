@@ -6,6 +6,7 @@ import com.raillylinker.module_service_rental_reservation.configurations.Securit
 import com.raillylinker.module_service_rental_reservation.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.module_service_rental_reservation.controllers.RentalReservationAdminController
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductCategory
+import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductInfo
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository.FindAllCategoryTreeUidListOutputVo
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_PaymentRefund_Repository
@@ -33,6 +34,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 @Service
@@ -266,17 +268,56 @@ class RentalReservationAdminService(
         authorization: String,
         inputVo: RentalReservationAdminController.PostRentableProductInfoInputVo
     ): RentalReservationAdminController.PostRentableProductInfoOutputVo? {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+
+        val rentableProductCategory =
+            if (inputVo.rentableProductCategoryUid == null) {
+                null
+            } else {
+                val rentableProductCategoryEntity =
+                    db1RaillyLinkerCompanyRentableProductCategoryRepository.findByUidAndRowDeleteDateStr(
+                        inputVo.rentableProductCategoryUid,
+                        "/"
+                    )
+
+                if (rentableProductCategoryEntity == null) {
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "1")
+                    return null
+                }
+
+                rentableProductCategoryEntity
+            }
+
+        val rentableProductInfo = db1RaillyLinkerCompanyRentableProductInfoRepository.save(
+            Db1_RaillyLinkerCompany_RentableProductInfo(
+                inputVo.productName,
+                rentableProductCategory,
+                inputVo.productIntro,
+                null,
+                inputVo.addressCountry,
+                inputVo.addressMain,
+                inputVo.addressDetail,
+                ZonedDateTime.parse(
+                    inputVo.firstReservableDatetime,
+                    DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+                ).toLocalDateTime(),
+                inputVo.reservationUnitMinute,
+                inputVo.minimumReservationUnitCount,
+                inputVo.maximumReservationUnitCount,
+                inputVo.reservationUnitPrice,
+                inputVo.reservationUnitPriceCurrencyCode.name,
+                inputVo.nowReservable
+            )
         )
 
-        // todo
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo
         return RentalReservationAdminController.PostRentableProductInfoOutputVo(
-            1L
+            rentableProductInfo.uid!!
         )
     }
 

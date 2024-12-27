@@ -244,7 +244,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 등록 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 등록 <ADMIN>",
         description = "대여 상품 정보를 등록합니다."
     )
     @ApiResponses(
