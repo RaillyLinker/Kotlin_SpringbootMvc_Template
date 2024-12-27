@@ -9,6 +9,7 @@ import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.ent
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductImage
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductInfo
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockCategory
+import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockInfo
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository.FindAllCategoryTreeUidListOutputVo
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository.FindAllStockCategoryTreeUidListOutputVo
@@ -1028,6 +1029,43 @@ class RentalReservationAdminService(
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
             AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
         )
+
+        val rentableProductInfo =
+            db1RaillyLinkerCompanyRentableProductInfoRepository.findByUidAndRowDeleteDateStr(
+                inputVo.rentableProductInfoUid,
+                "/"
+            )
+
+        if (rentableProductInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        val categoryTable = if (inputVo.rentableProductStockCategoryUid == null) {
+            null
+        } else {
+            val categoryEntity =
+                db1RaillyLinkerCompanyRentableProductStockCategoryRepository.findByUidAndRowDeleteDateStr(
+                    inputVo.rentableProductStockCategoryUid,
+                    "/"
+                )
+
+            if (categoryEntity == null) {
+                httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                httpServletResponse.setHeader("api-result-code", "1")
+                return null
+            }
+            categoryEntity
+        }
+
+
+//        val rentableProductStockInfo =
+//            db1RaillyLinkerCompanyRentableProductStockInfoRepository.save(
+//                Db1_RaillyLinkerCompany_RentableProductStockInfo(
+//
+//                )
+//            )
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
