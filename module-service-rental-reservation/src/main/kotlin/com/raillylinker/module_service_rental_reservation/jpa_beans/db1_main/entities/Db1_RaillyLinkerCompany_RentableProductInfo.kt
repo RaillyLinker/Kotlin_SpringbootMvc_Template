@@ -68,6 +68,10 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
     @Comment("단위 예약 시간에 대한 가격 (예약 시간 / 단위 예약 시간 * 예약 단가 = 예약 최종가)")
     var reservationUnitPrice: BigDecimal,
 
+    @Column(name = "reservation_unit_price_currency_code", nullable = false, columnDefinition = "CHAR(3)")
+    @Comment("단위 예약 시간에 대한 가격 통화 코드(IOS 4217, ex : KRW, USD, EUR...)")
+    var reservationUnitPriceCurrencyCode: String,
+
     @Column(name = "now_reservable", nullable = false, columnDefinition = "BIT(1)")
     @Comment("재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정 = 활성/비활성 플래그")
     var nowReservable: Boolean

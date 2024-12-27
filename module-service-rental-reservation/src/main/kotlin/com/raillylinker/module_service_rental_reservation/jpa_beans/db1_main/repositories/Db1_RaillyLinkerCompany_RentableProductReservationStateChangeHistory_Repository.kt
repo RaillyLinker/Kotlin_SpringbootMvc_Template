@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface Db1_RaillyLinkerCompany_RentableProductReservationHistory_Repository :
+interface Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory_Repository :
     JpaRepository<Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory, Long> {
 }

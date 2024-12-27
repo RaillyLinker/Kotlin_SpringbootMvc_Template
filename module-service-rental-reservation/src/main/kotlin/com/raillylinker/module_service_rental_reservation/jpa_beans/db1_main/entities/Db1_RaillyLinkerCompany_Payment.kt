@@ -23,6 +23,10 @@ class Db1_RaillyLinkerCompany_Payment(
     @Comment("결재 금액")
     var paymentAmount: BigDecimal,
 
+    @Column(name = "payment_currency_code", nullable = false, columnDefinition = "CHAR(3)")
+    @Comment("결재 금액 통화 코드(IOS 4217, ex : KRW, USD, EUR...)")
+    var paymentCurrencyCode: String,
+
     @Column(name = "payment_complete_datetime", nullable = true, columnDefinition = "DATETIME(3)")
     @Comment("결재가 완료 및 확인 된 일시(Null 이라면 아직 완료 처리가 아님)")
     var paymentCompleteDatetime: LocalDateTime?,

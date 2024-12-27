@@ -24,6 +24,10 @@ class Db1_RaillyLinkerCompany_PaymentRefund(
     @Comment("환불 금액")
     var amount: BigDecimal,
 
+    @Column(name = "currency_code", nullable = false, columnDefinition = "CHAR(3)")
+    @Comment("환불 금액 통화 코드(IOS 4217, ex : KRW, USD, EUR...)")
+    var currencyCode: String,
+
     @Column(name = "refund_datetime", nullable = true, columnDefinition = "DATETIME(3)")
     @Comment("환불 완료 일시")
     var paymentCompleteDatetime: LocalDateTime?
