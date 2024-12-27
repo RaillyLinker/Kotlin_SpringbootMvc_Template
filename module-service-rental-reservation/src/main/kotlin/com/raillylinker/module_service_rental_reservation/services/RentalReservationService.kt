@@ -65,4 +65,25 @@ class RentalReservationService(
             "2024_05_02_T_15_14_49_552_KST" // todo
         )
     }
+
+
+    // ----
+    // (상품 결재 처리 <>)
+    fun postRentableProductReservationPaymentInfo(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: RentalReservationController.PostRentableProductReservationPaymentInfoInputVo
+    ): RentalReservationController.PostRentableProductReservationPaymentInfoOutputVo? {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        // todo
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationController.PostRentableProductReservationPaymentInfoOutputVo(
+            1L // todo
+        )
+    }
 }
