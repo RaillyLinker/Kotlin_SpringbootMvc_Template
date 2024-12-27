@@ -898,7 +898,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 이미지 삭제 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 이미지 삭제 <ADMIN>",
         description = "대여 상품 이미지를 삭제합니다.<br>" +
                 "상품 정보에 대표 이미지로 설정되어 있다면 대표 이미지 설정이 null 이 됩니다.<br>" +
                 "이미지 관련 상품 정보 변경에는 update_version_seq 가 증가 하지 않습니다."
@@ -958,7 +958,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 대표 상품 이미지 설정 수정 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 대표 상품 이미지 설정 수정 <ADMIN>",
         description = "대여 가능 상품의 대표 상품 이미지 설정을 수정합니다.<br>" +
                 "이미지 관련 상품 정보 변경에는 update_version_seq 가 증가 하지 않습니다."
     )

@@ -681,8 +681,31 @@ class RentalReservationAdminService(
         authorization: String,
         rentableProductImageUid: Long
     ) {
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
-        // todo
+        val rentableProductImage = db1RaillyLinkerCompanyRentableProductImageRepository.findByUidAndRowDeleteDateStr(
+            rentableProductImageUid,
+            "/"
+        )
+
+        if (rentableProductImage == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        rentableProductImage.rowDeleteDateStr =
+            LocalDateTime.now().atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+
+        db1RaillyLinkerCompanyRentableProductImageRepository.save(
+            rentableProductImage
+        )
+
         httpServletResponse.status = HttpStatus.OK.value()
     }
 
@@ -696,8 +719,45 @@ class RentalReservationAdminService(
         rentableProductInfoUid: Long,
         inputVo: RentalReservationAdminController.PatchRentableProductInfoFrontImageInputVo
     ) {
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
-        // todo
+        val rentableProduct = db1RaillyLinkerCompanyRentableProductInfoRepository.findByUidAndRowDeleteDateStr(
+            rentableProductInfoUid,
+            "/"
+        )
+
+        if (rentableProduct == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        if (inputVo.rentableProductImageUid == null) {
+            rentableProduct.frontRentableProductImage = null
+            db1RaillyLinkerCompanyRentableProductInfoRepository.save(rentableProduct)
+            httpServletResponse.status = HttpStatus.OK.value()
+            return
+        }
+
+        val productImage = db1RaillyLinkerCompanyRentableProductImageRepository.findByUidAndRowDeleteDateStr(
+            inputVo.rentableProductImageUid,
+            "/"
+        )
+
+        if (productImage == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return
+        }
+
+        rentableProduct.frontRentableProductImage = productImage
+
+        db1RaillyLinkerCompanyRentableProductInfoRepository.save(rentableProduct)
+
         httpServletResponse.status = HttpStatus.OK.value()
     }
 
