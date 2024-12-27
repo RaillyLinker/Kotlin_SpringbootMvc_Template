@@ -4,6 +4,7 @@ import com.raillylinker.module_service_rental_reservation.util_components.JwtTok
 import com.raillylinker.module_service_rental_reservation.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 import com.raillylinker.module_service_rental_reservation.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR
 import com.raillylinker.module_service_rental_reservation.controllers.RentalReservationAdminController
+import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductCategory
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_PaymentRefund_Repository
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_Payment_Repository
@@ -86,17 +87,41 @@ class RentalReservationAdminService(
         authorization: String,
         inputVo: RentalReservationAdminController.PostRentableProductCategoryInputVo
     ): RentalReservationAdminController.PostRentableProductCategoryOutputVo? {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+
+        val parentCategoryEntity: Db1_RaillyLinkerCompany_RentableProductCategory? =
+            if (inputVo.parentRentableProductCategoryUid == null) {
+                null
+            } else {
+                val existsCategoryEntity =
+                    db1RaillyLinkerCompanyRentableProductCategoryRepository.findByUidAndRowDeleteDateStr(
+                        inputVo.parentRentableProductCategoryUid,
+                        "/"
+                    )
+
+                if (existsCategoryEntity == null) {
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "1")
+                    return null
+                }
+
+                existsCategoryEntity
+            }
+
+        val categoryEntity = db1RaillyLinkerCompanyRentableProductCategoryRepository.save(
+            Db1_RaillyLinkerCompany_RentableProductCategory(
+                inputVo.categoryName,
+                parentCategoryEntity
+            )
         )
 
-        // todo
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo
         return RentalReservationAdminController.PostRentableProductCategoryOutputVo(
-            1L
+            categoryEntity.uid!!
         )
     }
 
@@ -109,13 +134,48 @@ class RentalReservationAdminService(
         rentableProductCategoryUid: Long,
         inputVo: RentalReservationAdminController.PutRentableProductCategoryInputVo
     ) {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
-        // todo
+        val rentableCategoryEntity =
+            db1RaillyLinkerCompanyRentableProductCategoryRepository.findByUidAndRowDeleteDateStr(
+                rentableProductCategoryUid,
+                "/"
+            )
+
+        if (rentableCategoryEntity == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        val parentCategoryEntity: Db1_RaillyLinkerCompany_RentableProductCategory? =
+            if (inputVo.parentRentableProductCategoryUid == null) {
+                null
+            } else {
+                val existsCategoryEntity =
+                    db1RaillyLinkerCompanyRentableProductCategoryRepository.findByUidAndRowDeleteDateStr(
+                        inputVo.parentRentableProductCategoryUid,
+                        "/"
+                    )
+
+                if (existsCategoryEntity == null) {
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "2")
+                    return
+                }
+
+                existsCategoryEntity
+            }
+
+        rentableCategoryEntity.categoryName = inputVo.categoryName
+        rentableCategoryEntity.parentRentableProductCategory = parentCategoryEntity
+
+        db1RaillyLinkerCompanyRentableProductCategoryRepository.save(rentableCategoryEntity)
+
         httpServletResponse.status = HttpStatus.OK.value()
     }
 

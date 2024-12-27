@@ -30,7 +30,7 @@ class RentalReservationAdminController(
     // ---------------------------------------------------------------------------------------------
     // <매핑 함수 공간>
     @Operation(
-        summary = "예약 상품 카테고리 정보 등록 <ADMIN> (더미)", // todo
+        summary = "예약 상품 카테고리 정보 등록 <ADMIN>",
         description = "예약 상품의 카테고리 정보를 등록합니다."
     )
     @ApiResponses(
@@ -106,7 +106,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "예약 상품 카테고리 정보 수정 <ADMIN> (더미)", // todo
+        summary = "예약 상품 카테고리 정보 수정 <ADMIN>",
         description = "예약 상품의 카테고리 정보를 수정합니다."
     )
     @ApiResponses(
