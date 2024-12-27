@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import java.math.BigDecimal
 
 @Tag(name = "/rental-reservation-admin APIs", description = "대여 예약 서비스 관리자 API 컨트롤러")
 @Controller
@@ -370,7 +371,14 @@ class RentalReservationAdminController(
             example = "10000"
         )
         @JsonProperty("reservationUnitPrice")
-        val reservationUnitPrice: Long,
+        val reservationUnitPrice: BigDecimal,
+        @Schema(
+            description = "단위 예약 시간에 대한 가격 통화 코드(IOS 4217)",
+            required = true,
+            example = "KRW"
+        )
+        @JsonProperty("reservationUnitPriceCurrencyCode")
+        val reservationUnitPriceCurrencyCode: CurrencyCodeEnum,
         @Schema(
             description = "예약 가능 설정 (재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정)",
             required = true,
@@ -378,7 +386,11 @@ class RentalReservationAdminController(
         )
         @JsonProperty("nowReservable")
         val nowReservable: Boolean
-    )
+    ) {
+        enum class CurrencyCodeEnum {
+            KRW, USD
+        }
+    }
 
     data class PostRentableProductInfoOutputVo(
         @Schema(description = "rentableProductInfo 고유값", required = true, example = "1")
@@ -521,7 +533,14 @@ class RentalReservationAdminController(
             example = "10000"
         )
         @JsonProperty("reservationUnitPrice")
-        val reservationUnitPrice: Long,
+        val reservationUnitPrice: BigDecimal,
+        @Schema(
+            description = "단위 예약 시간에 대한 가격 통화 코드(IOS 4217)",
+            required = true,
+            example = "KRW"
+        )
+        @JsonProperty("reservationUnitPriceCurrencyCode")
+        val reservationUnitPriceCurrencyCode: CurrencyCodeEnum,
         @Schema(
             description = "예약 가능 설정 (재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정)",
             required = true,
@@ -529,7 +548,11 @@ class RentalReservationAdminController(
         )
         @JsonProperty("nowReservable")
         val nowReservable: Boolean
-    )
+    ) {
+        enum class CurrencyCodeEnum {
+            KRW, USD
+        }
+    }
 
 
     // ----
@@ -1241,7 +1264,6 @@ class RentalReservationAdminController(
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
-        @ModelAttribute
         @RequestBody
         inputVo: PostRentableProductStockInfoInputVo
     ): PostRentableProductStockInfoOutputVo? {
@@ -1359,7 +1381,6 @@ class RentalReservationAdminController(
         @Parameter(name = "rentableProductStockInfoUid", description = "rentableProductStockInfo 고유값", example = "1")
         @PathVariable("rentableProductStockInfoUid")
         rentableProductStockInfoUid: Long,
-        @ModelAttribute
         @RequestBody
         inputVo: PutRentableProductStockInfoInputVo
     ) {
@@ -1419,8 +1440,8 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 추가 예약 가능 설정 수정 <ADMIN> (더미)", // todo
-        description = "대여 가능 상품을 현 시간부로 예약 가능하게 할 것인지에 대한 스위치 플래그 수정"
+        summary = "대여 가능 상품 재고 추가 예약 가능 설정 수정 <ADMIN> (더미)", // todo
+        description = "대여 가능 상품 재고를 현 시간부로 예약 가능하게 할 것인지에 대한 스위치 플래그 수정"
     )
     @ApiResponses(
         value = [
@@ -2291,7 +2312,8 @@ class RentalReservationAdminController(
     // ----
     @Operation(
         summary = "대여 가능 상품 예약 상태 테이블의 상세 설명 수정 <ADMIN> (더미)", // todo
-        description = "대여 가능 상품 예약 상태 테이블의 상세 설명을 수정 처리합니다."
+        description = "대여 가능 상품 예약 상태 테이블의 상세 설명을 수정 처리합니다.<br>" +
+                "한번 결정된 상태 코드는 변하지 않습니다."
     )
     @ApiResponses(
         value = [
