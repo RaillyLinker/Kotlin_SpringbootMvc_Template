@@ -1538,7 +1538,10 @@ class RentalReservationAdminService(
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
 
-        // todo
+        // todo 상태 확인
+
+        // todo 예약 히스토리에 정보 기입
+
         httpServletResponse.status = HttpStatus.OK.value()
         // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoReservationApproveOutputVo(
@@ -1561,6 +1564,10 @@ class RentalReservationAdminService(
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
+
+        // todo 상태 확인
+
+        // todo 예약 히스토리에 정보 기입
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
@@ -1586,6 +1593,10 @@ class RentalReservationAdminService(
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
 
+        // todo 상태 확인
+
+        // todo 예약 히스토리에 정보 기입
+
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
         // todo
@@ -1610,6 +1621,10 @@ class RentalReservationAdminService(
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
 
+        // todo 상태 확인
+
+        // todo 예약 히스토리에 정보 기입
+
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
         // todo
@@ -1620,7 +1635,7 @@ class RentalReservationAdminService(
 
 
     // ----
-    // (대여 가능 상품 예약 정보의 환불 완료 처리 <ADMIN>)
+    // (대여 가능 상품 조기 반납 확인 처리 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductReservationInfoEarlyReturnComplete(
         httpServletResponse: HttpServletResponse,
@@ -1633,6 +1648,10 @@ class RentalReservationAdminService(
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
+
+        // todo 상태 확인
+
+        // todo 예약 히스토리에 정보 기입
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
