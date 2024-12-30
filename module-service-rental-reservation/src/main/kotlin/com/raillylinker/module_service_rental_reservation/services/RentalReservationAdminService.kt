@@ -1593,7 +1593,6 @@ class RentalReservationAdminService(
 
         // todo 예약 히스토리에 정보 기입
 
-        // todo
         httpServletResponse.status = HttpStatus.OK.value()
         // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoReservationDenyOutputVo(
@@ -1633,7 +1632,6 @@ class RentalReservationAdminService(
 
         // todo 예약 히스토리에 정보 기입
 
-        // todo
         httpServletResponse.status = HttpStatus.OK.value()
         // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelApproveOutputVo(
@@ -1673,7 +1671,6 @@ class RentalReservationAdminService(
 
         // todo 예약 히스토리에 정보 기입
 
-        // todo
         httpServletResponse.status = HttpStatus.OK.value()
         // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelDenyOutputVo(
@@ -1713,7 +1710,6 @@ class RentalReservationAdminService(
 
         // todo 예약 히스토리에 정보 기입
 
-        // todo
         httpServletResponse.status = HttpStatus.OK.value()
         // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo(
