@@ -1982,7 +1982,14 @@ class RentalReservationAdminController(
     data class PostRentableProductReservationInfoReservationApproveInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
-        val stateChangeDesc: String
+        val stateChangeDesc: String,
+        @Schema(
+            description = "상태변경 기준일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("stateChangeDatetime")
+        val stateChangeDatetime: String
     )
 
     data class PostRentableProductReservationInfoReservationApproveOutputVo(
@@ -2066,7 +2073,14 @@ class RentalReservationAdminController(
     data class PostRentableProductReservationInfoReservationDenyInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
-        val stateChangeDesc: String
+        val stateChangeDesc: String,
+        @Schema(
+            description = "상태변경 기준일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("stateChangeDatetime")
+        val stateChangeDatetime: String
     )
 
     data class PostRentableProductReservationInfoReservationDenyOutputVo(
@@ -2150,7 +2164,14 @@ class RentalReservationAdminController(
     data class PostRentableProductReservationInfoReservationCancelApproveInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
-        val stateChangeDesc: String
+        val stateChangeDesc: String,
+        @Schema(
+            description = "상태변경 기준일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("stateChangeDatetime")
+        val stateChangeDatetime: String
     )
 
     data class PostRentableProductReservationInfoReservationCancelApproveOutputVo(
@@ -2234,7 +2255,14 @@ class RentalReservationAdminController(
     data class PostRentableProductReservationInfoReservationCancelDenyInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
-        val stateChangeDesc: String
+        val stateChangeDesc: String,
+        @Schema(
+            description = "상태변경 기준일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("stateChangeDatetime")
+        val stateChangeDatetime: String
     )
 
     data class PostRentableProductReservationInfoReservationCancelDenyOutputVo(
@@ -2318,7 +2346,14 @@ class RentalReservationAdminController(
     data class PostRentableProductReservationInfoEarlyReturnCompleteInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
-        val stateChangeDesc: String
+        val stateChangeDesc: String,
+        @Schema(
+            description = "상태변경 기준일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("stateChangeDatetime")
+        val stateChangeDatetime: String
     )
 
     data class PostRentableProductReservationInfoEarlyReturnCompleteOutputVo(
@@ -2330,8 +2365,8 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 예약 상태 테이블의 상세 설명 수정 <ADMIN>",
-        description = "대여 가능 상품 예약 상태 테이블의 상세 설명을 수정 처리합니다.<br>" +
+        summary = "대여 가능 상품 예약 상태 테이블의 상세 설명 및 기준 일시 수정 <ADMIN>",
+        description = "대여 가능 상품 예약 상태 테이블의 상세 설명 및 기준 일시를 수정 처리합니다.<br>" +
                 "한번 결정된 상태 코드는 변하지 않습니다."
     )
     @ApiResponses(
@@ -2367,7 +2402,7 @@ class RentalReservationAdminController(
         ]
     )
     @PatchMapping(
-        path = ["/reservation-state-change-history/{reservationStateChangeHistoryUid}/state-change-desc"],
+        path = ["/reservation-state-change-history/{reservationStateChangeHistoryUid}/state-change-desc-and-date"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
@@ -2400,13 +2435,20 @@ class RentalReservationAdminController(
     data class PatchReservationStateChangeHistoryStateChangeDescInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
-        val stateChangeDesc: String
+        val stateChangeDesc: String,
+        @Schema(
+            description = "상태변경 기준일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("stateChangeDatetime")
+        val stateChangeDatetime: String
     )
 
 
     // ----
     @Operation(
-        summary = "개별 상품 예약 정보 다음 준비 예정일 수정 <ADMIN> (더미)", // todo
+        summary = "개별 상품 예약 정보 다음 준비 예정일 수정 <ADMIN>",
         description = "개별 상품 예약 정보의 다음 준비 예정일을 수정합니다."
     )
     @ApiResponses(
@@ -2425,7 +2467,7 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 준비 예정일이 현재 상태와 맞지 않습니다.(현재 예약 상태를 파악해서 반납이 이루어지지 않았을 때)",
+                                "2 : nextReadyDatetime 는 대여 마지막 일시, 혹은 조기 반납 확인 일시보다 커야 합니다.",
                         schema = Schema(type = "string")
                     )
                 ]
