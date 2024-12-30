@@ -561,7 +561,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 삭제 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 삭제 <ADMIN>",
         description = "대여 상품을 삭제 처리 합니다."
     )
     @ApiResponses(
@@ -1424,7 +1424,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 재고 삭제 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 재고 삭제 <ADMIN>",
         description = "대여 상품 재고를 삭제 처리 합니다."
     )
     @ApiResponses(

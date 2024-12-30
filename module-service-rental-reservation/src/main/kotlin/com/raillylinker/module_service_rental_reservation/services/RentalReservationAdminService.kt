@@ -480,9 +480,39 @@ class RentalReservationAdminService(
             )
         }
 
-        for (rentableProductImage in rentableProductInfo.rentableProductStockInfoList) {
-            // todo 재고 삭제 처리
+        for (rentableProductStockInfo in rentableProductInfo.rentableProductStockInfoList) {
+            for (rentableProductStockImage in rentableProductStockInfo.rentableProductStockImageList) {
+                // 이미지 삭제
+                // 이미지를 참조하고 있던 테이블들 모두 null 처리
+                for (rentableProductStockInfo in rentableProductStockImage.rentableProductStockInfoList) {
+                    rentableProductStockInfo.frontRentableProductStockImage = null
+                    db1RaillyLinkerCompanyRentableProductStockInfoRepository.save(rentableProductStockInfo)
+                }
 
+                rentableProductStockImage.rowDeleteDateStr =
+                    LocalDateTime.now().atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+
+                db1RaillyLinkerCompanyRentableProductStockImageRepository.save(
+                    rentableProductStockImage
+                )
+            }
+
+            for (rentableProductStockReservationInfo in rentableProductStockInfo.rentableProductStockReservationInfoList) {
+                // 상품 예약 내역 삭제
+                rentableProductStockReservationInfo.rowDeleteDateStr =
+                    LocalDateTime.now().atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+
+                db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(
+                    rentableProductStockReservationInfo
+                )
+            }
+
+            // 테이블 삭제 처리
+            rentableProductStockInfo.rowDeleteDateStr =
+                LocalDateTime.now().atZone(ZoneId.systemDefault())
+                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
         }
 
         // 테이블 삭제 처리
@@ -1135,8 +1165,14 @@ class RentalReservationAdminService(
         }
 
         for (rentableProductStockReservationInfo in rentableProductStockInfo.rentableProductStockReservationInfoList) {
-            // todo 상품 예약 내역 삭제
+            // 상품 예약 내역 삭제
+            rentableProductStockReservationInfo.rowDeleteDateStr =
+                LocalDateTime.now().atZone(ZoneId.systemDefault())
+                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
 
+            db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(
+                rentableProductStockReservationInfo
+            )
         }
 
         // 테이블 삭제 처리
