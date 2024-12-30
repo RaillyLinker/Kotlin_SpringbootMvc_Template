@@ -1761,11 +1761,19 @@ class RentalReservationAdminService(
                 rentableProductReservationInfo,
                 "/"
             )
-        // todo 예약 승인 기한을 초과하거나 결제 완료 및 예약 신청 승인 상태여야함
-        // todo 예약 취소 승인 내역이 없어야 함
-        // todo 예약 거부 내역이 없어야 함
-        // todo 미결제 상태일 경우 결제 기한 초과 상태(= 취소와 동일)가 아니어야 함
-        // todo 현재 진행중인 예약 취소 신청 내역이 있어야 함(가장 최근에 예약 취소 거부가 없고 예약 취소 신청 내역이 있어야 함)
+
+        if (historyList.isEmpty()) {
+            // 결재 대기 상태입니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return null
+        }
+
+        if (anchorDatetime.isBefore(rentableProductReservationInfo.reservationApprovalDeadlineDatetime)) {
+            // todo 예약 승인 기한 미만이면서 결제 완료 및 예약 신청 승인 이 완료되지 않음(= 예약 취소시 자동 취소 승인이 되는 상태)
+        }
+
+        // todo 현재 진행중인 예약 취소 신청 내역이 있어야 함(가장 최근에 예약 취소 거부나 승인이 없고 예약 취소 신청 내역이 있어야 함)
 
         // 예약 히스토리에 정보 기입
         val newReservationStateChangeHistory =
@@ -1782,9 +1790,8 @@ class RentalReservationAdminService(
             )
 
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelDenyOutputVo(
-            1L
+            newReservationStateChangeHistory.uid!!
         )
     }
 
