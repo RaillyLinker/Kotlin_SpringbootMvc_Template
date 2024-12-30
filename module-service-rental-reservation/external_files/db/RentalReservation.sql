@@ -7,7 +7,7 @@
 	`CUSTOMER_PHONE_NUMBER`	VARCHAR(45)	NOT NULL	COMMENT '예약자 전화번호(국가번호 + 전화번호)',
 	`RENTAL_START_DATETIME`	DATETIME	NOT NULL	COMMENT '대여가 시작되는 일시',
 	`RENTAL_END_DATETIME`	DATETIME	NOT NULL	COMMENT '대여가 끝나는 일시 (회수 시간은 포함되지 않는 순수 서비스 이용 시간)',
-	`PAYMENT_DEADLINE_DATETIME`	DATETIME	NOT NULL	COMMENT '예약 결재 기한 (결재 기한 초과 처리.)',
+	`PAYMENT_CHECK_DEADLINE_DATETIME`	DATETIME	NOT NULL	COMMENT '예약 결재 확인 기한 (결재 기한 초과 처리.)',
 	`RESERVATION_APPROVAL_DEADLINE_DATETIME`	DATETIME	NOT NULL	COMMENT '관리자 승인 기한 (이 시점이 지났고, reservation_approval_datetime 가 충족되지 않았다면 취소로 간주)',
 	`PRODUCT_NAME`	VARCHAR(90)	NOT NULL	COMMENT '고객에게 보일 상품명(아래 부터는 예약 당시의 정보로, 영수증의 기능을 위한 정보 복제 컬럼)',
 	`PRODUCT_INTRO`	VARCHAR(6000)	NOT NULL	COMMENT '고객에게 보일 상품 소개',
@@ -56,7 +56,7 @@ CREATE TABLE `HCP_RENTABLE_PRODUCT_RESERVATION_STATE_CHANGE_HISTORY` (
 	`DEL_FRAG`	BIT(1)	NOT NULL	COMMENT '행 삭제여부',
 	`ROW_CREATE_DATETIME`	DATETIME(3)	NOT NULL	COMMENT '행 생성일시',
 	`HCP_PRODUCT_RESERVATION_INFO_UID`	BIGINT UNSIGNED	NOT NULL	COMMENT 'HCP_RENTABLE_PRODUCT_RESERVATION_INFO 행 고유키',
-	`STATE_CODE`	TINYINT UNSIGNED	NOT NULL	COMMENT '예약 상태 코드(1 : 관리자 예약 승인, 2 : 관리자 예약 거부, 3 : 사용자 예약 취소 신청, 4 : 관리자 예약 취소 승인, 5 : 예약 취소 거부, 6: 사용자 조기반납신고, 7: 관리자 조기반납 확인)',
+	`STATE_CODE`	TINYINT UNSIGNED	NOT NULL	COMMENT '예약 상태 코드(0 : 관리자 결제 확인, 1 : 관리자 예약 승인, 2 : 관리자 예약 거부, 3 : 사용자 예약 취소 신청, 4 : 관리자 예약 취소 승인, 5 : 예약 취소 거부, 6: 사용자 조기반납신고, 7: 관리자 조기반납 확인)',
 	`STATE_CHANGE_DESC`	VARCHAR(600)	NOT NULL	COMMENT '상태 변경 상세',
 	`STATE_CHANGE_DATETIME`	DATETIME	NOT NULL	COMMENT '상태 변경 기준 일시(행 생성일과 다르게 사건의 발생 일시 기준)'
 );

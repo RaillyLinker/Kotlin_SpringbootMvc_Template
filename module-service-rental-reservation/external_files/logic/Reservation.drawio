@@ -61,8 +61,8 @@
         <mxCell id="5PIh_hH5cSEIUdFjAiik-31" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
           <mxGeometry x="-482.69" y="1400.5100000000002" width="38.99" height="38.99" as="geometry" />
         </mxCell>
-        <mxCell id="5PIh_hH5cSEIUdFjAiik-32" value="결제&lt;div&gt;기한&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
-          <mxGeometry x="-482.69" y="1441.0100000000002" width="40" height="39" as="geometry" />
+        <mxCell id="5PIh_hH5cSEIUdFjAiik-32" value="결제 확인&lt;div&gt;기한&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="-494.54" y="1441.01" width="62.69" height="39" as="geometry" />
         </mxCell>
         <mxCell id="5PIh_hH5cSEIUdFjAiik-35" value="예약 정보&lt;div&gt;등록&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
           <mxGeometry x="-691.1800000000001" y="1358.9899999999998" width="60" height="30" as="geometry" />
@@ -762,7 +762,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="CRkLpjZog5i0egp7tEst-71" value="결제 완료" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+        <mxCell id="CRkLpjZog5i0egp7tEst-71" value="결제 확인&lt;div&gt;처리&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
           <mxGeometry x="-397.68" y="359" width="79" height="40" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-126" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="CRkLpjZog5i0egp7tEst-73" target="CRkLpjZog5i0egp7tEst-76">
@@ -828,8 +828,8 @@
         <mxCell id="CRkLpjZog5i0egp7tEst-110" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="CRkLpjZog5i0egp7tEst-105" target="CRkLpjZog5i0egp7tEst-107">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="CRkLpjZog5i0egp7tEst-105" value="결제 기한&lt;div&gt;초과&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="-518.4200000000001" y="319" width="79" height="40" as="geometry" />
+        <mxCell id="CRkLpjZog5i0egp7tEst-105" value="결제 확인&amp;nbsp;&lt;div&gt;기한&lt;div&gt;초과&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="-518.42" y="310" width="79" height="49" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-109" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="CRkLpjZog5i0egp7tEst-107" target="CRkLpjZog5i0egp7tEst-108">
           <mxGeometry relative="1" as="geometry" />
@@ -950,6 +950,9 @@
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-163" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
           <mxGeometry x="-559.5" y="840.0100000000002" width="38.99" height="38.99" as="geometry" />
+        </mxCell>
+        <mxCell id="CRkLpjZog5i0egp7tEst-165" value="결제 확인 기한은 고객의 결제 기한과는 다릅니다.&lt;div&gt;고객에게 제공되는 결제 기한은 실질적 제약이 없지만&lt;/div&gt;&lt;div&gt;결제 확인 기한은 관리자에 대한 제약이며,&lt;/div&gt;&lt;div&gt;실질적으로 고객이 결제를 했더라도&lt;/div&gt;&lt;div&gt;결제 확인을 하지 않았다면 결제하지 않은 것으로 진행됩니다.&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-624.98" y="1620" width="347.32" height="79.99" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

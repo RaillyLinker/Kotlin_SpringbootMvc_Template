@@ -35,9 +35,9 @@ class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
     @Comment("대여가 끝나는 일시 (회수 시간은 포함되지 않는 순수 서비스 이용 시간)")
     var rentalEndDatetime: LocalDateTime,
 
-    @Column(name = "payment_deadline_datetime", nullable = false, columnDefinition = "DATETIME")
-    @Comment("예약 결제 기한 (예약 요청일로부터 생성, 이 시점이 지났고, payment_complete_datetime 가 충족되지 않았다면 취소로 간주)")
-    var paymentDeadlineDatetime: LocalDateTime,
+    @Column(name = "payment_check_deadline_datetime", nullable = false, columnDefinition = "DATETIME")
+    @Comment("예약 결제 확인 기한 (예약 요청일로부터 생성, 이 시점이 지났고, payment_complete_datetime 가 충족되지 않았다면 취소로 간주)")
+    var paymentCheckDeadlineDatetime: LocalDateTime,
 
     @Column(name = "reservation_approval_deadline_datetime", nullable = false, columnDefinition = "DATETIME")
     @Comment("관리자 승인 기한 (이 시점이 지났고, reservation_approval_datetime 가 충족되지 않았다면 취소로 간주)")
