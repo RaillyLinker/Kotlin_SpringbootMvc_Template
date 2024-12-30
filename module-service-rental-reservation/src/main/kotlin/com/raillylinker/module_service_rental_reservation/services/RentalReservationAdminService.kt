@@ -1769,9 +1769,8 @@ class RentalReservationAdminService(
             return null
         }
 
-        if (anchorDatetime.isBefore(rentableProductReservationInfo.reservationApprovalDeadlineDatetime)) {
-            // todo 예약 승인 기한 미만이면서 결제 완료 및 예약 신청 승인 이 완료되지 않음(= 예약 취소시 자동 취소 승인이 되는 상태)
-        }
+        // todo 결제 기한 초과인데 결제 확인이 되지 않음(= 예약 취소로 간주)
+        // todo 다시 보기
 
         // todo 현재 진행중인 예약 취소 신청 내역이 있어야 함(가장 최근에 예약 취소 거부나 승인이 없고 예약 취소 신청 내역이 있어야 함)
 
