@@ -1221,13 +1221,26 @@ class RentalReservationAdminService(
         rentableProductStockInfoUid: Long,
         inputVo: RentalReservationAdminController.PatchRentableProductStockInfoReservableInputVo
     ) {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
-        // todo
+        val rentableProductStockInfo =
+            db1RaillyLinkerCompanyRentableProductStockInfoRepository.findByUidAndRowDeleteDateStr(
+                rentableProductStockInfoUid,
+                "/"
+            )
+
+        if (rentableProductStockInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        rentableProductStockInfo.nowReservable = inputVo.nowReservable
+
         httpServletResponse.status = HttpStatus.OK.value()
     }
 

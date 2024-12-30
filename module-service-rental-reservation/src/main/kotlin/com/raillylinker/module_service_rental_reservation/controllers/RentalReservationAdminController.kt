@@ -1594,7 +1594,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 재고 추가 예약 가능 설정 수정 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 재고 추가 예약 가능 설정 수정 <ADMIN>",
         description = "대여 가능 상품 재고를 현 시간부로 예약 가능하게 할 것인지에 대한 스위치 플래그 수정"
     )
     @ApiResponses(
