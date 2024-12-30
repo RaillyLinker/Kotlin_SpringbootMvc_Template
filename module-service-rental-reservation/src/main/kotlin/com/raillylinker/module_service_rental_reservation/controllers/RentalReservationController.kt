@@ -47,7 +47,7 @@ class RentalReservationController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : rentableProductVersionSeq 가 맞지 않습니다. (결재 시점에 테이블 정보가 수정됨)",
+                                "2 : rentableProductVersionSeq 가 맞지 않습니다. (결제 시점에 테이블 정보가 수정됨)",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -110,7 +110,7 @@ class RentalReservationController(
         @JsonProperty("rentableProductReservationInfoUid")
         val rentableProductReservationInfoUid: Long,
         @Schema(
-            description = "결재 기한 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            description = "결제 기한 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
             required = true,
             example = "2024_05_02_T_15_14_49_552_KST"
         )
@@ -128,8 +128,8 @@ class RentalReservationController(
 
     // ----
     @Operation(
-        summary = "상품 결재 처리 <> (더미)", // todo
-        description = "상품 결재 처리(결재 모듈에서 처리한 결재 번호와 상품 번호, 환불은 환불 모듈에서)"
+        summary = "상품 결제 처리 <> (더미)", // todo
+        description = "상품 결제 처리(결제 모듈에서 처리한 결제 번호와 상품 번호, 환불은 환불 모듈에서)"
     )
     @ApiResponses(
         value = [

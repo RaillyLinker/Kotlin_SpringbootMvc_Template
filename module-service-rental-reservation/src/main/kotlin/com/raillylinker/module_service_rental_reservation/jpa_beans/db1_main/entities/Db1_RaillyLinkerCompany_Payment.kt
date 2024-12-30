@@ -13,26 +13,26 @@ import java.time.LocalDateTime
     name = "payment",
     catalog = "railly_linker_company"
 )
-@Comment("결재 정보 테이블")
+@Comment("결제 정보 테이블")
 class Db1_RaillyLinkerCompany_Payment(
     @Column(name = "payment_type", nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    @Comment("결재 타입(1 : 무통장 입금, 2 : 실시간 계좌이체, 3 : 토스 페이)")
+    @Comment("결제 타입(1 : 무통장 입금, 2 : 실시간 계좌이체, 3 : 토스 페이)")
     var paymentType: String,
 
     @Column(name = "payment_amount", nullable = false, columnDefinition = "DECIMAL(15, 2) UNSIGNED")
-    @Comment("결재 금액")
+    @Comment("결제 금액")
     var paymentAmount: BigDecimal,
 
     @Column(name = "payment_currency_code", nullable = false, columnDefinition = "CHAR(3)")
-    @Comment("결재 금액 통화 코드(IOS 4217, ex : KRW, USD, EUR...)")
+    @Comment("결제 금액 통화 코드(IOS 4217, ex : KRW, USD, EUR...)")
     var paymentCurrencyCode: String,
 
     @Column(name = "payment_complete_datetime", nullable = true, columnDefinition = "DATETIME(3)")
-    @Comment("결재가 완료 및 확인 된 일시(Null 이라면 아직 완료 처리가 아님)")
+    @Comment("결제가 완료 및 확인 된 일시(Null 이라면 아직 완료 처리가 아님)")
     var paymentCompleteDatetime: LocalDateTime?,
 
     @Column(name = "payment_failed", nullable = false, columnDefinition = "BIT(1)")
-    @Comment("결재 실패 여부")
+    @Comment("결제 실패 여부")
     var paymentFailed: Boolean
 ) {
     @Id

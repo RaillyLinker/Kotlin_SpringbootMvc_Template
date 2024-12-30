@@ -1563,9 +1563,10 @@ class RentalReservationAdminService(
                 "/"
             )
 
-        // todo 예약 승인 상태가 아니어야 함
         // todo 예약 거부 상태가 아니어야 함
-        // todo 예약 취소 승인 상태가 아니어야 함(취소 승인 내역이 있거나 취소 요청 후 피드백 없이 대여 시작 시간을 넘김)
+        // todo 예약 취소 승인 상태가 아니어야 함
+        // todo 결제 기한 초과 상태가 아니어야 함
+        // todo 예약 승인 상태가 아니어야 함
 
         // 예약 히스토리에 정보 기입
         val newReservationStateChangeHistory =

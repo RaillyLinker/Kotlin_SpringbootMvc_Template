@@ -15,7 +15,7 @@ import java.time.LocalDateTime
     name = "rentable_product_reservation_payment",
     catalog = "railly_linker_company"
 )
-@Comment("대여 가능 상품 예약 결재 정보(결재 모듈과 예약 모듈을 분리하기 위해 두 테이블을 연결하는 브릿지 테이블)")
+@Comment("대여 가능 상품 예약 결제 정보(결제 모듈과 예약 모듈을 분리하기 위해 두 테이블을 연결하는 브릿지 테이블)")
 class Db1_RaillyLinkerCompany_RentableProductReservationPayment(
     @ManyToOne
     @JoinColumn(name = "rentable_product_reservation_info_uid", nullable = false)

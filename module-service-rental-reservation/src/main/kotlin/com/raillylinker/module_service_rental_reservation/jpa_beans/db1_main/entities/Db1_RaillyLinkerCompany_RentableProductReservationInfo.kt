@@ -36,7 +36,7 @@ class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
     var rentalEndDatetime: LocalDateTime,
 
     @Column(name = "payment_deadline_datetime", nullable = false, columnDefinition = "DATETIME")
-    @Comment("예약 결재 기한 (예약 요청일로부터 생성, 이 시점이 지났고, payment_complete_datetime 가 충족되지 않았다면 취소로 간주)")
+    @Comment("예약 결제 기한 (예약 요청일로부터 생성, 이 시점이 지났고, payment_complete_datetime 가 충족되지 않았다면 취소로 간주)")
     var paymentDeadlineDatetime: LocalDateTime,
 
     @Column(name = "reservation_approval_deadline_datetime", nullable = false, columnDefinition = "DATETIME")
@@ -111,7 +111,7 @@ class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
     var rentableProductReservationStateChangeHistoryList: MutableList<Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory> =
         mutableListOf()
 
-    // 예약 정보가 삭제되면 예약 결재 정보 삭제
+    // 예약 정보가 삭제되면 예약 결제 정보 삭제
     @OneToMany(
         mappedBy = "rentableProductReservationInfo",
         fetch = FetchType.LAZY,

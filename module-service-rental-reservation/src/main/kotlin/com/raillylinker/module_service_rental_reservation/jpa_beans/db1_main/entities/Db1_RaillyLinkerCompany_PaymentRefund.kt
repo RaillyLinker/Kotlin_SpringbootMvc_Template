@@ -13,7 +13,7 @@ import java.time.LocalDateTime
     name = "payment_refund",
     catalog = "railly_linker_company"
 )
-@Comment("결재 환불 정보 테이블")
+@Comment("결제 환불 정보 테이블")
 class Db1_RaillyLinkerCompany_PaymentRefund(
     @ManyToOne
     @JoinColumn(name = "payment_uid", nullable = false)

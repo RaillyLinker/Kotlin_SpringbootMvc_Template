@@ -107,7 +107,7 @@ class RentalReservationService(
 
 
     // ----
-    // (상품 결재 처리 <>)
+    // (상품 결제 처리 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductReservationPaymentInfo(
         httpServletResponse: HttpServletResponse,
