@@ -1670,7 +1670,7 @@ class RentalReservationAdminService(
         // todo 예약 거부 내역이 없어야 함
         // todo 미결제 상태일 경우 결제 기한 초과 상태(= 취소와 동일)가 아니어야 함
         // todo 현재 진행중인 예약 취소 신청 내역이 없어야 함(가장 최근에 예약 취소 거부가 있거나 예약 취소 신청 내역이 없어야 함)
-        // todo 예약 취소 기한 미만이어야 함
+        // todo 대여 시작 기한 이상(= 예약 취소 거부와 동일)이 아니어야 함
 
         // 예약 히스토리에 정보 기입
         val newReservationStateChangeHistory =
@@ -1717,10 +1717,11 @@ class RentalReservationAdminService(
         }
 
         // 상태 확인
-        // todo 예약 취소 신청 상태여야 함
-        // todo 대여 시작 시간 이내여야 함
-        // todo 예약 취소 승인 상태가 아니어야 함
-        // todo 예약 취소 거부 상태가 아니어야 함
+        // todo 예약 취소 승인 내역이 없어야 함
+        // todo 예약 거부 내역이 없어야 함
+        // todo 미결제 상태일 경우 결제 기한 초과 상태(= 취소와 동일)가 아니어야 함
+        // todo 현재 진행중인 예약 취소 신청 내역이 있어야 함(가장 최근에 예약 취소 거부가 없고 예약 취소 신청 내역이 있어야 함)
+        // todo 대여 시작 기한 이상(= 예약 취소 거부와 동일)이 아니어야 함
 
         // 예약 히스토리에 정보 기입
         val newReservationStateChangeHistory =

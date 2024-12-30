@@ -734,8 +734,8 @@
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="20" y="1340" />
-              <mxPoint x="20" y="1260" />
-              <mxPoint x="-39" y="1260" />
+              <mxPoint x="20" y="1290" />
+              <mxPoint x="-39" y="1290" />
               <mxPoint x="-39" y="1200" />
             </Array>
           </mxGeometry>
@@ -747,6 +747,9 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-50" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="CRkLpjZog5i0egp7tEst-42" target="CRkLpjZog5i0egp7tEst-49">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="CRkLpjZog5i0egp7tEst-141" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="CRkLpjZog5i0egp7tEst-42" target="CRkLpjZog5i0egp7tEst-139">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-42" value="상품 대여일&lt;div&gt;시작&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
@@ -864,6 +867,9 @@
         <mxCell id="CRkLpjZog5i0egp7tEst-130" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="CRkLpjZog5i0egp7tEst-96" target="CRkLpjZog5i0egp7tEst-38">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="CRkLpjZog5i0egp7tEst-140" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="CRkLpjZog5i0egp7tEst-96" target="CRkLpjZog5i0egp7tEst-139">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-96" value="&lt;div&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;예약 취소&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;신청&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
           <mxGeometry x="-158.98" y="1240" width="79" height="40" as="geometry" />
         </mxCell>
@@ -947,6 +953,9 @@
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-138" value="&amp;nbsp;개별 상품 대여 가능 기간" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="142.20000000000002" y="230" width="158.86" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="CRkLpjZog5i0egp7tEst-139" value="예약 취소&amp;nbsp;&lt;div&gt;거부 처리&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1.5" y="1240" width="79" height="40" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
