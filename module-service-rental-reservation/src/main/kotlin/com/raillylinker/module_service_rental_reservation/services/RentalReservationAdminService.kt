@@ -1099,11 +1099,11 @@ class RentalReservationAdminService(
         authorization: String,
         rentableProductStockInfoUid: Long
     ) {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
         val rentableProductStockInfo =
             db1RaillyLinkerCompanyRentableProductStockInfoRepository.findByUidAndRowDeleteDateStr(
@@ -1118,8 +1118,20 @@ class RentalReservationAdminService(
         }
 
         for (rentableProductStockImage in rentableProductStockInfo.rentableProductStockImageList) {
-            // todo 이미지 삭제
+            // 이미지 삭제
+            // 이미지를 참조하고 있던 테이블들 모두 null 처리
+            for (rentableProductStockInfo in rentableProductStockImage.rentableProductStockInfoList) {
+                rentableProductStockInfo.frontRentableProductStockImage = null
+                db1RaillyLinkerCompanyRentableProductStockInfoRepository.save(rentableProductStockInfo)
+            }
 
+            rentableProductStockImage.rowDeleteDateStr =
+                LocalDateTime.now().atZone(ZoneId.systemDefault())
+                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+
+            db1RaillyLinkerCompanyRentableProductStockImageRepository.save(
+                rentableProductStockImage
+            )
         }
 
         for (rentableProductStockReservationInfo in rentableProductStockInfo.rentableProductStockReservationInfoList) {
@@ -1437,10 +1449,11 @@ class RentalReservationAdminService(
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
 
-        val rentableProductStock = db1RaillyLinkerCompanyRentableProductStockInfoRepository.findByUidAndRowDeleteDateStr(
-            rentableProductStockInfoUid,
-            "/"
-        )
+        val rentableProductStock =
+            db1RaillyLinkerCompanyRentableProductStockInfoRepository.findByUidAndRowDeleteDateStr(
+                rentableProductStockInfoUid,
+                "/"
+            )
 
         if (rentableProductStock == null) {
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
