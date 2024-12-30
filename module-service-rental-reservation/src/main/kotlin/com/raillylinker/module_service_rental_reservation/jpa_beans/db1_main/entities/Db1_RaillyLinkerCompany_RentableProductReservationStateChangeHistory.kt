@@ -23,7 +23,7 @@ class Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
     var rentableProductReservationInfo: Db1_RaillyLinkerCompany_RentableProductReservationInfo,
 
     @Column(name = "state_code", nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    @Comment("예약 상태 코드(0 : 관리자 결제 확인, 1 : 관리자 예약 승인, 2 : 관리자 예약 거부, 3 : 사용자 예약 취소 신청, 4 : 관리자 예약 취소 승인, 5 : 예약 취소 거부, 6: 사용자 조기반납신고, 7: 관리자 조기반납 확인)")
+    @Comment("예약 상태 코드(0 : 관리자 결제 확인, 1 : 관리자 예약 승인, 2 : 관리자 예약 거부, 3 : 사용자 예약 취소 신청, 4 : 관리자 예약 취소 승인, 5 : 예약 취소 거부, 6: 사용자 조기반납신고, 7: 관리자 조기반납 확인, 8: 결제 환불 처리)")
     var stateCode: Int,
 
     @Column(name = "state_change_desc", nullable = false, columnDefinition = "VARCHAR(600)")
