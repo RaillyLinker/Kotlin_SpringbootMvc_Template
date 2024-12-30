@@ -1564,6 +1564,11 @@ class RentalReservationAdminService(
             )
 
         // 상태 확인
+        val historyList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductReservationInfo,
+                "/"
+            )
         // todo 예약 취소 승인 내역이 없어야 함
         // todo 예약 거부 내역이 없어야 함
         // todo 미결제 상태일 경우 결제 기한 초과 상태(= 취소와 동일)가 아니어야 함
@@ -1619,6 +1624,11 @@ class RentalReservationAdminService(
         }
 
         // 상태 확인
+        val historyList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductReservationInfo,
+                "/"
+            )
         // todo 예약 취소 승인 내역이 없어야 함
         // todo 예약 거부 내역이 없어야 함
         // todo 미결제 상태일 경우 결제 기한 초과 상태(= 취소와 동일)가 아니어야 함
@@ -1674,6 +1684,11 @@ class RentalReservationAdminService(
         }
 
         // 상태 확인
+        val historyList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductReservationInfo,
+                "/"
+            )
         // todo 예약 취소 승인 내역이 없어야 함
         // todo 예약 거부 내역이 없어야 함
         // todo 미결제 상태일 경우 결제 기한 초과 상태(= 취소와 동일)가 아니어야 함
@@ -1729,6 +1744,11 @@ class RentalReservationAdminService(
         }
 
         // 상태 확인
+        val historyList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductReservationInfo,
+                "/"
+            )
         // todo 예약 취소 승인 내역이 없어야 함
         // todo 예약 거부 내역이 없어야 함
         // todo 미결제 상태일 경우 결제 기한 초과 상태(= 취소와 동일)가 아니어야 함
@@ -1785,6 +1805,11 @@ class RentalReservationAdminService(
         }
 
         // 상태 확인
+        val historyList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductReservationInfo,
+                "/"
+            )
         // todo 대여 상품 조기 반납 신고 내역이 있어야 함
         // todo 대여 상품 조기 반납 확인 내역이 없어야 함
         // todo 대여 상품 반납일 미만이어야 함
