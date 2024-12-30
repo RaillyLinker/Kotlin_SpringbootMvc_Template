@@ -39,10 +39,6 @@ class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
     @Comment("예약 결재 기한 (예약 요청일로부터 생성, 이 시점이 지났고, payment_complete_datetime 가 충족되지 않았다면 취소로 간주)")
     var paymentDeadlineDatetime: LocalDateTime,
 
-    @Column(name = "cancelable_deadline_datetime", nullable = false, columnDefinition = "DATETIME")
-    @Comment("예약 요청일로부터 생성, 예약 취소 신청 가능 기한")
-    var cancelableDeadlineDatetime: LocalDateTime,
-
     @Column(name = "reservation_approval_deadline_datetime", nullable = false, columnDefinition = "DATETIME")
     @Comment("관리자 승인 기한 (이 시점이 지났고, reservation_approval_datetime 가 충족되지 않았다면 취소로 간주)")
     var reservationApprovalDeadlineDatetime: LocalDateTime,
