@@ -57,7 +57,7 @@ CREATE TABLE `HCP_RENTABLE_PRODUCT_RESERVATION_STATE_CHANGE_HISTORY` (
 	`DEL_FRAG`	BIT(1)	NOT NULL	COMMENT '행 삭제여부',
 	`ROW_CREATE_DATETIME`	DATETIME(3)	NOT NULL	COMMENT '행 생성일시',
 	`HCP_PRODUCT_RESERVATION_INFO_UID`	BIGINT UNSIGNED	NOT NULL	COMMENT 'HCP_RENTABLE_PRODUCT_RESERVATION_INFO 행 고유키',
-	`STATE_CODE`	TINYINT UNSIGNED	NOT NULL	COMMENT '예약 상태 코드(1 : 관리자 예약 승인, 2 : 관리자 예약 거부, 3 : 사용자 예약 취소 신청, 4 : 관리자 예약 취소 승인, 5 : 예약 취소 거부, 6: 사용자 조기반납신고, 7: 관리자 조기반납 확인, 8: 사용자 조기반납 신고취소)',
+	`STATE_CODE`	TINYINT UNSIGNED	NOT NULL	COMMENT '예약 상태 코드(1 : 관리자 예약 승인, 2 : 관리자 예약 거부, 3 : 사용자 예약 취소 신청, 4 : 관리자 예약 취소 승인, 5 : 예약 취소 거부, 6: 사용자 조기반납신고, 7: 관리자 조기반납 확인)',
 	`STATE_CHANGE_DESC`	VARCHAR(600)	NOT NULL	COMMENT '상태 변경 상세'
 );
 

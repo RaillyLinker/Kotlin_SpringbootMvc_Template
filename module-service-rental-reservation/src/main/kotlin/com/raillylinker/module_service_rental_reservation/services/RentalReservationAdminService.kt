@@ -8,6 +8,7 @@ import com.raillylinker.module_service_rental_reservation.controllers.RentalRese
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductCategory
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductImage
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductInfo
+import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockCategory
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockImage
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockInfo
@@ -1550,14 +1551,37 @@ class RentalReservationAdminService(
             return null
         }
 
-        // todo 상태 확인
+        // 예약 상태 확인
+        if (LocalDateTime.now().isAfter(rentableProductReservationInfo.reservationApprovalDeadlineDatetime)) {
+            // 예약 승인 기한을 넘김
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
 
-        // todo 예약 히스토리에 정보 기입
+        val reservationStateChangeHistoryList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductReservationInfo,
+                "/"
+            )
+
+        // todo 예약 승인 상태가 아니어야 함
+        // todo 예약 거부 상태가 아니어야 함
+        // todo 예약 취소 승인 상태가 아니어야 함(취소 승인 내역이 있거나 취소 요청 후 피드백 없이 대여 시작 시간을 넘김)
+
+        // 예약 히스토리에 정보 기입
+        val newReservationStateChangeHistory =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
+                Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
+                    rentableProductReservationInfo,
+                    1,
+                    "관리자 예약 승인"
+                )
+            )
 
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoReservationApproveOutputVo(
-            1L
+            newReservationStateChangeHistory.uid!!
         )
     }
 
@@ -1589,14 +1613,25 @@ class RentalReservationAdminService(
             return null
         }
 
-        // todo 상태 확인
+        // 상태 확인
+        // todo 예약 승인 기한 이내여야 함
+        // todo 예약 승인 상태가 아니어야 함
+        // todo 예약 거부 상태가 아니어야 함
+        // todo 예약 취소 승인 상태가 아니어야 함
 
-        // todo 예약 히스토리에 정보 기입
+        // 예약 히스토리에 정보 기입
+        val newReservationStateChangeHistory =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
+                Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
+                    rentableProductReservationInfo,
+                    2,
+                    "관리자 예약 거부"
+                )
+            )
 
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoReservationDenyOutputVo(
-            1L
+            newReservationStateChangeHistory.uid!!
         )
     }
 
@@ -1628,14 +1663,25 @@ class RentalReservationAdminService(
             return null
         }
 
-        // todo 상태 확인
+        // 상태 확인
+        // todo 예약 취소 신청 상태여야 함
+        // todo 대여 시작 시간 이내여야 함
+        // todo 예약 취소 승인 상태가 아니어야 함
+        // todo 예약 취소 거부 상태가 아니어야 함
 
-        // todo 예약 히스토리에 정보 기입
+        // 예약 히스토리에 정보 기입
+        val newReservationStateChangeHistory =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
+                Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
+                    rentableProductReservationInfo,
+                    4,
+                    "관리자 취소 승인"
+                )
+            )
 
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelApproveOutputVo(
-            1L
+            newReservationStateChangeHistory.uid!!
         )
     }
 
@@ -1667,9 +1713,21 @@ class RentalReservationAdminService(
             return null
         }
 
-        // todo 상태 확인
+        // 상태 확인
+        // todo 예약 취소 신청 상태여야 함
+        // todo 대여 시작 시간 이내여야 함
+        // todo 예약 취소 승인 상태가 아니어야 함
+        // todo 예약 취소 거부 상태가 아니어야 함
 
-        // todo 예약 히스토리에 정보 기입
+        // 예약 히스토리에 정보 기입
+        val newReservationStateChangeHistory =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
+                Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
+                    rentableProductReservationInfo,
+                    5,
+                    "관리자 취소 거부"
+                )
+            )
 
         httpServletResponse.status = HttpStatus.OK.value()
         // todo
@@ -1706,14 +1764,24 @@ class RentalReservationAdminService(
             return null
         }
 
-        // todo 상태 확인
+        // 상태 확인
+        // todo 예약 승인 상태여야 함
+        // todo 대여 시작 시간 이후여야 함
+        // todo 대여 끝 시간 이전이여야 함
 
-        // todo 예약 히스토리에 정보 기입
+        // 예약 히스토리에 정보 기입
+        val newReservationStateChangeHistory =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
+                Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
+                    rentableProductReservationInfo,
+                    7,
+                    "관리자 조기반납 확인"
+                )
+            )
 
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo(
-            1L
+            newReservationStateChangeHistory.uid!!
         )
     }
 

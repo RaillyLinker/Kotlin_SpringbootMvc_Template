@@ -661,21 +661,6 @@
         <mxCell id="5PIh_hH5cSEIUdFjAiik-219" value="&amp;nbsp;개별 상품 생명주기" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="213" y="270" width="158.86" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="hg1lAvm9tssFelz9uaSC-1" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;" parent="1" edge="1">
-          <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="101" y="503.98999999999995" as="sourcePoint" />
-            <mxPoint x="101" y="760" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="hg1lAvm9tssFelz9uaSC-2" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
-          <mxGeometry x="81.50999999999999" y="760.01" width="38.99" height="38.99" as="geometry" />
-        </mxCell>
-        <mxCell id="hg1lAvm9tssFelz9uaSC-3" value="조기 반납&lt;div&gt;신고 취소&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
-          <mxGeometry x="71" y="799" width="60" height="40.3" as="geometry" />
-        </mxCell>
-        <mxCell id="hg1lAvm9tssFelz9uaSC-4" value="조기 반납&lt;div&gt;신고 취소는&lt;/div&gt;&lt;div&gt;조기 반납&lt;/div&gt;&lt;div&gt;확인 전까지만 가능&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="56" y="839.3" width="90" height="79.63" as="geometry" />
-        </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-2" value="관리자 승인 가능 기간이 지나면 자동 승인 처리되므로 판단을 위한 충분한 마진을 둘 것을 권장" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="-451" y="440" width="263" height="30" as="geometry" />
         </mxCell>
@@ -693,6 +678,9 @@
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-21" value="중복 취소 신청 불가능,&amp;nbsp;&lt;div&gt;취소 거부 시 재 취소 가능&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="-211.76" y="389.69" width="150.27" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="CRkLpjZog5i0egp7tEst-22" value="조기 반납 신고 취소는&amp;nbsp;&lt;div&gt;사용자가 불가능&lt;div&gt;다만 관리자가&amp;nbsp;&lt;/div&gt;&lt;div&gt;조기 반납 확인을&amp;nbsp;&lt;/div&gt;&lt;div&gt;하지 않으면 유&lt;/div&gt;&lt;div&gt;사한 효과&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-24" y="642.83" width="129.99" height="110.02" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

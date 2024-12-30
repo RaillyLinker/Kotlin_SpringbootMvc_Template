@@ -174,27 +174,4 @@ class RentalReservationService(
             1L
         )
     }
-
-
-    // ----
-    // (대여품 조기반납 신고 취소 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun postRentalProductEarlyReturnCancel(
-        httpServletResponse: HttpServletResponse,
-        authorization: String,
-        inputVo: RentalReservationController.PostRentalProductEarlyReturnCancelInputVo
-    ): RentalReservationController.PostRentalProductEarlyReturnCancelOutputVo? {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-
-        // todo
-        httpServletResponse.status = HttpStatus.OK.value()
-        // todo
-        return RentalReservationController.PostRentalProductEarlyReturnCancelOutputVo(
-            1L
-        )
-    }
 }
