@@ -1524,38 +1524,6 @@ class RentalReservationAdminService(
 
 
     // ----
-    // (대여 가능 상품 예약 정보의 결재 완료 처리 <ADMIN>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun postRentableProductReservationInfoPaymentComplete(
-        httpServletResponse: HttpServletResponse,
-        authorization: String,
-        rentableProductReservationInfoUid: Long,
-        inputVo: RentalReservationAdminController.PostRentableProductReservationInfoPaymentCompleteInputVo
-    ): RentalReservationAdminController.PostRentableProductReservationInfoPaymentCompleteOutputVo {
-//        val memberUid = jwtTokenUtil.getMemberUid(
-//            authorization.split(" ")[1].trim(),
-//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-//        )
-
-        // todo 상태 변경 가능 여부 확인
-        // 상품 예약 정보 존재
-        // 결재 완료 아님
-        // 예약 거부 아님
-
-        // todo 결재 정보에 완료 처리
-
-        // todo 예약 정보 히스토리 테이블 완료 정보 추가
-
-        httpServletResponse.status = HttpStatus.OK.value()
-        // todo
-        return RentalReservationAdminController.PostRentableProductReservationInfoPaymentCompleteOutputVo(
-            1L
-        )
-    }
-
-
-    // ----
     // (대여 가능 상품 예약 정보의 예약 승인 처리 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductReservationInfoReservationApprove(
@@ -1564,11 +1532,11 @@ class RentalReservationAdminService(
         rentableProductReservationInfoUid: Long,
         inputVo: RentalReservationAdminController.PostRentableProductReservationInfoReservationApproveInputVo
     ): RentalReservationAdminController.PostRentableProductReservationInfoReservationApproveOutputVo {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
@@ -1588,11 +1556,11 @@ class RentalReservationAdminService(
         rentableProductReservationInfoUid: Long,
         inputVo: RentalReservationAdminController.PostRentableProductReservationInfoReservationDenyInputVo
     ): RentalReservationAdminController.PostRentableProductReservationInfoReservationDenyOutputVo {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
@@ -1612,11 +1580,11 @@ class RentalReservationAdminService(
         rentableProductReservationInfoUid: Long,
         inputVo: RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelApproveInputVo
     ): RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelApproveOutputVo {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
@@ -1636,40 +1604,16 @@ class RentalReservationAdminService(
         rentableProductReservationInfoUid: Long,
         inputVo: RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelDenyInputVo
     ): RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelDenyOutputVo {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
         // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelDenyOutputVo(
-            1L
-        )
-    }
-
-
-    // ----
-    // (대여 가능 상품 예약 정보의 환불 완료 처리 <ADMIN>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun postRentableProductReservationInfoRefundComplete(
-        httpServletResponse: HttpServletResponse,
-        authorization: String,
-        rentableProductReservationInfoUid: Long,
-        inputVo: RentalReservationAdminController.PostRentableProductReservationInfoRefundCompleteInputVo
-    ): RentalReservationAdminController.PostRentableProductReservationInfoRefundCompleteOutputVo {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-
-        // todo
-        httpServletResponse.status = HttpStatus.OK.value()
-        // todo
-        return RentalReservationAdminController.PostRentableProductReservationInfoRefundCompleteOutputVo(
             1L
         )
     }
@@ -1684,11 +1628,11 @@ class RentalReservationAdminService(
         rentableProductReservationInfoUid: Long,
         inputVo: RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteInputVo
     ): RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
@@ -1708,11 +1652,11 @@ class RentalReservationAdminService(
         reservationStateChangeHistoryUid: Long,
         inputVo: RentalReservationAdminController.PatchReservationStateChangeHistoryStateChangeDescInputVo
     ): RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
@@ -1732,11 +1676,11 @@ class RentalReservationAdminService(
         rentableProductStockReservationInfoUid: Long,
         inputVo: RentalReservationAdminController.PatchRentableProductStockReservationInfoNextReadyDatetimeInputVo
     ) {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
