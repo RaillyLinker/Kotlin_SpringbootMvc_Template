@@ -1744,16 +1744,28 @@ class RentalReservationAdminService(
         }
 
         // 상태 확인
+        val anchorDatetime = ZonedDateTime.parse(
+            inputVo.stateChangeDatetime,
+            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+        ).toLocalDateTime()
+
+        if (anchorDatetime.isAfter(rentableProductReservationInfo.rentalStartDatetime)) {
+            // 기준 시간이 대여 시작 시간보다 클 경우(= 예약 취소 거부와 동일)
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
         val historyList =
             db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
                 rentableProductReservationInfo,
                 "/"
             )
+        // todo 예약 승인 기한을 초과하거나 결제 완료 및 예약 신청 승인 상태여야함
         // todo 예약 취소 승인 내역이 없어야 함
         // todo 예약 거부 내역이 없어야 함
         // todo 미결제 상태일 경우 결제 기한 초과 상태(= 취소와 동일)가 아니어야 함
         // todo 현재 진행중인 예약 취소 신청 내역이 있어야 함(가장 최근에 예약 취소 거부가 없고 예약 취소 신청 내역이 있어야 함)
-        // todo 대여 시작 기한 이상(= 예약 취소 거부와 동일)이 아니어야 함
 
         // 예약 히스토리에 정보 기입
         val newReservationStateChangeHistory =

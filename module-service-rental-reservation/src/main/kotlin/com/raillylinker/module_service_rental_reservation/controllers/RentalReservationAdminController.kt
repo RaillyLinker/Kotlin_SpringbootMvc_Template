@@ -2204,7 +2204,7 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 예약 거부 처리가 가능한 상태가 아닙니다.",
+                                "2 : 기준 시간이 대여 시작 시간보다 큼(= 예약 취소 거부와 동일)",
                         schema = Schema(type = "string")
                     )
                 ]
