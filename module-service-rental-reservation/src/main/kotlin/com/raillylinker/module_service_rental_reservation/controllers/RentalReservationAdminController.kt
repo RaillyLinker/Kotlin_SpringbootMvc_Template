@@ -2408,7 +2408,7 @@ class RentalReservationAdminController(
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun patchReservationStateChangeHistoryStateChangeDesc(
+    fun patchReservationStateChangeHistoryStateChangeDescAndDate(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
@@ -2422,9 +2422,9 @@ class RentalReservationAdminController(
         @PathVariable("reservationStateChangeHistoryUid")
         reservationStateChangeHistoryUid: Long,
         @RequestBody
-        inputVo: PatchReservationStateChangeHistoryStateChangeDescInputVo
+        inputVo: PatchReservationStateChangeHistoryStateChangeDescAndDateInputVo
     ) {
-        service.patchReservationStateChangeHistoryStateChangeDesc(
+        service.patchReservationStateChangeHistoryStateChangeDescAndDate(
             httpServletResponse,
             authorization!!,
             reservationStateChangeHistoryUid,
@@ -2432,7 +2432,7 @@ class RentalReservationAdminController(
         )
     }
 
-    data class PatchReservationStateChangeHistoryStateChangeDescInputVo(
+    data class PatchReservationStateChangeHistoryStateChangeDescAndDateInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
         val stateChangeDesc: String,

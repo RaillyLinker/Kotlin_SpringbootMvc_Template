@@ -1813,11 +1813,11 @@ class RentalReservationAdminService(
     // ----
     // (대여 가능 상품 예약 상태 테이블의 상세 설명 수정 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun patchReservationStateChangeHistoryStateChangeDesc(
+    fun patchReservationStateChangeHistoryStateChangeDescAndDate(
         httpServletResponse: HttpServletResponse,
         authorization: String,
         reservationStateChangeHistoryUid: Long,
-        inputVo: RentalReservationAdminController.PatchReservationStateChangeHistoryStateChangeDescInputVo
+        inputVo: RentalReservationAdminController.PatchReservationStateChangeHistoryStateChangeDescAndDateInputVo
     ) {
 //        val memberUid = jwtTokenUtil.getMemberUid(
 //            authorization.split(" ")[1].trim(),
@@ -1838,6 +1838,10 @@ class RentalReservationAdminService(
         }
 
         reservationStateChangeHistory.stateChangeDesc = inputVo.stateChangeDesc
+        reservationStateChangeHistory.stateChangeDatetime = ZonedDateTime.parse(
+            inputVo.stateChangeDatetime,
+            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+        ).toLocalDateTime()
         db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(reservationStateChangeHistory)
 
         httpServletResponse.status = HttpStatus.OK.value()
