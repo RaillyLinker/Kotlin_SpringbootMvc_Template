@@ -1532,11 +1532,17 @@ class RentalReservationAdminService(
         rentableProductReservationInfoUid: Long,
         inputVo: RentalReservationAdminController.PostRentableProductReservationInfoPaymentCompleteInputVo
     ): RentalReservationAdminController.PostRentableProductReservationInfoPaymentCompleteOutputVo {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+
+        // todo 상태 변경 가능 여부 확인
+
+        // todo 결재 정보에 완료 처리
+
+        // todo 예약 정보 히스토리 테이블 완료 정보 추가
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
