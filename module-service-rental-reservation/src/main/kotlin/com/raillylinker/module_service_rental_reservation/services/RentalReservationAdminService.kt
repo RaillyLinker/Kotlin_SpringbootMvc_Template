@@ -434,11 +434,11 @@ class RentalReservationAdminService(
         authorization: String,
         rentableProductInfoUid: Long
     ) {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
         val rentableProductInfo: Db1_RaillyLinkerCompany_RentableProductInfo? =
             db1RaillyLinkerCompanyRentableProductInfoRepository.findByUidAndRowDeleteDateStr(
@@ -1024,11 +1024,11 @@ class RentalReservationAdminService(
         authorization: String,
         inputVo: RentalReservationAdminController.PostRentableProductStockInfoInputVo
     ): RentalReservationAdminController.PostRentableProductStockInfoOutputVo? {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
 
         val rentableProductInfo =
             db1RaillyLinkerCompanyRentableProductInfoRepository.findByUidAndRowDeleteDateStr(
@@ -1053,25 +1053,39 @@ class RentalReservationAdminService(
 
             if (categoryEntity == null) {
                 httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                httpServletResponse.setHeader("api-result-code", "1")
+                httpServletResponse.setHeader("api-result-code", "2")
                 return null
             }
             categoryEntity
         }
 
 
-//        val rentableProductStockInfo =
-//            db1RaillyLinkerCompanyRentableProductStockInfoRepository.save(
-//                Db1_RaillyLinkerCompany_RentableProductStockInfo(
-//
-//                )
-//            )
+        val rentableProductStockInfo =
+            db1RaillyLinkerCompanyRentableProductStockInfoRepository.save(
+                Db1_RaillyLinkerCompany_RentableProductStockInfo(
+                    categoryTable,
+                    inputVo.productDesc,
+                    null,
+                    ZonedDateTime.parse(
+                        inputVo.firstRentableDatetime,
+                        DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+                    ).toLocalDateTime(),
+                    if (inputVo.lastRentableDatetime == null) {
+                        null
+                    } else {
+                        ZonedDateTime.parse(
+                            inputVo.lastRentableDatetime,
+                            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+                        ).toLocalDateTime()
+                    },
+                    rentableProductInfo,
+                    inputVo.nowReservable
+                )
+            )
 
-        // todo
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo
         return RentalReservationAdminController.PostRentableProductStockInfoOutputVo(
-            1L
+            rentableProductStockInfo.uid!!
         )
     }
 

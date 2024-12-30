@@ -1311,7 +1311,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 재고 등록 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 재고 등록 <ADMIN>",
         description = "대여 가능 상품에 속하는 상품 재고 정보를 등록합니다."
     )
     @ApiResponses(
