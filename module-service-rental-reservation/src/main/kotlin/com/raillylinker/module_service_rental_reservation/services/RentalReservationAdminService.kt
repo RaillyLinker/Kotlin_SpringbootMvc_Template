@@ -1531,12 +1531,24 @@ class RentalReservationAdminService(
         authorization: String,
         rentableProductReservationInfoUid: Long,
         inputVo: RentalReservationAdminController.PostRentableProductReservationInfoReservationApproveInputVo
-    ): RentalReservationAdminController.PostRentableProductReservationInfoReservationApproveOutputVo {
+    ): RentalReservationAdminController.PostRentableProductReservationInfoReservationApproveOutputVo? {
 //        val memberUid = jwtTokenUtil.getMemberUid(
 //            authorization.split(" ")[1].trim(),
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
+        // rentableProductReservationInfoUid 정보 존재 여부 확인
+        val rentableProductReservationInfo =
+            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findByUidAndRowDeleteDateStr(
+                rentableProductReservationInfoUid,
+                "/"
+            )
+
+        if (rentableProductReservationInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
 
         // todo 상태 확인
 
@@ -1558,12 +1570,24 @@ class RentalReservationAdminService(
         authorization: String,
         rentableProductReservationInfoUid: Long,
         inputVo: RentalReservationAdminController.PostRentableProductReservationInfoReservationDenyInputVo
-    ): RentalReservationAdminController.PostRentableProductReservationInfoReservationDenyOutputVo {
+    ): RentalReservationAdminController.PostRentableProductReservationInfoReservationDenyOutputVo? {
 //        val memberUid = jwtTokenUtil.getMemberUid(
 //            authorization.split(" ")[1].trim(),
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
+        // rentableProductReservationInfoUid 정보 존재 여부 확인
+        val rentableProductReservationInfo =
+            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findByUidAndRowDeleteDateStr(
+                rentableProductReservationInfoUid,
+                "/"
+            )
+
+        if (rentableProductReservationInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
 
         // todo 상태 확인
 
@@ -1586,12 +1610,24 @@ class RentalReservationAdminService(
         authorization: String,
         rentableProductReservationInfoUid: Long,
         inputVo: RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelApproveInputVo
-    ): RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelApproveOutputVo {
+    ): RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelApproveOutputVo? {
 //        val memberUid = jwtTokenUtil.getMemberUid(
 //            authorization.split(" ")[1].trim(),
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
+        // rentableProductReservationInfoUid 정보 존재 여부 확인
+        val rentableProductReservationInfo =
+            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findByUidAndRowDeleteDateStr(
+                rentableProductReservationInfoUid,
+                "/"
+            )
+
+        if (rentableProductReservationInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
 
         // todo 상태 확인
 
@@ -1614,12 +1650,24 @@ class RentalReservationAdminService(
         authorization: String,
         rentableProductReservationInfoUid: Long,
         inputVo: RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelDenyInputVo
-    ): RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelDenyOutputVo {
+    ): RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelDenyOutputVo? {
 //        val memberUid = jwtTokenUtil.getMemberUid(
 //            authorization.split(" ")[1].trim(),
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
+        // rentableProductReservationInfoUid 정보 존재 여부 확인
+        val rentableProductReservationInfo =
+            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findByUidAndRowDeleteDateStr(
+                rentableProductReservationInfoUid,
+                "/"
+            )
+
+        if (rentableProductReservationInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
 
         // todo 상태 확인
 
@@ -1642,12 +1690,24 @@ class RentalReservationAdminService(
         authorization: String,
         rentableProductReservationInfoUid: Long,
         inputVo: RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteInputVo
-    ): RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo {
+    ): RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo? {
 //        val memberUid = jwtTokenUtil.getMemberUid(
 //            authorization.split(" ")[1].trim(),
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
+        // rentableProductReservationInfoUid 정보 존재 여부 확인
+        val rentableProductReservationInfo =
+            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findByUidAndRowDeleteDateStr(
+                rentableProductReservationInfoUid,
+                "/"
+            )
+
+        if (rentableProductReservationInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
 
         // todo 상태 확인
 
@@ -1670,7 +1730,7 @@ class RentalReservationAdminService(
         authorization: String,
         reservationStateChangeHistoryUid: Long,
         inputVo: RentalReservationAdminController.PatchReservationStateChangeHistoryStateChangeDescInputVo
-    ): RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo {
+    ): RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo? {
 //        val memberUid = jwtTokenUtil.getMemberUid(
 //            authorization.split(" ")[1].trim(),
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
