@@ -1539,12 +1539,14 @@ class RentalReservationAdminService(
 //        )
 
         // todo 상태 변경 가능 여부 확인
+        // 상품 예약 정보 존재
+        // 결재 완료 아님
+        // 예약 거부 아님
 
         // todo 결재 정보에 완료 처리
 
         // todo 예약 정보 히스토리 테이블 완료 정보 추가
 
-        // todo
         httpServletResponse.status = HttpStatus.OK.value()
         // todo
         return RentalReservationAdminController.PostRentableProductReservationInfoPaymentCompleteOutputVo(
