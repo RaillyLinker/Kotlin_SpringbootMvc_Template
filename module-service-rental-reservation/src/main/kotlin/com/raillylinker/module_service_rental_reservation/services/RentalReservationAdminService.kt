@@ -1144,7 +1144,70 @@ class RentalReservationAdminService(
         rentableProductStockInfoUid: Long,
         inputVo: RentalReservationAdminController.PutRentableProductStockInfoInputVo
     ) {
-        // todo
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+
+        val rentableProductStockInfo =
+            db1RaillyLinkerCompanyRentableProductStockInfoRepository.findByUidAndRowDeleteDateStr(
+                rentableProductStockInfoUid,
+                "/"
+            )
+
+        if (rentableProductStockInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        val rentableProductInfo =
+            db1RaillyLinkerCompanyRentableProductInfoRepository.findByUidAndRowDeleteDateStr(
+                inputVo.rentableProductInfoUid,
+                "/"
+            )
+
+        if (rentableProductInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return
+        }
+
+        val categoryTable = if (inputVo.rentableProductStockCategoryUid == null) {
+            null
+        } else {
+            val categoryEntity =
+                db1RaillyLinkerCompanyRentableProductStockCategoryRepository.findByUidAndRowDeleteDateStr(
+                    inputVo.rentableProductStockCategoryUid,
+                    "/"
+                )
+
+            if (categoryEntity == null) {
+                httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                httpServletResponse.setHeader("api-result-code", "3")
+                return
+            }
+            categoryEntity
+        }
+
+        rentableProductStockInfo.rentableProductInfo = rentableProductInfo
+        rentableProductStockInfo.rentableProductStockCategory = categoryTable
+        rentableProductStockInfo.productDesc = inputVo.productDesc
+        rentableProductStockInfo.firstRentableDatetime = ZonedDateTime.parse(
+            inputVo.firstRentableDatetime,
+            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+        ).toLocalDateTime()
+        rentableProductStockInfo.lastRentableDatetime = if (inputVo.lastRentableDatetime == null) {
+            null
+        } else {
+            ZonedDateTime.parse(
+                inputVo.lastRentableDatetime,
+                DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+            ).toLocalDateTime()
+        }
+        rentableProductStockInfo.nowReservable = inputVo.nowReservable
+
         httpServletResponse.status = HttpStatus.OK.value()
     }
 

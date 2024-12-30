@@ -1482,7 +1482,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 재고 수정 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 재고 수정 <ADMIN>",
         description = "대여 가능 상품에 속하는 상품 재고 정보를 수정합니다."
     )
     @ApiResponses(
