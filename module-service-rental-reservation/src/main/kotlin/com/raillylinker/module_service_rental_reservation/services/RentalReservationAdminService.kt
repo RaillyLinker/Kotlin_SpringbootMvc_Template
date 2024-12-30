@@ -1769,9 +1769,9 @@ class RentalReservationAdminService(
         }
 
         // 상태 확인
-        // todo 예약 승인 상태여야 함
-        // todo 대여 시작 시간 이후여야 함
-        // todo 대여 끝 시간 이전이여야 함
+        // todo 대여 상품 조기 반납 신고 내역이 있어야 함
+        // todo 대여 상품 조기 반납 확인 내역이 없어야 함
+        // todo 대여 상품 반납일 미만이어야 함
 
         // 예약 히스토리에 정보 기입
         val newReservationStateChangeHistory =
@@ -1798,19 +1798,29 @@ class RentalReservationAdminService(
         authorization: String,
         reservationStateChangeHistoryUid: Long,
         inputVo: RentalReservationAdminController.PatchReservationStateChangeHistoryStateChangeDescInputVo
-    ): RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo? {
+    ) {
 //        val memberUid = jwtTokenUtil.getMemberUid(
 //            authorization.split(" ")[1].trim(),
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
 
-        // todo
+        val reservationStateChangeHistory =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findByUidAndRowDeleteDateStr(
+                reservationStateChangeHistoryUid,
+                "/"
+            )
+
+        if (reservationStateChangeHistory == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        reservationStateChangeHistory.stateDesc = inputVo.stateChangeDesc
+        db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(reservationStateChangeHistory)
+
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo
-        return RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo(
-            1L
-        )
     }
 
 

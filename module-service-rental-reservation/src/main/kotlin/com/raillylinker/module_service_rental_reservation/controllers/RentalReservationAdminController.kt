@@ -2330,7 +2330,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 예약 상태 테이블의 상세 설명 수정 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 예약 상태 테이블의 상세 설명 수정 <ADMIN>",
         description = "대여 가능 상품 예약 상태 테이블의 상세 설명을 수정 처리합니다.<br>" +
                 "한번 결정된 상태 코드는 변하지 않습니다."
     )

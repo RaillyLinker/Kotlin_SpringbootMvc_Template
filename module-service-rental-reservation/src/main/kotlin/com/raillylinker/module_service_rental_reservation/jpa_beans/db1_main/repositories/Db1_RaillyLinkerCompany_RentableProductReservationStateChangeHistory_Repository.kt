@@ -12,4 +12,9 @@ interface Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory_R
         rentableProductReservationInfo: Db1_RaillyLinkerCompany_RentableProductReservationInfo,
         rowDeleteDateStr: String
     ): List<Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory>
+
+    fun findByUidAndRowDeleteDateStr(
+        uid: Long,
+        rowDeleteDateStr: String
+    ): Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory?
 }
