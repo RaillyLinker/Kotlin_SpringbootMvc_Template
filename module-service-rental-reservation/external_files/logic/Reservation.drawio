@@ -655,11 +655,8 @@
             <mxPoint x="-60.480000000000004" y="287" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="5PIh_hH5cSEIUdFjAiik-219" value="&amp;nbsp;개별 상품 생명주기" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="213" y="270" width="158.86" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="CRkLpjZog5i0egp7tEst-2" value="관리자 승인 가능 기간이 지나면 자동 승인 처리되므로 판단을 위한 충분한 마진을 둘 것을 권장" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="-492.49" y="790" width="263" height="30" as="geometry" />
+        <mxCell id="5PIh_hH5cSEIUdFjAiik-219" value="&amp;nbsp;개별 상품 입출고 생명주기" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="181.05" y="270" width="158.86" height="30" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-16" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;rounded=0;" edge="1" parent="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
@@ -674,7 +671,7 @@
           <mxGeometry x="-572.75" y="639.02" width="61" height="30.98" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-21" value="중복 취소 신청 불가능,&amp;nbsp;&lt;div&gt;취소 거부 시 재 취소 가능&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="-211.76" y="389.69" width="150.27" height="40" as="geometry" />
+          <mxGeometry x="-114.64" y="1370" width="150.27" height="40" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-22" value="조기 반납 신고 취소는&amp;nbsp;&lt;span style=&quot;background-color: initial;&quot;&gt;사용자가 불가능&lt;/span&gt;&lt;div&gt;&lt;div&gt;다만 관리자가&amp;nbsp;&lt;span style=&quot;background-color: initial;&quot;&gt;조기 반납 확인을&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;하지 않으면 유&lt;span style=&quot;background-color: initial;&quot;&gt;사한 효과&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="69.80999999999999" y="930" width="212.34" height="55.02" as="geometry" />
@@ -725,13 +722,13 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-34" value="예약 신청&lt;div&gt;승인&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="-520.51" y="1200" width="79" height="40" as="geometry" />
+          <mxGeometry x="-397.75" y="1200" width="79" height="40" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-118" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="CRkLpjZog5i0egp7tEst-36" target="CRkLpjZog5i0egp7tEst-87">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-36" value="&lt;div&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;예약 취소&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;신청&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="-520.51" y="1280" width="79" height="40" as="geometry" />
+          <mxGeometry x="-397.75" y="1280" width="79" height="40" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-133" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="CRkLpjZog5i0egp7tEst-38" target="CRkLpjZog5i0egp7tEst-93">
           <mxGeometry relative="1" as="geometry">
@@ -816,7 +813,14 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-121" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="CRkLpjZog5i0egp7tEst-71" target="CRkLpjZog5i0egp7tEst-120">
-          <mxGeometry relative="1" as="geometry" />
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-358" y="1180" />
+              <mxPoint x="-440" y="1180" />
+              <mxPoint x="-440" y="1200" />
+              <mxPoint x="-479" y="1200" />
+            </Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-71" value="결제 완료" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
           <mxGeometry x="-397.75" y="1120" width="79" height="40" as="geometry" />
@@ -840,10 +844,10 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-87" value="예약 취소&amp;nbsp;&lt;div&gt;자동 승인&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="-520.51" y="1360" width="79" height="40" as="geometry" />
+          <mxGeometry x="-397.75" y="1360" width="79" height="40" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-89" value="진행 종료" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-520.51" y="1440" width="79" height="40" as="geometry" />
+          <mxGeometry x="-397.75" y="1440" width="79" height="40" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-97" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="CRkLpjZog5i0egp7tEst-93" target="CRkLpjZog5i0egp7tEst-96">
           <mxGeometry relative="1" as="geometry" />
@@ -909,19 +913,40 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-120" value="예약 신청&lt;div&gt;거부&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="-398.51" y="1240" width="79" height="40" as="geometry" />
+          <mxGeometry x="-519.03" y="1240" width="79" height="40" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-125" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="CRkLpjZog5i0egp7tEst-122" target="CRkLpjZog5i0egp7tEst-124">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-122" value="예약 취소&amp;nbsp;&lt;div&gt;처리 및&lt;/div&gt;&lt;div&gt;환불 의무&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="-397.75" y="1320" width="79" height="50" as="geometry" />
+          <mxGeometry x="-518.27" y="1320" width="79" height="50" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-124" value="진행 종료" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-400.49" y="1400" width="79" height="40" as="geometry" />
+          <mxGeometry x="-521.01" y="1400" width="79" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="CRkLpjZog5i0egp7tEst-134" value="관리자 승인 기간은 결제 가능 기간 이상,&amp;nbsp;&lt;div&gt;대여 시작 일시 미만이어야 함&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="-452" y="440" width="263" height="30" as="geometry" />
+        <mxCell id="CRkLpjZog5i0egp7tEst-134" value="결제 가능 기간&amp;nbsp;&amp;nbsp;&lt;span style=&quot;background-color: initial;&quot;&gt;&amp;lt;= 관리자 승인 기간&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&amp;lt;&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;대여 시작 일시&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-442.52" y="440" width="302" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="CRkLpjZog5i0egp7tEst-135" value="" style="endArrow=none;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-59.99" y="270" as="sourcePoint" />
+            <mxPoint x="-60.49" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="CRkLpjZog5i0egp7tEst-136" value="" style="endArrow=none;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-58.51" y="260" as="sourcePoint" />
+            <mxPoint x="460" y="260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="CRkLpjZog5i0egp7tEst-137" value="" style="endArrow=none;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="459.99" y="270" as="sourcePoint" />
+            <mxPoint x="459.49" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="CRkLpjZog5i0egp7tEst-138" value="&amp;nbsp;개별 상품 대여 가능 기간" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="142.20000000000002" y="230" width="158.86" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
