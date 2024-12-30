@@ -9,6 +9,7 @@ import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.ent
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductImage
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductInfo
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockCategory
+import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockImage
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockInfo
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository.FindAllCategoryTreeUidListOutputVo
@@ -1253,18 +1254,126 @@ class RentalReservationAdminService(
         authorization: String,
         inputVo: RentalReservationAdminController.PostRentableProductStockImageInputVo
     ): RentalReservationAdminController.PostRentableProductStockImageOutputVo? {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+
+        val rentableStockProduct =
+            db1RaillyLinkerCompanyRentableProductStockInfoRepository.findByUidAndRowDeleteDateStr(
+                inputVo.rentableProductInfoStockUid,
+                "/"
+            )
+
+        if (rentableStockProduct == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        // 저장된 상품 이미지 파일을 다운로드 할 수 있는 URL
+        val savedProductStockImageUrl: String
+
+        // 상품 이미지 파일 저장
+
+        //----------------------------------------------------------------------------------------------------------
+        // 상품 이미지를 서버 스토리지에 저장할 때 사용하는 방식
+        // 파일 저장 기본 디렉토리 경로
+        val saveDirectoryPath: Path =
+            Paths.get("./by_product_files/service_rental_reservation/rentable_product_stock/images")
+                .toAbsolutePath().normalize()
+
+        // 파일 저장 기본 디렉토리 생성
+        Files.createDirectories(saveDirectoryPath)
+
+        // 원본 파일명(with suffix)
+        val multiPartFileNameString = StringUtils.cleanPath(inputVo.thumbnailImage.originalFilename!!)
+
+        // 파일 확장자 구분 위치
+        val fileExtensionSplitIdx = multiPartFileNameString.lastIndexOf('.')
+
+        // 확장자가 없는 파일명
+        val fileNameWithOutExtension: String
+        // 확장자
+        val fileExtension: String
+
+        if (fileExtensionSplitIdx == -1) {
+            fileNameWithOutExtension = multiPartFileNameString
+            fileExtension = ""
+        } else {
+            fileNameWithOutExtension = multiPartFileNameString.substring(0, fileExtensionSplitIdx)
+            fileExtension =
+                multiPartFileNameString.substring(fileExtensionSplitIdx + 1, multiPartFileNameString.length)
+        }
+
+        val savedFileName = "${fileNameWithOutExtension}(${
+            LocalDateTime.now().atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+        }).$fileExtension"
+
+        // multipartFile 을 targetPath 에 저장
+        inputVo.thumbnailImage.transferTo(
+            // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
+            saveDirectoryPath.resolve(savedFileName).normalize()
         )
 
-        // todo
+        savedProductStockImageUrl =
+            "${externalAccessAddress}/rental-reservation-admin/product-stock-image/$savedFileName"
+        //----------------------------------------------------------------------------------------------------------
+
+        val productStockImage = db1RaillyLinkerCompanyRentableProductStockImageRepository.save(
+            Db1_RaillyLinkerCompany_RentableProductStockImage(
+                rentableStockProduct,
+                savedProductStockImageUrl
+            )
+        )
+
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo
         return RentalReservationAdminController.PostRentableProductStockImageOutputVo(
-            1L,
-            "https://testImage.com/sample.jpg"
+            productStockImage.uid!!,
+            savedProductStockImageUrl
+        )
+    }
+
+
+    // ----
+    // (대여 가능 상품 재고 이미지 파일 다운받기)
+    fun getProductStockImageFile(
+        httpServletResponse: HttpServletResponse,
+        fileName: String
+    ): ResponseEntity<Resource>? {
+        // 프로젝트 루트 경로 (프로젝트 settings.gradle 이 있는 경로)
+        val projectRootAbsolutePathString: String = File("").absolutePath
+
+        // 파일 절대 경로 및 파일명
+        val serverFilePathObject =
+            Paths.get("$projectRootAbsolutePathString/by_product_files/service_rental_reservation/rentable_product_stock/images/$fileName")
+
+        when {
+            Files.isDirectory(serverFilePathObject) -> {
+                // 파일이 디렉토리일때
+                httpServletResponse.status = HttpStatus.NOT_FOUND.value()
+                return null
+            }
+
+            Files.notExists(serverFilePathObject) -> {
+                // 파일이 없을 때
+                httpServletResponse.status = HttpStatus.NOT_FOUND.value()
+                return null
+            }
+        }
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return ResponseEntity<Resource>(
+            InputStreamResource(Files.newInputStream(serverFilePathObject)),
+            HttpHeaders().apply {
+                this.contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(fileName, StandardCharsets.UTF_8)
+                    .build()
+                this.add(HttpHeaders.CONTENT_TYPE, Files.probeContentType(serverFilePathObject))
+            },
+            HttpStatus.OK
         )
     }
 
@@ -1277,13 +1386,38 @@ class RentalReservationAdminService(
         authorization: String,
         rentableProductStockImageUid: Long
     ) {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+
+        val rentableProductStockImage =
+            db1RaillyLinkerCompanyRentableProductStockImageRepository.findByUidAndRowDeleteDateStr(
+                rentableProductStockImageUid,
+                "/"
+            )
+
+        if (rentableProductStockImage == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        // 이미지를 참조하고 있던 테이블들 모두 null 처리
+        for (rentableProductStockInfo in rentableProductStockImage.rentableProductStockInfoList) {
+            rentableProductStockInfo.frontRentableProductStockImage = null
+            db1RaillyLinkerCompanyRentableProductStockInfoRepository.save(rentableProductStockInfo)
+        }
+
+        rentableProductStockImage.rowDeleteDateStr =
+            LocalDateTime.now().atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+
+        db1RaillyLinkerCompanyRentableProductStockImageRepository.save(
+            rentableProductStockImage
         )
 
-        // todo
         httpServletResponse.status = HttpStatus.OK.value()
     }
 
@@ -1297,13 +1431,45 @@ class RentalReservationAdminService(
         rentableProductStockInfoUid: Long,
         inputVo: RentalReservationAdminController.PatchRentableProductStockInfoFrontImageInputVo
     ) {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+
+        val rentableProductStock = db1RaillyLinkerCompanyRentableProductStockInfoRepository.findByUidAndRowDeleteDateStr(
+            rentableProductStockInfoUid,
+            "/"
         )
 
-        // todo
+        if (rentableProductStock == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        if (inputVo.rentableProductStockImageUid == null) {
+            rentableProductStock.frontRentableProductStockImage = null
+            db1RaillyLinkerCompanyRentableProductStockInfoRepository.save(rentableProductStock)
+            httpServletResponse.status = HttpStatus.OK.value()
+            return
+        }
+
+        val productStockImage = db1RaillyLinkerCompanyRentableProductStockImageRepository.findByUidAndRowDeleteDateStr(
+            inputVo.rentableProductStockImageUid,
+            "/"
+        )
+
+        if (productStockImage == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return
+        }
+
+        rentableProductStock.frontRentableProductStockImage = productStockImage
+
+        db1RaillyLinkerCompanyRentableProductStockInfoRepository.save(rentableProductStock)
+
         httpServletResponse.status = HttpStatus.OK.value()
     }
 

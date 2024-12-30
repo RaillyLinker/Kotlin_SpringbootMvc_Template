@@ -1669,7 +1669,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 재고 이미지 등록 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 재고 이미지 등록 <ADMIN>",
         description = "대여 상품 재고 이미지를 등록합니다."
     )
     @ApiResponses(
@@ -1745,7 +1745,37 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 재고 이미지 삭제 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 재고 이미지 파일 다운받기",
+        description = "대여 가능 상품 재고 이미지를 by_product_files 위치에 저장했을 때 파일을 가져오기 위한 API"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @GetMapping(
+        path = ["/product-stock-image/{fileName}"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE]
+    )
+    @ResponseBody
+    fun getProductStockImageFile(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(name = "fileName", description = "by_product_files 폴더 안의 파일명", example = "test.jpg")
+        @PathVariable("fileName")
+        fileName: String
+    ): ResponseEntity<Resource>? {
+        return service.getProductStockImageFile(httpServletResponse, fileName)
+    }
+
+
+    // ----
+    @Operation(
+        summary = "대여 가능 상품 재고 이미지 삭제 <ADMIN>",
         description = "대여 상품 재고 이미지를 삭제합니다.<br>" +
                 "상품 정보에 대표 이미지로 설정되어 있다면 대표 이미지 설정이 null 이 됩니다."
     )
@@ -1804,7 +1834,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 대표 상품 재고 이미지 설정 수정 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 대표 상품 재고 이미지 설정 수정 <ADMIN>",
         description = "대여 가능 상품 재고의 대표 상품 이미지 설정을 수정합니다."
     )
     @ApiResponses(
