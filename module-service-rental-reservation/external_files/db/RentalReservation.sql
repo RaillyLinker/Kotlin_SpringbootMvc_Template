@@ -15,8 +15,7 @@
 	`FRONT_IMAGE_UID`	BIGINT UNSIGNED	NULL	COMMENT 'HCP_RENTABLE_PRODUCT_IMAGE 행 고유키',
 	`ADDRESS_COUNTRY`	VARCHAR(60)	NOT NULL	COMMENT '상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 국가',
 	`ADDRESS_MAIN`	VARCHAR(300)	NOT NULL	COMMENT '상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 국가와 상세 주소를 제외',
-	`ADDRESS_DETAIL`	VARCHAR(300)	NOT NULL	COMMENT '상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 상세',
-	`PAYMENT_COMPLETE_DATETIME`	DATETIME	NULL	COMMENT '결재가 완료 처리된 일시(null 이라면 미결재 상태)'
+	`ADDRESS_DETAIL`	VARCHAR(300)	NOT NULL	COMMENT '상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 상세'
 );
 
 CREATE TABLE `HCP_RENTABLE_PRODUCT_STOCK_INFO` (
