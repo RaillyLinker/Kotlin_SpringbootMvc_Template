@@ -1810,9 +1810,22 @@ class RentalReservationAdminService(
                 rentableProductReservationInfo,
                 "/"
             )
-        // todo 대여 상품 조기 반납 신고 내역이 있어야 함
-        // todo 대여 상품 조기 반납 확인 내역이 없어야 함
-        // todo 대여 상품 반납일 미만이어야 함
+
+        if (historyList.isEmpty()) {
+            // 상품 대여 상태가 아닙니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
+        val latestHistory = historyList.first()
+
+        if (latestHistory.stateCode != 6) {
+            // 대여 상품 조기 반납 신고 내역이 없음
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return null
+        }
 
         // 예약 히스토리에 정보 기입
         val newReservationStateChangeHistory =

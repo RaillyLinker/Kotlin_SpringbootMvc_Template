@@ -2274,7 +2274,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 예약 정보의 조기 반납 확인 처리 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 예약 정보의 조기 반납 확인 처리 <ADMIN>",
         description = "대여 가능 상품 예약 정보를 조기 반납 확인 처리합니다.<br>" +
                 "상태 변경 철회 불가, 설명 수정은 가능<br>" +
                 "rentable_product_reservation_state_change_history 에 조기 반납 확인 히스토리를 추가합니다."
@@ -2295,7 +2295,8 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 조기 반납 확인 처리가 가능한 상태가 아닙니다.",
+                                "2 : 상품 대여 상태가 아닙니다.<br>" +
+                                "3 : 대여 상품 조기 반납 신고 내역이 없음",
                         schema = Schema(type = "string")
                     )
                 ]
