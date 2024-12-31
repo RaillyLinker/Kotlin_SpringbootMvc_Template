@@ -34,7 +34,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlin.math.pow
+import kotlin.random.Random
 
 @Service
 class TestService(
@@ -682,49 +682,40 @@ class TestService(
         testUserIdx: Long,
         price: Long
     ) {
-        var lockKey: String? = null
-        var attempt = 0 // 재시도 횟수
+        redis1LockTestBank.tryLockRepeat(
+            // Redis 키
+            "$testUserIdx",
+            // Redis 만료시간
+            1000L,
+            // Lock 획득 후 작업 콜백
+            {
+                lockIdx += 1
 
-        while (lockKey == null) {
-            // 공유 락을 얻을 때 까지 반복
-            lockKey = redis1LockTestBank.tryLock("$testUserIdx", 100000)
-            if (lockKey == null) {
-                // 공유 락을 못 얻었다면 대기 시간 증가(불발 횟수에 따라 대기 시간 증가 처리)
-                attempt++
+                // 락 획득 후 기존 잔고 조회 후 수정
+                val testBank = db1TemplateTestBankRepository.findByUserIdxAndRowDeleteDateStr(
+                    testUserIdx,
+                    "/"
+                )
 
-                val baseWaitTime = 50L // 기본 대기 시간
-                val incrementalFactor = 1.1 // 증가 비율
-                val maxWaitTime = 300L // 최대 대기 시간
+                if (testBank == null) {
+                    return@tryLockRepeat
+                }
 
-                val waitTime =
-                    baseWaitTime + (baseWaitTime * (attempt - 1) * incrementalFactor).toLong().coerceAtMost(maxWaitTime)
+                // 값 조회와 값 수정 사이의 극단적인 간격 차이를 만들기 위한 랜덤 sleep 처리
+                val randomValue = Random.nextInt(0, 11).toLong() // 0 (포함) ~ 11 (미포함)
+                Thread.sleep(randomValue)
 
-                Thread.sleep(waitTime)
-            }
-        }
+                classLogger.info("lockIdx : $lockIdx, taskIdx : $taskIdx, price : $price")
+                testBank.amount += price
 
-        // lock 획득 idx 증가
-        lockIdx += 1
-
-        try {
-            // 락 획득 후 기존 잔고 조회 후 수정
-            val testBank = db1TemplateTestBankRepository.findByUserIdxAndRowDeleteDateStr(
-                testUserIdx,
-                "/"
-            )
-
-            if (testBank == null) {
-                return
-            }
-
-            classLogger.info("lockIdx : $lockIdx, taskIdx : $taskIdx, price : $price")
-            testBank.amount += price
-
-            db1TemplateTestBankRepository.save(testBank)
-        } finally {
-            // 작업 완료로 인한 락 반납
-            classLogger.info("lock Release : $lockIdx")
-            redis1LockTestBank.unlock("$testUserIdx", lockKey)
-        }
+                db1TemplateTestBankRepository.save(testBank)
+            },
+            // 락 불발시 최소 대기시간
+            50L,
+            // 락 불발 반복시 대기시간 증가율
+            0.1,
+            // 락 불발 반복시 대기시간 증가 최대시간
+            100L
+        )
     }
 }
