@@ -27,7 +27,6 @@ class RentalReservationController(
 
     // ---------------------------------------------------------------------------------------------
     // <매핑 함수 공간>
-    // todo : reservation race condition 처리
     @Operation(
         summary = "상품 예약 신청하기 <> (더미)", // todo
         description = "상품에 대한 예약 신청을 합니다."

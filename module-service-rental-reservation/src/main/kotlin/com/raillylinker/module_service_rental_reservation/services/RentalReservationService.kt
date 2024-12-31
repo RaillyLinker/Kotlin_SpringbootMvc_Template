@@ -87,6 +87,7 @@ class RentalReservationService(
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
+    // todo : reservation race condition 처리
     // (상품 예약 신청하기 <>)
     // 동시 대량 요청이 예상되며 Database 의 데이터 중 Race Condition 을 유발하는 부분이 있으므로 적절히 처리 및 테스트가 필요
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)

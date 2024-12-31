@@ -348,6 +348,7 @@ class RentalReservationAdminService(
 
 
     // ----
+    // todo : reservation race condition 처리
     // (대여 가능 상품 수정 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun putRentableProductInfo(
@@ -426,6 +427,7 @@ class RentalReservationAdminService(
 
 
     // ----
+    // todo : reservation race condition 처리
     // (대여 가능 상품 삭제 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteRentableProductInfo(
@@ -523,6 +525,7 @@ class RentalReservationAdminService(
 
 
     // ----
+    // todo : reservation race condition 처리
     // (대여 가능 상품 추가 예약 가능 설정 수정 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchRentableProductInfoReservable(
@@ -557,6 +560,7 @@ class RentalReservationAdminService(
 
 
     // ----
+    // todo : reservation race condition 처리
     // (대여 가능 상품 최소 예약 횟수 설정 수정 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchRentableProductInfoMinReservationUnitCount(
@@ -600,6 +604,7 @@ class RentalReservationAdminService(
 
 
     // ----
+    // todo : reservation race condition 처리
     // (대여 가능 상품 최대 예약 횟수 설정 수정 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchRentableProductInfoMaxReservationUnitCount(
@@ -1120,6 +1125,7 @@ class RentalReservationAdminService(
 
 
     // ----
+    // todo : reservation race condition 처리
     // (대여 가능 상품 재고 삭제 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteRentableProductStockInfo(
@@ -1183,6 +1189,7 @@ class RentalReservationAdminService(
 
 
     // ----
+    // todo : reservation race condition 처리
     // (대여 가능 상품 재고 수정 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun putRentableProductStockInfo(
@@ -1260,6 +1267,7 @@ class RentalReservationAdminService(
 
 
     // ----
+    // todo : reservation race condition 처리
     // (대여 가능 상품 재고 추가 예약 가능 설정 수정 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchRentableProductStockInfoReservable(
@@ -2275,6 +2283,7 @@ class RentalReservationAdminService(
 
 
     // ----
+    // todo : reservation race condition 처리
     // (개별 상품 예약 정보 다음 준비 예정일 수정 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchRentableProductStockReservationInfoNextReadyDatetime(
