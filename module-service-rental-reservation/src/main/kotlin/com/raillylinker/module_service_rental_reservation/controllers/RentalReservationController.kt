@@ -194,11 +194,15 @@ class RentalReservationController(
 
     data class PostCancelProductReservationOutputVo(
         @Schema(description = "rentableProductReservationStateChangeInfo 고유값", required = true, example = "1")
-        @JsonProperty("rentableProductReservationStateChangeInfoUid")
-        val rentableProductReservationStateChangeInfoUid: Long,
-        @Schema(description = "취소 즉시 승인 여부", required = true, example = "false")
-        @JsonProperty("cancelApproved")
-        val cancelApproved: Boolean
+        @JsonProperty("stateChangeInfoUid")
+        val stateChangeInfoUid: Long,
+        @Schema(
+            description = "예약 취소 즉시 승인시 rentableProductReservationStateChangeInfo 고유값",
+            required = false,
+            example = "1"
+        )
+        @JsonProperty("stateChangeInfoUidForApproved")
+        val stateChangeInfoUidForApproved: Long?,
     )
 
 

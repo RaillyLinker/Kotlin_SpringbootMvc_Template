@@ -133,12 +133,17 @@ class RentalReservationService(
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        // todo
+        // todo 예약 취소 신청 가능 상태 확인
+
+        // todo 예약 취소 신청 정보 추가
+
+        // todo 상태에 따라 예약 취소 자동 승인 정보 추가
+
         httpServletResponse.status = HttpStatus.OK.value()
         // todo
         return RentalReservationController.PostCancelProductReservationOutputVo(
             1L,
-            false
+            null
         )
     }
 
