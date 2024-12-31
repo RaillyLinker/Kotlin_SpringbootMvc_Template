@@ -1910,7 +1910,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 예약 정보의 예약 승인 처리 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 예약 정보의 예약 승인 처리 <ADMIN>",
         description = "대여 가능 상품 예약 정보를 예약 승인 처리합니다.<br>" +
                 "상태 변경 철회 불가, 설명 수정은 가능<br>" +
                 "rentable_product_reservation_state_change_history 에 예약 승인 히스토리를 추가합니다."
@@ -1931,7 +1931,11 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 예약 승인 처리가 가능한 상태가 아닙니다.",
+                                "2 : 예약 승인 기한을 넘겼습니다.<br>" +
+                                "3 : 예약 취소 승인 내역 있습니다.<br>" +
+                                "4 : 예약 신청 거부 내역 있습니다.<br>" +
+                                "5 : 예약 승인 내역 있습니다.<br>" +
+                                "6 : 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일)",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -2001,7 +2005,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 예약 정보의 예약 거부 처리 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 예약 정보의 예약 거부 처리 <ADMIN>",
         description = "대여 가능 상품 예약 정보를 예약 거부 처리합니다.<br>" +
                 "상태 변경 철회 불가, 설명 수정은 가능<br>" +
                 "rentable_product_reservation_state_change_history 에 예약 거부 히스토리를 추가합니다."
@@ -2022,7 +2026,11 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 예약 거부 처리가 가능한 상태가 아닙니다.",
+                                "2 : 예약 승인 기한을 넘겼습니다.<br>" +
+                                "3 : 예약 취소 승인 내역 있습니다.<br>" +
+                                "4 : 예약 신청 거부 내역 있습니다.<br>" +
+                                "5 : 예약 승인 내역 있습니다.<br>" +
+                                "6 : 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일)",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -2092,7 +2100,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 예약 정보의 예약 취소 승인 처리 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 예약 정보의 예약 취소 승인 처리 <ADMIN>",
         description = "대여 가능 상품 예약 정보를 예약 취소 승인 처리합니다.<br>" +
                 "상태 변경 철회 불가, 설명 수정은 가능<br>" +
                 "rentable_product_reservation_state_change_history 에 예약 취소 승인 히스토리를 추가합니다."
@@ -2113,7 +2121,13 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 예약 취소 승인 처리가 가능한 상태가 아닙니다.",
+                                "2 : 대여 시작 기한 초과하였습니다.<br>" +
+                                "3 : 예약 취소 승인 내역 있습니다.<br>" +
+                                "4 : 예약 신청 거부 내역 있습니다.<br>" +
+                                "5 : 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일)<br>" +
+                                "6 : 예약 취소 신청 내역이 없습니다.<br>" +
+                                "7 : 기존 예약 취소 신청에 대한 예약 취소 거부 상태입니다.<br>" +
+                                "8 : 결재 대기 상태입니다.(잘못된 상황 -> 결재 대기 상태에서 취소 요청시 자동으로 취소 처리가 되어있어야 함)",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -2183,7 +2197,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 예약 정보의 예약 취소 거부 처리 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 예약 정보의 예약 취소 거부 처리 <ADMIN>",
         description = "대여 가능 상품 예약 정보를 예약 취소 거부 처리합니다.<br>" +
                 "상태 변경 철회 불가, 설명 수정은 가능<br>" +
                 "rentable_product_reservation_state_change_history 에 예약 취소 거부 히스토리를 추가합니다."
@@ -2204,8 +2218,13 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 기준 시간이 대여 시작 시간보다 큼(= 예약 취소 거부와 동일)<br>" +
-                                "3 : 결재 대기 상태입니다.",
+                                "2 : 대여 시작 시간을 초과하였습니다.<br>" +
+                                "3 : 예약 취소 승인 내역 있습니다.<br>" +
+                                "4 : 예약 신청 거부 내역 있습니다.<br>" +
+                                "5 : 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일)<br>" +
+                                "6 : 예약 취소 신청 내역이 없습니다.<br>" +
+                                "7 : 기존 예약 취소 신청에 대한 예약 취소 거부 상태입니다.<br>" +
+                                "8 : 결재 대기 상태입니다.(잘못된 상황 -> 결재 대기 상태에서 취소 요청시 자동으로 취소 처리가 되어있어야 함)",
                         schema = Schema(type = "string")
                     )
                 ]

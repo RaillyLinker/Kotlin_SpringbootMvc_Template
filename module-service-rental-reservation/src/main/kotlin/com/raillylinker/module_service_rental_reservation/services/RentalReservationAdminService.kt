@@ -1550,30 +1550,60 @@ class RentalReservationAdminService(
         }
 
         // 예약 상태 확인
-        if (LocalDateTime.now().isAfter(rentableProductReservationInfo.reservationApprovalDeadlineDatetime)) {
+        val anchorDatetime = ZonedDateTime.parse(
+            inputVo.stateChangeDatetime,
+            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+        ).toLocalDateTime()
+
+        if (anchorDatetime.isAfter(rentableProductReservationInfo.reservationApprovalDeadlineDatetime)) {
             // 예약 승인 기한을 넘김
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "2")
             return null
         }
 
-        val reservationStateChangeHistoryList =
-            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
-                rentableProductReservationInfo,
-                "/"
-            )
-
-        // 상태 확인
         val historyList =
             db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
                 rentableProductReservationInfo,
                 "/"
             )
-        // todo 예약 취소 승인 내역이 없어야 함
-        // todo 예약 신청 거부 내역이 없어야 함
-        // todo 미결제 상태일 경우 결제 기한 초과 상태(= 취소와 동일)가 아니어야 함
-        // todo 예약 승인 내역이 없어야 함
-        // todo 결제 완료 후 예약 승인 기한 이상(= 예약 승인과 동일)이 아니어야 함
+
+        var notPaid = true
+        for (history in historyList) {
+            when (history.stateCode) {
+                4 -> {
+                    // 예약 취소 승인 내역 있음 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "3")
+                    return null
+                }
+
+                2 -> {
+                    // 예약 신청 거부 내역 있음 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "4")
+                    return null
+                }
+
+                1 -> {
+                    // 예약 승인 내역 있음 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "5")
+                    return null
+                }
+
+                0 -> {
+                    notPaid = false
+                }
+            }
+        }
+
+        if (notPaid && anchorDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
+            // 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일) -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "6")
+            return null
+        }
 
         // 예약 히스토리에 정보 기입
         val newReservationStateChangeHistory =
@@ -1624,16 +1654,60 @@ class RentalReservationAdminService(
         }
 
         // 상태 확인
+        val anchorDatetime = ZonedDateTime.parse(
+            inputVo.stateChangeDatetime,
+            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+        ).toLocalDateTime()
+
+        if (anchorDatetime.isAfter(rentableProductReservationInfo.reservationApprovalDeadlineDatetime)) {
+            // 예약 승인 기한을 넘김
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
         val historyList =
             db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
                 rentableProductReservationInfo,
                 "/"
             )
-        // todo 예약 취소 승인 내역이 없어야 함
-        // todo 예약 거부 내역이 없어야 함
-        // todo 미결제 상태일 경우 결제 기한 초과 상태(= 취소와 동일)가 아니어야 함
-        // todo 예약 승인 내역이 없어야 함
-        // todo 결제 완료 후 예약 승인 기한 이상(= 예약 승인과 동일)이 아니어야 함
+
+        var notPaid = true
+        for (history in historyList) {
+            when (history.stateCode) {
+                4 -> {
+                    // 예약 취소 승인 내역 있음 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "3")
+                    return null
+                }
+
+                2 -> {
+                    // 예약 신청 거부 내역 있음 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "4")
+                    return null
+                }
+
+                1 -> {
+                    // 예약 승인 내역 있음 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "5")
+                    return null
+                }
+
+                0 -> {
+                    notPaid = false
+                }
+            }
+        }
+
+        if (notPaid && anchorDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
+            // 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일) -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "6")
+            return null
+        }
 
         // 예약 히스토리에 정보 기입
         val newReservationStateChangeHistory =
@@ -1684,16 +1758,94 @@ class RentalReservationAdminService(
         }
 
         // 상태 확인
+        val anchorDatetime = ZonedDateTime.parse(
+            inputVo.stateChangeDatetime,
+            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+        ).toLocalDateTime()
+
+        if (anchorDatetime.isAfter(rentableProductReservationInfo.rentalStartDatetime)) {
+            // 대여 시작 기한 초과 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
         val historyList =
             db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
                 rentableProductReservationInfo,
                 "/"
             )
-        // todo 예약 취소 승인 내역이 없어야 함
-        // todo 예약 거부 내역이 없어야 함
-        // todo 미결제 상태일 경우 결제 기한 초과 상태(= 취소와 동일)가 아니어야 함
-        // todo 현재 진행중인 예약 취소 신청 내역이 없어야 함(가장 최근에 예약 취소 거부가 있거나 예약 취소 신청 내역이 없어야 함)
-        // todo 대여 시작 기한 이상(= 예약 취소 거부와 동일)이 아니어야 함
+
+        if (historyList.isEmpty()) {
+            // 결재 대기 상태입니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "8")
+            return null
+        }
+
+        var notPaid = true
+        var noRequestCancel = true
+        var notRequestCancelDenyLatest = true
+        var notRequestCancelLatest = true
+        for (history in historyList) {
+            when (history.stateCode) {
+                5 -> {
+                    // 예약 취소 거부
+                    if (notRequestCancelLatest) {
+                        // 예약 취소 거부 내역이 최신인지
+                        notRequestCancelDenyLatest = false
+                    }
+                }
+
+                4 -> {
+                    // 예약 취소 승인 내역 있음 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "3")
+                    return null
+                }
+
+                3 -> {
+                    // 예약 취소 신청
+                    noRequestCancel = false
+                    if (notRequestCancelDenyLatest) {
+                        // 예약 취소 신청 내역이 최신인지
+                        notRequestCancelLatest = false
+                    }
+                }
+
+                2 -> {
+                    // 예약 신청 거부 내역 있음 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "4")
+                    return null
+                }
+
+                0 -> {
+                    notPaid = false
+                }
+            }
+        }
+
+        if (notPaid && anchorDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
+            // 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일) -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "5")
+            return null
+        }
+
+        if (noRequestCancel) {
+            // 예약 취소 신청 내역이 없음 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "6")
+            return null
+        }
+
+        if (!notRequestCancelDenyLatest && notRequestCancelLatest) {
+            // 기존 예약 취소 신청에 대한 예약 취소 거부 상태입니다. -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "7")
+            return null
+        }
 
         // 예약 히스토리에 정보 기입
         val newReservationStateChangeHistory =
@@ -1750,7 +1902,7 @@ class RentalReservationAdminService(
         ).toLocalDateTime()
 
         if (anchorDatetime.isAfter(rentableProductReservationInfo.rentalStartDatetime)) {
-            // 기준 시간이 대여 시작 시간보다 클 경우(= 예약 취소 거부와 동일)
+            // 대여 시작 기한 초과 -> return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "2")
             return null
@@ -1765,14 +1917,73 @@ class RentalReservationAdminService(
         if (historyList.isEmpty()) {
             // 결재 대기 상태입니다.
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "3")
+            httpServletResponse.setHeader("api-result-code", "8")
             return null
         }
 
-        // todo 결제 기한 초과인데 결제 확인이 되지 않음(= 예약 취소로 간주)
-        // todo 다시 보기
+        var notPaid = true
+        var noRequestCancel = true
+        var notRequestCancelDenyLatest = true
+        var notRequestCancelLatest = true
+        for (history in historyList) {
+            when (history.stateCode) {
+                5 -> {
+                    // 예약 취소 거부
+                    if (notRequestCancelLatest) {
+                        // 예약 취소 거부 내역이 최신인지
+                        notRequestCancelDenyLatest = false
+                    }
+                }
 
-        // todo 현재 진행중인 예약 취소 신청 내역이 있어야 함(가장 최근에 예약 취소 거부나 승인이 없고 예약 취소 신청 내역이 있어야 함)
+                4 -> {
+                    // 예약 취소 승인 내역 있음 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "3")
+                    return null
+                }
+
+                3 -> {
+                    // 예약 취소 신청
+                    noRequestCancel = false
+                    if (notRequestCancelDenyLatest) {
+                        // 예약 취소 신청 내역이 최신인지
+                        notRequestCancelLatest = false
+                    }
+                }
+
+                2 -> {
+                    // 예약 신청 거부 내역 있음 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "4")
+                    return null
+                }
+
+                0 -> {
+                    notPaid = false
+                }
+            }
+        }
+
+        if (notPaid && anchorDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
+            // 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일) -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "5")
+            return null
+        }
+
+        if (noRequestCancel) {
+            // 예약 취소 신청 내역이 없음 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "6")
+            return null
+        }
+
+        if (!notRequestCancelDenyLatest && notRequestCancelLatest) {
+            // 기존 예약 취소 신청에 대한 예약 취소 거부 상태입니다. -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "7")
+            return null
+        }
 
         // 예약 히스토리에 정보 기입
         val newReservationStateChangeHistory =
