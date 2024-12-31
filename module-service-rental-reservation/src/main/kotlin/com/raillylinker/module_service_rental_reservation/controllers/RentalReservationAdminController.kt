@@ -2477,7 +2477,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 예약 정보의 환불 완료 처리 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 예약 정보의 환불 완료 처리 <ADMIN>",
         description = "대여 가능 상품 예약 정보를 환불 완료 처리합니다.<br>" +
                 "rentable_product_reservation_state_change_history 에 결제 확인 히스토리를 추가합니다."
     )
@@ -2497,7 +2497,9 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 상태가 아닙니다.", // todo
+                                "2 : 결재 대기 상태입니다.<br>" +
+                                "3 : 결제 확인 내역이 없습니다.<br>" +
+                                "4 : 예약 취소 승인 내역이 없고 예약 신청 거부 내역이 없습니다.",
                         schema = Schema(type = "string")
                     )
                 ]

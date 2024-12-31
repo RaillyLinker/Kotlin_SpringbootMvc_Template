@@ -2172,7 +2172,49 @@ class RentalReservationAdminService(
                 rentableProductReservationInfo,
                 "/"
             )
-        // todo
+
+        if (historyList.isEmpty()) {
+            // 결재 대기 상태입니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
+        var notPaid = true
+        var noCancelRequest = true
+        var noRequestDeny = true
+        for (history in historyList) {
+            when (history.stateCode) {
+                4 -> {
+                    // 예약 취소 승인
+                    noCancelRequest = false
+                }
+
+                2 -> {
+                    // 예약 거부
+                    noRequestDeny = false
+                }
+
+                0 -> {
+                    // 결재 확인
+                    notPaid = false
+                }
+            }
+        }
+
+        if (notPaid) {
+            // 결제 확인 내역이 없음 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return null
+        }
+
+        if (noCancelRequest && noRequestDeny) {
+            // 예약 취소 승인 내역이 없고 예약 신청 거부 내역이 없음 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
+            return null
+        }
 
         // 예약 히스토리에 정보 기입
         val newReservationStateChangeHistory =
