@@ -102,11 +102,23 @@ class RentalReservationService(
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        // todo 입력값 검증
+        // 검증
+        // todo 대여 시작 일시가 끝 일시보다 클 경우 -> return
+        // todo 업데이트 버전 시퀀스가 다를 때 -> return
+        // todo 현 시점 예약 가능 설정이 아닐 때 -> return
+        // todo 현재 시간이 예약 가능 일시보다 작음 -> return
+        // todo 대여 시작 일시가 예약 취소 가능 기한(현재 시간 + N)과 같거나 작음 -> return
+        // todo 대여 시작 일시와 끝 일시의 차이를 단위 예약 시간으로 나누었을 때, 단위 예약 최소 횟수보다 작을 때 -> return
+        // todo 대여 시작 일시와 끝 일시의 차이를 단위 예약 시간으로 나누었을 때, 단위 예약 최대 횟수보다 클 때 -> return
 
-        // todo 예약 상품 상태 확인
+        // todo 재고 리스트 중 없는 개체가 있습니다.
+        // todo 재고 리스트 중 현재 예약 중인 개체가 있습니다. -> return
+        // todo 재고 리스트 중 대여 가능 최초 일시가 더 큰 개체가 있습니다. -> return
+        // todo 재고 리스트 중 대여 가능 마지막 일시가 더 작은 개체가 있습니다. -> return
+        // todo 재고 리스트 중 대여 가능 설정이 아닌 상품이 있습니다. -> return
 
         // todo 예약 정보 입력
+        // todo 개별 상품 예약 정보 입력
 
         httpServletResponse.status = HttpStatus.OK.value()
         return RentalReservationController.PostProductReservationOutputVo(
