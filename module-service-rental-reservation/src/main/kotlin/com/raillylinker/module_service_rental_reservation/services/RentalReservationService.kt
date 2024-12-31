@@ -107,7 +107,22 @@ class RentalReservationService(
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        // todo 대여 시작 일시가 끝 일시보다 클 경우 -> return
+        val rentalStartDatetime = ZonedDateTime.parse(
+            inputVo.rentalStartDatetime,
+            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+        ).toLocalDateTime()
+
+        val rentalEndDatetime = ZonedDateTime.parse(
+            inputVo.rentalEndDatetime,
+            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+        ).toLocalDateTime()
+
+        if (rentalStartDatetime.isAfter(rentalEndDatetime)) {
+            // 대여 시작 일시가 끝 일시보다 클 경우 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return null
+        }
 
         // Redis 공유 락 처리
         return redis1LockRentableProductInfo.tryLockRepeat<RentalReservationController.PostProductReservationOutputVo?>(
@@ -130,6 +145,7 @@ class RentalReservationService(
                 // todo 개별 상품 예약 정보 입력
 
                 httpServletResponse.status = HttpStatus.OK.value()
+                // todo
                 return@tryLockRepeat RentalReservationController.PostProductReservationOutputVo(
                     1L,
                     "2024_05_02_T_15_14_49_552_KST",
