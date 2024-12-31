@@ -90,6 +90,9 @@ class RentalReservationController(
         @Schema(description = "예약 상품 버전 시퀀스(현재 상품 테이블 버전과 맞지 않는다면 진행 불가)", required = true, example = "1")
         @JsonProperty("rentableProductVersionSeq")
         val rentableProductVersionSeq: Long,
+        @Schema(description = "예약 상품 재고 고유번호 리스트", required = true)
+        @JsonProperty("rentableProductStockInfoUidList")
+        val rentableProductStockInfoUidList: List<Long>,
         @Schema(
             description = "대여 시작 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
             required = true,
@@ -111,7 +114,7 @@ class RentalReservationController(
         @JsonProperty("rentableProductReservationInfoUid")
         val rentableProductReservationInfoUid: Long,
         @Schema(
-            description = "결제 기한 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            description = "고객 결제 기한 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
             required = true,
             example = "2024_05_02_T_15_14_49_552_KST"
         )
