@@ -43,6 +43,10 @@ class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
     @Comment("관리자 승인 기한 (이 시점이 지났고, reservation_approval_datetime 가 충족되지 않았다면 취소로 간주)")
     var reservationApprovalDeadlineDatetime: LocalDateTime,
 
+    @Column(name = "reservation_cancel_deadline_datetime", nullable = false, columnDefinition = "DATETIME")
+    @Comment("예약 취소 가능 기한")
+    var reservationCancelDeadlineDatetime: LocalDateTime,
+
     // 아래는 예약 당시 영수증으로서의 기능을 하는 컬럼
     @Column(name = "product_name", nullable = false, columnDefinition = "VARCHAR(90)")
     @Comment("고객에게 보일 상품명")

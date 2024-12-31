@@ -9,6 +9,7 @@
 	`RENTAL_END_DATETIME`	DATETIME	NOT NULL	COMMENT '대여가 끝나는 일시 (회수 시간은 포함되지 않는 순수 서비스 이용 시간)',
 	`PAYMENT_CHECK_DEADLINE_DATETIME`	DATETIME	NOT NULL	COMMENT '예약 결재 확인 기한 (결재 기한 초과 처리.)',
 	`RESERVATION_APPROVAL_DEADLINE_DATETIME`	DATETIME	NOT NULL	COMMENT '관리자 승인 기한 (이 시점이 지났고, reservation_approval_datetime 가 충족되지 않았다면 취소로 간주)',
+	`RESERVATION_CANCEL_DEADLINE_DATETIME`	DATETIME	NOT NULL	COMMENT '예약 취소 가능 기한',
 	`PRODUCT_NAME`	VARCHAR(90)	NOT NULL	COMMENT '고객에게 보일 상품명(아래 부터는 예약 당시의 정보로, 영수증의 기능을 위한 정보 복제 컬럼)',
 	`PRODUCT_INTRO`	VARCHAR(6000)	NOT NULL	COMMENT '고객에게 보일 상품 소개',
 	`FRONT_IMAGE_UID`	BIGINT UNSIGNED	NULL	COMMENT 'HCP_RENTABLE_PRODUCT_IMAGE 행 고유키',

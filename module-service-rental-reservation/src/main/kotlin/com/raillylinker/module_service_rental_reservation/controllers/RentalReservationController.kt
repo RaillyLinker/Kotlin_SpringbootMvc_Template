@@ -129,7 +129,7 @@ class RentalReservationController(
 
     // ----
     @Operation(
-        summary = "예약 취소 신청 <> (더미)", // todo
+        summary = "예약 취소 신청 <>",
         description = "예약 취소 신청을 합니다."
     )
     @ApiResponses(
@@ -148,7 +148,11 @@ class RentalReservationController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductReservationInfo 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 예약을 취소 할 수 없는 상태입니다.",
+                                "2 : 예약 취소 가능 기한 초과<br>" +
+                                "3 : 예약 취소 승인 상태<br>" +
+                                "4 : 예약 신청 거부 상태<br>" +
+                                "5 : 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일)<br>" +
+                                "6 : 예약 취소 신청 상태",
                         schema = Schema(type = "string")
                     )
                 ]

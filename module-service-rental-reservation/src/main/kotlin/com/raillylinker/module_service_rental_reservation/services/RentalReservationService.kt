@@ -133,17 +133,132 @@ class RentalReservationService(
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        // todo 예약 취소 신청 가능 상태 확인
+        val reservationEntity: Db1_RaillyLinkerCompany_RentableProductReservationInfo? =
+            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findByUidAndTotalAuthMemberAndRowDeleteDateStr(
+                inputVo.rentableProductReservationInfoUid,
+                memberData,
+                "/"
+            )
 
-        // todo 예약 취소 신청 정보 추가
+        if (reservationEntity == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
 
-        // todo 상태에 따라 예약 취소 자동 승인 정보 추가
+        val nowDatetime = LocalDateTime.now()
+
+        // 예약 취소 신청 가능 상태 확인
+        if (nowDatetime.isAfter(reservationEntity.reservationCancelDeadlineDatetime)) {
+            // 예약 취소 가능 기한 초과 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
+        val historyList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                reservationEntity,
+                "/"
+            )
+
+        var notApproved = true
+        var notPaid = true
+        var requestCancel = false
+        var notRequestCancelDenyLatest = true
+        var notRequestCancelLatest = true
+        for (history in historyList) {
+            when (history.stateCode) {
+                5 -> {
+                    // 예약 취소 거부
+                    if (notRequestCancelLatest) {
+                        // 예약 취소 거부 내역이 최신인지
+                        notRequestCancelDenyLatest = false
+                    }
+                }
+
+                4 -> {
+                    // 예약 취소 승인 상태 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "3")
+                    return null
+                }
+
+                3 -> {
+                    // 예약 취소 신청
+                    requestCancel = true
+                    if (notRequestCancelDenyLatest) {
+                        // 예약 취소 신청 내역이 최신인지
+                        notRequestCancelLatest = false
+                    }
+                }
+
+                2 -> {
+                    // 예약 신청 거부 상태 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "4")
+                    return null
+                }
+
+                1 -> {
+                    // 관리자 예약 신청 승인 상태
+                    notApproved = false
+                }
+
+                0 -> {
+                    // 결제 확인 상태
+                    notPaid = false
+                }
+            }
+        }
+
+        if (notPaid && nowDatetime.isAfter(reservationEntity.paymentCheckDeadlineDatetime)) {
+            // 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일) -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "5")
+            return null
+        }
+
+        if (requestCancel) {
+            // 기존 예약 취소 신청 내역이 있고,
+            if (notRequestCancelDenyLatest && !notRequestCancelLatest) {
+                // 예약 취소 신청 상태 -> return
+                httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                httpServletResponse.setHeader("api-result-code", "6")
+                return null
+            }
+        }
+
+        // 예약 취소 신청 정보 추가
+        val reservationCancelEntity = db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
+            Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
+                reservationEntity,
+                3,
+                inputVo.cancelReason,
+                nowDatetime
+            )
+        )
+
+        // 상태에 따라 예약 취소 자동 승인 정보 추가
+        val autoCancelCompleteEntityUid =
+            if (notPaid || notApproved) {
+                // 결제 확인 완료 아님 || 예약 신청 승인 아님 상태라면 자동 취소 승인 처리
+                db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
+                    Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
+                        reservationEntity,
+                        4,
+                        inputVo.cancelReason,
+                        nowDatetime
+                    )
+                ).uid
+            } else {
+                null
+            }
 
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo
         return RentalReservationController.PostCancelProductReservationOutputVo(
-            1L,
-            null
+            reservationCancelEntity.uid!!,
+            autoCancelCompleteEntityUid
         )
     }
 
