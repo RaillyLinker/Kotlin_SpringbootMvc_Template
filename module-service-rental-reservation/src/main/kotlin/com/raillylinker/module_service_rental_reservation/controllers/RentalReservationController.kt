@@ -204,7 +204,7 @@ class RentalReservationController(
 
     // ----
     @Operation(
-        summary = "대여품 조기반납 신고 <> (더미)", // todo
+        summary = "대여품 조기반납 신고 <>",
         description = "대여품을 조기반납 신고합니다."
     )
     @ApiResponses(
@@ -225,7 +225,11 @@ class RentalReservationController(
                                 "1 : rentableProductReservationInfo 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : 조기 반납 기준 일시가 현재보다 앞으로 설정됨<br>" +
                                 "3 : 조기 반납 기준 일시가 대여 마지막 일시보다 뒤로 설정됨<br>" +
-                                "4 : 조기 반납 기준 일시가 대여 시작일보다 앞으로 설정됨",
+                                "4 : 조기 반납 기준 일시가 대여 시작일보다 앞으로 설정됨<br>" +
+                                "5 : 결재 대기 상태입니다<br>" +
+                                "6 : 미결제 상태입니다<br>" +
+                                "7 : 예약 취소 승인 상태입니다.<br>" +
+                                "8 : 예약 신청 승인 처리가 되지 않음",
                         schema = Schema(type = "string")
                     )
                 ]

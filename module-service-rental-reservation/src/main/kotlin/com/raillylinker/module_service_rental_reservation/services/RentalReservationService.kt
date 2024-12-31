@@ -200,10 +200,54 @@ class RentalReservationService(
             return null
         }
 
-        // todo 조기 반납 가능 상태 확인
-        // todo 결제 확인 처리가 되지 않음 -> return
-        // todo 예약 신청 승인 처리가 되지 않음 -> return
-        // todo 예약 취소 승인 상태 -> return
+        val historyList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                reservationEntity,
+                "/"
+            )
+
+        if (historyList.isEmpty()) {
+            // 결재 대기 상태입니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "5")
+            return null
+        }
+
+        var notPaid = true
+        var notApproved = true
+        for (history in historyList) {
+            when (history.stateCode) {
+                4 -> {
+                    // 예약 취소 승인 내역 있음 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "7")
+                    return null
+                }
+
+                1 -> {
+                    // 예약 승인
+                    notApproved = false
+                }
+
+                0 -> {
+                    notPaid = false
+                }
+            }
+        }
+
+        if (notPaid) {
+            // 미결제 상태 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "6")
+            return null
+        }
+
+        if (notApproved) {
+            // 예약 신청 승인 처리가 되지 않음 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "8")
+            return null
+        }
 
         // 조기 반납 신고 정보 입력
         val stateChangeEntity = db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
