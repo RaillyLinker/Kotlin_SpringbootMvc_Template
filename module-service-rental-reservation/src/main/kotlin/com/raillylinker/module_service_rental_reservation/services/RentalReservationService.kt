@@ -107,29 +107,6 @@ class RentalReservationService(
 
 
     // ----
-    // (상품 결제 처리 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun postRentableProductReservationPaymentInfo(
-        httpServletResponse: HttpServletResponse,
-        authorization: String,
-        inputVo: RentalReservationController.PostRentableProductReservationPaymentInfoInputVo
-    ): RentalReservationController.PostRentableProductReservationPaymentInfoOutputVo? {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-
-        // todo
-        httpServletResponse.status = HttpStatus.OK.value()
-        // todo
-        return RentalReservationController.PostRentableProductReservationPaymentInfoOutputVo(
-            1L
-        )
-    }
-
-
-    // ----
     // (예약 취소 신청 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postCancelProductReservation(
