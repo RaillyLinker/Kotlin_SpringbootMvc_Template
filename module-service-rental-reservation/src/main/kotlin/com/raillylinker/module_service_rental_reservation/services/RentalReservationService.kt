@@ -120,7 +120,7 @@ class RentalReservationService(
         if (rentalStartDatetime.isAfter(rentalEndDatetime)) {
             // 대여 시작 일시가 끝 일시보다 클 경우 -> return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "3")
+            httpServletResponse.setHeader("api-result-code", "2")
             return null
         }
 
@@ -129,6 +129,18 @@ class RentalReservationService(
             "${inputVo.rentableProductInfoUid}",
             7000L,
             {
+                val rentableProductInfo =
+                    db1RaillyLinkerCompanyRentableProductInfoRepository.findByUidAndRowDeleteDateStr(
+                        inputVo.rentableProductInfoUid,
+                        "/"
+                    )
+
+                if (rentableProductInfo == null) {
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "1")
+                    return@tryLockRepeat null
+                }
+
                 // todo 현 시점 예약 가능 설정이 아닐 때 -> return
                 // todo 현재 시간이 예약 가능 일시보다 작음 -> return
                 // todo 대여 시작 일시가 예약 취소 가능 기한(현재 시간 + N)과 같거나 작음 -> return
