@@ -2386,6 +2386,186 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
+        summary = "대여 가능 상품 예약 정보의 결제 확인 처리 <ADMIN> (더미)", // todo
+        description = "대여 가능 상품 예약 정보를 결제 확인 처리합니다.<br>" +
+                "rentable_product_reservation_state_change_history 에 결제 확인 히스토리를 추가합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 상태가 아닙니다.", // todo
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/rentable-product-reservation-info/{rentableProductReservationInfoUid}/payment-complete"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun postRentableProductReservationInfoPaymentComplete(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(
+            name = "rentableProductReservationInfoUid",
+            description = "rentableProductReservationInfo 고유값",
+            example = "1"
+        )
+        @PathVariable("rentableProductReservationInfoUid")
+        rentableProductReservationInfoUid: Long,
+        @RequestBody
+        inputVo: PostRentableProductReservationInfoPaymentCompleteInputVo
+    ): PostRentableProductReservationInfoPaymentCompleteOutputVo? {
+        return service.postRentableProductReservationInfoPaymentComplete(
+            httpServletResponse,
+            authorization!!,
+            rentableProductReservationInfoUid,
+            inputVo
+        )
+    }
+
+    data class PostRentableProductReservationInfoPaymentCompleteInputVo(
+        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
+        @JsonProperty("stateChangeDesc")
+        val stateChangeDesc: String,
+        @Schema(
+            description = "상태변경 기준일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("stateChangeDatetime")
+        val stateChangeDatetime: String
+    )
+
+    data class PostRentableProductReservationInfoPaymentCompleteOutputVo(
+        @Schema(description = "reservationStateChangeHistory 고유값", required = true, example = "1")
+        @JsonProperty("reservationStateChangeHistoryUid")
+        val reservationStateChangeHistoryUid: Long
+    )
+
+
+    // ----
+    @Operation(
+        summary = "대여 가능 상품 예약 정보의 환불 완료 처리 <ADMIN> (더미)", // todo
+        description = "대여 가능 상품 예약 정보를 환불 완료 처리합니다.<br>" +
+                "rentable_product_reservation_state_change_history 에 결제 확인 히스토리를 추가합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 상태가 아닙니다.", // todo
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/rentable-product-reservation-info/{rentableProductReservationInfoUid}/refund-complete"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun postRentableProductReservationInfoRefundComplete(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(
+            name = "rentableProductReservationInfoUid",
+            description = "rentableProductReservationInfo 고유값",
+            example = "1"
+        )
+        @PathVariable("rentableProductReservationInfoUid")
+        rentableProductReservationInfoUid: Long,
+        @RequestBody
+        inputVo: PostRentableProductReservationInfoRefundCompleteInputVo
+    ): PostRentableProductReservationInfoRefundCompleteOutputVo? {
+        return service.postRentableProductReservationInfoRefundComplete(
+            httpServletResponse,
+            authorization!!,
+            rentableProductReservationInfoUid,
+            inputVo
+        )
+    }
+
+    data class PostRentableProductReservationInfoRefundCompleteInputVo(
+        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
+        @JsonProperty("stateChangeDesc")
+        val stateChangeDesc: String,
+        @Schema(
+            description = "상태변경 기준일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("stateChangeDatetime")
+        val stateChangeDatetime: String
+    )
+
+    data class PostRentableProductReservationInfoRefundCompleteOutputVo(
+        @Schema(description = "reservationStateChangeHistory 고유값", required = true, example = "1")
+        @JsonProperty("reservationStateChangeHistoryUid")
+        val reservationStateChangeHistoryUid: Long
+    )
+
+
+    // ----
+    @Operation(
         summary = "대여 가능 상품 예약 상태 테이블의 상세 설명 및 기준 일시 수정 <ADMIN>",
         description = "대여 가능 상품 예약 상태 테이블의 상세 설명 및 기준 일시를 수정 처리합니다.<br>" +
                 "한번 결정된 상태 코드는 변하지 않습니다."

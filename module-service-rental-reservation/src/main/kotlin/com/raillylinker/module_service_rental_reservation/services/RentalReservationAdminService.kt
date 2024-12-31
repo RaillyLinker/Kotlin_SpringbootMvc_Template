@@ -2078,6 +2078,118 @@ class RentalReservationAdminService(
 
 
     // ----
+    // (대여 가능 상품 예약 정보의 결제 확인 처리 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun postRentableProductReservationInfoPaymentComplete(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductReservationInfoUid: Long,
+        inputVo: RentalReservationAdminController.PostRentableProductReservationInfoPaymentCompleteInputVo
+    ): RentalReservationAdminController.PostRentableProductReservationInfoPaymentCompleteOutputVo? {
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+        // rentableProductReservationInfoUid 정보 존재 여부 확인
+        val rentableProductReservationInfo =
+            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findByUidAndRowDeleteDateStr(
+                rentableProductReservationInfoUid,
+                "/"
+            )
+
+        if (rentableProductReservationInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        // 상태 확인
+        val historyList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductReservationInfo,
+                "/"
+            )
+        // todo
+
+        // 예약 히스토리에 정보 기입
+        val newReservationStateChangeHistory =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
+                Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
+                    rentableProductReservationInfo,
+                    0,
+                    "관리자 결제 확인",
+                    ZonedDateTime.parse(
+                        inputVo.stateChangeDatetime,
+                        DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+                    ).toLocalDateTime()
+                )
+            )
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationAdminController.PostRentableProductReservationInfoPaymentCompleteOutputVo(
+            newReservationStateChangeHistory.uid!!
+        )
+    }
+
+
+    // ----
+    // (대여 가능 상품 예약 정보의 환불 완료 처리 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun postRentableProductReservationInfoRefundComplete(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductReservationInfoUid: Long,
+        inputVo: RentalReservationAdminController.PostRentableProductReservationInfoRefundCompleteInputVo
+    ): RentalReservationAdminController.PostRentableProductReservationInfoRefundCompleteOutputVo? {
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+        // rentableProductReservationInfoUid 정보 존재 여부 확인
+        val rentableProductReservationInfo =
+            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findByUidAndRowDeleteDateStr(
+                rentableProductReservationInfoUid,
+                "/"
+            )
+
+        if (rentableProductReservationInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        // 상태 확인
+        val historyList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductReservationInfo,
+                "/"
+            )
+        // todo
+
+        // 예약 히스토리에 정보 기입
+        val newReservationStateChangeHistory =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
+                Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
+                    rentableProductReservationInfo,
+                    8,
+                    "관리자 환불 완료",
+                    ZonedDateTime.parse(
+                        inputVo.stateChangeDatetime,
+                        DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+                    ).toLocalDateTime()
+                )
+            )
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationAdminController.PostRentableProductReservationInfoRefundCompleteOutputVo(
+            newReservationStateChangeHistory.uid!!
+        )
+    }
+
+
+    // ----
     // (대여 가능 상품 예약 상태 테이블의 상세 설명 수정 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchReservationStateChangeHistoryStateChangeDescAndDate(
