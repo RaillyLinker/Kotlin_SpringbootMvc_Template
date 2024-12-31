@@ -1612,10 +1612,7 @@ class RentalReservationAdminService(
                     rentableProductReservationInfo,
                     1,
                     "관리자 예약 승인",
-                    ZonedDateTime.parse(
-                        inputVo.stateChangeDatetime,
-                        DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-                    ).toLocalDateTime()
+                    anchorDatetime
                 )
             )
 
@@ -1716,10 +1713,7 @@ class RentalReservationAdminService(
                     rentableProductReservationInfo,
                     2,
                     "관리자 예약 거부",
-                    ZonedDateTime.parse(
-                        inputVo.stateChangeDatetime,
-                        DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-                    ).toLocalDateTime()
+                    anchorDatetime
                 )
             )
 
@@ -1854,10 +1848,7 @@ class RentalReservationAdminService(
                     rentableProductReservationInfo,
                     4,
                     "관리자 취소 승인",
-                    ZonedDateTime.parse(
-                        inputVo.stateChangeDatetime,
-                        DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-                    ).toLocalDateTime()
+                    anchorDatetime
                 )
             )
 
@@ -1992,10 +1983,7 @@ class RentalReservationAdminService(
                     rentableProductReservationInfo,
                     5,
                     "관리자 취소 거부",
-                    ZonedDateTime.parse(
-                        inputVo.stateChangeDatetime,
-                        DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-                    ).toLocalDateTime()
+                    anchorDatetime
                 )
             )
 
@@ -2105,12 +2093,33 @@ class RentalReservationAdminService(
         }
 
         // 상태 확인
+        val anchorDatetime = ZonedDateTime.parse(
+            inputVo.stateChangeDatetime,
+            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+        ).toLocalDateTime()
+
+        if (anchorDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
+            // 결제 확인 기한 초과 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return null
+        }
+
         val historyList =
             db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
                 rentableProductReservationInfo,
                 "/"
             )
-        // todo
+        for (history in historyList) {
+            when (history.stateCode) {
+                0 -> {
+                    // 결제 확인 내역 있음 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "2")
+                    return null
+                }
+            }
+        }
 
         // 예약 히스토리에 정보 기입
         val newReservationStateChangeHistory =
@@ -2119,10 +2128,7 @@ class RentalReservationAdminService(
                     rentableProductReservationInfo,
                     0,
                     "관리자 결제 확인",
-                    ZonedDateTime.parse(
-                        inputVo.stateChangeDatetime,
-                        DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-                    ).toLocalDateTime()
+                    anchorDatetime
                 )
             )
 

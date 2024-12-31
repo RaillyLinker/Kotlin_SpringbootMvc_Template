@@ -2386,7 +2386,7 @@ class RentalReservationAdminController(
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 예약 정보의 결제 확인 처리 <ADMIN> (더미)", // todo
+        summary = "대여 가능 상품 예약 정보의 결제 확인 처리 <ADMIN>",
         description = "대여 가능 상품 예약 정보를 결제 확인 처리합니다.<br>" +
                 "rentable_product_reservation_state_change_history 에 결제 확인 히스토리를 추가합니다."
     )
@@ -2406,7 +2406,8 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 상태가 아닙니다.", // todo
+                                "2 : 결제 확인 내역이 존재합니다.<br>" +
+                                "3: 결제 확인 가능 기한을 초과하였습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
