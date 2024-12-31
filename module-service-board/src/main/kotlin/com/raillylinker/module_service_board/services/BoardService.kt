@@ -229,35 +229,34 @@ class BoardService(
     fun updateBoardViewCount1UpInAsync(
         boardUid: Long
     ) {
-        var lockKey: String? = null
+        redis1LockBoardView.tryLockRepeat(
+            // Redis 키
+            "$boardUid",
+            // Redis 만료시간
+            1000L,
+            // Lock 획득 후 작업 콜백
+            {
+                // 락 획득 후 기존 viewCount 조회 후 수정
+                val boardEntity = db1RaillyLinkerCompanySampleBoardRepository.findByUidAndRowDeleteDateStr(
+                    boardUid,
+                    "/"
+                )
 
-        while (lockKey == null) {
-            // 공유 락을 얻을 때 까지 반복
-            lockKey = redis1LockBoardView.tryLock("$boardUid", 100000)
-            if (lockKey == null) {
-                // 공유 락을 못 얻었다면 0.5초 대기
-                Thread.sleep(500L)
-            }
-        }
+                if (boardEntity == null) {
+                    return@tryLockRepeat
+                }
 
-        try {
-            // 락 획득 후 기존 viewCount 조회 후 수정
-            val boardEntity = db1RaillyLinkerCompanySampleBoardRepository.findByUidAndRowDeleteDateStr(
-                boardUid,
-                "/"
-            )
+                boardEntity.viewCount += 1
 
-            if (boardEntity == null) {
-                return
-            }
-
-            boardEntity.viewCount += 1
-
-            db1RaillyLinkerCompanySampleBoardRepository.save(boardEntity)
-        } finally {
-            // 작업 완료로 인한 락 반납
-            redis1LockBoardView.unlock("$boardUid", lockKey)
-        }
+                db1RaillyLinkerCompanySampleBoardRepository.save(boardEntity)
+            },
+            // 락 불발시 최소 대기시간
+            50L,
+            // 락 불발 반복시 대기시간 증가율
+            0.1,
+            // 락 불발 반복시 대기시간 증가 최대시간
+            100L
+        )
     }
 
 
