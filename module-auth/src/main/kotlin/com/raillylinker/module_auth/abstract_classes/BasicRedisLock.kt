@@ -112,7 +112,7 @@ abstract class BasicRedisLock(
     // ----
     // (반복 락 획득 시도)
     // 락을 획득 할 때까지 반복적으로 tryLock 을 하고, 락 획득시 콜백을 실행합니다.
-    fun tryLockRepeat(
+    fun <OutputType> tryLockRepeat(
         // lock 키
         key: String,
         // lock 만료시간
@@ -120,14 +120,14 @@ abstract class BasicRedisLock(
         // whenLockPass 의 작업 수행 시간보다 커야하며, 작다면 작업을 수행하는 도중 락이 풀릴 것입니다.
         expireTimeMs: Long,
         // lock 을 얻으면 수행할 작업
-        whenLockPass: () -> Unit,
+        whenLockPass: () -> OutputType,
         // lock 불통과시 기본 대기시간
         baseWaitTime: Long = 50L,
         // lock 불통과 때마다 기본 대기시간이 증가하는 비율
         incrementalFactor: Double = 0.1,
         // 대기 시간 증가 최대값
         maxWaitTime: Long = 100L,
-    ) {
+    ): OutputType {
         // 공유 락 해제 키
         var unLockKey: String? = null
         // 현재 재시도 횟수
@@ -157,11 +157,15 @@ abstract class BasicRedisLock(
             }
         }
 
+        val output: OutputType
+
         try {
-            whenLockPass()
+            output = whenLockPass()
         } finally {
             // 작업 완료로 인한 락 반납
             this.unlock(key, unLockKey)
         }
+
+        return output
     }
 }

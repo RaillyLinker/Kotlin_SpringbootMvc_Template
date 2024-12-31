@@ -682,7 +682,7 @@ class TestService(
         testUserIdx: Long,
         price: Long
     ) {
-        redis1LockTestBank.tryLockRepeat(
+        redis1LockTestBank.tryLockRepeat<Unit>(
             // Redis 키
             "$testUserIdx",
             // Redis 만료시간

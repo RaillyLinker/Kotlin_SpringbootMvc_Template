@@ -229,7 +229,7 @@ class BoardService(
     fun updateBoardViewCount1UpInAsync(
         boardUid: Long
     ) {
-        redis1LockBoardView.tryLockRepeat(
+        redis1LockBoardView.tryLockRepeat<Unit>(
             // Redis 키
             "$boardUid",
             // Redis 만료시간
