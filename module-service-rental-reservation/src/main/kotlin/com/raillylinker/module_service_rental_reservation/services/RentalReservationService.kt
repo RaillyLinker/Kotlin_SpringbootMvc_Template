@@ -5,6 +5,8 @@ import com.raillylinker.module_service_rental_reservation.configurations.Securit
 import com.raillylinker.module_service_rental_reservation.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR
 import com.raillylinker.module_service_rental_reservation.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.module_service_rental_reservation.controllers.RentalReservationController
+import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductReservationInfo
+import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_PaymentRefund_Repository
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_Payment_Repository
@@ -29,6 +31,9 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 @Service
 class RentalReservationService(
@@ -94,10 +99,16 @@ class RentalReservationService(
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
             AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
         )
+        val memberData =
+            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        // todo
+        // todo 입력값 검증
+
+        // todo 예약 상품 상태 확인
+
+        // todo 예약 정보 입력
+
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo
         return RentalReservationController.PostProductReservationOutputVo(
             1L,
             "2024_05_02_T_15_14_49_552_KST",
@@ -119,6 +130,8 @@ class RentalReservationService(
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
             AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
         )
+        val memberData =
+            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
         // todo
         httpServletResponse.status = HttpStatus.OK.value()
@@ -143,12 +156,68 @@ class RentalReservationService(
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
             AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
         )
+        val memberData =
+            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        // todo
+        val reservationEntity: Db1_RaillyLinkerCompany_RentableProductReservationInfo? =
+            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findByUidAndTotalAuthMemberAndRowDeleteDateStr(
+                inputVo.rentableProductReservationInfoUid,
+                memberData,
+                "/"
+            )
+
+        if (reservationEntity == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        val anchorDatetime = ZonedDateTime.parse(
+            inputVo.stateChangeDatetime,
+            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+        ).toLocalDateTime()
+
+        val nowDatetime = LocalDateTime.now()
+
+        if (anchorDatetime.isBefore(nowDatetime)) {
+            // 조기 반납 기준 일시가 현재보다 앞으로 설정됨 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
+        if (anchorDatetime.isAfter(reservationEntity.rentalEndDatetime)) {
+            // 조기 반납 기준 일시가 대여 마지막 일시보다 뒤로 설정됨 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return null
+        }
+
+        if (anchorDatetime.isBefore(reservationEntity.rentalStartDatetime)) {
+            // 조기 반납 기준 일시가 대여 시작일보다 앞으로 설정됨 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
+            return null
+        }
+
+        // todo 조기 반납 가능 상태 확인
+        // todo 결제 확인 처리가 되지 않음 -> return
+        // todo 예약 신청 승인 처리가 되지 않음 -> return
+        // todo 예약 취소 승인 상태 -> return
+
+        // 조기 반납 신고 정보 입력
+        val stateChangeEntity = db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
+            Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
+                reservationEntity,
+                6,
+                inputVo.earlyReturnReason,
+                anchorDatetime
+            )
+        )
+
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo
         return RentalReservationController.PostRentalProductEarlyReturnOutputVo(
-            1L
+            stateChangeEntity.uid!!
         )
     }
 }

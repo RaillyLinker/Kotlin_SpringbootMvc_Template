@@ -223,7 +223,9 @@ class RentalReservationController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductReservationInfo 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 조기 반납 신고를 할 수 없는 상태입니다.",
+                                "2 : 조기 반납 기준 일시가 현재보다 앞으로 설정됨<br>" +
+                                "3 : 조기 반납 기준 일시가 대여 마지막 일시보다 뒤로 설정됨<br>" +
+                                "4 : 조기 반납 기준 일시가 대여 시작일보다 앞으로 설정됨",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -264,7 +266,14 @@ class RentalReservationController(
         val rentableProductReservationInfoUid: Long,
         @Schema(description = "조기 반납 사유", required = true, example = "개인 사유")
         @JsonProperty("earlyReturnReason")
-        val earlyReturnReason: String
+        val earlyReturnReason: String,
+        @Schema(
+            description = "조기 반납 기준일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("stateChangeDatetime")
+        val stateChangeDatetime: String
     )
 
     data class PostRentalProductEarlyReturnOutputVo(
