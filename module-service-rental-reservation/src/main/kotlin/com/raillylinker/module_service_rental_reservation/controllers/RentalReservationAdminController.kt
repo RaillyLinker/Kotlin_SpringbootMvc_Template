@@ -402,6 +402,7 @@ class RentalReservationAdminController(
     )
 
 
+    // todo : reservation race condition 처리
     // ----
     @Operation(
         summary = "대여 가능 상품 수정 <ADMIN>",
@@ -559,6 +560,7 @@ class RentalReservationAdminController(
     }
 
 
+    // todo : reservation race condition 처리
     // ----
     @Operation(
         summary = "대여 가능 상품 삭제 <ADMIN>",
@@ -617,6 +619,7 @@ class RentalReservationAdminController(
     }
 
 
+    // todo : reservation race condition 처리
     // ----
     @Operation(
         summary = "대여 가능 상품 추가 예약 가능 설정 수정 <ADMIN>",
@@ -693,6 +696,7 @@ class RentalReservationAdminController(
     )
 
 
+    // todo : reservation race condition 처리
     // ----
     @Operation(
         summary = "대여 가능 상품 최소 예약 횟수 설정 수정 <ADMIN>",
@@ -770,6 +774,7 @@ class RentalReservationAdminController(
     )
 
 
+    // todo : reservation race condition 처리
     // ----
     @Operation(
         summary = "대여 가능 상품 최대 예약 횟수 설정 수정 <ADMIN>",
@@ -1422,6 +1427,7 @@ class RentalReservationAdminController(
     )
 
 
+    // todo : reservation race condition 처리
     // ----
     @Operation(
         summary = "대여 가능 상품 재고 삭제 <ADMIN>",
@@ -1480,6 +1486,7 @@ class RentalReservationAdminController(
     }
 
 
+    // todo : reservation race condition 처리
     // ----
     @Operation(
         summary = "대여 가능 상품 재고 수정 <ADMIN>",
@@ -1592,6 +1599,7 @@ class RentalReservationAdminController(
     )
 
 
+    // todo : reservation race condition 처리
     // ----
     @Operation(
         summary = "대여 가능 상품 재고 추가 예약 가능 설정 수정 <ADMIN>",
@@ -2650,6 +2658,7 @@ class RentalReservationAdminController(
     )
 
 
+    // todo : reservation race condition 처리
     // ----
     @Operation(
         summary = "개별 상품 예약 정보 다음 준비 예정일 수정 <ADMIN>",

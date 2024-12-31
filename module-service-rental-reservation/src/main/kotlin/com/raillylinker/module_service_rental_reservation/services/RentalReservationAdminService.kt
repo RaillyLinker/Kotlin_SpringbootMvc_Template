@@ -402,7 +402,6 @@ class RentalReservationAdminService(
                 rentableProductCategoryEntity
             }
 
-        rentableProduct.updateVersionSeq += 1
         rentableProduct.productName = inputVo.productName
         rentableProduct.rentableProductCategory = rentableProductCategory
         rentableProduct.productIntro = inputVo.productIntro

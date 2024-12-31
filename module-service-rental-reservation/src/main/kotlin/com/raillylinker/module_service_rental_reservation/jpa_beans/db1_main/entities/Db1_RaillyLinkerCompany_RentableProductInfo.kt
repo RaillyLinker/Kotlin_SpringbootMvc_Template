@@ -97,11 +97,6 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
     @Comment("행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)")
     var rowDeleteDateStr: String = "/"
 
-    @Column(name = "update_version_seq", nullable = false, columnDefinition = "INT UNSIGNED")
-    @ColumnDefault("0")
-    @Comment("업데이트 버전 시퀀스 (0에서 시작해서 정보 업데이트가 될 때마다 1 씩 올라갑니다. 예약 프로세스 진행중 버전 정보가 맞지 않으면 진행이 불가능하게 할 것.)")
-    var updateVersionSeq: Long = 0
-
 
     // ---------------------------------------------------------------------------------------------
     // <중첩 클래스 공간>

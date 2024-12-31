@@ -48,8 +48,7 @@ CREATE TABLE `HCP_RENTABLE_PRODUCT_INFO` (
 	`MAXIMUM_RESERVATION_UNIT_COUNT`	INT UNSIGNED	NULL	COMMENT '단위 예약 시간을 대여일 기준에서 최대 몇번 추가 가능한지 (Null 이라면 제한 없음)',
 	`RESERVATION_UNIT_PRICE`	DECIMAL(15, 2) UNSIGNED	NOT NULL	COMMENT '단위 예약 시간에 대한 가격 (예약 시간 / 단위 예약 시간 * 예약 단가 = 예약 최종가)',
 	`RESERVATION_UNIT_PRICE_CURRENCY_CODE`	CHAR(3)	NOT NULL	COMMENT '단위 예약 시간에 대한 가격 통화 코드(IOS 4217, ex : KRW, USD, EUR...)',
-	`NOW_RESERVABLE`	BIT(1)	NOT NULL	COMMENT '재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정',
-	`UPDATE_VERSION_SEQ`	INT UNSIGNED	NOT NULL	COMMENT '업데이트 버전 시퀀스 (0에서 시작해서 정보 업데이트가 될 때마다 1 씩 올라갑니다. 예약 프로세스 진행중 버전 정보가 맞지 않으면 진행이 불가능하게 할 것.)'
+	`NOW_RESERVABLE`	BIT(1)	NOT NULL	COMMENT '재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정'
 );
 
 CREATE TABLE `HCP_RENTABLE_PRODUCT_RESERVATION_STATE_CHANGE_HISTORY` (
