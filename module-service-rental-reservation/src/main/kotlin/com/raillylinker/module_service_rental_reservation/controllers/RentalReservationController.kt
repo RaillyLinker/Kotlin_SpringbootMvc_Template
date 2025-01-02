@@ -47,7 +47,8 @@ class RentalReservationController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : rentalStartDatetime 가 rentalEndDatetime 보다 커서는 안됩니다.",
+                                "2 : rentalStartDatetime 가 rentalEndDatetime 보다 커서는 안됩니다.<br>" +
+                                "3 : 예약 상품 버전 시퀀스가 일치하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]

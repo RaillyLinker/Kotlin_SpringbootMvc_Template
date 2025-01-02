@@ -428,6 +428,7 @@ class RentalReservationAdminService(
                 rentableProduct.reservationUnitPrice = inputVo.reservationUnitPrice
                 rentableProduct.reservationUnitPriceCurrencyCode = inputVo.reservationUnitPriceCurrencyCode.name
                 rentableProduct.nowReservable = inputVo.nowReservable
+                rentableProduct.versionSeq += 1
 
                 db1RaillyLinkerCompanyRentableProductInfoRepository.save(rentableProduct)
 

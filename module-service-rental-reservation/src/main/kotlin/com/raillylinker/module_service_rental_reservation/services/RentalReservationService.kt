@@ -141,6 +141,12 @@ class RentalReservationService(
                     return@tryLockRepeat null
                 }
 
+                if(rentableProductInfo.versionSeq != inputVo.rentableProductVersionSeq){
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "3")
+                    return@tryLockRepeat null
+                }
+
                 // todo 현 시점 예약 가능 설정이 아닐 때 -> return
                 // todo 현재 시간이 예약 가능 일시보다 작음 -> return
                 // todo 대여 시작 일시가 예약 취소 가능 기한(현재 시간 + N)과 같거나 작음 -> return

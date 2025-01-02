@@ -97,6 +97,11 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
     @Comment("행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)")
     var rowDeleteDateStr: String = "/"
 
+    @Column(name = "version_seq", nullable = false, columnDefinition = "BIGINT UNSIGNED")
+    @ColumnDefault("0")
+    @Comment("예약 상품 정보 버전 시퀀스(고객이 정보를 확인한 시점의 버전과 예약 신청하는 시점의 버전이 다르면 진행 불가)")
+    var versionSeq: Long = 0L
+
 
     // ---------------------------------------------------------------------------------------------
     // <중첩 클래스 공간>
