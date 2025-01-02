@@ -2218,4 +2218,63 @@ class JpaTestController(
     ) {
         service.fkTableNonTransactionTest(httpServletResponse)
     }
+
+
+    // ----
+    @Operation(
+        summary = "ORM Datatype Mapping 테이블 Row 입력 테스트 API",
+        description = "ORM Datatype Mapping 테이블에 값이 잘 입력되는지 테스트"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/orm-datatype-mapping-test"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun ormDatatypeMappingTest(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @RequestBody
+        inputVo: OrmDatatypeMappingTestInputVo
+    ): OrmDatatypeMappingTestOutputVo? {
+        return service.ormDatatypeMappingTest(httpServletResponse, inputVo)
+    }
+
+    data class OrmDatatypeMappingTestInputVo(
+        @Schema(description = "TINYINT 타입 컬럼(-128 ~ 127 사이 값을 입력)", required = true, example = "1")
+        @JsonProperty("tinyInt")
+        val tinyInt: Byte,
+        @Schema(description = "TINYINT UNSIGNED 타입 컬럼(0 ~ 255 사이 값을 입력)", required = true, example = "1")
+        @JsonProperty("tinyIntUnsigned")
+        val tinyIntUnsigned: Short,
+        @Schema(description = "SMALLINT 타입 컬럼(-32,768 ~ 32,767 사이 값을 입력)", required = true, example = "1")
+        @JsonProperty("smallInt")
+        val smallInt: Short,
+        @Schema(description = "SMALLINT UNSIGNED 타입 컬럼(0 ~ 65,535 사이 값을 입력)", required = true, example = "1")
+        @JsonProperty("smallIntUnsigned")
+        val smallIntUnsigned: Int
+    )
+
+    data class OrmDatatypeMappingTestOutputVo(
+        @Schema(description = "TINYINT 타입 컬럼", required = true, example = "1")
+        @JsonProperty("tinyInt")
+        val tinyInt: Byte,
+        @Schema(description = "TINYINT UNSIGNED 타입 컬럼(0 ~ 255 사이 값을 입력)", required = true, example = "1")
+        @JsonProperty("tinyIntUnsigned")
+        val tinyIntUnsigned: Short,
+        @Schema(description = "SMALLINT 타입 컬럼(-32,768 ~ 32,767 사이 값을 입력)", required = true, example = "1")
+        @JsonProperty("smallInt")
+        val smallInt: Short,
+        @Schema(description = "SMALLINT UNSIGNED 타입 컬럼(0 ~ 65,535 사이 값을 입력)", required = true, example = "1")
+        @JsonProperty("smallIntUnsigned")
+        val smallIntUnsigned: Int
+    )
 }

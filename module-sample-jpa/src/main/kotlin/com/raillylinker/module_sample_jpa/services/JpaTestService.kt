@@ -31,6 +31,7 @@ class JpaTestService(
     private val db1TemplateFkTestManyToOneChildRepository: Db1_Template_FkTestManyToOneChild_Repository,
     private val db1TemplateLogicalDeleteUniqueDataRepository: Db1_Template_LogicalDeleteUniqueData_Repository,
     private val db1TemplateJustBooleanTestRepository: Db1_Template_JustBooleanTest_Repository,
+    private val db1TemplateDataTypeMappingTestRepository: Db1_Template_DataTypeMappingTest_Repository,
 
     // (Database Repository DSL)
     private val db1TemplateRepositoryDsl: Db1_Template_RepositoryDsl
@@ -1258,5 +1259,31 @@ class JpaTestService(
         )
 
         throw RuntimeException("No Transaction Exception Test!")
+    }
+
+
+    // ----
+    // (ORM Datatype Mapping 테이블 Row 입력 테스트 API)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun ormDatatypeMappingTest(
+        httpServletResponse: HttpServletResponse,
+        inputVo: JpaTestController.OrmDatatypeMappingTestInputVo
+    ): JpaTestController.OrmDatatypeMappingTestOutputVo? {
+        val result = db1TemplateDataTypeMappingTestRepository.save(
+            Db1_Template_DataTypeMappingTest(
+                inputVo.tinyInt,
+                inputVo.tinyIntUnsigned,
+                inputVo.smallInt,
+                inputVo.smallIntUnsigned
+            )
+        )
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return JpaTestController.OrmDatatypeMappingTestOutputVo(
+            result.tinyInt,
+            result.tinyIntUnsigned,
+            result.smallInt,
+            result.smallIntUnsigned
+        )
     }
 }
