@@ -1,8 +1,10 @@
 package com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories
 
+import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockInfo
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockReservationInfo
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Repository
 interface Db1_RaillyLinkerCompany_RentableProductStockReservationInfo_Repository :
@@ -11,4 +13,10 @@ interface Db1_RaillyLinkerCompany_RentableProductStockReservationInfo_Repository
         uid: Long,
         rowDeleteDateStr: String
     ): Db1_RaillyLinkerCompany_RentableProductStockReservationInfo?
+
+    fun existsByRentableProductStockInfoAndRowDeleteDateStrAndNextReadyDatetime(
+        rentableProductStockInfo: Db1_RaillyLinkerCompany_RentableProductStockInfo,
+        rowDeleteDateStr: String = "/",
+        nextReadyDatetime: LocalDateTime? = null
+    ): Boolean
 }
