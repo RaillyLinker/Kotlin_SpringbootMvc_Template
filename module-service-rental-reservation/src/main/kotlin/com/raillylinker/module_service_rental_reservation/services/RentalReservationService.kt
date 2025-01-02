@@ -373,7 +373,7 @@ class RentalReservationService(
         var notRequestCancelDenyLatest = true
         var notRequestCancelLatest = true
         for (history in historyList) {
-            when (history.stateCode) {
+            when (history.stateCode.toInt()) {
                 5 -> {
                     // 예약 취소 거부
                     if (notRequestCancelLatest) {
@@ -541,7 +541,7 @@ class RentalReservationService(
         var notPaid = true
         var notApproved = true
         for (history in historyList) {
-            when (history.stateCode) {
+            when (history.stateCode.toInt()) {
                 4 -> {
                     // 예약 취소 승인 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()

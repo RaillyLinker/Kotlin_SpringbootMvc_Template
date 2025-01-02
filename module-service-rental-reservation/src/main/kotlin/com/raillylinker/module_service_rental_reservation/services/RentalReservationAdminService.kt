@@ -1680,7 +1680,7 @@ class RentalReservationAdminService(
 
         var notPaid = true
         for (history in historyList) {
-            when (history.stateCode) {
+            when (history.stateCode.toInt()) {
                 4 -> {
                     // 예약 취소 승인 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
@@ -1781,7 +1781,7 @@ class RentalReservationAdminService(
 
         var notPaid = true
         for (history in historyList) {
-            when (history.stateCode) {
+            when (history.stateCode.toInt()) {
                 4 -> {
                     // 예약 취소 승인 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
@@ -1892,7 +1892,7 @@ class RentalReservationAdminService(
         var notRequestCancelDenyLatest = true
         var notRequestCancelLatest = true
         for (history in historyList) {
-            when (history.stateCode) {
+            when (history.stateCode.toInt()) {
                 5 -> {
                     // 예약 취소 거부
                     if (notRequestCancelLatest) {
@@ -2027,7 +2027,7 @@ class RentalReservationAdminService(
         var notRequestCancelDenyLatest = true
         var notRequestCancelLatest = true
         for (history in historyList) {
-            when (history.stateCode) {
+            when (history.stateCode.toInt()) {
                 5 -> {
                     // 예약 취소 거부
                     if (notRequestCancelLatest) {
@@ -2147,7 +2147,7 @@ class RentalReservationAdminService(
 
         val latestHistory = historyList.first()
 
-        if (latestHistory.stateCode != 6) {
+        if (latestHistory.stateCode.toInt() != 6) {
             // 대여 상품 조기 반납 신고 내역이 없음
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "3")
@@ -2221,7 +2221,7 @@ class RentalReservationAdminService(
                 "/"
             )
         for (history in historyList) {
-            when (history.stateCode) {
+            when (history.stateCode.toInt()) {
                 0 -> {
                     // 결제 확인 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
@@ -2294,7 +2294,7 @@ class RentalReservationAdminService(
         var noCancelRequest = true
         var noRequestDeny = true
         for (history in historyList) {
-            when (history.stateCode) {
+            when (history.stateCode.toInt()) {
                 4 -> {
                     // 예약 취소 승인
                     noCancelRequest = false
@@ -2432,7 +2432,7 @@ class RentalReservationAdminService(
                             "/"
                         )
 
-                    if (historyList.isEmpty() || historyList.first().stateCode != 7) {
+                    if (historyList.isEmpty() || historyList.first().stateCode.toInt() != 7) {
                         // 조기 반납 이력이 없다면 에러
                         httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                         httpServletResponse.setHeader("api-result-code", "2")
