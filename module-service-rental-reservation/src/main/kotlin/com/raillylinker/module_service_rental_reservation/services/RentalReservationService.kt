@@ -7,6 +7,8 @@ import com.raillylinker.module_service_rental_reservation.configurations.jpa_con
 import com.raillylinker.module_service_rental_reservation.controllers.RentalReservationController
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductReservationInfo
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory
+import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockInfo
+import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockReservationInfo
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_Native_Repository
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_PaymentRefund_Repository
 import com.raillylinker.module_service_rental_reservation.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_Payment_Repository
@@ -33,6 +35,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -127,7 +130,7 @@ class RentalReservationService(
             return null
         }
 
-        // Redis 공유 락 처리
+        // Redis 공유 락 처리 (예약과 관련된 정보 수정시에는 모두 공유락을 적용해야 합니다.)
         return redis1LockRentableProductInfo.tryLockRepeat<RentalReservationController.PostProductReservationOutputVo?>(
             "${inputVo.rentableProductInfoUid}",
             7000L,
@@ -168,8 +171,6 @@ class RentalReservationService(
                     return@tryLockRepeat null
                 }
 
-                // todo 대여 시작 일시가 예약 취소 가능 기한(현재 시간 + N)과 같거나 작음 -> return
-
                 // 대여 시작 / 끝 시간 차이(분)
                 val rentalStartAndEndTimeDiff = ChronoUnit.MINUTES.between(
                     rentalStartDatetime,
@@ -198,22 +199,90 @@ class RentalReservationService(
                     return@tryLockRepeat null
                 }
 
+                // todo 대여 시작 일시가 예약 취소 가능 기한(현재 시간 + N)과 같거나 작음 -> return
 
-                // todo 재고 리스트 중 없는 개체가 있습니다.
-                // todo 재고 리스트 중 현재 예약 중인 개체가 있습니다. -> return
-                // todo 재고 리스트 중 대여 가능 최초 일시가 더 큰 개체가 있습니다. -> return
-                // todo 재고 리스트 중 대여 가능 마지막 일시가 더 작은 개체가 있습니다. -> return
-                // todo 재고 리스트 중 대여 가능 설정이 아닌 상품이 있습니다. -> return
+                // 예약할 재고 정보 리스트
+                val rentableProductStockEntityList: MutableList<Db1_RaillyLinkerCompany_RentableProductStockInfo> =
+                    mutableListOf()
 
-                // todo 예약 정보 입력
-                // todo 개별 상품 예약 정보 입력
+                for (stockUid in inputVo.rentableProductStockInfoUidList) {
+                    val rentableProductStockEntity =
+                        db1RaillyLinkerCompanyRentableProductStockInfoRepository.findByUidAndRowDeleteDateStr(
+                            stockUid,
+                            "/"
+                        )
+
+                    if (rentableProductStockEntity == null) {
+                        // 재고 리스트 중 없는 개체가 있습니다. -> return
+                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                        httpServletResponse.setHeader("api-result-code", "9")
+                        return@tryLockRepeat null
+                    }
+
+                    if (!rentableProductStockEntity.nowReservable) {
+                        //  재고 리스트 중 대여 가능 설정이 아닌 상품이 있습니다. -> return
+                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                        httpServletResponse.setHeader("api-result-code", "10")
+                        return@tryLockRepeat null
+                    }
+
+                    if (rentalStartDatetime.isBefore(rentableProductStockEntity.firstRentableDatetime)) {
+                        // 재고 리스트 중 대여 가능 최초 일시가 더 큰 개체가 있습니다. -> return
+                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                        httpServletResponse.setHeader("api-result-code", "11")
+                        return@tryLockRepeat null
+                    }
+
+                    if (rentalEndDatetime.isAfter(rentableProductStockEntity.lastRentableDatetime)) {
+                        // 재고 리스트 중 대여 가능 마지막 일시가 더 작은 개체가 있습니다. -> return
+                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                        httpServletResponse.setHeader("api-result-code", "12")
+                        return@tryLockRepeat null
+                    }
+
+                    // todo 재고 리스트 중 현재 예약 중인 개체가 있습니다. -> return
+
+                    rentableProductStockEntityList.add(rentableProductStockEntity)
+                }
+
+                // 예약 정보 입력
+                val newReservationInfo = db1RaillyLinkerCompanyRentableProductReservationInfoRepository.save(
+                    Db1_RaillyLinkerCompany_RentableProductReservationInfo(
+                        rentableProductInfo,
+                        memberData,
+                        rentalStartDatetime,
+                        rentalEndDatetime,
+                        LocalDateTime.now(), // todo 고객에게 이때까지 결제를 해야 한다고 통보한 기한
+                        LocalDateTime.now(), // todo 예약 결제 확인 기한
+                        LocalDateTime.now(), // todo 관리자 승인 기한
+                        LocalDateTime.now(), // todo 예약 취소 가능 기한
+                        rentableProductInfo.productName,
+                        rentableProductInfo.productIntro,
+                        rentableProductInfo.frontRentableProductImage,
+                        rentableProductInfo.addressCountry,
+                        rentableProductInfo.addressMain,
+                        rentableProductInfo.addressDetail
+                    )
+                )
+
+                // 개별 상품 예약 정보 입력
+                for (rentableProductStockEntity in rentableProductStockEntityList) {
+                    db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(
+                        Db1_RaillyLinkerCompany_RentableProductStockReservationInfo(
+                            rentableProductStockEntity,
+                            newReservationInfo,
+                            null
+                        )
+                    )
+                }
 
                 httpServletResponse.status = HttpStatus.OK.value()
-                // todo
                 return@tryLockRepeat RentalReservationController.PostProductReservationOutputVo(
-                    1L,
-                    "2024_05_02_T_15_14_49_552_KST",
-                    "2024_05_02_T_15_14_49_552_KST"
+                    newReservationInfo.uid!!,
+                    newReservationInfo.customerPaymentDeadlineDatetime.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    newReservationInfo.reservationCancelDeadlineDatetime.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
                 )
             }
         )
