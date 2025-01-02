@@ -1,0 +1,142 @@
+[Spring Boot Kotlin JPA와 데이터베이스 상호 매핑 정리]
+
+TINYINT
+-128 ~ 127 정수
+@Column(name = "tiny_column")
+val tinyColumn: Byte
+
+TINYINT UNSIGNED
+0 ~ 255 정수
+@Column(name = "tiny_unsigned", columnDefinition = "TINYINT UNSIGNED")
+val tinyUnsigned: Short
+
+SMALLINT
+-32,768 ~ 32,767 정수
+@Column(name = "small_column")
+val smallColumn: Short
+
+SMALLINT UNSIGNED
+0 ~ 65,535 정수
+@Column(name = "small_unsigned", columnDefinition = "SMALLINT UNSIGNED")
+val smallUnsigned: Int
+
+MEDIUMINT
+-8,388,608 ~ 8,388,607 정수
+@Column(name = "medium_column")
+val mediumColumn: Int
+
+MEDIUMINT UNSIGNED
+0 ~ 16,777,215 정수
+@Column(name = "medium_unsigned", columnDefinition = "MEDIUMINT UNSIGNED")
+val mediumUnsigned: Int
+
+INT
+-2,147,483,648 ~ 2,147,483,647 정수
+@Column(name = "int_column")
+val intColumn: Int
+
+INT UNSIGNED
+0 ~ 4,294,967,295 정수
+@Column(name = "int_unsigned", columnDefinition = "INT UNSIGNED")
+val intUnsigned: Long
+
+BIGINT
+-2^63 ~ 2^63-1 정수
+@Column(name = "big_column")
+val bigColumn: Long
+
+BIGINT UNSIGNED
+0 ~ 2^64-1	정수
+@Column(name = "big_unsigned", columnDefinition = "BIGINT UNSIGNED")
+val bigUnsigned: BigInteger
+
+FLOAT
+-3.4E38 ~ 3.4E38 단정밀도 부동소수점
+@Column(name = "float_column")
+val floatColumn: Float
+
+DOUBLE
+-1.7E308 ~ 1.7E308 배정밀도 부동소수점
+@Column(name = "double_column")
+val doubleColumn: Double
+
+DECIMAL(p, s)
+p, s 설정 가능 고정 소수점 숫자
+@Column(name = "decimal_column", precision = p, scale = s)
+val decimalColumn: BigDecimal
+
+BIT
+1 또는 0
+@Column(name = "bit_column")
+val bitColumn: Boolean
+
+DATE
+1000-01-01 ~ 9999-12-31
+@Column(name = "date_column")
+val dateColumn: LocalDate
+
+DATETIME
+1000-01-01 00:00:00 ~ 9999-12-31 23:59:59
+@Column(name = "datetime_column")
+val datetimeColumn: LocalDateTime
+
+TIME
+-838:59:59 ~ 838:59:59
+@Column(name = "time_column")
+val timeColumn: LocalTime
+
+TIMESTAMP
+1970-01-01 00:00:01 UTC ~ 2038-01-19 03:14:07
+@Column(name = "timestamp_column")
+val timestampColumn: LocalDateTime
+
+YEAR
+1901 ~ 2155	정수
+@Column(name = "year_column")
+val yearColumn: Int
+
+TIMEZONE-AWARE
+시간대 포함 시간
+@Column(name = "tz_timestamp_column")
+val tzTimestampColumn: ZonedDateTime
+
+
+
+
+
+
+
+CHAR(n)	고정 길이 문자열 (최대 255)	String	@Column(name = "char_column", length = n) val charColumn: String
+VARCHAR(n)	가변 길이 문자열 (최대 65,535)	String	@Column(name = "varchar_column", length = n) val varcharColumn: String
+TINYTEXT	최대 255자	String	@Column(name = "tinytext_column", columnDefinition = "TINYTEXT") val tinyTextColumn: String
+TEXT	최대 65,535자	String	@Column(name = "text_column", columnDefinition = "TEXT") val textColumn: String
+MEDIUMTEXT	최대 16,777,215자	String	@Column(name = "mediumtext_column", columnDefinition = "MEDIUMTEXT") val mediumTextColumn: String
+LONGTEXT	최대 4,294,967,295자	String	@Column(name = "longtext_column", columnDefinition = "LONGTEXT") val longTextColumn: String
+
+TINYBLOB	최대 255 바이트	ByteArray	@Column(name = "tinyblob_column", columnDefinition = "TINYBLOB") val tinyBlobColumn: ByteArray
+BLOB	이진 데이터	ByteArray	@Column(name = "blob_column") val blobColumn: ByteArray
+MEDIUMBLOB	최대 16,777,215 바이트	ByteArray	@Column(name = "mediumblob_column", columnDefinition = "MEDIUMBLOB") val mediumBlobColumn: ByteArray
+LONGBLOB	최대 4,294,967,295 바이트	ByteArray	@Column(name = "longblob_column", columnDefinition = "LONGBLOB") val longBlobColumn: ByteArray
+
+BINARY(n)	고정 길이 이진 데이터 (최대 255 바이트)	ByteArray	@Column(name = "binary_column", length = n) val binaryColumn: ByteArray
+VARBINARY(n)	가변 길이 이진 데이터 (최대 65,535 바이트)	ByteArray	@Column(name = "varbinary_column", length = n) val varbinaryColumn: ByteArray
+UUID	128비트 고유 식별자	UUID	@Column(name = "uuid_column", columnDefinition = "BINARY(16)") val uuidColumn: UUID
+GEOMETRY	공간 데이터 타입	ByteArray 또는 Object	@Column(name = "geometry_column", columnDefinition = "GEOMETRY") val geometryColumn: ByteArray
+POINT	(X, Y) 공간 좌표	String	@Column(name = "point_column", columnDefinition = "POINT") val pointColumn: String
+LINESTRING	직선의 시퀀스	String	@Column(name = "linestring_column", columnDefinition = "LINESTRING") val linestringColumn: String
+POLYGON	다각형	String	@Column(name = "polygon_column", columnDefinition = "POLYGON") val polygonColumn: String
+ARRAY	여러 값을 저장	List<String>	@Column(name = "array_column", columnDefinition = "ARRAY") val arrayColumn: List<String>
+MONEY	통화 데이터	BigDecimal	@Column(name = "money_column", columnDefinition = "MONEY") val moneyColumn: BigDecimal
+XML	XML 데이터	String	@Column(name = "xml_column", columnDefinition = "XML") val xmlColumn: String
+TSVECTOR	Full-text 검색용 데이터	String	@Column(name = "tsvector_column", columnDefinition = "TSVECTOR") val tsvectorColumn: String
+BOX	(x1, y1), (x2, y2) 직사각형 좌표	String	@Column(name = "box_column", columnDefinition = "BOX") val boxColumn: String
+CIRCLE	중심과 반지름으로 정의된 원	String	@Column(name = "circle_column", columnDefinition = "CIRCLE") val circleColumn: String
+TSQUERY	텍스트 검색 질의	String	@Column(name = "tsquery_column", columnDefinition = "TSQUERY") val tsqueryColumn: String
+BIT VARYING(n)	가변 길이 비트 문자열	String	@Column(name = "bit_varying_column", columnDefinition = "BIT VARYING(n)") val bitVaryingColumn: String
+RAW	바이너리 또는 비트 데이터	ByteArray	@Column(name = "raw_column", columnDefinition = "RAW") val rawColumn: ByteArray
+GEOGRAPHY	지리적 데이터 타입	String	@Column(name = "geography_column", columnDefinition = "GEOGRAPHY") val geographyColumn: String
+JSON	JSON 데이터	String	@Column(name = "json_column", columnDefinition = "JSON") val jsonColumn: String
+JSONB	JSON 바이너리 데이터	String	@Column(name = "jsonb_column", columnDefinition = "JSONB") val jsonbColumn: String
+XML	XML 데이터	String	@Column(name = "xml_column", columnDefinition = "XML") val xmlColumn: String
+ENUM('A', 'B', ...)	정해진 문자열 값	String	@Column(name = "enum_column") val enumColumn: String
+SET('A', 'B', ...)	정해진 값 집합	String	@Column(name = "set_column") val setColumn: String
