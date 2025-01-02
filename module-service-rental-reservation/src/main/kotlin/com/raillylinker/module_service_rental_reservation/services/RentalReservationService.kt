@@ -199,7 +199,7 @@ class RentalReservationService(
                     return@tryLockRepeat null
                 }
 
-                // todo 대여 시작 일시가 예약 취소 가능 기한(현재 시간 + N)과 같거나 작음 -> return
+                // todo 취소 가능 기한의 계산 결과가 관리자 승인 기한보다 작습니다. -> return
 
                 // 예약할 재고 정보 리스트
                 val rentableProductStockEntityList: MutableList<Db1_RaillyLinkerCompany_RentableProductStockInfo> =

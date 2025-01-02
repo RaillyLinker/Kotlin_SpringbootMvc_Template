@@ -292,6 +292,20 @@ class RentalReservationAdminService(
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
 
+        if (inputVo.customerPaymentDeadlineMinute > inputVo.paymentCheckDeadlineMinute) {
+            // 결제 통보 기한이 결제 승인 기한보다 클 경우 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return null
+        }
+
+        if (inputVo.paymentCheckDeadlineMinute > inputVo.approvalDeadlineMinute) {
+            // 결제 승인 기한이 예약 승인 기한보다 클 경우 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
+            return null
+        }
+
         if (inputVo.minimumReservationUnitCount < 0 ||
             (inputVo.maximumReservationUnitCount != null &&
                     (inputVo.maximumReservationUnitCount < 0 ||
@@ -339,7 +353,11 @@ class RentalReservationAdminService(
                 inputVo.maximumReservationUnitCount,
                 inputVo.reservationUnitPrice,
                 inputVo.reservationUnitPriceCurrencyCode.name,
-                inputVo.nowReservable
+                inputVo.nowReservable,
+                inputVo.customerPaymentDeadlineMinute,
+                inputVo.paymentCheckDeadlineMinute,
+                inputVo.approvalDeadlineMinute,
+                inputVo.cancelDeadlineMinute
             )
         )
 
@@ -365,6 +383,20 @@ class RentalReservationAdminService(
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
+
+        if (inputVo.customerPaymentDeadlineMinute > inputVo.paymentCheckDeadlineMinute) {
+            // 결제 통보 기한이 결제 승인 기한보다 클 경우 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
+            return
+        }
+
+        if (inputVo.paymentCheckDeadlineMinute > inputVo.approvalDeadlineMinute) {
+            // 결제 승인 기한이 예약 승인 기한보다 클 경우 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "5")
+            return
+        }
 
         if (inputVo.minimumReservationUnitCount < 0 ||
             (inputVo.maximumReservationUnitCount != null &&
@@ -428,6 +460,10 @@ class RentalReservationAdminService(
                 rentableProduct.reservationUnitPrice = inputVo.reservationUnitPrice
                 rentableProduct.reservationUnitPriceCurrencyCode = inputVo.reservationUnitPriceCurrencyCode.name
                 rentableProduct.nowReservable = inputVo.nowReservable
+                rentableProduct.customerPaymentDeadlineMinute = inputVo.customerPaymentDeadlineMinute
+                rentableProduct.paymentCheckDeadlineMinute = inputVo.paymentCheckDeadlineMinute
+                rentableProduct.approvalDeadlineMinute = inputVo.approvalDeadlineMinute
+                rentableProduct.cancelDeadlineMinute = inputVo.cancelDeadlineMinute
                 rentableProduct.versionSeq += 1
 
                 db1RaillyLinkerCompanyRentableProductInfoRepository.save(rentableProduct)

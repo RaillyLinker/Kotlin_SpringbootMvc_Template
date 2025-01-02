@@ -50,7 +50,11 @@ CREATE TABLE `HCP_RENTABLE_PRODUCT_INFO` (
 	`RESERVATION_UNIT_PRICE`	DECIMAL(15, 2) UNSIGNED	NOT NULL	COMMENT '단위 예약 시간에 대한 가격 (예약 시간 / 단위 예약 시간 * 예약 단가 = 예약 최종가)',
 	`RESERVATION_UNIT_PRICE_CURRENCY_CODE`	CHAR(3)	NOT NULL	COMMENT '단위 예약 시간에 대한 가격 통화 코드(IOS 4217, ex : KRW, USD, EUR...)',
 	`NOW_RESERVABLE`	BIT(1)	NOT NULL	COMMENT '재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정',
-	`VERSION_SEQ`	BIGINT UNSIGNED	NOT NULL	COMMENT '예약 상품 정보 버전 시퀀스(고객이 정보를 확인한 시점의 버전과 예약 신청하는 시점의 버전이 다르면 진행 불가)'
+	`VERSION_SEQ`	BIGINT UNSIGNED	NOT NULL	COMMENT '예약 상품 정보 버전 시퀀스(고객이 정보를 확인한 시점의 버전과 예약 신청하는 시점의 버전이 다르면 진행 불가)',
+	`CUSTOMER_PAYMENT_DEADLINE_MINUTE`	BIGINT UNSIGNED	NOT NULL	COMMENT '고객에게 이때까지 결제를 해야 한다고 통보하는 기한 설정값(예약일로부터 +N 분)',
+	`PAYMENT_CHECK_DEADLINE_MINUTE`	BIGINT UNSIGNED	NOT NULL	COMMENT '관리자의 결제 확인 기한 설정값(예약일로 부터 +N 분, 고객 결제 기한 설정값보다 크거나 같음)',
+	`APPROVAL_DEADLINE_MINUTE`	BIGINT UNSIGNED	NOT NULL	COMMENT '관리자의 예약 승인 기한 설정값(예약일로부터 +N분, 결제 확인 기한 설정값보다 크거나 같음)',
+	`CANCEL_DEADLINE_MINUTE`	BIGINT UNSIGNED	NOT NULL	COMMENT '고객이 예약 취소 가능한 기한 설정값(대여 시작일로부터 -N분이며, 그 결과가 관리자 승인 기한보다 커야함)'
 );
 
 CREATE TABLE `HCP_RENTABLE_PRODUCT_RESERVATION_STATE_CHANGE_HISTORY` (

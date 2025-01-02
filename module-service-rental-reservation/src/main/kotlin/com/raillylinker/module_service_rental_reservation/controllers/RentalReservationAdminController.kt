@@ -265,7 +265,9 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 최소,최대 예약 횟수는 0보다 크며, 최소 예약 횟수는 최대 예약 횟수보다 작거나 같아야 합니다.",
+                                "2 : 최소,최대 예약 횟수는 0보다 크며, 최소 예약 횟수는 최대 예약 횟수보다 작거나 같아야 합니다.<br>" +
+                                "3 : 결제 통보 기한 설정이 결제 승인 기한 설정보다 크면 안됩니다.<br>" +
+                                "4 : 결제 승인 기한 설정이 예약 승인 기한 설정보다 크면 안됩니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -388,7 +390,35 @@ class RentalReservationAdminController(
             example = "true"
         )
         @JsonProperty("nowReservable")
-        val nowReservable: Boolean
+        val nowReservable: Boolean,
+        @Schema(
+            description = "고객에게 이때까지 결제를 해야 한다고 통보하는 기한 설정값(예약일로부터 +N 분)",
+            required = true,
+            example = "30"
+        )
+        @JsonProperty("customerPaymentDeadlineMinute")
+        val customerPaymentDeadlineMinute: Long,
+        @Schema(
+            description = "관리자의 결제 확인 기한 설정값(예약일로 부터 +N 분, 고객 결제 기한 설정값보다 크거나 같음)",
+            required = true,
+            example = "30"
+        )
+        @JsonProperty("paymentCheckDeadlineMinute")
+        val paymentCheckDeadlineMinute: Long,
+        @Schema(
+            description = "관리자의 예약 승인 기한 설정값(예약일로부터 +N분, 결제 확인 기한 설정값보다 크거나 같음)",
+            required = true,
+            example = "30"
+        )
+        @JsonProperty("approvalDeadlineMinute")
+        val approvalDeadlineMinute: Long,
+        @Schema(
+            description = "고객이 예약 취소 가능한 기한 설정값(대여 시작일로부터 -N분이며, 그 결과가 관리자 승인 기한보다 커야함)",
+            required = true,
+            example = "30"
+        )
+        @JsonProperty("cancelDeadlineMinute")
+        val cancelDeadlineMinute: Long
     ) {
         enum class CurrencyCodeEnum {
             KRW, USD
@@ -425,7 +455,9 @@ class RentalReservationAdminController(
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "3 : 최소,최대 예약 횟수는 0보다 크며, 최소 예약 횟수는 최대 예약 횟수보다 작거나 같아야 합니다.",
+                                "3 : 최소,최대 예약 횟수는 0보다 크며, 최소 예약 횟수는 최대 예약 횟수보다 작거나 같아야 합니다.<br>" +
+                                "4 : 결제 통보 기한 설정이 결제 승인 기한 설정보다 크면 안됩니다.<br>" +
+                                "5 : 결제 승인 기한 설정이 예약 승인 기한 설정보다 크면 안됩니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -551,7 +583,35 @@ class RentalReservationAdminController(
             example = "true"
         )
         @JsonProperty("nowReservable")
-        val nowReservable: Boolean
+        val nowReservable: Boolean,
+        @Schema(
+            description = "고객에게 이때까지 결제를 해야 한다고 통보하는 기한 설정값(예약일로부터 +N 분)",
+            required = true,
+            example = "30"
+        )
+        @JsonProperty("customerPaymentDeadlineMinute")
+        val customerPaymentDeadlineMinute: Long,
+        @Schema(
+            description = "관리자의 결제 확인 기한 설정값(예약일로 부터 +N 분, 고객 결제 기한 설정값보다 크거나 같음)",
+            required = true,
+            example = "30"
+        )
+        @JsonProperty("paymentCheckDeadlineMinute")
+        val paymentCheckDeadlineMinute: Long,
+        @Schema(
+            description = "관리자의 예약 승인 기한 설정값(예약일로부터 +N분, 결제 확인 기한 설정값보다 크거나 같음)",
+            required = true,
+            example = "30"
+        )
+        @JsonProperty("approvalDeadlineMinute")
+        val approvalDeadlineMinute: Long,
+        @Schema(
+            description = "고객이 예약 취소 가능한 기한 설정값(대여 시작일로부터 -N분이며, 그 결과가 관리자 승인 기한보다 커야함)",
+            required = true,
+            example = "30"
+        )
+        @JsonProperty("cancelDeadlineMinute")
+        val cancelDeadlineMinute: Long
     ) {
         enum class CurrencyCodeEnum {
             KRW, USD
