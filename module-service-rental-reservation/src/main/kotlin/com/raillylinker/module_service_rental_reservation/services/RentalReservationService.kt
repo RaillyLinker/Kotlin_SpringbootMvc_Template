@@ -199,8 +199,6 @@ class RentalReservationService(
                     return@tryLockRepeat null
                 }
 
-                // todo 취소 가능 기한의 계산 결과가 관리자 승인 기한보다 작습니다. -> return
-
                 // 예약할 재고 정보 리스트
                 val rentableProductStockEntityList: MutableList<Db1_RaillyLinkerCompany_RentableProductStockInfo> =
                     mutableListOf()
@@ -261,10 +259,10 @@ class RentalReservationService(
                         memberData,
                         rentalStartDatetime,
                         rentalEndDatetime,
-                        LocalDateTime.now(), // todo 고객에게 이때까지 결제를 해야 한다고 통보한 기한
-                        LocalDateTime.now(), // todo 예약 결제 확인 기한
-                        LocalDateTime.now(), // todo 관리자 승인 기한
-                        LocalDateTime.now(), // todo 예약 취소 가능 기한
+                        nowDatetime, // 고객에게 이때까지 결제를 해야 한다고 통보한 기한 임시 입력
+                        nowDatetime, // 예약 결제 확인 기한 임시 입력
+                        nowDatetime, // 관리자 승인 기한 임시 입력
+                        nowDatetime, // 예약 취소 가능 기한 임시 입력
                         rentableProductInfo.productName,
                         rentableProductInfo.productIntro,
                         rentableProductInfo.frontRentableProductImage,
@@ -273,6 +271,32 @@ class RentalReservationService(
                         rentableProductInfo.addressDetail
                     )
                 )
+
+                // 예약 신청 일시를 기준으로 기한 관련 데이터 계산 및 검증
+                val reservationDatetime = newReservationInfo.rowCreateDate!!
+                val customerPaymentDeadlineDatetime =
+                    reservationDatetime.plusMinutes(rentableProductInfo.customerPaymentDeadlineMinute)
+                val paymentCheckDeadlineDatetime =
+                    reservationDatetime.plusMinutes(rentableProductInfo.paymentCheckDeadlineMinute)
+                val reservationApprovalDeadlineDatetime =
+                    reservationDatetime.plusMinutes(rentableProductInfo.approvalDeadlineMinute)
+                val reservationCancelDeadlineDatetime =
+                    rentalStartDatetime.minusMinutes(rentableProductInfo.cancelDeadlineMinute)
+
+                if (reservationApprovalDeadlineDatetime.isAfter(reservationCancelDeadlineDatetime)) {
+                    // 취소 가능 기한의 계산 결과가 관리자 승인 기한보다 작습니다. -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "8")
+                    return@tryLockRepeat null
+                }
+
+                // 예약 신청 일시를 기준으로 만들어진 기한 관련 데이터 입력
+                newReservationInfo.customerPaymentDeadlineDatetime = customerPaymentDeadlineDatetime
+                newReservationInfo.paymentCheckDeadlineDatetime = paymentCheckDeadlineDatetime
+                newReservationInfo.reservationApprovalDeadlineDatetime = reservationApprovalDeadlineDatetime
+                newReservationInfo.reservationCancelDeadlineDatetime = reservationCancelDeadlineDatetime
+
+                db1RaillyLinkerCompanyRentableProductReservationInfoRepository.save(newReservationInfo)
 
                 // 개별 상품 예약 정보 입력
                 for (rentableProductStockEntity in rentableProductStockEntityList) {
