@@ -48,7 +48,11 @@ class RentalReservationController(
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : rentalStartDatetime 가 rentalEndDatetime 보다 커서는 안됩니다.<br>" +
-                                "3 : 예약 상품 버전 시퀀스가 일치하지 않습니다.",
+                                "3 : 예약 상품 버전 시퀀스가 일치하지 않습니다.<br>" +
+                                "4 : 예약 상품이 현재 예약 가능 상태가 아닙니다.<br>" +
+                                "5 : 상품 예약 가능 일시 이전입니다.<br>" +
+                                "6 : 대여 단위 예약 최소 횟수보다 작습니다.<br>" +
+                                "7 : 대여 단위 예약 최대 횟수보다 큽니다.",
                         schema = Schema(type = "string")
                     )
                 ]

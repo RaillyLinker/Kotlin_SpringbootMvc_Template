@@ -35,6 +35,9 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import kotlin.math.ceil
+import kotlin.math.floor
 
 @Service
 class RentalReservationService(
@@ -136,22 +139,65 @@ class RentalReservationService(
                     )
 
                 if (rentableProductInfo == null) {
+                    // 상품 정보가 없는 경우 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                     httpServletResponse.setHeader("api-result-code", "1")
                     return@tryLockRepeat null
                 }
 
-                if(rentableProductInfo.versionSeq != inputVo.rentableProductVersionSeq){
+                if (rentableProductInfo.versionSeq != inputVo.rentableProductVersionSeq) {
+                    // 고객이 본 정보와 상품 정보의 버전 시퀀스가 다른 경우 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                     httpServletResponse.setHeader("api-result-code", "3")
                     return@tryLockRepeat null
                 }
 
-                // todo 현 시점 예약 가능 설정이 아닐 때 -> return
-                // todo 현재 시간이 예약 가능 일시보다 작음 -> return
+                if (!rentableProductInfo.nowReservable) {
+                    // 현 시점 예약 가능 설정이 아닐 때 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "4")
+                    return@tryLockRepeat null
+                }
+
+                val nowDatetime = LocalDateTime.now()
+
+                if (nowDatetime.isBefore(rentableProductInfo.firstReservableDatetime)) {
+                    // 현재 시간이 예약 가능 일시보다 작음 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "5")
+                    return@tryLockRepeat null
+                }
+
                 // todo 대여 시작 일시가 예약 취소 가능 기한(현재 시간 + N)과 같거나 작음 -> return
-                // todo 대여 시작 일시와 끝 일시의 차이를 단위 예약 시간으로 나누었을 때, 단위 예약 최소 횟수보다 작을 때 -> return
-                // todo 대여 시작 일시와 끝 일시의 차이를 단위 예약 시간으로 나누었을 때, 단위 예약 최대 횟수보다 클 때 -> return
+
+                // 대여 시작 / 끝 시간 차이(분)
+                val rentalStartAndEndTimeDiff = ChronoUnit.MINUTES.between(
+                    rentalStartDatetime,
+                    rentalEndDatetime
+                )
+
+                // 설정 시간을 단위 시간으로 나눈 값 = 단위 설정 횟수
+                val calcTimeUnitCount =
+                    rentalStartAndEndTimeDiff.toDouble() / rentableProductInfo.reservationUnitMinute.toDouble()
+                val calcTimeUnitCountUp = ceil(calcTimeUnitCount).toLong()
+                val calcTimeUnitCountDown = floor(calcTimeUnitCount).toLong()
+
+                if (calcTimeUnitCountUp < rentableProductInfo.minimumReservationUnitCount) {
+                    // 대여 시작 일시와 끝 일시의 차이를 단위 예약 시간으로 나누었을 때, 단위 예약 최소 횟수보다 작을 때 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "6")
+                    return@tryLockRepeat null
+                }
+
+                if (rentableProductInfo.maximumReservationUnitCount != null &&
+                    calcTimeUnitCountDown > rentableProductInfo.maximumReservationUnitCount!!
+                ) {
+                    // 대여 시작 일시와 끝 일시의 차이를 단위 예약 시간으로 나누었을 때, 단위 예약 최대 횟수보다 클 때 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "7")
+                    return@tryLockRepeat null
+                }
+
 
                 // todo 재고 리스트 중 없는 개체가 있습니다.
                 // todo 재고 리스트 중 현재 예약 중인 개체가 있습니다. -> return
