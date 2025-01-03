@@ -2503,7 +2503,96 @@ class RentalReservationAdminService(
             return null
         }
 
-        // 개별 상품 반납 확인 내역 추가
+        // 개별 상품 연체 내역 추가
+        val historyEntity = db1RaillyLinkerCompanyRentableProductStockReservationStateChangeHistoryRepository.save(
+            Db1_RaillyLinkerCompany_RentableProductStockReservationStateChangeHistory(
+                rentableProductStockReservationInfo,
+                2,
+                inputVo.stateChangeDesc
+            )
+        )
+
+        // 상품 준비일 설정 초기화
+        rentableProductStockReservationInfo.productReadyDatetime = null
+        db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(rentableProductStockReservationInfo)
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationAdminController.PatchRentableProductStockReservationInfoOverdueOutputVo(
+            historyEntity.uid!!
+        )
+    }
+
+
+    // ----
+    // (개별 상품 연체 상태 변경 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun patchRentableProductStockReservationInfoLost(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentableProductStockReservationInfoUid: Long,
+        inputVo: RentalReservationAdminController.PatchRentableProductStockReservationInfoLostInputVo
+    ): RentalReservationAdminController.PatchRentableProductStockReservationInfoLostOutputVo? {
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+
+        val rentableProductStockReservationInfo =
+            db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.findByUidAndRowDeleteDateStr(
+                rentableProductStockReservationInfoUid,
+                "/"
+            )
+
+        if (rentableProductStockReservationInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        // 상태 확인
+        val historyList =
+            db1RaillyLinkerCompanyRentableProductStockReservationStateChangeHistoryRepository.findAllByRentableProductStockReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductStockReservationInfo,
+                "/"
+            )
+
+        for (history in historyList) {
+            when (history.stateCode.toInt()) {
+                3 -> {
+                    // 손망실 상태
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "4")
+                    return null
+                }
+
+                2 -> {
+                    // 연체 상태
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "3")
+                    return null
+                }
+
+                1 -> {
+                    // 반납 확인 상태
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "5")
+                    return null
+                }
+            }
+        }
+
+        // 상태 확인
+        val nowDatetime = LocalDateTime.now()
+
+        if (nowDatetime.isBefore(rentableProductStockReservationInfo.rentableProductReservationInfo.rentalStartDatetime)) {
+            // 상품 대여 시작을 넘지 않음
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
+        // 개별 상품 손망실 내역 추가
         val historyEntity = db1RaillyLinkerCompanyRentableProductStockReservationStateChangeHistoryRepository.save(
             Db1_RaillyLinkerCompany_RentableProductStockReservationStateChangeHistory(
                 rentableProductStockReservationInfo,
@@ -2517,7 +2606,7 @@ class RentalReservationAdminService(
         db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(rentableProductStockReservationInfo)
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return RentalReservationAdminController.PatchRentableProductStockReservationInfoOverdueOutputVo(
+        return RentalReservationAdminController.PatchRentableProductStockReservationInfoLostOutputVo(
             historyEntity.uid!!
         )
     }

@@ -2829,7 +2829,88 @@ class RentalReservationAdminController(
 
 
     // ----
-    // todo 개별 상품 손망실 설정 api
+    @Operation(
+        summary = "개별 상품 손망실 상태 변경 <ADMIN>",
+        description = "개별 상품에 대해 손망실 상태로 변경 처리를 합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 상품 대여일이 도래하지 않았습니다.<br>" +
+                                "3 : 현재 연체 상태입니다.<br>" +
+                                "4 : 이미 손망실 상태입니다.<br>" +
+                                "5 : 이미 반납 확인을 한 상태입니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PatchMapping(
+        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/lost"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun patchRentableProductStockReservationInfoLost(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(
+            name = "rentableProductStockReservationInfoUid",
+            description = "rentableProductStockReservationInfo 고유값",
+            example = "1"
+        )
+        @PathVariable("rentableProductStockReservationInfoUid")
+        rentableProductStockReservationInfoUid: Long,
+        @RequestBody
+        inputVo: PatchRentableProductStockReservationInfoLostInputVo
+    ): PatchRentableProductStockReservationInfoLostOutputVo? {
+        return service.patchRentableProductStockReservationInfoLost(
+            httpServletResponse,
+            authorization!!,
+            rentableProductStockReservationInfoUid,
+            inputVo
+        )
+    }
+
+    data class PatchRentableProductStockReservationInfoLostInputVo(
+        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
+        @JsonProperty("stateChangeDesc")
+        val stateChangeDesc: String
+    )
+
+    data class PatchRentableProductStockReservationInfoLostOutputVo(
+        @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
+        @JsonProperty("stockReservationStateChangeHistoryUid")
+        val stockReservationStateChangeHistoryUid: Long
+    )
 
 
     // ----
