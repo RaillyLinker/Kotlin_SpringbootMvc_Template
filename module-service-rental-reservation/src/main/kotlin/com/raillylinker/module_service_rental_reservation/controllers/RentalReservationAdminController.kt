@@ -2814,14 +2814,7 @@ class RentalReservationAdminController(
     data class PatchRentableProductStockReservationInfoOverdueInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
-        val stateChangeDesc: String,
-        @Schema(
-            description = "연체 적용 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-            required = true,
-            example = "2024_05_02_T_15_14_49_552_KST"
-        )
-        @JsonProperty("overdueDatetime")
-        val overdueDatetime: String
+        val stateChangeDesc: String
     )
 
     data class PatchRentableProductStockReservationInfoOverdueOutputVo(
@@ -2829,6 +2822,10 @@ class RentalReservationAdminController(
         @JsonProperty("stockReservationStateChangeHistoryUid")
         val stockReservationStateChangeHistoryUid: Long
     )
+
+
+    // ----
+    // todo 개별 상품 연체 설정 삭제 api
 
 
     // ----

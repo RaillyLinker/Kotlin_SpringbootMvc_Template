@@ -2468,7 +2468,6 @@ class RentalReservationAdminService(
                 "/"
             )
 
-        var noEarlyReturn = true
         for (history in historyList) {
             when (history.stateCode.toInt()) {
                 3 -> {
@@ -2491,21 +2490,13 @@ class RentalReservationAdminService(
                     httpServletResponse.setHeader("api-result-code", "5")
                     return null
                 }
-
-                0 -> {
-                    // 사용자 조기 반납 신고
-                    noEarlyReturn = false
-                }
             }
         }
 
         // 상태 확인
-        val anchorDatetime = ZonedDateTime.parse(
-            inputVo.overdueDatetime,
-            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-        ).toLocalDateTime()
+        val nowDatetime = LocalDateTime.now()
 
-        if (anchorDatetime.isBefore(rentableProductStockReservationInfo.rentableProductReservationInfo.rentalEndDatetime)) {
+        if (nowDatetime.isBefore(rentableProductStockReservationInfo.rentableProductReservationInfo.rentalEndDatetime)) {
             // 상품 반납일을 넘지 않음
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "2")
@@ -2520,6 +2511,10 @@ class RentalReservationAdminService(
                 inputVo.stateChangeDesc
             )
         )
+
+        // 상품 준비일 설정 초기화
+        rentableProductStockReservationInfo.productReadyDatetime = null
+        db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(rentableProductStockReservationInfo)
 
         httpServletResponse.status = HttpStatus.OK.value()
         return RentalReservationAdminController.PatchRentableProductStockReservationInfoOverdueOutputVo(
