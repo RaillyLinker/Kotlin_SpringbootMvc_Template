@@ -608,9 +608,9 @@
           <mxGeometry x="-572.9300000000001" y="1558.02" width="61" height="30.98" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-21" value="중복 취소&lt;div&gt;신청 불가능&amp;nbsp;&lt;div&gt;취소 거부 시&lt;/div&gt;&lt;div&gt;재 취소 가능&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="-223.18" y="487" width="79.69" height="66.5" as="geometry" />
+          <mxGeometry x="-218.52" y="488" width="79.69" height="66.5" as="geometry" />
         </mxCell>
-        <mxCell id="CRkLpjZog5i0egp7tEst-22" value="조기 반납 신고 취소는&amp;nbsp;&lt;div&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;불가능&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;다만 관리자가&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: initial; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;반납 확인을&amp;nbsp;&lt;/span&gt;&lt;div&gt;&lt;div&gt;하지 않으면 유&lt;span style=&quot;background-color: initial;&quot;&gt;사한 효과&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+        <mxCell id="CRkLpjZog5i0egp7tEst-22" value="조기 반납 신고 취소는&amp;nbsp;&lt;div&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;불가능합니다.&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;이에 대해 사전에 충분한 공지가 필요합니다.&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="-58.110000000000014" y="134.86" width="140.94" height="64.02" as="geometry" />
         </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-23" value="예약 상태&amp;nbsp;&lt;div&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;흐름표&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
