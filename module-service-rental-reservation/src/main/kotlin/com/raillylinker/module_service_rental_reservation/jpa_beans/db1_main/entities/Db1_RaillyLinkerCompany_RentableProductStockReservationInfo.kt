@@ -25,11 +25,7 @@ class Db1_RaillyLinkerCompany_RentableProductStockReservationInfo(
     @ManyToOne
     @JoinColumn(name = "rentable_product_reservation_info_uid", nullable = false)
     @Comment("rentable_product_reservation_info 테이블 고유번호 (railly_linker_company.rentable_product_reservation_info.uid)")
-    var rentableProductReservationInfo: Db1_RaillyLinkerCompany_RentableProductReservationInfo,
-
-    @Column(name = "next_ready_datetime", nullable = true, columnDefinition = "DATETIME")
-    @Comment("다음 준비 예정일(예약 후 상품의 다음 고객의 대여까지 준비가 완료되는 일시, 이 값이 null 이라면 다음 예약이 불가)")
-    var nextReadyDatetime: LocalDateTime?
+    var rentableProductReservationInfo: Db1_RaillyLinkerCompany_RentableProductReservationInfo
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,5 +51,13 @@ class Db1_RaillyLinkerCompany_RentableProductStockReservationInfo(
 
     // ---------------------------------------------------------------------------------------------
     // <중첩 클래스 공간>
+    // 예약 정보가 삭제되면 예약 정보 히스토리 삭제
+    @OneToMany(
+        mappedBy = "rentableProductStockReservationInfo",
+        fetch = FetchType.LAZY,
+        cascade = [CascadeType.ALL]
+    )
+    var rentableProductStockReservationStateChangeHistoryList: MutableList<Db1_RaillyLinkerCompany_RentableProductStockReservationStateChangeHistory> =
+        mutableListOf()
 
 }

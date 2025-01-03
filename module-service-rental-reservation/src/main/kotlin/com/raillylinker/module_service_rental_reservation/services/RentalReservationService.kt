@@ -238,16 +238,16 @@ class RentalReservationService(
                         return@tryLockRepeat null
                     }
 
-                    if (db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository
-                            .existsByRentableProductStockInfoAndRowDeleteDateStrAndNextReadyDatetime(
-                                rentableProductStockEntity
-                            )
-                    ) {
-                        // 재고 리스트 중 현재 예약 중인 개체가 있습니다. -> return
-                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                        httpServletResponse.setHeader("api-result-code", "13")
-                        return@tryLockRepeat null
-                    }
+//                    if (db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository
+//                            .existsByRentableProductStockInfoAndRowDeleteDateStrAndNextReadyDatetime(
+//                                rentableProductStockEntity
+//                            )
+//                    ) {
+//                        // 재고 리스트 중 현재 예약 중인 개체가 있습니다. -> return
+//                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+//                        httpServletResponse.setHeader("api-result-code", "13")
+//                        return@tryLockRepeat null
+//                    }
 
                     rentableProductStockEntityList.add(rentableProductStockEntity)
                 }
@@ -303,8 +303,7 @@ class RentalReservationService(
                     db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(
                         Db1_RaillyLinkerCompany_RentableProductStockReservationInfo(
                             rentableProductStockEntity,
-                            newReservationInfo,
-                            null
+                            newReservationInfo
                         )
                     )
                 }

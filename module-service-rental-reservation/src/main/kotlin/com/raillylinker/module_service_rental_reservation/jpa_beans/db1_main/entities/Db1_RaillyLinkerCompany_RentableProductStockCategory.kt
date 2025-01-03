@@ -17,14 +17,14 @@ import java.time.LocalDateTime
 )
 @Comment("대여 가능 상품 재고 카테고리")
 class Db1_RaillyLinkerCompany_RentableProductStockCategory(
-    @Column(name = "category_name", nullable = false, columnDefinition = "VARCHAR(90)")
-    @Comment("카테고리 이름")
-    var categoryName: String,
-
     @ManyToOne
     @JoinColumn(name = "parent_rentable_product_stock_category_uid", nullable = true)
     @Comment("부모 카테고리 rentable_product_stock_category 테이블 고유번호 (railly_linker_company.rentable_product_stock_category.uid)")
-    var parentRentableProductStockCategory: Db1_RaillyLinkerCompany_RentableProductStockCategory?
+    var parentRentableProductStockCategory: Db1_RaillyLinkerCompany_RentableProductStockCategory?,
+
+    @Column(name = "category_name", nullable = false, columnDefinition = "VARCHAR(90)")
+    @Comment("카테고리 이름")
+    var categoryName: String
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,7 +56,8 @@ class Db1_RaillyLinkerCompany_RentableProductStockCategory(
         fetch = FetchType.LAZY,
         cascade = [CascadeType.ALL]
     )
-    var childRentableProductStockCategoryList: MutableList<Db1_RaillyLinkerCompany_RentableProductStockCategory> = mutableListOf()
+    var childRentableProductStockCategoryList: MutableList<Db1_RaillyLinkerCompany_RentableProductStockCategory> =
+        mutableListOf()
 
     // 카테고리 삭제시 카테고리 설정 null 처리
     @OneToMany(

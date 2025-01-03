@@ -27,6 +27,7 @@ class RentalReservationController(
 
     // ---------------------------------------------------------------------------------------------
     // <매핑 함수 공간>
+    // todo
     @Operation(
         summary = "상품 예약 신청하기 <>",
         description = "상품에 대한 예약 신청을 합니다."
@@ -223,6 +224,7 @@ class RentalReservationController(
     )
 
 
+    // todo 예약 내역에 있는 모든 개별 상품에 대한 조기 반납 신고
     // ----
     @Operation(
         summary = "대여품 조기반납 신고 <>",
@@ -306,6 +308,8 @@ class RentalReservationController(
         @JsonProperty("rentableProductReservationStateChangeInfoUid")
         val rentableProductReservationStateChangeInfoUid: Long
     )
+
+    // todo 개별 상품 조기 반납 신고
 
     // todo : 필요 정보 조회 API 들 추가
 }

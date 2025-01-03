@@ -141,8 +141,8 @@ class RentalReservationAdminService(
 
         val categoryEntity = db1RaillyLinkerCompanyRentableProductCategoryRepository.save(
             Db1_RaillyLinkerCompany_RentableProductCategory(
-                inputVo.categoryName,
-                parentCategoryEntity
+                parentCategoryEntity,
+                inputVo.categoryName
             )
         )
 
@@ -337,10 +337,10 @@ class RentalReservationAdminService(
 
         val rentableProductInfo = db1RaillyLinkerCompanyRentableProductInfoRepository.save(
             Db1_RaillyLinkerCompany_RentableProductInfo(
-                inputVo.productName,
                 rentableProductCategory,
-                inputVo.productIntro,
                 null,
+                inputVo.productName,
+                inputVo.productIntro,
                 inputVo.addressCountry,
                 inputVo.addressMain,
                 inputVo.addressDetail,
@@ -993,8 +993,8 @@ class RentalReservationAdminService(
 
         val categoryEntity = db1RaillyLinkerCompanyRentableProductStockCategoryRepository.save(
             Db1_RaillyLinkerCompany_RentableProductStockCategory(
-                inputVo.categoryName,
-                parentCategoryEntity
+                parentCategoryEntity,
+                inputVo.categoryName
             )
         )
 
@@ -1179,8 +1179,9 @@ class RentalReservationAdminService(
             db1RaillyLinkerCompanyRentableProductStockInfoRepository.save(
                 Db1_RaillyLinkerCompany_RentableProductStockInfo(
                     categoryTable,
-                    inputVo.productDesc,
                     null,
+                    rentableProductInfo,
+                    inputVo.productDesc,
                     ZonedDateTime.parse(
                         inputVo.firstRentableDatetime,
                         DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
@@ -1193,7 +1194,6 @@ class RentalReservationAdminService(
                             DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
                         ).toLocalDateTime()
                     },
-                    rentableProductInfo,
                     inputVo.nowReservable
                 )
             )
@@ -1925,6 +1925,7 @@ class RentalReservationAdminService(
                 }
 
                 0 -> {
+                    // 관리자 결제 확인
                     notPaid = false
                 }
             }
@@ -2060,6 +2061,7 @@ class RentalReservationAdminService(
                 }
 
                 0 -> {
+                    // 관리자 결제 확인
                     notPaid = false
                 }
             }
@@ -2099,77 +2101,6 @@ class RentalReservationAdminService(
 
         httpServletResponse.status = HttpStatus.OK.value()
         return RentalReservationAdminController.PostRentableProductReservationInfoReservationCancelDenyOutputVo(
-            newReservationStateChangeHistory.uid!!
-        )
-    }
-
-
-    // ----
-    // (대여 가능 상품 조기 반납 확인 처리 <ADMIN>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun postRentableProductReservationInfoEarlyReturnComplete(
-        httpServletResponse: HttpServletResponse,
-        authorization: String,
-        rentableProductReservationInfoUid: Long,
-        inputVo: RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteInputVo
-    ): RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo? {
-//        val memberUid = jwtTokenUtil.getMemberUid(
-//            authorization.split(" ")[1].trim(),
-//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-//        )
-        // rentableProductReservationInfoUid 정보 존재 여부 확인
-        val rentableProductReservationInfo =
-            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findByUidAndRowDeleteDateStr(
-                rentableProductReservationInfoUid,
-                "/"
-            )
-
-        if (rentableProductReservationInfo == null) {
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return null
-        }
-
-        // 상태 확인
-        val historyList =
-            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
-                rentableProductReservationInfo,
-                "/"
-            )
-
-        if (historyList.isEmpty()) {
-            // 상품 대여 상태가 아닙니다.
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "2")
-            return null
-        }
-
-        val latestHistory = historyList.first()
-
-        if (latestHistory.stateCode.toInt() != 6) {
-            // 대여 상품 조기 반납 신고 내역이 없음
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "3")
-            return null
-        }
-
-        // 예약 히스토리에 정보 기입
-        val newReservationStateChangeHistory =
-            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
-                Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
-                    rentableProductReservationInfo,
-                    7,
-                    "관리자 조기반납 확인",
-                    ZonedDateTime.parse(
-                        inputVo.stateChangeDatetime,
-                        DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-                    ).toLocalDateTime()
-                )
-            )
-
-        httpServletResponse.status = HttpStatus.OK.value()
-        return RentalReservationAdminController.PostRentableProductReservationInfoEarlyReturnCompleteOutputVo(
             newReservationStateChangeHistory.uid!!
         )
     }
@@ -2295,6 +2226,13 @@ class RentalReservationAdminService(
         var noRequestDeny = true
         for (history in historyList) {
             when (history.stateCode.toInt()) {
+                6 -> {
+                    // 이미 환불됨
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "5")
+                    return null
+                }
+
                 4 -> {
                     // 예약 취소 승인
                     noCancelRequest = false
@@ -2331,7 +2269,7 @@ class RentalReservationAdminService(
             db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
                 Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                     rentableProductReservationInfo,
-                    8,
+                    6,
                     "관리자 환불 완료",
                     ZonedDateTime.parse(
                         inputVo.stateChangeDatetime,
@@ -2388,72 +2326,72 @@ class RentalReservationAdminService(
     // ----
     // (개별 상품 예약 정보 다음 준비 예정일 수정 <ADMIN>)
     // rentableProductInfoUid 관련 공유 락 처리 (예약하기 시점에 예약 정보에 영향을 끼치는 데이터 안정화)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun patchRentableProductStockReservationInfoNextReadyDatetime(
-        httpServletResponse: HttpServletResponse,
-        authorization: String,
-        rentableProductStockReservationInfoUid: Long,
-        inputVo: RentalReservationAdminController.PatchRentableProductStockReservationInfoNextReadyDatetimeInputVo
-    ) {
-//        val memberUid = jwtTokenUtil.getMemberUid(
-//            authorization.split(" ")[1].trim(),
-//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+//    fun patchRentableProductStockReservationInfoNextReadyDatetime(
+//        httpServletResponse: HttpServletResponse,
+//        authorization: String,
+//        rentableProductStockReservationInfoUid: Long,
+//        inputVo: RentalReservationAdminController.PatchRentableProductStockReservationInfoNextReadyDatetimeInputVo
+//    ) {
+////        val memberUid = jwtTokenUtil.getMemberUid(
+////            authorization.split(" ")[1].trim(),
+////            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+////            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+////        )
+//
+//        val rentableProductStockReservationInfo =
+//            db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.findByUidAndRowDeleteDateStr(
+//                rentableProductStockReservationInfoUid,
+//                "/"
+//            )
+//
+//        if (rentableProductStockReservationInfo == null) {
+//            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+//            httpServletResponse.setHeader("api-result-code", "1")
+//            return
+//        }
+//
+//        redis1LockRentableProductInfo.tryLockRepeat(
+//            "${rentableProductStockReservationInfo.rentableProductStockInfo.rentableProductInfo.uid}",
+//            7000L,
+//            {
+//                val newNextReadyDatetime = ZonedDateTime.parse(
+//                    inputVo.nextReadyDatetime,
+//                    DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+//                ).toLocalDateTime()
+//
+//                // newNextReadyDatetime 는 상품 대여 끝 일, 혹은 조기 반납 확인 일시보다 커야 합니다.
+//                if (newNextReadyDatetime.isBefore(rentableProductStockReservationInfo.rentableProductReservationInfo.rentalEndDatetime)) {
+//                    // 새 설정값이 상품 대여 마지막 날보다 앞일 때
+//                    // 히스토리에서 조기 반납이 있었는지 확인
+//                    val historyList =
+//                        db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+//                            rentableProductStockReservationInfo.rentableProductReservationInfo,
+//                            "/"
+//                        )
+//
+//                    if (historyList.isEmpty() || historyList.first().stateCode.toInt() != 7) {
+//                        // 조기 반납 이력이 없다면 에러
+//                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+//                        httpServletResponse.setHeader("api-result-code", "2")
+//                        return@tryLockRepeat
+//                    }
+//
+//                    if (newNextReadyDatetime.isBefore(historyList.first().stateChangeDatetime)) {
+//                        // 조기 반납 이력이 있지만 조기 반납일보다 설정값이 앞이니 에러
+//                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+//                        httpServletResponse.setHeader("api-result-code", "2")
+//                        return@tryLockRepeat
+//                    }
+//                }
+//
+//                // 값 수정
+//                rentableProductStockReservationInfo.nextReadyDatetime = newNextReadyDatetime
+//                db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(
+//                    rentableProductStockReservationInfo
+//                )
+//                httpServletResponse.status = HttpStatus.OK.value()
+//            }
 //        )
-
-        val rentableProductStockReservationInfo =
-            db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.findByUidAndRowDeleteDateStr(
-                rentableProductStockReservationInfoUid,
-                "/"
-            )
-
-        if (rentableProductStockReservationInfo == null) {
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
-
-        redis1LockRentableProductInfo.tryLockRepeat(
-            "${rentableProductStockReservationInfo.rentableProductStockInfo.rentableProductInfo.uid}",
-            7000L,
-            {
-                val newNextReadyDatetime = ZonedDateTime.parse(
-                    inputVo.nextReadyDatetime,
-                    DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-                ).toLocalDateTime()
-
-                // newNextReadyDatetime 는 상품 대여 끝 일, 혹은 조기 반납 확인 일시보다 커야 합니다.
-                if (newNextReadyDatetime.isBefore(rentableProductStockReservationInfo.rentableProductReservationInfo.rentalEndDatetime)) {
-                    // 새 설정값이 상품 대여 마지막 날보다 앞일 때
-                    // 히스토리에서 조기 반납이 있었는지 확인
-                    val historyList =
-                        db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
-                            rentableProductStockReservationInfo.rentableProductReservationInfo,
-                            "/"
-                        )
-
-                    if (historyList.isEmpty() || historyList.first().stateCode.toInt() != 7) {
-                        // 조기 반납 이력이 없다면 에러
-                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                        httpServletResponse.setHeader("api-result-code", "2")
-                        return@tryLockRepeat
-                    }
-
-                    if (newNextReadyDatetime.isBefore(historyList.first().stateChangeDatetime)) {
-                        // 조기 반납 이력이 있지만 조기 반납일보다 설정값이 앞이니 에러
-                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                        httpServletResponse.setHeader("api-result-code", "2")
-                        return@tryLockRepeat
-                    }
-                }
-
-                // 값 수정
-                rentableProductStockReservationInfo.nextReadyDatetime = newNextReadyDatetime
-                db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(
-                    rentableProductStockReservationInfo
-                )
-                httpServletResponse.status = HttpStatus.OK.value()
-            }
-        )
-    }
+//    }
 }

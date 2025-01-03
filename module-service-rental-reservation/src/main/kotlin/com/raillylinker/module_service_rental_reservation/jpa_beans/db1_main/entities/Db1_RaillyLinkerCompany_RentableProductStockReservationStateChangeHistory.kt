@@ -12,19 +12,27 @@ import java.time.LocalDateTime
 //     로직상으로 활성화된 행이 한개 뿐이라고 처리하면 됩니다.
 @Entity
 @Table(
-    name = "rentable_product_category",
+    name = "rentable_product_stock_reservation_state_change_history",
     catalog = "railly_linker_company"
 )
-@Comment("대여 가능 상품 카테고리")
-class Db1_RaillyLinkerCompany_RentableProductCategory(
+@Comment("개별 상품 예약 상태 변경 히스토리")
+class Db1_RaillyLinkerCompany_RentableProductStockReservationStateChangeHistory(
     @ManyToOne
-    @JoinColumn(name = "parent_rentable_product_category_uid", nullable = true)
-    @Comment("부모 카테고리 rentable_product_category 테이블 고유번호 (railly_linker_company.rentable_product_category.uid)")
-    var parentRentableProductCategory: Db1_RaillyLinkerCompany_RentableProductCategory?,
+    @JoinColumn(name = "rentable_product_stock_reservation_info_uid", nullable = false)
+    @Comment("rentable_product_stock_reservation_info 테이블 고유번호 (railly_linker_company.rentable_product_stock_reservation_info.uid)")
+    var rentableProductStockReservationInfo: Db1_RaillyLinkerCompany_RentableProductStockReservationInfo,
 
-    @Column(name = "category_name", nullable = false, columnDefinition = "VARCHAR(90)")
-    @Comment("카테고리 이름")
-    var categoryName: String
+    @Column(name = "state_code", nullable = false, columnDefinition = "TINYINT UNSIGNED")
+    @Comment("예약 상태 코드(0 : 관리자 결제 확인, 1 : 관리자 예약 승인, 2 : 관리자 예약 거부, 3 : 사용자 예약 취소 신청, 4 : 관리자 예약 취소 승인, 5 : 예약 취소 거부, 6: 사용자 조기반납신고, 7: 관리자 조기반납 확인, 8: 결제 환불 처리)")
+    var stateCode: Short,
+
+    @Column(name = "state_change_desc", nullable = false, columnDefinition = "VARCHAR(600)")
+    @Comment("상태 변경 상세")
+    var stateChangeDesc: String,
+
+    @Column(name = "state_change_datetime", nullable = false, columnDefinition = "DATETIME")
+    @Comment("상태 변경 기준 일시(행 생성일과 다르게 사건의 발생 일시 기준)")
+    var stateChangeDatetime: LocalDateTime
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,18 +58,5 @@ class Db1_RaillyLinkerCompany_RentableProductCategory(
 
     // ---------------------------------------------------------------------------------------------
     // <중첩 클래스 공간>
-    // 상위 카테고리가 삭제되면 하위 카테고리도 삭제
-    @OneToMany(
-        mappedBy = "parentRentableProductCategory",
-        fetch = FetchType.LAZY,
-        cascade = [CascadeType.ALL]
-    )
-    var childRentableProductCategoryList: MutableList<Db1_RaillyLinkerCompany_RentableProductCategory> = mutableListOf()
 
-    // 카테고리 삭제시 카테고리 설정을 null 로 변경
-    @OneToMany(
-        mappedBy = "rentableProductCategory",
-        fetch = FetchType.LAZY
-    )
-    var rentableProductInfoList: MutableList<Db1_RaillyLinkerCompany_RentableProductInfo> = mutableListOf()
 }

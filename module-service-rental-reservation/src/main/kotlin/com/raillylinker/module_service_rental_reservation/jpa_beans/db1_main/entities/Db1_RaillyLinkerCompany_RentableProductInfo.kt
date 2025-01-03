@@ -18,23 +18,23 @@ import java.time.LocalDateTime
 )
 @Comment("대여 가능 상품 정보")
 class Db1_RaillyLinkerCompany_RentableProductInfo(
-    @Column(name = "product_name", nullable = false, columnDefinition = "VARCHAR(90)")
-    @Comment("고객에게 보일 상품명")
-    var productName: String,
-
     @ManyToOne
     @JoinColumn(name = "rentable_product_category_uid", nullable = true)
     @Comment("rentable_product_category 테이블 고유번호 (railly_linker_company.rentable_product_category.uid)")
     var rentableProductCategory: Db1_RaillyLinkerCompany_RentableProductCategory?,
 
-    @Column(name = "product_intro", nullable = false, columnDefinition = "VARCHAR(6000)")
-    @Comment("고객에게 보일 상품 소개")
-    var productIntro: String,
-
     @ManyToOne
     @JoinColumn(name = "front_rentable_product_image_uid", nullable = true)
     @Comment("상품 대표 이미지 rentable_product_image 테이블 고유번호 (railly_linker_company.rentable_product_image.uid)")
     var frontRentableProductImage: Db1_RaillyLinkerCompany_RentableProductImage?,
+
+    @Column(name = "product_name", nullable = false, columnDefinition = "VARCHAR(90)")
+    @Comment("고객에게 보일 상품명")
+    var productName: String,
+
+    @Column(name = "product_intro", nullable = false, columnDefinition = "VARCHAR(6000)")
+    @Comment("고객에게 보일 상품 소개")
+    var productIntro: String,
 
     @Column(name = "address_country", nullable = false, columnDefinition = "VARCHAR(60)")
     @Comment("상품이 위치한 주소 (대여 가능 위치의 기준으로 사용됨) - 국가")
