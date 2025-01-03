@@ -29,7 +29,7 @@ class Db1_RaillyLinkerCompany_TotalAuthMemberLockHistory(
 
     @Column(name = "lock_reason_code", nullable = false, columnDefinition = "TINYINT UNSIGNED")
     @Comment("계정 정지 이유 코드(0 : 기타, 1 : 휴면계정, 2 : 패널티)")
-    var lockReasonCode: Byte,
+    var lockReasonCode: Short,
 
     @Column(name = "lock_reason", nullable = false, columnDefinition = "VARCHAR(1000)")
     @Comment("계정 정지 이유 상세(시스템 악용 패널티, 1년 이상 미접속 휴면계정 등...)")

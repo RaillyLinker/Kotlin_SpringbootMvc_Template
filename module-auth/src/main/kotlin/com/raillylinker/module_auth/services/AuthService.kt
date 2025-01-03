@@ -2391,7 +2391,7 @@ class AuthService(
             return
         }
 
-        if (oauth2Verification.oauth2TypeCode != oauth2TypeCode.toByte() ||
+        if (oauth2Verification.oauth2TypeCode.toInt() != oauth2TypeCode ||
             oauth2Verification.oauth2Id != inputVo.oauth2Id
         ) {
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
@@ -2445,7 +2445,7 @@ class AuthService(
             db1RaillyLinkerCompanyTotalAuthMemberOauth2LoginRepository.save(
                 Db1_RaillyLinkerCompany_TotalAuthMemberOauth2Login(
                     memberEntity,
-                    inputVo.oauth2TypeCode.toByte(),
+                    inputVo.oauth2TypeCode.toShort(),
                     inputVo.oauth2Id
                 )
             )
@@ -3894,7 +3894,7 @@ class AuthService(
         db1RaillyLinkerCompanyTotalAuthMemberOauth2LoginRepository.save(
             Db1_RaillyLinkerCompany_TotalAuthMemberOauth2Login(
                 memberData,
-                snsTypeCode.toByte(),
+                snsTypeCode.toShort(),
                 snsId
             )
         )
@@ -3963,7 +3963,7 @@ class AuthService(
         db1RaillyLinkerCompanyTotalAuthMemberOauth2LoginRepository.save(
             Db1_RaillyLinkerCompany_TotalAuthMemberOauth2Login(
                 memberData,
-                snsTypeCode.toByte(),
+                snsTypeCode.toShort(),
                 snsId
             )
         )

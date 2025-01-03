@@ -24,7 +24,7 @@ class Db1_RaillyLinkerCompany_TotalAuthMemberOauth2Login(
 
     @Column(name = "oauth2_type_code", nullable = false, columnDefinition = "TINYINT UNSIGNED")
     @Comment("oauth2 종류 (1 : GOOGLE, 2 : NAVER, 3 : KAKAO, 4 : APPLE)")
-    var oauth2TypeCode: Byte,
+    var oauth2TypeCode: Short,
 
     @Column(name = "oauth2_id", nullable = false, columnDefinition = "VARCHAR(50)")
     @Comment("OAuth2 로그인으로 얻어온 고유값")
