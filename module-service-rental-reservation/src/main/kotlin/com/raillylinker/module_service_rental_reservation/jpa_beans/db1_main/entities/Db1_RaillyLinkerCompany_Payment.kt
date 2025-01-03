@@ -17,9 +17,9 @@ import java.time.LocalDateTime
 class Db1_RaillyLinkerCompany_Payment(
     @Column(name = "payment_type", nullable = false, columnDefinition = "TINYINT UNSIGNED")
     @Comment("결제 타입(1 : 무통장 입금, 2 : 실시간 계좌이체, 3 : 토스 페이)")
-    var paymentType: Byte,
+    var paymentType: Short,
 
-    @Column(name = "payment_amount", nullable = false, columnDefinition = "DECIMAL(15, 2) UNSIGNED")
+    @Column(name = "payment_amount", nullable = false, columnDefinition = "DECIMAL(15, 2)")
     @Comment("결제 금액")
     var paymentAmount: BigDecimal,
 

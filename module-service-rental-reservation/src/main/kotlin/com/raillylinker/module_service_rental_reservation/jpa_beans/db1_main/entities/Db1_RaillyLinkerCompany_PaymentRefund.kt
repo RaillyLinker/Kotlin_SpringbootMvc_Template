@@ -20,7 +20,7 @@ class Db1_RaillyLinkerCompany_PaymentRefund(
     @Comment("payment 테이블 고유번호 (railly_linker_company.payment.uid)")
     var payment: Db1_RaillyLinkerCompany_Payment,
 
-    @Column(name = "amount", nullable = false, columnDefinition = "DECIMAL(15, 2) UNSIGNED")
+    @Column(name = "amount", nullable = false, columnDefinition = "DECIMAL(15, 2)")
     @Comment("환불 금액")
     var amount: BigDecimal,
 

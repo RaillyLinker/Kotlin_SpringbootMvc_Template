@@ -64,7 +64,7 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
     @Comment("단위 예약 시간을 대여일 기준에서 최대 몇번 추가 가능한지 (Null 이라면 제한 없음)")
     var maximumReservationUnitCount: Long?,
 
-    @Column(name = "reservation_unit_price", nullable = false, columnDefinition = "DECIMAL(15, 2) UNSIGNED")
+    @Column(name = "reservation_unit_price", nullable = false, columnDefinition = "DECIMAL(15, 2)")
     @Comment("단위 예약 시간에 대한 가격 (예약 시간 / 단위 예약 시간 * 예약 단가 = 예약 최종가)")
     var reservationUnitPrice: BigDecimal,
 
