@@ -23,16 +23,12 @@ class Db1_RaillyLinkerCompany_RentableProductStockReservationStateChangeHistory(
     var rentableProductStockReservationInfo: Db1_RaillyLinkerCompany_RentableProductStockReservationInfo,
 
     @Column(name = "state_code", nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    @Comment("예약 상태 코드(0 : 사용자 조기 반납 신고, 1 : 관리자 반납 확인, 2 : 관리자 다음 예약 준비 완료, 3 : 관리자 연체 상태 변경, 4 : 관리자 손망실 상태 변경)")
+    @Comment("예약 상태 코드(0 : 사용자 조기 반납 신고, 1 : 관리자 반납 확인, 2 : 관리자 연체 상태 변경, 3 : 관리자 손망실 상태 변경)")
     var stateCode: Short,
 
     @Column(name = "state_change_desc", nullable = false, columnDefinition = "VARCHAR(600)")
     @Comment("상태 변경 상세")
-    var stateChangeDesc: String,
-
-    @Column(name = "state_change_datetime", nullable = false, columnDefinition = "DATETIME")
-    @Comment("상태 변경 기준 일시(행 생성일과 다르게 사건의 발생 일시 기준)")
-    var stateChangeDatetime: LocalDateTime
+    var stateChangeDesc: String
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

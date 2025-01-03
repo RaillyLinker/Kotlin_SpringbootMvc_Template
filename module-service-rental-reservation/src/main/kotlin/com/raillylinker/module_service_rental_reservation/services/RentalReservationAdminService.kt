@@ -1663,12 +1663,9 @@ class RentalReservationAdminService(
         }
 
         // 예약 상태 확인
-        val anchorDatetime = ZonedDateTime.parse(
-            inputVo.stateChangeDatetime,
-            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-        ).toLocalDateTime()
+        val nowDatetime = LocalDateTime.now()
 
-        if (anchorDatetime.isAfter(rentableProductReservationInfo.reservationApprovalDeadlineDatetime)) {
+        if (nowDatetime.isAfter(rentableProductReservationInfo.reservationApprovalDeadlineDatetime)) {
             // 예약 승인 기한을 넘김
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "2")
@@ -1711,7 +1708,7 @@ class RentalReservationAdminService(
             }
         }
 
-        if (notPaid && anchorDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
+        if (notPaid && nowDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
             // 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일) -> return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "6")
@@ -1724,8 +1721,7 @@ class RentalReservationAdminService(
                 Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                     rentableProductReservationInfo,
                     1,
-                    "관리자 예약 승인",
-                    anchorDatetime
+                    "관리자 예약 승인"
                 )
             )
 
@@ -1764,12 +1760,9 @@ class RentalReservationAdminService(
         }
 
         // 상태 확인
-        val anchorDatetime = ZonedDateTime.parse(
-            inputVo.stateChangeDatetime,
-            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-        ).toLocalDateTime()
+        val nowDatetime = LocalDateTime.now()
 
-        if (anchorDatetime.isAfter(rentableProductReservationInfo.reservationApprovalDeadlineDatetime)) {
+        if (nowDatetime.isAfter(rentableProductReservationInfo.reservationApprovalDeadlineDatetime)) {
             // 예약 승인 기한을 넘김
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "2")
@@ -1812,7 +1805,7 @@ class RentalReservationAdminService(
             }
         }
 
-        if (notPaid && anchorDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
+        if (notPaid && nowDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
             // 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일) -> return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "6")
@@ -1825,8 +1818,7 @@ class RentalReservationAdminService(
                 Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                     rentableProductReservationInfo,
                     2,
-                    "관리자 예약 거부",
-                    anchorDatetime
+                    "관리자 예약 거부"
                 )
             )
 
@@ -1865,12 +1857,9 @@ class RentalReservationAdminService(
         }
 
         // 상태 확인
-        val anchorDatetime = ZonedDateTime.parse(
-            inputVo.stateChangeDatetime,
-            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-        ).toLocalDateTime()
+        val nowDatetime = LocalDateTime.now()
 
-        if (anchorDatetime.isAfter(rentableProductReservationInfo.rentalStartDatetime)) {
+        if (nowDatetime.isAfter(rentableProductReservationInfo.rentalStartDatetime)) {
             // 대여 시작 기한 초과 -> return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "2")
@@ -1934,7 +1923,7 @@ class RentalReservationAdminService(
             }
         }
 
-        if (notPaid && anchorDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
+        if (notPaid && nowDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
             // 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일) -> return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "5")
@@ -1961,8 +1950,7 @@ class RentalReservationAdminService(
                 Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                     rentableProductReservationInfo,
                     4,
-                    "관리자 취소 승인",
-                    anchorDatetime
+                    "관리자 취소 승인"
                 )
             )
 
@@ -2001,12 +1989,9 @@ class RentalReservationAdminService(
         }
 
         // 상태 확인
-        val anchorDatetime = ZonedDateTime.parse(
-            inputVo.stateChangeDatetime,
-            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-        ).toLocalDateTime()
+        val nowDatetime = LocalDateTime.now()
 
-        if (anchorDatetime.isAfter(rentableProductReservationInfo.rentalStartDatetime)) {
+        if (nowDatetime.isAfter(rentableProductReservationInfo.rentalStartDatetime)) {
             // 대여 시작 기한 초과 -> return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "2")
@@ -2070,7 +2055,7 @@ class RentalReservationAdminService(
             }
         }
 
-        if (notPaid && anchorDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
+        if (notPaid && nowDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
             // 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일) -> return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "5")
@@ -2097,8 +2082,7 @@ class RentalReservationAdminService(
                 Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                     rentableProductReservationInfo,
                     5,
-                    "관리자 취소 거부",
-                    anchorDatetime
+                    "관리자 취소 거부"
                 )
             )
 
@@ -2137,12 +2121,9 @@ class RentalReservationAdminService(
         }
 
         // 상태 확인
-        val anchorDatetime = ZonedDateTime.parse(
-            inputVo.stateChangeDatetime,
-            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-        ).toLocalDateTime()
+        val nowDatetime = LocalDateTime.now()
 
-        if (anchorDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
+        if (nowDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
             // 결제 확인 기한 초과 -> return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "3")
@@ -2171,8 +2152,7 @@ class RentalReservationAdminService(
                 Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                     rentableProductReservationInfo,
                     0,
-                    "관리자 결제 확인",
-                    anchorDatetime
+                    "관리자 결제 확인"
                 )
             )
 
@@ -2273,11 +2253,7 @@ class RentalReservationAdminService(
                 Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                     rentableProductReservationInfo,
                     6,
-                    "관리자 환불 완료",
-                    ZonedDateTime.parse(
-                        inputVo.stateChangeDatetime,
-                        DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-                    ).toLocalDateTime()
+                    "관리자 환불 완료"
                 )
             )
 
@@ -2291,11 +2267,11 @@ class RentalReservationAdminService(
     // ----
     // (대여 가능 상품 예약 상태 테이블의 상세 설명 수정 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun patchReservationStateChangeHistoryStateChangeDescAndDate(
+    fun patchReservationStateChangeHistoryStateChangeDesc(
         httpServletResponse: HttpServletResponse,
         authorization: String,
         reservationStateChangeHistoryUid: Long,
-        inputVo: RentalReservationAdminController.PatchReservationStateChangeHistoryStateChangeDescAndDateInputVo
+        inputVo: RentalReservationAdminController.PatchReservationStateChangeHistoryStateChangeDescInputVo
     ) {
 //        val memberUid = jwtTokenUtil.getMemberUid(
 //            authorization.split(" ")[1].trim(),
@@ -2316,10 +2292,6 @@ class RentalReservationAdminService(
         }
 
         reservationStateChangeHistory.stateChangeDesc = inputVo.stateChangeDesc
-        reservationStateChangeHistory.stateChangeDatetime = ZonedDateTime.parse(
-            inputVo.stateChangeDatetime,
-            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-        ).toLocalDateTime()
         db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(reservationStateChangeHistory)
 
         httpServletResponse.status = HttpStatus.OK.value()
@@ -2363,6 +2335,13 @@ class RentalReservationAdminService(
         var noEarlyReturn = true
         for (history in historyList) {
             when (history.stateCode.toInt()) {
+                1 -> {
+                    // 반납 확인 처리
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "3")
+                    return null
+                }
+
                 0 -> {
                     // 사용자 조기 반납 신고
                     noEarlyReturn = false
@@ -2371,12 +2350,9 @@ class RentalReservationAdminService(
         }
 
         // 상태 확인
-        val anchorDatetime = ZonedDateTime.parse(
-            inputVo.returnCheckDatetime,
-            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-        ).toLocalDateTime()
+        val nowDatetime = LocalDateTime.now()
 
-        if (noEarlyReturn && anchorDatetime.isBefore(rentableProductStockReservationInfo.rentableProductReservationInfo.rentalEndDatetime)) {
+        if (noEarlyReturn && nowDatetime.isBefore(rentableProductStockReservationInfo.rentableProductReservationInfo.rentalEndDatetime)) {
             // 조기 반납 내역도 없고, 상품 반납일도 안됨
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "2")
@@ -2388,8 +2364,7 @@ class RentalReservationAdminService(
             Db1_RaillyLinkerCompany_RentableProductStockReservationStateChangeHistory(
                 rentableProductStockReservationInfo,
                 1,
-                inputVo.stateChangeDesc,
-                anchorDatetime
+                inputVo.stateChangeDesc
             )
         )
 
@@ -2437,8 +2412,7 @@ class RentalReservationAdminService(
             Db1_RaillyLinkerCompany_RentableProductStockReservationStateChangeHistory(
                 rentableProductStockReservationInfo,
                 2,
-                inputVo.stateChangeDesc,
-                anchorDatetime
+                inputVo.stateChangeDesc
             )
         )
 
@@ -2494,8 +2468,7 @@ class RentalReservationAdminService(
             Db1_RaillyLinkerCompany_RentableProductStockReservationStateChangeHistory(
                 rentableProductStockReservationInfo,
                 3,
-                inputVo.stateChangeDesc,
-                anchorDatetime
+                inputVo.stateChangeDesc
             )
         )
 

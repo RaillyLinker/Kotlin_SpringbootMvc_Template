@@ -303,7 +303,8 @@ class RentalReservationService(
                     db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(
                         Db1_RaillyLinkerCompany_RentableProductStockReservationInfo(
                             rentableProductStockEntity,
-                            newReservationInfo
+                            newReservationInfo,
+                            null
                         )
                     )
                 }
@@ -438,8 +439,7 @@ class RentalReservationService(
             Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                 reservationEntity,
                 3,
-                inputVo.cancelReason,
-                nowDatetime
+                inputVo.cancelReason
             )
         )
 
@@ -451,8 +451,7 @@ class RentalReservationService(
                     Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                         reservationEntity,
                         4,
-                        inputVo.cancelReason,
-                        nowDatetime
+                        inputVo.cancelReason
                     )
                 ).uid
             } else {
@@ -578,8 +577,7 @@ class RentalReservationService(
             Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                 reservationEntity,
                 6,
-                inputVo.earlyReturnReason,
-                anchorDatetime
+                inputVo.earlyReturnReason
             )
         )
 

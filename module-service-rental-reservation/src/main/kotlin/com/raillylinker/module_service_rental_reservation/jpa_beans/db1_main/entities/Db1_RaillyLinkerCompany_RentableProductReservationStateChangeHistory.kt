@@ -28,11 +28,7 @@ class Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
 
     @Column(name = "state_change_desc", nullable = false, columnDefinition = "VARCHAR(600)")
     @Comment("상태 변경 상세")
-    var stateChangeDesc: String,
-
-    @Column(name = "state_change_datetime", nullable = false, columnDefinition = "DATETIME")
-    @Comment("상태 변경 기준 일시(행 생성일과 다르게 사건의 발생 일시 기준)")
-    var stateChangeDatetime: LocalDateTime
+    var stateChangeDesc: String
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
