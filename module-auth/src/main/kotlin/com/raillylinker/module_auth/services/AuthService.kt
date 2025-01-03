@@ -226,7 +226,7 @@ class AuthService(
         inputVo: AuthController.LoginWithPasswordInputVo
     ): AuthController.LoginOutputVo? {
         val memberData: Db1_RaillyLinkerCompany_TotalAuthMember
-        when (inputVo.loginTypeCode) {
+        when (inputVo.loginTypeCode.toInt()) {
             0 -> { // 아이디
                 // (정보 검증 로직 수행)
                 val member = db1RaillyLinkerCompanyTotalAuthMemberRepository.findByAccountIdAndRowDeleteDateStr(
@@ -2354,9 +2354,9 @@ class AuthService(
         inputVo: AuthController.JoinTheMembershipWithOauth2InputVo
     ) {
         // oauth2 종류 (1 : GOOGLE, 2 : NAVER, 3 : KAKAO)
-        val oauth2TypeCode: Int
+        val oauth2TypeCode: Short
 
-        when (inputVo.oauth2TypeCode) {
+        when (inputVo.oauth2TypeCode.toInt()) {
             1 -> {
                 oauth2TypeCode = 1
             }
@@ -2391,7 +2391,7 @@ class AuthService(
             return
         }
 
-        if (oauth2Verification.oauth2TypeCode.toInt() != oauth2TypeCode ||
+        if (oauth2Verification.oauth2TypeCode != oauth2TypeCode ||
             oauth2Verification.oauth2Id != inputVo.oauth2Id
         ) {
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
@@ -2410,7 +2410,7 @@ class AuthService(
         if (oauth2Verification.verificationSecret == inputVo.verificationCode) { // 코드 일치
             val isUserExists =
                 db1RaillyLinkerCompanyTotalAuthMemberOauth2LoginRepository.existsByOauth2TypeCodeAndOauth2IdAndRowDeleteDateStr(
-                    inputVo.oauth2TypeCode.toByte(),
+                    inputVo.oauth2TypeCode,
                     inputVo.oauth2Id,
                     "/"
                 )
@@ -3808,7 +3808,7 @@ class AuthService(
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        val snsTypeCode: Int
+        val snsTypeCode: Short
         val snsId: String
 
         // (정보 검증 로직 수행)
@@ -3879,7 +3879,7 @@ class AuthService(
         // 사용중인지 아닌지 검증
         val memberExists =
             db1RaillyLinkerCompanyTotalAuthMemberOauth2LoginRepository.existsByOauth2TypeCodeAndOauth2IdAndRowDeleteDateStr(
-                snsTypeCode.toByte(),
+                snsTypeCode,
                 snsId,
                 "/"
             )
@@ -3919,11 +3919,11 @@ class AuthService(
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        val snsTypeCode: Int
+        val snsTypeCode: Short
         val snsId: String
 
         // (정보 검증 로직 수행)
-        when (inputVo.oauth2TypeCode) {
+        when (inputVo.oauth2TypeCode.toInt()) {
             4 -> { // Apple
                 val appleInfo = appleOAuthHelperUtil.getAppleMemberData(inputVo.oauth2IdToken)
 
@@ -3948,7 +3948,7 @@ class AuthService(
         // 사용중인지 아닌지 검증
         val memberExists =
             db1RaillyLinkerCompanyTotalAuthMemberOauth2LoginRepository.existsByOauth2TypeCodeAndOauth2IdAndRowDeleteDateStr(
-                snsTypeCode.toByte(),
+                snsTypeCode,
                 snsId,
                 "/"
             )

@@ -55,7 +55,7 @@ class Db1_RaillyLinkerCompany_RepositoryDsl(entityManager: EntityManager) {
 
     data class FindAllNowActivateMemberLockInfoOutputVo(
         val uid: Long,
-        val lockReasonCode: Byte,
+        val lockReasonCode: Short,
         val lockReason: String,
         val lockStart: LocalDateTime,
         val lockBefore: LocalDateTime?,

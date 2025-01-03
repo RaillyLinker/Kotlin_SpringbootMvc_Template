@@ -11,13 +11,13 @@ import org.springframework.stereotype.Repository
 interface Db1_RaillyLinkerCompany_TotalAuthMemberOauth2Login_Repository :
     JpaRepository<Db1_RaillyLinkerCompany_TotalAuthMemberOauth2Login, Long> {
     fun findByOauth2TypeCodeAndOauth2IdAndRowDeleteDateStr(
-        oauth2TypeCode: Byte,
+        oauth2TypeCode: Short,
         snsId: String,
         rowDeleteDateStr: String
     ): Db1_RaillyLinkerCompany_TotalAuthMemberOauth2Login?
 
     fun existsByOauth2TypeCodeAndOauth2IdAndRowDeleteDateStr(
-        oauth2TypeCode: Byte,
+        oauth2TypeCode: Short,
         snsId: String,
         rowDeleteDateStr: String
     ): Boolean

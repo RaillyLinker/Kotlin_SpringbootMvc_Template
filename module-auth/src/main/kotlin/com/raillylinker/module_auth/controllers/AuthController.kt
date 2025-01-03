@@ -284,7 +284,7 @@ class AuthController(
             example = "1"
         )
         @JsonProperty("loginTypeCode")
-        val loginTypeCode: Int,
+        val loginTypeCode: Short,
 
         @Schema(
             description = "아이디 값 (0 : 홍길동, 1 : test@gmail.com, 2 : 82)000-0000-0000)",
@@ -1717,7 +1717,7 @@ class AuthController(
             example = "1"
         )
         @JsonProperty("oauth2TypeCode")
-        val oauth2TypeCode: Int,
+        val oauth2TypeCode: Short,
 
         @Schema(
             description = "계정 아이디",
@@ -3069,7 +3069,7 @@ class AuthController(
             example = "1"
         )
         @JsonProperty("oauth2TypeCode")
-        val oauth2TypeCode: Int,
+        val oauth2TypeCode: Short,
 
         @Schema(
             description = "OAuth2 인증으로 받은 oauth2 IdToken",
