@@ -2654,6 +2654,10 @@ class RentalReservationAdminController(
 
 
     // ----
+    // todo 반납 확인 내역 지우기
+
+
+    // ----
     @Operation(
         summary = "개별 상품 준비 완료 일시 설정 <ADMIN>",
         description = "개별 상품에 대해 준비 완료 일시를 설정 합니다.<br>" +
@@ -2675,7 +2679,8 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                                "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : readyDatetime 를 null 로 하려 할 때, 이미 해당 상품이 다른 예약을 진행중입니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -2734,7 +2739,6 @@ class RentalReservationAdminController(
     )
 
 
-    // todo ready 시간 지우기, 에러 코드 살피기
     // ----
     @Operation(
         summary = "개별 상품 연체 상태 변경 <ADMIN>",
@@ -2756,7 +2760,10 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 상품 반납일이 도래하지 않았습니다.",
+                                "2 : 상품 반납일이 도래하지 않았습니다.<br>" +
+                                "3 : 이미 연체 상태입니다.<br>" +
+                                "4 : 현재 손망실 상태입니다.<br>" +
+                                "5 : 이미 반납 확인을 한 상태입니다.",
                         schema = Schema(type = "string")
                     )
                 ]

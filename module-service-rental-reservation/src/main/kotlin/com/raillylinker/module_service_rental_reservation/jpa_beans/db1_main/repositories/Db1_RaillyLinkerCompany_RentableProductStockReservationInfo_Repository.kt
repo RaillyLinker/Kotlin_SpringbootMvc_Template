@@ -13,4 +13,9 @@ interface Db1_RaillyLinkerCompany_RentableProductStockReservationInfo_Repository
         uid: Long,
         rowDeleteDateStr: String
     ): Db1_RaillyLinkerCompany_RentableProductStockReservationInfo?
+
+    fun findAllByRentableProductStockInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+        rentableProductStockInfo: Db1_RaillyLinkerCompany_RentableProductStockInfo,
+        rowDeleteDateStr: String
+    ): List<Db1_RaillyLinkerCompany_RentableProductStockReservationInfo>
 }

@@ -2403,6 +2403,21 @@ class RentalReservationAdminService(
         }
 
         val anchorDatetime = if (inputVo.readyDatetime == null) {
+            // 대여 가능 상품 재고를 기반으로 최신 순서 개별 상품 예약 정보 리스트 가져오기
+            val latestFirstStockReservationList =
+                db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.findAllByRentableProductStockInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                    rentableProductStockReservationInfo.rentableProductStockInfo,
+                    "/"
+                )
+            val latestStockReservation = latestFirstStockReservationList[0]
+
+            // 최신 개별 상품 예약 정보가 현재 정보와 다를 때(= 새롭게 진행되는 예약이 존재)
+            if (latestStockReservation.uid != rentableProductStockReservationInfo.uid) {
+                httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                httpServletResponse.setHeader("api-result-code", "2")
+                return
+            }
+
             null
         } else {
             ZonedDateTime.parse(
@@ -2444,6 +2459,44 @@ class RentalReservationAdminService(
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
             return null
+        }
+
+        // 상태 확인
+        val historyList =
+            db1RaillyLinkerCompanyRentableProductStockReservationStateChangeHistoryRepository.findAllByRentableProductStockReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductStockReservationInfo,
+                "/"
+            )
+
+        var noEarlyReturn = true
+        for (history in historyList) {
+            when (history.stateCode.toInt()) {
+                3 -> {
+                    // 손망실 상태
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "4")
+                    return null
+                }
+
+                2 -> {
+                    // 연체 상태
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "3")
+                    return null
+                }
+
+                1 -> {
+                    // 반납 확인 상태
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "5")
+                    return null
+                }
+
+                0 -> {
+                    // 사용자 조기 반납 신고
+                    noEarlyReturn = false
+                }
+            }
         }
 
         // 상태 확인
