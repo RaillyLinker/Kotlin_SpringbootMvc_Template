@@ -2610,4 +2610,40 @@ class RentalReservationAdminService(
             historyEntity.uid!!
         )
     }
+
+
+    // ----
+    // (개별 상품 예약 상태 테이블의 상세 설명 수정 <ADMIN>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun patchStockReservationStateChangeHistoryStateChangeDesc(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        stockReservationStateChangeHistoryUid: Long,
+        inputVo: RentalReservationAdminController.PatchStockReservationStateChangeHistoryStateChangeDescInputVo
+    ) {
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+
+        val reservationStateChangeHistory =
+            db1RaillyLinkerCompanyRentableProductStockReservationStateChangeHistoryRepository.findByUidAndRowDeleteDateStr(
+                stockReservationStateChangeHistoryUid,
+                "/"
+            )
+
+        if (reservationStateChangeHistory == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        reservationStateChangeHistory.stateChangeDesc = inputVo.stateChangeDesc
+        db1RaillyLinkerCompanyRentableProductStockReservationStateChangeHistoryRepository.save(
+            reservationStateChangeHistory
+        )
+
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
 }
