@@ -2376,14 +2376,14 @@ class RentalReservationAdminService(
 
 
     // ----
-    // (개별 상품 준비 완료 <ADMIN>)
+    // (개별 상품 준비 완료 일시 설정 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchRentableProductStockReservationInfoReady(
         httpServletResponse: HttpServletResponse,
         authorization: String,
         rentableProductStockReservationInfoUid: Long,
         inputVo: RentalReservationAdminController.PatchRentableProductStockReservationInfoReadyInputVo
-    ): RentalReservationAdminController.PatchRentableProductStockReservationInfoReadyOutputVo? {
+    ) {
 //        val memberUid = jwtTokenUtil.getMemberUid(
 //            authorization.split(" ")[1].trim(),
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
@@ -2399,27 +2399,23 @@ class RentalReservationAdminService(
         if (rentableProductStockReservationInfo == null) {
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
-            return null
+            return
         }
 
-        val anchorDatetime = ZonedDateTime.parse(
-            inputVo.readyDatetime,
-            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-        ).toLocalDateTime()
+        val anchorDatetime = if (inputVo.readyDatetime == null) {
+            null
+        } else {
+            ZonedDateTime.parse(
+                inputVo.readyDatetime,
+                DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+            ).toLocalDateTime()
+        }
 
         // 개별 상품 반납 확인 내역 추가
-        val historyEntity = db1RaillyLinkerCompanyRentableProductStockReservationStateChangeHistoryRepository.save(
-            Db1_RaillyLinkerCompany_RentableProductStockReservationStateChangeHistory(
-                rentableProductStockReservationInfo,
-                2,
-                inputVo.stateChangeDesc
-            )
-        )
+        rentableProductStockReservationInfo.productReadyDatetime = anchorDatetime
+        db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(rentableProductStockReservationInfo)
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return RentalReservationAdminController.PatchRentableProductStockReservationInfoReadyOutputVo(
-            historyEntity.uid!!
-        )
     }
 
 

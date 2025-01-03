@@ -2653,12 +2653,12 @@ class RentalReservationAdminController(
     )
 
 
-    // todo
     // ----
     @Operation(
-        summary = "개별 상품 준비 완료 <ADMIN>",
-        description = "개별 상품에 대해 준비 완료 처리를 합니다.<br>" +
-                "readyDatetime 변수를 미래로 설정하는 식으로 사용하면, 해당 시점의 상품 예약 가능 수량으로 집계됩니다."
+        summary = "개별 상품 준비 완료 일시 설정 <ADMIN>",
+        description = "개별 상품에 대해 준비 완료 일시를 설정 합니다.<br>" +
+                "readyDatetime 변수를 미래로 설정하는 식으로 미리 준비 설정을 할 수도 있습니다.<br>" +
+                "다른 모든 상태 정보에 앞서며, 연체 처리, 손망실 처리를 하면 이 설정이 지워집니다."
     )
     @ApiResponses(
         value = [
@@ -2695,7 +2695,7 @@ class RentalReservationAdminController(
     @PatchMapping(
         path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/ready"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
+        produces = [MediaType.ALL_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
@@ -2714,8 +2714,8 @@ class RentalReservationAdminController(
         rentableProductStockReservationInfoUid: Long,
         @RequestBody
         inputVo: PatchRentableProductStockReservationInfoReadyInputVo
-    ): PatchRentableProductStockReservationInfoReadyOutputVo? {
-        return service.patchRentableProductStockReservationInfoReady(
+    ) {
+        service.patchRentableProductStockReservationInfoReady(
             httpServletResponse,
             authorization!!,
             rentableProductStockReservationInfoUid,
@@ -2724,26 +2724,17 @@ class RentalReservationAdminController(
     }
 
     data class PatchRentableProductStockReservationInfoReadyInputVo(
-        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
-        @JsonProperty("stateChangeDesc")
-        val stateChangeDesc: String,
         @Schema(
-            description = "상품 준비 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            description = "상품 준비 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, null 이라면 설정 해제)",
             required = true,
             example = "2024_05_02_T_15_14_49_552_KST"
         )
         @JsonProperty("readyDatetime")
-        val readyDatetime: String
-    )
-
-    data class PatchRentableProductStockReservationInfoReadyOutputVo(
-        @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
-        @JsonProperty("stockReservationStateChangeHistoryUid")
-        val stockReservationStateChangeHistoryUid: Long
+        val readyDatetime: String?
     )
 
 
-    // todo
+    // todo ready 시간 지우기, 에러 코드 살피기
     // ----
     @Operation(
         summary = "개별 상품 연체 상태 변경 <ADMIN>",

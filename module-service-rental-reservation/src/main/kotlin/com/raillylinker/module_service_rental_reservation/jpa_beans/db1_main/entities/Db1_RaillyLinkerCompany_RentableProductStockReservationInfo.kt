@@ -28,7 +28,7 @@ class Db1_RaillyLinkerCompany_RentableProductStockReservationInfo(
     var rentableProductReservationInfo: Db1_RaillyLinkerCompany_RentableProductReservationInfo,
 
     @Column(name = "product_ready_datetime", nullable = true, columnDefinition = "DATETIME")
-    @Comment("개별 상품이 대여 반납 이후 준비가 완료된 시간(미리 설정도 가능, 히스토리 테이블에 반납 확인 내역이 없다면 준비 완료 상태로 판별되지 않습니다.)")
+    @Comment("개별 상품이 대여 반납 이후 준비가 완료된 시간(미리 설정도 가능, 히스토리 테이블 내역보다 우선됩니다.)")
     var productReadyDatetime: LocalDateTime?
 ) {
     @Id
