@@ -169,7 +169,7 @@ CREATE TABLE `HCP_RENTABLE_PRODUCT_STOCK_RESERVATION_STATE_CHANGE_HISTORY` (
 	`DEL_FRAG`	BIT(1)	NOT NULL	COMMENT '행 삭제여부',
 	`ROW_CREATE_DATETIME`	DATETIME(3)	NOT NULL	COMMENT '행 생성일시',
 	`HCP_RENTABLE_PRODUCT_STOCK_RESERVATION_INFO_UID`	BIGINT UNSIGNED	NOT NULL	COMMENT '행 고유키',
-	`STATE_CODE`	TINYINT UNSIGNED	NOT NULL	COMMENT '예약 상태 코드(0 : 사용자 조기 반납 신고, 1 : 관리자  반납 확인, 2 : 관리자 연체 상태 변경, 3 : 관리자 손망실 상태 변경)',
+	`STATE_CODE`	TINYINT UNSIGNED	NOT NULL	COMMENT '예약 상태 코드(0 : 사용자 조기 반납 신고, 1 : 관리자  반납 확인, 2 : 관리자 연체 상태 변경, 3 : 관리자 손망실 상태 변경, 4: 관리자 반납 확인 취소, 5 : 관리자 연체 상태 변경 취소, 6 : 관리자 손망실 상태 변경 취소)',
 	`STATE_CHANGE_DESC`	VARCHAR(600)	NOT NULL	COMMENT '상태 변경 상세'
 );
 

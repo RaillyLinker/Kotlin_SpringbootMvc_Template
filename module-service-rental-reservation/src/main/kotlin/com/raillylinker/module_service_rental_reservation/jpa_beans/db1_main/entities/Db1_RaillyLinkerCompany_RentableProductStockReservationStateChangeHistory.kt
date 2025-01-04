@@ -23,7 +23,7 @@ class Db1_RaillyLinkerCompany_RentableProductStockReservationStateChangeHistory(
     var rentableProductStockReservationInfo: Db1_RaillyLinkerCompany_RentableProductStockReservationInfo,
 
     @Column(name = "state_code", nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    @Comment("예약 상태 코드(0 : 사용자 조기 반납 신고, 1 : 관리자 반납 확인, 2 : 관리자 연체 상태 변경, 3 : 관리자 손망실 상태 변경)")
+    @Comment("예약 상태 코드(0 : 사용자 조기 반납 신고, 1 : 관리자  반납 확인, 2 : 관리자 연체 상태 변경, 3 : 관리자 손망실 상태 변경, 4: 관리자 반납 확인 취소, 5 : 관리자 연체 상태 변경 취소, 6 : 관리자 손망실 상태 변경 취소)")
     var stateCode: Short,
 
     @Column(name = "state_change_desc", nullable = false, columnDefinition = "VARCHAR(600)")
