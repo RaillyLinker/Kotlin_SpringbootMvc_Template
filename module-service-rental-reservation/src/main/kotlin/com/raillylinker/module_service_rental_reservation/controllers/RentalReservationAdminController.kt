@@ -1968,7 +1968,6 @@ class RentalReservationAdminController(
     )
 
 
-    // todo 아래로부터 다시보기
     // ----
     @Operation(
         summary = "대여 가능 상품 예약 정보의 예약 승인 처리 <ADMIN>",
@@ -2173,8 +2172,7 @@ class RentalReservationAdminController(
                                 "4 : 예약 신청 거부 내역 있습니다.<br>" +
                                 "5 : 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일)<br>" +
                                 "6 : 예약 취소 신청 내역이 없습니다.<br>" +
-                                "7 : 기존 예약 취소 신청에 대한 예약 취소 거부 상태입니다.<br>" +
-                                "8 : 결재 대기 상태입니다.(잘못된 상황 -> 결재 대기 상태에서 취소 요청시 자동으로 취소 처리가 되어있어야 함)",
+                                "7 : 기존 예약 취소 신청에 대한 예약 취소 거부 상태입니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -2263,8 +2261,7 @@ class RentalReservationAdminController(
                                 "4 : 예약 신청 거부 내역 있습니다.<br>" +
                                 "5 : 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일)<br>" +
                                 "6 : 예약 취소 신청 내역이 없습니다.<br>" +
-                                "7 : 기존 예약 취소 신청에 대한 예약 취소 거부 상태입니다.<br>" +
-                                "8 : 결재 대기 상태입니다.(잘못된 상황 -> 결재 대기 상태에서 취소 요청시 자동으로 취소 처리가 되어있어야 함)",
+                                "7 : 기존 예약 취소 신청에 대한 예약 취소 거부 상태입니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -2409,6 +2406,7 @@ class RentalReservationAdminController(
     )
 
 
+    // todo 아래부터 재확인
     // ----
     @Operation(
         summary = "대여 가능 상품 예약 정보의 환불 완료 처리 <ADMIN>",

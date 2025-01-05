@@ -1871,76 +1871,72 @@ class RentalReservationAdminService(
                 "/"
             )
 
-        if (historyList.isEmpty()) {
-            // 결재 대기 상태입니다.
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "8")
-            return null
-        }
-
-        var notPaid = true
-        var noRequestCancel = true
-        var notRequestCancelDenyLatest = true
-        var notRequestCancelLatest = true
-        for (history in historyList) {
-            when (history.stateCode.toInt()) {
-                5 -> {
-                    // 예약 취소 거부
-                    if (notRequestCancelLatest) {
-                        // 예약 취소 거부 내역이 최신인지
-                        notRequestCancelDenyLatest = false
+        if (historyList.isNotEmpty()) {
+            // 결제 대기 상태라면 그냥 넘어가고, 아니라면 검증 계속(원래라면 결제 대기 상태에 취소 요청시 자동으로 취소 승인이 되어 있어야 함.)
+            var notPaid = true
+            var noRequestCancel = true
+            var notRequestCancelDenyLatest = true
+            var notRequestCancelLatest = true
+            for (history in historyList) {
+                when (history.stateCode.toInt()) {
+                    5 -> {
+                        // 예약 취소 거부
+                        if (notRequestCancelLatest) {
+                            // 예약 취소 거부 내역이 최신인지
+                            notRequestCancelDenyLatest = false
+                        }
                     }
-                }
 
-                4 -> {
-                    // 예약 취소 승인 내역 있음 -> return
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "3")
-                    return null
-                }
-
-                3 -> {
-                    // 예약 취소 신청
-                    noRequestCancel = false
-                    if (notRequestCancelDenyLatest) {
-                        // 예약 취소 신청 내역이 최신인지
-                        notRequestCancelLatest = false
+                    4 -> {
+                        // 예약 취소 승인 내역 있음 -> return
+                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                        httpServletResponse.setHeader("api-result-code", "3")
+                        return null
                     }
-                }
 
-                2 -> {
-                    // 예약 신청 거부 내역 있음 -> return
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "4")
-                    return null
-                }
+                    3 -> {
+                        // 예약 취소 신청
+                        noRequestCancel = false
+                        if (notRequestCancelDenyLatest) {
+                            // 예약 취소 신청 내역이 최신인지
+                            notRequestCancelLatest = false
+                        }
+                    }
 
-                0 -> {
-                    // 관리자 결제 확인
-                    notPaid = false
+                    2 -> {
+                        // 예약 신청 거부 내역 있음 -> return
+                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                        httpServletResponse.setHeader("api-result-code", "4")
+                        return null
+                    }
+
+                    0 -> {
+                        // 관리자 결제 확인
+                        notPaid = false
+                    }
                 }
             }
-        }
 
-        if (notPaid && nowDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
-            // 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일) -> return
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "5")
-            return null
-        }
+            if (notPaid && nowDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
+                // 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일) -> return
+                httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                httpServletResponse.setHeader("api-result-code", "5")
+                return null
+            }
 
-        if (noRequestCancel) {
-            // 예약 취소 신청 내역이 없음 -> return
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "6")
-            return null
-        }
+            if (noRequestCancel) {
+                // 예약 취소 신청 내역이 없음 -> return
+                httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                httpServletResponse.setHeader("api-result-code", "6")
+                return null
+            }
 
-        if (!notRequestCancelDenyLatest && notRequestCancelLatest) {
-            // 기존 예약 취소 신청에 대한 예약 취소 거부 상태입니다. -> return
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "7")
-            return null
+            if (!notRequestCancelDenyLatest && notRequestCancelLatest) {
+                // 기존 예약 취소 신청에 대한 예약 취소 거부 상태입니다. -> return
+                httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                httpServletResponse.setHeader("api-result-code", "7")
+                return null
+            }
         }
 
         // 예약 히스토리에 정보 기입
@@ -2004,9 +2000,18 @@ class RentalReservationAdminService(
             )
 
         if (historyList.isEmpty()) {
-            // 결재 대기 상태입니다.
+            // 결재 대기 상태입니다.(원래라면 취소 요청시 취소 승인이 자동으로 되어야 함.)
+            // 취소 승인 처리를 지금이라도 하기
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
+                Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
+                    rentableProductReservationInfo,
+                    4,
+                    "관리자 취소 승인"
+                )
+            )
+
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "8")
+            httpServletResponse.setHeader("api-result-code", "3")
             return null
         }
 
