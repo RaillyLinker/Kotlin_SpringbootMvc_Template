@@ -36,7 +36,7 @@ management:
 
 # springboot actuator info 에 표시될 정보 설정
 info:
-  made-by: com.rayllylinker
+  made-by: com.raillylinker
 
 spring:
   jpa:
