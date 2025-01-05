@@ -468,122 +468,122 @@ class RentalReservationService(
 
     // ----
     // (대여품 조기반납 신고 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun postRentalProductEarlyReturn(
-        httpServletResponse: HttpServletResponse,
-        authorization: String,
-        inputVo: RentalReservationController.PostRentalProductEarlyReturnInputVo
-    ): RentalReservationController.PostRentalProductEarlyReturnOutputVo? {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-        val memberData =
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-
-        val reservationEntity: Db1_RaillyLinkerCompany_RentableProductReservationInfo? =
-            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findByUidAndTotalAuthMemberAndRowDeleteDateStr(
-                inputVo.rentableProductReservationInfoUid,
-                memberData,
-                "/"
-            )
-
-        if (reservationEntity == null) {
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return null
-        }
-
-        val anchorDatetime = ZonedDateTime.parse(
-            inputVo.stateChangeDatetime,
-            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-        ).toLocalDateTime()
-
-        val nowDatetime = LocalDateTime.now()
-
-        if (anchorDatetime.isBefore(nowDatetime)) {
-            // 조기 반납 기준 일시가 현재보다 앞으로 설정됨 -> return
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "2")
-            return null
-        }
-
-        if (anchorDatetime.isAfter(reservationEntity.rentalEndDatetime)) {
-            // 조기 반납 기준 일시가 대여 마지막 일시보다 뒤로 설정됨 -> return
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "3")
-            return null
-        }
-
-        if (anchorDatetime.isBefore(reservationEntity.rentalStartDatetime)) {
-            // 조기 반납 기준 일시가 대여 시작일보다 앞으로 설정됨 -> return
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "4")
-            return null
-        }
-
-        val historyList =
-            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
-                reservationEntity,
-                "/"
-            )
-
-        if (historyList.isEmpty()) {
-            // 결재 대기 상태입니다.
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "5")
-            return null
-        }
-
-        var notPaid = true
-        var notApproved = true
-        for (history in historyList) {
-            when (history.stateCode.toInt()) {
-                4 -> {
-                    // 예약 취소 승인 내역 있음 -> return
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "7")
-                    return null
-                }
-
-                1 -> {
-                    // 예약 승인
-                    notApproved = false
-                }
-
-                0 -> {
-                    notPaid = false
-                }
-            }
-        }
-
-        if (notPaid) {
-            // 미결제 상태 -> return
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "6")
-            return null
-        }
-
-        if (notApproved) {
-            // 예약 신청 승인 처리가 되지 않음 -> return
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "8")
-            return null
-        }
-
-        // 조기 반납 신고 정보 입력
-        val stateChangeEntity = db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
-            Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
-                reservationEntity,
-                6,
-                inputVo.earlyReturnReason
-            )
-        )
-
-        httpServletResponse.status = HttpStatus.OK.value()
-        return RentalReservationController.PostRentalProductEarlyReturnOutputVo(
-            stateChangeEntity.uid!!
-        )
-    }
+//    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+//    fun postRentalProductEarlyReturn(
+//        httpServletResponse: HttpServletResponse,
+//        authorization: String,
+//        inputVo: RentalReservationController.PostRentalProductEarlyReturnInputVo
+//    ): RentalReservationController.PostRentalProductEarlyReturnOutputVo? {
+//        val memberUid = jwtTokenUtil.getMemberUid(
+//            authorization.split(" ")[1].trim(),
+//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+//        )
+//        val memberData =
+//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+//
+//        val reservationEntity: Db1_RaillyLinkerCompany_RentableProductReservationInfo? =
+//            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findByUidAndTotalAuthMemberAndRowDeleteDateStr(
+//                inputVo.rentableProductReservationInfoUid,
+//                memberData,
+//                "/"
+//            )
+//
+//        if (reservationEntity == null) {
+//            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+//            httpServletResponse.setHeader("api-result-code", "1")
+//            return null
+//        }
+//
+//        val anchorDatetime = ZonedDateTime.parse(
+//            inputVo.stateChangeDatetime,
+//            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+//        ).toLocalDateTime()
+//
+//        val nowDatetime = LocalDateTime.now()
+//
+//        if (anchorDatetime.isBefore(nowDatetime)) {
+//            // 조기 반납 기준 일시가 현재보다 앞으로 설정됨 -> return
+//            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+//            httpServletResponse.setHeader("api-result-code", "2")
+//            return null
+//        }
+//
+//        if (anchorDatetime.isAfter(reservationEntity.rentalEndDatetime)) {
+//            // 조기 반납 기준 일시가 대여 마지막 일시보다 뒤로 설정됨 -> return
+//            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+//            httpServletResponse.setHeader("api-result-code", "3")
+//            return null
+//        }
+//
+//        if (anchorDatetime.isBefore(reservationEntity.rentalStartDatetime)) {
+//            // 조기 반납 기준 일시가 대여 시작일보다 앞으로 설정됨 -> return
+//            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+//            httpServletResponse.setHeader("api-result-code", "4")
+//            return null
+//        }
+//
+//        val historyList =
+//            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+//                reservationEntity,
+//                "/"
+//            )
+//
+//        if (historyList.isEmpty()) {
+//            // 결재 대기 상태입니다.
+//            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+//            httpServletResponse.setHeader("api-result-code", "5")
+//            return null
+//        }
+//
+//        var notPaid = true
+//        var notApproved = true
+//        for (history in historyList) {
+//            when (history.stateCode.toInt()) {
+//                4 -> {
+//                    // 예약 취소 승인 내역 있음 -> return
+//                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+//                    httpServletResponse.setHeader("api-result-code", "7")
+//                    return null
+//                }
+//
+//                1 -> {
+//                    // 예약 승인
+//                    notApproved = false
+//                }
+//
+//                0 -> {
+//                    notPaid = false
+//                }
+//            }
+//        }
+//
+//        if (notPaid) {
+//            // 미결제 상태 -> return
+//            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+//            httpServletResponse.setHeader("api-result-code", "6")
+//            return null
+//        }
+//
+//        if (notApproved) {
+//            // 예약 신청 승인 처리가 되지 않음 -> return
+//            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+//            httpServletResponse.setHeader("api-result-code", "8")
+//            return null
+//        }
+//
+//        // 조기 반납 신고 정보 입력
+//        val stateChangeEntity = db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
+//            Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
+//                reservationEntity,
+//                6,
+//                inputVo.earlyReturnReason
+//            )
+//        )
+//
+//        httpServletResponse.status = HttpStatus.OK.value()
+//        return RentalReservationController.PostRentalProductEarlyReturnOutputVo(
+//            stateChangeEntity.uid!!
+//        )
+//    }
 }

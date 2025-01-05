@@ -2737,7 +2737,6 @@ class RentalReservationAdminController(
     )
 
 
-    // todo 재확인
     // ----
     @Operation(
         summary = "개별 상품 연체 상태 변경 <ADMIN>",
@@ -2827,7 +2826,6 @@ class RentalReservationAdminController(
     // todo 개별 상품 연체 상태 변경 취소 api
 
 
-    // todo 재확인
     // ----
     @Operation(
         summary = "개별 상품 손망실 상태 변경 <ADMIN>",

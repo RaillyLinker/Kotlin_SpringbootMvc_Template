@@ -2372,8 +2372,8 @@ class RentalReservationAdminService(
             }
         }
 
-        if (noReturnCheckCancel && !noReturnCheck) {
-            // 반납 확인 취소 상태가 아니고, 반납 확인 상태
+        if (!noReturnCheck) {
+            // 반납 확인 상태
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "3")
             return null
@@ -2382,8 +2382,11 @@ class RentalReservationAdminService(
         // 상태 확인
         val nowDatetime = LocalDateTime.now()
 
-        if (!(!noEarlyReturn && noEarlyReturnCancel) && nowDatetime.isBefore(rentableProductStockReservationInfo.rentableProductReservationInfo.rentalEndDatetime)) {
-            // 조기 반납 신고 상태가 아니고, 상품 반납일도 안됨
+        if (((noEarlyReturn && noEarlyReturnCancel) || !noEarlyReturnCancel) && nowDatetime.isBefore(
+                rentableProductStockReservationInfo.rentableProductReservationInfo.rentalEndDatetime
+            )
+        ) {
+            // 조기 반납 신고 상태가 아니고(내역이 없거나 취소 상태), 상품 반납일도 안됨
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "2")
             return null
@@ -2498,29 +2501,77 @@ class RentalReservationAdminService(
                 "/"
             )
 
+        var noLost = true
+        var noLostCancel = true
+        var noOverdue = true
+        var noOverdueCancel = true
+        var noReturnCheck = true
+        var noReturnCheckCancel = true
         for (history in historyList) {
             when (history.stateCode.toInt()) {
+                6 -> {
+                    // 손망실 설정 취소
+                    if (noLost) {
+                        noLostCancel = false
+                    }
+                }
+
+                5 -> {
+                    // 연체 설정 취소
+                    if (noOverdue) {
+                        noOverdueCancel = false
+                    }
+                }
+
+                4 -> {
+                    // 반납 확인 취소
+                    if (noReturnCheck) {
+                        noReturnCheckCancel = false
+                    }
+                }
+
                 3 -> {
                     // 손망실 상태
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "4")
-                    return null
+                    if (noLostCancel) {
+                        noLost = false
+                    }
                 }
 
                 2 -> {
                     // 연체 상태
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "3")
-                    return null
+                    if (noOverdueCancel) {
+                        noOverdue = false
+                    }
                 }
 
                 1 -> {
                     // 반납 확인 상태
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "5")
-                    return null
+                    if (noReturnCheckCancel) {
+                        noReturnCheck = false
+                    }
                 }
             }
+        }
+
+        if (!noOverdue) {
+            // 연체 상태입니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return null
+        }
+
+        if (!noLost) {
+            // 손망실 상태입니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
+            return null
+        }
+
+        if (!noReturnCheck) {
+            // 반납 확인 상태입니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "5")
+            return null
         }
 
         // 상태 확인
@@ -2587,29 +2638,77 @@ class RentalReservationAdminService(
                 "/"
             )
 
+        var noLost = true
+        var noLostCancel = true
+        var noOverdue = true
+        var noOverdueCancel = true
+        var noReturnCheck = true
+        var noReturnCheckCancel = true
         for (history in historyList) {
             when (history.stateCode.toInt()) {
+                6 -> {
+                    // 손망실 설정 취소
+                    if (noLost) {
+                        noLostCancel = false
+                    }
+                }
+
+                5 -> {
+                    // 연체 설정 취소
+                    if (noOverdue) {
+                        noOverdueCancel = false
+                    }
+                }
+
+                4 -> {
+                    // 반납 확인 취소
+                    if (noReturnCheck) {
+                        noReturnCheckCancel = false
+                    }
+                }
+
                 3 -> {
                     // 손망실 상태
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "4")
-                    return null
+                    if (noLostCancel) {
+                        noLost = false
+                    }
                 }
 
                 2 -> {
                     // 연체 상태
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "3")
-                    return null
+                    if (noOverdueCancel) {
+                        noOverdue = false
+                    }
                 }
 
                 1 -> {
                     // 반납 확인 상태
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "5")
-                    return null
+                    if (noReturnCheckCancel) {
+                        noReturnCheck = false
+                    }
                 }
             }
+        }
+
+        if (!noOverdue) {
+            // 연체 상태입니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return null
+        }
+
+        if (!noLost) {
+            // 손망실 상태입니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
+            return null
+        }
+
+        if (!noReturnCheck) {
+            // 반납 확인 상태입니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "5")
+            return null
         }
 
         // 상태 확인
