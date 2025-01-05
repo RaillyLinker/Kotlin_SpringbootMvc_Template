@@ -2406,7 +2406,6 @@ class RentalReservationAdminController(
     )
 
 
-    // todo 아래부터 재확인
     // ----
     @Operation(
         summary = "대여 가능 상품 예약 정보의 환불 완료 처리 <ADMIN>",
@@ -2569,6 +2568,7 @@ class RentalReservationAdminController(
     )
 
 
+    // todo 아래부터 재확인
     // ----
     @Operation(
         summary = "개별 상품 반납 확인 <ADMIN>",
