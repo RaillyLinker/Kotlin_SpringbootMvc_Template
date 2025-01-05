@@ -2336,28 +2336,54 @@ class RentalReservationAdminService(
                 "/"
             )
 
+        var noReturnCheck = true
+        var noReturnCheckCancel = true
         var noEarlyReturn = true
+        var noEarlyReturnCancel = true
         for (history in historyList) {
             when (history.stateCode.toInt()) {
+                7 -> {
+                    // 사용자 조기 반납 신고 취소
+                    if (noEarlyReturn) {
+                        noEarlyReturnCancel = false
+                    }
+                }
+
+                4 -> {
+                    // 반납 확인 취소
+                    if (noReturnCheck) {
+                        noReturnCheckCancel = false
+                    }
+                }
+
                 1 -> {
-                    // 반납 확인 처리
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "3")
-                    return null
+                    // 반납 확인
+                    if (noReturnCheckCancel) {
+                        noReturnCheck = false
+                    }
                 }
 
                 0 -> {
                     // 사용자 조기 반납 신고
-                    noEarlyReturn = false
+                    if (noEarlyReturnCancel) {
+                        noEarlyReturn = false
+                    }
                 }
             }
+        }
+
+        if (noReturnCheckCancel && !noReturnCheck) {
+            // 반납 확인 취소 상태가 아니고, 반납 확인 상태
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return null
         }
 
         // 상태 확인
         val nowDatetime = LocalDateTime.now()
 
-        if (noEarlyReturn && nowDatetime.isBefore(rentableProductStockReservationInfo.rentableProductReservationInfo.rentalEndDatetime)) {
-            // 조기 반납 내역도 없고, 상품 반납일도 안됨
+        if (!(!noEarlyReturn && noEarlyReturnCancel) && nowDatetime.isBefore(rentableProductStockReservationInfo.rentableProductReservationInfo.rentalEndDatetime)) {
+            // 조기 반납 신고 상태가 아니고, 상품 반납일도 안됨
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "2")
             return null

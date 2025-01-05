@@ -2568,7 +2568,6 @@ class RentalReservationAdminController(
     )
 
 
-    // todo 아래부터 재확인
     // ----
     @Operation(
         summary = "개별 상품 반납 확인 <ADMIN>",
@@ -2653,7 +2652,7 @@ class RentalReservationAdminController(
 
 
     // ----
-    // todo 반납 확인 내역 지우기
+    // todo 개별 상품 반납 확인 취소
 
 
     // ----
@@ -2738,6 +2737,7 @@ class RentalReservationAdminController(
     )
 
 
+    // todo 재확인
     // ----
     @Operation(
         summary = "개별 상품 연체 상태 변경 <ADMIN>",
@@ -2824,9 +2824,10 @@ class RentalReservationAdminController(
 
 
     // ----
-    // todo 개별 상품 연체 설정 삭제 api
+    // todo 개별 상품 연체 상태 변경 취소 api
 
 
+    // todo 재확인
     // ----
     @Operation(
         summary = "개별 상품 손망실 상태 변경 <ADMIN>",
@@ -2913,7 +2914,7 @@ class RentalReservationAdminController(
 
 
     // ----
-    // todo 개별 상품 손망실 설정 삭제 api
+    // todo 개별 상품 손망실 상태 변경 취소 api
 
 
     // ----
