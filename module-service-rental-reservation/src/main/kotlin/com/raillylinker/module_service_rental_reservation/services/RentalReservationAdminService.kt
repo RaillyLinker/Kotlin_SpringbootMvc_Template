@@ -517,9 +517,9 @@ class RentalReservationAdminService(
 
                 for (rentableProductImage in rentableProductInfo.rentableProductImageList) {
                     // 이미지를 참조하고 있던 테이블들 모두 null 처리
-                    for (rentableProductInfo in rentableProductImage.rentableProductInfoList) {
-                        rentableProductInfo.frontRentableProductImage = null
-                        db1RaillyLinkerCompanyRentableProductInfoRepository.save(rentableProductInfo)
+                    for (rentableProductInfoEntity in rentableProductImage.rentableProductInfoList) {
+                        rentableProductInfoEntity.frontRentableProductImage = null
+                        db1RaillyLinkerCompanyRentableProductInfoRepository.save(rentableProductInfoEntity)
                     }
 
                     for (rentableProductReservationInfo in rentableProductImage.rentableProductReservationInfoList) {
@@ -542,9 +542,9 @@ class RentalReservationAdminService(
                     for (rentableProductStockImage in rentableProductStockInfo.rentableProductStockImageList) {
                         // 이미지 삭제
                         // 이미지를 참조하고 있던 테이블들 모두 null 처리
-                        for (rentableProductStockInfo in rentableProductStockImage.rentableProductStockInfoList) {
-                            rentableProductStockInfo.frontRentableProductStockImage = null
-                            db1RaillyLinkerCompanyRentableProductStockInfoRepository.save(rentableProductStockInfo)
+                        for (rentableProductStockInfoEntity in rentableProductStockImage.rentableProductStockInfoList) {
+                            rentableProductStockInfoEntity.frontRentableProductStockImage = null
+                            db1RaillyLinkerCompanyRentableProductStockInfoRepository.save(rentableProductStockInfoEntity)
                         }
 
                         rentableProductStockImage.rowDeleteDateStr =
@@ -1177,7 +1177,6 @@ class RentalReservationAdminService(
             categoryEntity
         }
 
-
         val rentableProductStockInfo =
             db1RaillyLinkerCompanyRentableProductStockInfoRepository.save(
                 Db1_RaillyLinkerCompany_RentableProductStockInfo(
@@ -1242,9 +1241,9 @@ class RentalReservationAdminService(
                 for (rentableProductStockImage in rentableProductStockInfo.rentableProductStockImageList) {
                     // 이미지 삭제
                     // 이미지를 참조하고 있던 테이블들 모두 null 처리
-                    for (rentableProductStockInfo in rentableProductStockImage.rentableProductStockInfoList) {
-                        rentableProductStockInfo.frontRentableProductStockImage = null
-                        db1RaillyLinkerCompanyRentableProductStockInfoRepository.save(rentableProductStockInfo)
+                    for (rentableProductStockInfoEntity in rentableProductStockImage.rentableProductStockInfoList) {
+                        rentableProductStockInfoEntity.frontRentableProductStockImage = null
+                        db1RaillyLinkerCompanyRentableProductStockInfoRepository.save(rentableProductStockInfoEntity)
                     }
 
                     rentableProductStockImage.rowDeleteDateStr =

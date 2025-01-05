@@ -1460,7 +1460,7 @@ class RentalReservationAdminController(
         @JsonProperty("firstRentableDatetime")
         val firstRentableDatetime: String,
         @Schema(
-            description = "제품 대여 마지막 일시 (yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, 이때가 대여 마지막 날)",
+            description = "제품 대여 마지막 일시 (yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, 이때가 대여 마지막 날, null 이라면 무기한)",
             required = false,
             example = "2024_05_02_T_15_14_49_552_KST"
         )
@@ -1968,6 +1968,7 @@ class RentalReservationAdminController(
     )
 
 
+    // todo 아래로부터 다시보기
     // ----
     @Operation(
         summary = "대여 가능 상품 예약 정보의 예약 승인 처리 <ADMIN>",
