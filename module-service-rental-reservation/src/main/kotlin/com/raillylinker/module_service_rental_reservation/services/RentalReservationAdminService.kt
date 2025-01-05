@@ -2000,7 +2000,7 @@ class RentalReservationAdminService(
             )
 
         if (historyList.isEmpty()) {
-            // 결재 대기 상태입니다.(원래라면 취소 요청시 취소 승인이 자동으로 되어야 함.)
+            // 결제 대기 상태입니다.(원래라면 취소 요청시 취소 승인이 자동으로 되어야 함.)
             // 취소 승인 처리를 지금이라도 하기
             db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
                 Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
@@ -2202,7 +2202,7 @@ class RentalReservationAdminService(
             )
 
         if (historyList.isEmpty()) {
-            // 결재 대기 상태입니다.
+            // 결제 대기 상태입니다.
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "2")
             return null
@@ -2231,7 +2231,7 @@ class RentalReservationAdminService(
                 }
 
                 0 -> {
-                    // 결재 확인
+                    // 결제 확인
                     notPaid = false
                 }
             }
