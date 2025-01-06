@@ -141,10 +141,12 @@ class RentalReservationController(
     )
 
 
+    // todo 다시 확인
     // ----
     @Operation(
         summary = "예약 취소 신청 <>",
-        description = "예약 취소 신청을 합니다."
+        description = "예약 취소 신청을 합니다.<br>" +
+                "결제 확인 및 예약 신청 승인 처리가 전부 완료되기 전이라면 자동적으로 예약 취소 승인 처리가 됩니다."
     )
     @ApiResponses(
         value = [
