@@ -140,7 +140,6 @@ class RentalReservationController(
     )
 
 
-    // todo 다시 확인
     // ----
     @Operation(
         summary = "예약 취소 신청 <>",
