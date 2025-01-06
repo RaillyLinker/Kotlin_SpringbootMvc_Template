@@ -2332,6 +2332,33 @@ class RentalReservationAdminService(
             return null
         }
 
+        val reservationHistoryList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductStockReservationInfo.rentableProductReservationInfo,
+                "/"
+            )
+        var notApproved = true
+        var notPaid = true
+        for (history in reservationHistoryList) {
+            when (history.stateCode.toInt()) {
+                1 -> {
+                    // 관리자 예약 신청 승인 상태
+                    notApproved = false
+                }
+
+                0 -> {
+                    // 결제 확인 상태
+                    notPaid = false
+                }
+            }
+        }
+        if (notPaid || notApproved) {
+            // 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
+            return null
+        }
+
         // 관리자의 상품 반납 확인과 고객의 조기 반납 신고 간의 공유락 처리
         return redis1LockRentableProductStockEarlyReturn.tryLockRepeat<RentalReservationAdminController.PatchRentableProductStockReservationInfoReturnCheckOutputVo?>(
             "$rentableProductStockReservationInfoUid",
@@ -2444,6 +2471,33 @@ class RentalReservationAdminService(
         if (rentableProductStockReservationInfo == null) {
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        val reservationHistoryList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductStockReservationInfo.rentableProductReservationInfo,
+                "/"
+            )
+        var notApproved = true
+        var notPaid = true
+        for (history in reservationHistoryList) {
+            when (history.stateCode.toInt()) {
+                1 -> {
+                    // 관리자 예약 신청 승인 상태
+                    notApproved = false
+                }
+
+                0 -> {
+                    // 결제 확인 상태
+                    notPaid = false
+                }
+            }
+        }
+        if (notPaid || notApproved) {
+            // 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
             return null
         }
 
@@ -2590,6 +2644,33 @@ class RentalReservationAdminService(
             return null
         }
 
+        val reservationHistoryList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductStockReservationInfo.rentableProductReservationInfo,
+                "/"
+            )
+        var notApproved = true
+        var notPaid = true
+        for (history in reservationHistoryList) {
+            when (history.stateCode.toInt()) {
+                1 -> {
+                    // 관리자 예약 신청 승인 상태
+                    notApproved = false
+                }
+
+                0 -> {
+                    // 결제 확인 상태
+                    notPaid = false
+                }
+            }
+        }
+        if (notPaid || notApproved) {
+            // 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "6")
+            return null
+        }
+
         // 상태 확인
         val historyList =
             db1RaillyLinkerCompanyRentableProductStockReservationStateChangeHistoryRepository.findAllByRentableProductStockReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
@@ -2727,6 +2808,33 @@ class RentalReservationAdminService(
             return null
         }
 
+        val reservationHistoryList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductStockReservationInfo.rentableProductReservationInfo,
+                "/"
+            )
+        var notApproved = true
+        var notPaid = true
+        for (history in reservationHistoryList) {
+            when (history.stateCode.toInt()) {
+                1 -> {
+                    // 관리자 예약 신청 승인 상태
+                    notApproved = false
+                }
+
+                0 -> {
+                    // 결제 확인 상태
+                    notPaid = false
+                }
+            }
+        }
+        if (notPaid || notApproved) {
+            // 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
+            return null
+        }
+
         // 상태 확인
         val historyList =
             db1RaillyLinkerCompanyRentableProductStockReservationStateChangeHistoryRepository.findAllByRentableProductStockReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
@@ -2812,6 +2920,33 @@ class RentalReservationAdminService(
         if (rentableProductStockReservationInfo == null) {
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        val reservationHistoryList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductStockReservationInfo.rentableProductReservationInfo,
+                "/"
+            )
+        var notApproved = true
+        var notPaid = true
+        for (history in reservationHistoryList) {
+            when (history.stateCode.toInt()) {
+                1 -> {
+                    // 관리자 예약 신청 승인 상태
+                    notApproved = false
+                }
+
+                0 -> {
+                    // 결제 확인 상태
+                    notPaid = false
+                }
+            }
+        }
+        if (notPaid || notApproved) {
+            // 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
             return null
         }
 
@@ -2949,6 +3084,33 @@ class RentalReservationAdminService(
         if (rentableProductStockReservationInfo == null) {
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        val reservationHistoryList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentableProductReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductStockReservationInfo.rentableProductReservationInfo,
+                "/"
+            )
+        var notApproved = true
+        var notPaid = true
+        for (history in reservationHistoryList) {
+            when (history.stateCode.toInt()) {
+                1 -> {
+                    // 관리자 예약 신청 승인 상태
+                    notApproved = false
+                }
+
+                0 -> {
+                    // 결제 확인 상태
+                    notPaid = false
+                }
+            }
+        }
+        if (notPaid || notApproved) {
+            // 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
             return null
         }
 

@@ -308,9 +308,175 @@ class RentalReservationController(
 //        val rentableProductReservationStateChangeInfoUid: Long
 //    )
 
-    // todo 개별 상품 조기 반납 신고
 
-    // todo 개별 상품 조기 반납 신고 취소
+    // ----
+    @Operation(
+        summary = "개별 상품 조기 반납 신고 <ADMIN>",
+        description = "개별 상품에 대해 조기 반납 신고 처리를 합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님<br>" +
+                                "3 : 상품 대여일이 도래하지 않았습니다.<br>" +
+                                "4 : 상품 반납일이 도래하였습니다.<br>" +
+                                "5 : 개별 상품 반납 확인이 되었습니다.<br>" +
+                                "6 : 개별 상품 조기 반납 신고 된 상태입니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PatchMapping(
+        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/early-return"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun patchRentableProductStockReservationInfoEarlyReturn(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(
+            name = "rentableProductStockReservationInfoUid",
+            description = "rentableProductStockReservationInfo 고유값",
+            example = "1"
+        )
+        @PathVariable("rentableProductStockReservationInfoUid")
+        rentableProductStockReservationInfoUid: Long,
+        @RequestBody
+        inputVo: PatchRentableProductStockReservationInfoEarlyReturnInputVo
+    ): PatchRentableProductStockReservationInfoEarlyReturnOutputVo? {
+        return service.patchRentableProductStockReservationInfoEarlyReturn(
+            httpServletResponse,
+            authorization!!,
+            rentableProductStockReservationInfoUid,
+            inputVo
+        )
+    }
+
+    data class PatchRentableProductStockReservationInfoEarlyReturnInputVo(
+        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
+        @JsonProperty("stateChangeDesc")
+        val stateChangeDesc: String
+    )
+
+    data class PatchRentableProductStockReservationInfoEarlyReturnOutputVo(
+        @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
+        @JsonProperty("stockReservationStateChangeHistoryUid")
+        val stockReservationStateChangeHistoryUid: Long
+    )
+
+
+    // ----
+    @Operation(
+        summary = "개별 상품 조기 반납 신고 취소 <ADMIN>",
+        description = "개별 상품에 대해 조기 반납 신고 취소 처리를 합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 개별 상품 조기 반납 신고 내역이 없습니다.<br>" +
+                                "3 : 개별 상품 조기 반납 신고 취소 상태입니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @DeleteMapping(
+        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/early-return"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun deleteRentableProductStockReservationInfoEarlyReturn(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(
+            name = "rentableProductStockReservationInfoUid",
+            description = "rentableProductStockReservationInfo 고유값",
+            example = "1"
+        )
+        @PathVariable("rentableProductStockReservationInfoUid")
+        rentableProductStockReservationInfoUid: Long,
+        @RequestBody
+        inputVo: DeleteRentableProductStockReservationInfoEarlyReturnInputVo
+    ): DeleteRentableProductStockReservationInfoEarlyReturnOutputVo? {
+        return service.deleteRentableProductStockReservationInfoEarlyReturn(
+            httpServletResponse,
+            authorization!!,
+            rentableProductStockReservationInfoUid,
+            inputVo
+        )
+    }
+
+    data class DeleteRentableProductStockReservationInfoEarlyReturnInputVo(
+        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
+        @JsonProperty("stateChangeDesc")
+        val stateChangeDesc: String
+    )
+
+    data class DeleteRentableProductStockReservationInfoEarlyReturnOutputVo(
+        @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
+        @JsonProperty("stockReservationStateChangeHistoryUid")
+        val stockReservationStateChangeHistoryUid: Long
+    )
+
 
     // todo : 필요 정보 조회 API 들 추가
 }
