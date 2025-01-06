@@ -18,4 +18,10 @@ interface Db1_RaillyLinkerCompany_RentableProductStockReservationInfo_Repository
         rentableProductStockInfo: Db1_RaillyLinkerCompany_RentableProductStockInfo,
         rowDeleteDateStr: String
     ): List<Db1_RaillyLinkerCompany_RentableProductStockReservationInfo>
+
+    fun existsByRentableProductStockInfoAndRowDeleteDateStrAndProductReadyDatetime(
+        rentableProductStockInfo: Db1_RaillyLinkerCompany_RentableProductStockInfo,
+        rowDeleteDateStr: String,
+        productReadyDatetime: LocalDateTime?
+    ): Boolean
 }
