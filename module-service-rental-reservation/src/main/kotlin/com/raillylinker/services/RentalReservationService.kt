@@ -453,6 +453,7 @@ class RentalReservationService(
         // 상태에 따라 예약 취소 자동 승인 정보 추가
         val autoCancelCompleteEntityUid =
             if (notPaid || notApproved) {
+                // todo 결제 확인 완료 + 승인 기한 지남도 대여 상태로 치기
                 // 결제 확인 완료 아님 || 예약 신청 승인 아님 상태라면 자동 취소 승인 처리
                 db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
                     Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
@@ -506,13 +507,13 @@ class RentalReservationService(
                 rentableProductStockReservationInfo.rentableProductReservationInfo,
                 "/"
             )
-        var notApproved = true
+        var denied = false
         var notPaid = true
         for (history in reservationHistoryList) {
             when (history.stateCode.toInt()) {
-                1 -> {
-                    // 관리자 예약 신청 승인 상태
-                    notApproved = false
+                2 -> {
+                    // 관리자 예약 신청 거부
+                    denied = true
                 }
 
                 0 -> {
@@ -521,8 +522,8 @@ class RentalReservationService(
                 }
             }
         }
-        if (notPaid || notApproved) {
-            // 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님
+        if (notPaid || denied) {
+            // 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "2")
             return null

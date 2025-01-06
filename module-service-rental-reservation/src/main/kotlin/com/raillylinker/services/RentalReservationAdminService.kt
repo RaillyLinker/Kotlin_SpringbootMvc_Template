@@ -2337,13 +2337,13 @@ class RentalReservationAdminService(
                 rentableProductStockReservationInfo.rentableProductReservationInfo,
                 "/"
             )
-        var notApproved = true
+        var denied = false
         var notPaid = true
         for (history in reservationHistoryList) {
             when (history.stateCode.toInt()) {
-                1 -> {
-                    // 관리자 예약 신청 승인 상태
-                    notApproved = false
+                2 -> {
+                    // 관리자 예약 신청 거부
+                    denied = true
                 }
 
                 0 -> {
@@ -2352,8 +2352,8 @@ class RentalReservationAdminService(
                 }
             }
         }
-        if (notPaid || notApproved) {
-            // 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님
+        if (notPaid || denied) {
+            // 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "4")
             return null
@@ -2479,13 +2479,13 @@ class RentalReservationAdminService(
                 rentableProductStockReservationInfo.rentableProductReservationInfo,
                 "/"
             )
-        var notApproved = true
+        var denied = false
         var notPaid = true
         for (history in reservationHistoryList) {
             when (history.stateCode.toInt()) {
-                1 -> {
-                    // 관리자 예약 신청 승인 상태
-                    notApproved = false
+                2 -> {
+                    // 관리자 예약 신청 거부
+                    denied = true
                 }
 
                 0 -> {
@@ -2494,8 +2494,8 @@ class RentalReservationAdminService(
                 }
             }
         }
-        if (notPaid || notApproved) {
-            // 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님
+        if (notPaid || denied) {
+            // 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "4")
             return null
@@ -2649,13 +2649,13 @@ class RentalReservationAdminService(
                 rentableProductStockReservationInfo.rentableProductReservationInfo,
                 "/"
             )
-        var notApproved = true
+        var denied = false
         var notPaid = true
         for (history in reservationHistoryList) {
             when (history.stateCode.toInt()) {
-                1 -> {
-                    // 관리자 예약 신청 승인 상태
-                    notApproved = false
+                2 -> {
+                    // 관리자 예약 신청 거부
+                    denied = true
                 }
 
                 0 -> {
@@ -2664,8 +2664,8 @@ class RentalReservationAdminService(
                 }
             }
         }
-        if (notPaid || notApproved) {
-            // 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님
+        if (notPaid || denied) {
+            // 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "6")
             return null
@@ -2813,13 +2813,13 @@ class RentalReservationAdminService(
                 rentableProductStockReservationInfo.rentableProductReservationInfo,
                 "/"
             )
-        var notApproved = true
+        var denied = false
         var notPaid = true
         for (history in reservationHistoryList) {
             when (history.stateCode.toInt()) {
-                1 -> {
-                    // 관리자 예약 신청 승인 상태
-                    notApproved = false
+                2 -> {
+                    // 관리자 예약 신청 거부
+                    denied = true
                 }
 
                 0 -> {
@@ -2828,8 +2828,8 @@ class RentalReservationAdminService(
                 }
             }
         }
-        if (notPaid || notApproved) {
-            // 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님
+        if (notPaid || denied) {
+            // 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "4")
             return null
@@ -2928,13 +2928,13 @@ class RentalReservationAdminService(
                 rentableProductStockReservationInfo.rentableProductReservationInfo,
                 "/"
             )
-        var notApproved = true
+        var denied = false
         var notPaid = true
         for (history in reservationHistoryList) {
             when (history.stateCode.toInt()) {
-                1 -> {
-                    // 관리자 예약 신청 승인 상태
-                    notApproved = false
+                2 -> {
+                    // 관리자 예약 신청 거부
+                    denied = true
                 }
 
                 0 -> {
@@ -2943,8 +2943,8 @@ class RentalReservationAdminService(
                 }
             }
         }
-        if (notPaid || notApproved) {
-            // 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님
+        if (notPaid || denied) {
+            // 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "4")
             return null
@@ -3092,13 +3092,13 @@ class RentalReservationAdminService(
                 rentableProductStockReservationInfo.rentableProductReservationInfo,
                 "/"
             )
-        var notApproved = true
+        var denied = false
         var notPaid = true
         for (history in reservationHistoryList) {
             when (history.stateCode.toInt()) {
-                1 -> {
-                    // 관리자 예약 신청 승인 상태
-                    notApproved = false
+                2 -> {
+                    // 관리자 예약 신청 거부
+                    denied = true
                 }
 
                 0 -> {
@@ -3107,8 +3107,8 @@ class RentalReservationAdminService(
                 }
             }
         }
-        if (notPaid || notApproved) {
-            // 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님
+        if (notPaid || denied) {
+            // 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "4")
             return null

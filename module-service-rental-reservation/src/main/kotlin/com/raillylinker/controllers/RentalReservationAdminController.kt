@@ -2428,7 +2428,7 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 결재 대기 상태입니다.<br>" +
+                                "2 : 결제 대기 상태입니다.<br>" +
                                 "3 : 결제 확인 내역이 없습니다.<br>" +
                                 "4 : 예약 취소 승인 내역이 없고 예약 신청 거부 내역이 없습니다.<br>" +
                                 "5 : 이미 환불되었습니다.",
@@ -2592,7 +2592,7 @@ class RentalReservationAdminController(
                                 "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : 반납 확인 처리가 되지 않은 상태입니다.<br>" +
                                 "3 : 이미 반납 확인 취소 처리되었습니다.<br>" +
-                                "4 : 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님",
+                                "4 : 결제 확인 완료 아님 || 예약 거부 상태 = 대여 진행 상태가 아님",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -2676,7 +2676,7 @@ class RentalReservationAdminController(
                                 "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : 상품의 조기 반납 신고 내역도 없고, 상품 반납일도 도래하지 않았습니다.<br>" +
                                 "3 : 이미 반납 확인 취소 처리되었습니다.<br>" +
-                                "4 : 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님",
+                                "4 : 결제 확인 완료 아님 || 예약 거부 상태 = 대여 진행 상태가 아님",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -2844,7 +2844,7 @@ class RentalReservationAdminController(
                                 "3 : 이미 연체 상태입니다.<br>" +
                                 "4 : 현재 손망실 상태입니다.<br>" +
                                 "5 : 이미 반납 확인을 한 상태입니다.<br>" +
-                                "6 : 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님",
+                                "6 : 결제 확인 완료 아님 || 예약 거부 상태 = 대여 진행 상태가 아님",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -2928,7 +2928,7 @@ class RentalReservationAdminController(
                                 "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : 연체 상태 설정 내역이 없습니다.<br>" +
                                 "3 : 연제 상태 변경 취소 상태입니다.<br>" +
-                                "4 : 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님",
+                                "4 : 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -3014,7 +3014,7 @@ class RentalReservationAdminController(
                                 "3 : 현재 연체 상태입니다.<br>" +
                                 "4 : 이미 손망실 상태입니다.<br>" +
                                 "5 : 이미 반납 확인을 한 상태입니다.<br>" +
-                                "6 : 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님",
+                                "6 : 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -3098,7 +3098,7 @@ class RentalReservationAdminController(
                                 "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : 손망실 상태 변경 내역이 없습니다.<br>" +
                                 "3 : 손망실 상태 변경 취소 상태입니다.<br>" +
-                                "4 : 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님",
+                                "4 : 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님",
                         schema = Schema(type = "string")
                     )
                 ]

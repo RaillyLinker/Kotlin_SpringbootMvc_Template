@@ -245,7 +245,7 @@ class RentalReservationController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 결제 확인 완료 아님 || 예약 신청 승인 아님 = 대여 진행 상태가 아님<br>" +
+                                "2 : 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님<br>" +
                                 "3 : 상품 대여일이 도래하지 않았습니다.<br>" +
                                 "4 : 상품 반납일이 도래하였습니다.<br>" +
                                 "5 : 개별 상품 반납 확인이 되었습니다.<br>" +
