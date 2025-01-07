@@ -2590,8 +2590,8 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 반납 확인 처리가 되지 않은 상태입니다.<br>" +
-                                "3 : 이미 반납 확인 취소 처리되었습니다.<br>" +
+                                "2 : 조기 반납 신고 상태가 아니고(내역이 없거나 취소 상태), 상품 반납일도 안됨<br>" +
+                                "3 : 반납 확인 상태입니다.<br>" +
                                 "4 : 결제 확인 완료 아님 || 예약 거부 상태 = 대여 진행 상태가 아님",
                         schema = Schema(type = "string")
                     )
