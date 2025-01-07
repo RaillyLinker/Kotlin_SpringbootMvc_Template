@@ -464,11 +464,11 @@ class RentalReservationService(
         rentableProductStockReservationInfoUid: Long,
         inputVo: RentalReservationController.PatchRentableProductStockReservationInfoEarlyReturnInputVo
     ): RentalReservationController.PatchRentableProductStockReservationInfoEarlyReturnOutputVo? {
-//        val memberUid = jwtTokenUtil.getMemberUid(
-//            authorization.split(" ")[1].trim(),
-//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-//        )
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
 
         val rentableProductStockReservationInfo =
             db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.findByUidAndRowDeleteDateStr(
@@ -477,6 +477,13 @@ class RentalReservationService(
             )
 
         if (rentableProductStockReservationInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        if (rentableProductStockReservationInfo.rentableProductReservationInfo.totalAuthMember.uid != memberUid) {
+            // 고객이 진행중인 예약이 아님
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
             return null
@@ -617,11 +624,11 @@ class RentalReservationService(
         rentableProductStockReservationInfoUid: Long,
         inputVo: RentalReservationController.DeleteRentableProductStockReservationInfoEarlyReturnInputVo
     ): RentalReservationController.DeleteRentableProductStockReservationInfoEarlyReturnOutputVo? {
-//        val memberUid = jwtTokenUtil.getMemberUid(
-//            authorization.split(" ")[1].trim(),
-//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-//        )
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
 
         val rentableProductStockReservationInfo =
             db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.findByUidAndRowDeleteDateStr(
@@ -630,6 +637,13 @@ class RentalReservationService(
             )
 
         if (rentableProductStockReservationInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        if (rentableProductStockReservationInfo.rentableProductReservationInfo.totalAuthMember.uid != memberUid) {
+            // 고객이 진행중인 예약이 아님
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
             return null
