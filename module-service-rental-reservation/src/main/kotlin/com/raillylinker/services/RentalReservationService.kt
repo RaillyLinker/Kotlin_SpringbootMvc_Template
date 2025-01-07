@@ -1,35 +1,14 @@
 package com.raillylinker.services
 
-import com.raillylinker.util_components.JwtTokenUtil
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.controllers.RentalReservationController
-import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductReservationInfo
-import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory
-import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockInfo
-import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockReservationInfo
-import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockReservationStateChangeHistory
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Native_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_PaymentRefund_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_Payment_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_RentableProductCategory_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_RentableProductImage_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_RentableProductInfo_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_RentableProductReservationInfo_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_RentableProductReservationPayment_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_RentableProductStockCategory_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_RentableProductStockImage_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_RentableProductStockInfo_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_RentableProductStockReservationInfo_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_RentableProductStockReservationStateChangeHistory_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_TotalAuthMemberEmail_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_TotalAuthMemberPhone_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_TotalAuthMemberProfile_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_TotalAuthMember_Repository
+import com.raillylinker.jpa_beans.db1_main.entities.*
+import com.raillylinker.jpa_beans.db1_main.repositories.*
 import com.raillylinker.redis_map_components.redis1_main.Redis1_Lock_RentableProductInfo
 import com.raillylinker.redis_map_components.redis1_main.Redis1_Lock_RentableProductStockEarlyReturn
+import com.raillylinker.util_components.JwtTokenUtil
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -446,9 +425,11 @@ class RentalReservationService(
 
         // 상태에 따라 예약 취소 자동 승인 정보 추가
         val autoCancelCompleteEntityUid =
-            if (notPaid || notApproved) {
-                // todo 결제 확인 완료 + 승인 기한 지남도 대여 상태로 치기
-                // 결제 확인 완료 아님 || 예약 신청 승인 아님 상태라면 자동 취소 승인 처리
+            if (!notPaid && (!notApproved || nowDatetime.isAfter(reservationEntity.reservationApprovalDeadlineDatetime))) {
+                // 결제 확인 상태 && (예약 승인 상태 || 예약 승인 기한 초과)
+                null
+            } else {
+                // 예약 완전 승인 상태가 아니라면 자동 취소 승인 처리
                 db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
                     Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                         reservationEntity,
@@ -456,8 +437,6 @@ class RentalReservationService(
                         inputVo.cancelReason
                     )
                 ).uid
-            } else {
-                null
             }
 
         httpServletResponse.status = HttpStatus.OK.value()
