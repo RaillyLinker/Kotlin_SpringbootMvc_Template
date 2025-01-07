@@ -441,7 +441,7 @@ class RentalReservationService(
                     Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                         reservationEntity,
                         4,
-                        inputVo.cancelReason
+                        "자동 취소 승인 처리"
                     )
                 ).uid
             }
