@@ -210,8 +210,9 @@ class RentalReservationService(
 
                 for (stockUid in inputVo.rentableProductStockInfoUidList) {
                     val rentableProductStockEntity =
-                        db1RaillyLinkerCompanyRentableProductStockInfoRepository.findByUidAndRowDeleteDateStr(
+                        db1RaillyLinkerCompanyRentableProductStockInfoRepository.findByUidAndRentableProductInfoAndRowDeleteDateStr(
                             stockUid,
+                            rentableProductInfo,
                             "/"
                         )
 

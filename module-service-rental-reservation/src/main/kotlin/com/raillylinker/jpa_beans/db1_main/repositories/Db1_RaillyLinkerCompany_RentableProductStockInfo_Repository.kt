@@ -1,5 +1,6 @@
 package com.raillylinker.jpa_beans.db1_main.repositories
 
+import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductInfo
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockCategory
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockInfo
 import org.springframework.data.jpa.repository.JpaRepository
@@ -15,6 +16,12 @@ interface Db1_RaillyLinkerCompany_RentableProductStockInfo_Repository :
 
     fun findByUidAndRowDeleteDateStr(
         uid: Long,
+        rowDeleteDateStr: String
+    ): Db1_RaillyLinkerCompany_RentableProductStockInfo?
+
+    fun findByUidAndRentableProductInfoAndRowDeleteDateStr(
+        uid: Long,
+        rentableProductInfo: Db1_RaillyLinkerCompany_RentableProductInfo,
         rowDeleteDateStr: String
     ): Db1_RaillyLinkerCompany_RentableProductStockInfo?
 }
