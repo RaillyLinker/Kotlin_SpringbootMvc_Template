@@ -705,12 +705,6 @@ class RentalReservationService(
                         )
                     )
 
-                // 상품 준비일 설정 초기화
-                rentableProductStockReservationInfo.productReadyDatetime = null
-                db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(
-                    rentableProductStockReservationInfo
-                )
-
                 httpServletResponse.status = HttpStatus.OK.value()
                 return@tryLockRepeat RentalReservationController.DeleteRentableProductStockReservationInfoEarlyReturnOutputVo(
                     historyEntity.uid!!
