@@ -219,28 +219,28 @@ class RentalReservationService(
                     if (rentableProductStockEntity == null) {
                         // 재고 리스트 중 없는 개체가 있습니다. -> return
                         httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                        httpServletResponse.setHeader("api-result-code", "9")
+                        httpServletResponse.setHeader("api-result-code", "8")
                         return@tryLockRepeat null
                     }
 
                     if (!rentableProductStockEntity.nowReservable) {
                         //  재고 리스트 중 대여 가능 설정이 아닌 상품이 있습니다. -> return
                         httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                        httpServletResponse.setHeader("api-result-code", "10")
+                        httpServletResponse.setHeader("api-result-code", "9")
                         return@tryLockRepeat null
                     }
 
                     if (rentalStartDatetime.isBefore(rentableProductStockEntity.firstRentableDatetime)) {
                         // 재고 리스트 중 대여 가능 최초 일시가 더 큰 개체가 있습니다. -> return
                         httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                        httpServletResponse.setHeader("api-result-code", "11")
+                        httpServletResponse.setHeader("api-result-code", "10")
                         return@tryLockRepeat null
                     }
 
                     if (rentalEndDatetime.isAfter(rentableProductStockEntity.lastRentableDatetime)) {
                         // 재고 리스트 중 대여 가능 마지막 일시가 더 작은 개체가 있습니다. -> return
                         httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                        httpServletResponse.setHeader("api-result-code", "12")
+                        httpServletResponse.setHeader("api-result-code", "11")
                         return@tryLockRepeat null
                     }
 
@@ -253,7 +253,7 @@ class RentalReservationService(
                     ) {
                         // 재고 리스트 중 현재 예약 중인 개체(예약 준비 시간이 결정되지 않은 항목)가 있습니다. -> return
                         httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                        httpServletResponse.setHeader("api-result-code", "13")
+                        httpServletResponse.setHeader("api-result-code", "12")
                         return@tryLockRepeat null
                     }
 
@@ -290,13 +290,6 @@ class RentalReservationService(
                     reservationDatetime.plusMinutes(rentableProductInfo.approvalDeadlineMinute)
                 val reservationCancelDeadlineDatetime =
                     rentalStartDatetime.minusMinutes(rentableProductInfo.cancelDeadlineMinute)
-
-                if (reservationApprovalDeadlineDatetime.isAfter(reservationCancelDeadlineDatetime)) {
-                    // 취소 가능 기한의 계산 결과가 관리자 승인 기한보다 작습니다. -> return
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "8")
-                    return@tryLockRepeat null
-                }
 
                 // 예약 신청 일시를 기준으로 만들어진 기한 관련 데이터 입력
                 newReservationInfo.customerPaymentDeadlineDatetime = customerPaymentDeadlineDatetime
