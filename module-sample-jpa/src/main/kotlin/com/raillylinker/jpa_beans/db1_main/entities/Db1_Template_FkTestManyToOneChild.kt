@@ -28,7 +28,7 @@ class Db1_Template_FkTestManyToOneChild(
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "uid", columnDefinition = "BIGINT UNSIGNED")
+    @Column(name = "uid", columnDefinition = "BIGINT")
     @Comment("행 고유값")
     var uid: Long? = null
 

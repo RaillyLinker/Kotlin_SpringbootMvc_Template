@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 )
 @Comment("은행 계좌 테스트용 테이블")
 class Db1_Template_TestBank(
-    @Column(name = "user_idx", nullable = false, columnDefinition = "BIGINT UNSIGNED")
+    @Column(name = "user_idx", nullable = false, columnDefinition = "BIGINT")
     @Comment("유저 고유번호")
     var userIdx: Long,
 
@@ -27,7 +27,7 @@ class Db1_Template_TestBank(
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "uid", columnDefinition = "BIGINT UNSIGNED")
+    @Column(name = "uid", columnDefinition = "BIGINT")
     @Comment("행 고유값")
     var uid: Long? = null
 

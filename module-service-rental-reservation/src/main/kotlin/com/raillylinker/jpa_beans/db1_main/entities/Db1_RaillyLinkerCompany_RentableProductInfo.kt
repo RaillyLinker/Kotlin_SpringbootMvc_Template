@@ -6,6 +6,7 @@ import org.hibernate.annotations.Comment
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.math.BigDecimal
+import java.math.BigInteger
 import java.time.LocalDateTime
 
 // Fk 관계 중 OneToOne 은 논리적 삭제를 적용할시 사용이 불가능합니다.
@@ -54,7 +55,7 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
 
     @Column(name = "reservation_unit_minute", nullable = false, columnDefinition = "BIGINT UNSIGNED")
     @Comment("예약 추가 할 수 있는 최소 시간 단위 (분)")
-    var reservationUnitMinute: Long,
+    var reservationUnitMinute: BigInteger,
 
     @Column(name = "minimum_reservation_unit_count", nullable = false, columnDefinition = "INT UNSIGNED")
     @Comment("단위 예약 시간을 대여일 기준에서 최소 몇번 추가 해야 하는지")
@@ -78,23 +79,23 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
 
     @Column(name = "customer_payment_deadline_minute", nullable = false, columnDefinition = "BIGINT UNSIGNED")
     @Comment("고객에게 이때까지 결제를 해야 한다고 통보하는 기한 설정값(예약일로부터 +N 분)")
-    var customerPaymentDeadlineMinute: Long,
+    var customerPaymentDeadlineMinute: BigInteger,
 
     @Column(name = "payment_check_deadline_minute", nullable = false, columnDefinition = "BIGINT UNSIGNED")
     @Comment("관리자의 결제 확인 기한 설정값(예약일로 부터 +N 분, 고객 결제 기한 설정값보다 크거나 같음)")
-    var paymentCheckDeadlineMinute: Long,
+    var paymentCheckDeadlineMinute: BigInteger,
 
     @Column(name = "approval_deadline_minute", nullable = false, columnDefinition = "BIGINT UNSIGNED")
     @Comment("관리자의 예약 승인 기한 설정값(예약일로부터 +N분, 결제 확인 기한 설정값보다 크거나 같음)")
-    var approvalDeadlineMinute: Long,
+    var approvalDeadlineMinute: BigInteger,
 
     @Column(name = "cancel_deadline_minute", nullable = false, columnDefinition = "BIGINT UNSIGNED")
     @Comment("고객이 예약 취소 가능한 기한 설정값(대여 시작일로부터 -N분이며, 그 결과가 관리자 승인 기한보다 커야함)")
-    var cancelDeadlineMinute: Long
+    var cancelDeadlineMinute: BigInteger
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "uid", columnDefinition = "BIGINT UNSIGNED")
+    @Column(name = "uid", columnDefinition = "BIGINT")
     @Comment("행 고유값")
     var uid: Long? = null
 
@@ -116,7 +117,7 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
     @Column(name = "version_seq", nullable = false, columnDefinition = "BIGINT UNSIGNED")
     @ColumnDefault("0")
     @Comment("예약 상품 정보 버전 시퀀스(고객이 정보를 확인한 시점의 버전과 예약 신청하는 시점의 버전이 다르면 진행 불가)")
-    var versionSeq: Long = 0L
+    var versionSeq: BigInteger = BigInteger.valueOf(0L)
 
 
     // ---------------------------------------------------------------------------------------------
