@@ -1271,19 +1271,31 @@ class JpaTestService(
     ): JpaTestController.OrmDatatypeMappingTestOutputVo? {
         val result = db1TemplateDataTypeMappingTestRepository.save(
             Db1_Template_DataTypeMappingTest(
-                inputVo.tinyInt,
-                inputVo.tinyIntUnsigned,
-                inputVo.smallInt,
-                inputVo.smallIntUnsigned
+                inputVo.sampleTinyInt,
+                inputVo.sampleTinyIntUnsigned,
+                inputVo.sampleSmallInt,
+                inputVo.sampleSmallIntUnsigned,
+                inputVo.sampleMediumInt,
+                inputVo.sampleMediumIntUnsigned,
+                inputVo.sampleInt,
+                inputVo.sampleIntUnsigned,
+                inputVo.sampleBigInt,
+                inputVo.sampleBigIntUnsigned
             )
         )
 
         httpServletResponse.status = HttpStatus.OK.value()
         return JpaTestController.OrmDatatypeMappingTestOutputVo(
-            result.tinyInt,
-            result.tinyIntUnsigned,
-            result.smallInt,
-            result.smallIntUnsigned
+            result.sampleTinyInt,
+            result.sampleTinyIntUnsigned,
+            result.sampleSmallInt,
+            result.sampleSmallIntUnsigned,
+            result.sampleMediumInt,
+            result.sampleMediumIntUnsigned,
+            result.sampleInt,
+            result.sampleIntUnsigned,
+            result.sampleBigInt,
+            result.sampleBigIntUnsigned
         )
     }
 }

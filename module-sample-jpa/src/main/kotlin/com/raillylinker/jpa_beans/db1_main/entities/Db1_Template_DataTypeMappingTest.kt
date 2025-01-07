@@ -5,6 +5,7 @@ import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
+import java.math.BigInteger
 import java.time.LocalDateTime
 
 @Entity
@@ -14,24 +15,42 @@ import java.time.LocalDateTime
 )
 @Comment("ORM 과 Database 간 데이터 타입 매핑을 위한 테이블")
 class Db1_Template_DataTypeMappingTest(
-    @Column(name = "tiny_int", nullable = false, columnDefinition = "TINYINT")
-    @Comment("-128 ~ 127")
-    var tinyInt: Byte,
-    @Column(name = "tiny_int_unsigned", nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    @Comment("0 ~ 255")
-    var tinyIntUnsigned: Short,
-    @Column(name = "small_int", nullable = false, columnDefinition = "SMALLINT")
-    @Comment("-32,768 ~ 32,767")
-    var smallInt: Short,
-    @Column(name = "small_int_unsigned", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
-    @Comment("0 ~ 65,535")
-    var smallIntUnsigned: Int
+    @Column(name = "sample_tiny_int", nullable = false, columnDefinition = "TINYINT")
+    @Comment("-128 ~ 127 정수 (1Byte)")
+    var sampleTinyInt: Byte,
+    @Column(name = "sample_tiny_int_unsigned", nullable = false, columnDefinition = "TINYINT UNSIGNED")
+    @Comment("0 ~ 255 정수 (1Byte)")
+    var sampleTinyIntUnsigned: Short,
+    @Column(name = "sample_small_int", nullable = false, columnDefinition = "SMALLINT")
+    @Comment("-32,768 ~ 32,767 정수 (2Byte)")
+    var sampleSmallInt: Short,
+    @Column(name = "sample_small_int_unsigned", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
+    @Comment("0 ~ 65,535 정수 (2Byte)")
+    var sampleSmallIntUnsigned: Int,
+    @Column(name = "sample_medium_int", nullable = false, columnDefinition = "MEDIUMINT")
+    @Comment("-8,388,608 ~ 8,388,607 정수 (3Byte)")
+    var sampleMediumInt: Int,
+    @Column(name = "sample_medium_int_unsigned", nullable = false, columnDefinition = "MEDIUMINT UNSIGNED")
+    @Comment("0 ~ 16,777,215 정수 (3Byte)")
+    var sampleMediumIntUnsigned: Int,
+    @Column(name = "sample_int", nullable = false, columnDefinition = "INT")
+    @Comment("-2,147,483,648 ~ 2,147,483,647 정수 (4Byte)")
+    var sampleInt: Int,
+    @Column(name = "sample_int_unsigned", nullable = false, columnDefinition = "INT UNSIGNED")
+    @Comment("0 ~ 4,294,967,295 정수 (4Byte)")
+    var sampleIntUnsigned: Long,
+    @Column(name = "sample_big_int", nullable = false, columnDefinition = "BIGINT")
+    @Comment("-2^63 ~ 2^63-1 정수 (8Byte)")
+    var sampleBigInt: Long,
+    @Column(name = "sample_big_int_unsigned", nullable = false, columnDefinition = "BIGINT UNSIGNED")
+    @Comment("0 ~ 2^64-1 정수 (8Byte)")
+    var sampleBigIntUnsigned: BigInteger
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uid", columnDefinition = "BIGINT UNSIGNED")
     @Comment("행 고유값")
-    var uid: Long? = null
+    var uid: BigInteger? = null
 
     @Column(name = "row_create_date", nullable = false, columnDefinition = "DATETIME(3)")
     @CreationTimestamp

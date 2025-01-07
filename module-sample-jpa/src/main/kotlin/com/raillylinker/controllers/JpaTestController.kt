@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
+import java.math.BigInteger
 
 @Tag(name = "/jpa-test APIs", description = "JPA 테스트 API 컨트롤러")
 @Controller
@@ -2249,32 +2250,68 @@ class JpaTestController(
     }
 
     data class OrmDatatypeMappingTestInputVo(
-        @Schema(description = "TINYINT 타입 컬럼(-128 ~ 127 사이 값을 입력)", required = true, example = "1")
-        @JsonProperty("tinyInt")
-        val tinyInt: Byte,
-        @Schema(description = "TINYINT UNSIGNED 타입 컬럼(0 ~ 255 사이 값을 입력)", required = true, example = "1")
-        @JsonProperty("tinyIntUnsigned")
-        val tinyIntUnsigned: Short,
-        @Schema(description = "SMALLINT 타입 컬럼(-32,768 ~ 32,767 사이 값을 입력)", required = true, example = "1")
-        @JsonProperty("smallInt")
-        val smallInt: Short,
-        @Schema(description = "SMALLINT UNSIGNED 타입 컬럼(0 ~ 65,535 사이 값을 입력)", required = true, example = "1")
-        @JsonProperty("smallIntUnsigned")
-        val smallIntUnsigned: Int
+        @Schema(description = "TINYINT 타입 컬럼(-128 ~ 127 정수 (1Byte))", required = true, example = "1")
+        @JsonProperty("sampleTinyInt")
+        val sampleTinyInt: Byte,
+        @Schema(description = "TINYINT UNSIGNED 타입 컬럼(0 ~ 255 정수 (1Byte))", required = true, example = "1")
+        @JsonProperty("sampleTinyIntUnsigned")
+        val sampleTinyIntUnsigned: Short,
+        @Schema(description = "SMALLINT 타입 컬럼(-32,768 ~ 32,767 정수 (2Byte))", required = true, example = "1")
+        @JsonProperty("sampleSmallInt")
+        val sampleSmallInt: Short,
+        @Schema(description = "SMALLINT UNSIGNED 타입 컬럼(0 ~ 65,535 정수 (2Byte))", required = true, example = "1")
+        @JsonProperty("sampleSmallIntUnsigned")
+        val sampleSmallIntUnsigned: Int,
+        @Schema(description = "MEDIUMINT 타입 컬럼(-8,388,608 ~ 8,388,607 정수 (3Byte))", required = true, example = "1")
+        @JsonProperty("sampleMediumInt")
+        val sampleMediumInt: Int,
+        @Schema(description = "MEDIUMINT UNSIGNED 타입 컬럼(0 ~ 16,777,215 정수 (3Byte))", required = true, example = "1")
+        @JsonProperty("sampleMediumIntUnsigned")
+        val sampleMediumIntUnsigned: Int,
+        @Schema(description = "INT 타입 컬럼(-2,147,483,648 ~ 2,147,483,647 정수 (4Byte))", required = true, example = "1")
+        @JsonProperty("sampleInt")
+        val sampleInt: Int,
+        @Schema(description = "INT UNSIGNED 타입 컬럼(0 ~ 4,294,967,295 정수 (4Byte))", required = true, example = "1")
+        @JsonProperty("sampleIntUnsigned")
+        val sampleIntUnsigned: Long,
+        @Schema(description = "BIGINT 타입 컬럼(-2^63 ~ 2^63-1 정수 (8Byte))", required = true, example = "1")
+        @JsonProperty("sampleBigInt")
+        val sampleBigInt: Long,
+        @Schema(description = "BIGINT UNSIGNED 타입 컬럼(0 ~ 2^64-1 정수 (8Byte))", required = true, example = "1")
+        @JsonProperty("sampleBigIntUnsigned")
+        val sampleBigIntUnsigned: BigInteger
     )
 
     data class OrmDatatypeMappingTestOutputVo(
-        @Schema(description = "TINYINT 타입 컬럼", required = true, example = "1")
-        @JsonProperty("tinyInt")
-        val tinyInt: Byte,
-        @Schema(description = "TINYINT UNSIGNED 타입 컬럼(0 ~ 255 사이 값을 입력)", required = true, example = "1")
-        @JsonProperty("tinyIntUnsigned")
-        val tinyIntUnsigned: Short,
-        @Schema(description = "SMALLINT 타입 컬럼(-32,768 ~ 32,767 사이 값을 입력)", required = true, example = "1")
-        @JsonProperty("smallInt")
-        val smallInt: Short,
-        @Schema(description = "SMALLINT UNSIGNED 타입 컬럼(0 ~ 65,535 사이 값을 입력)", required = true, example = "1")
-        @JsonProperty("smallIntUnsigned")
-        val smallIntUnsigned: Int
+        @Schema(description = "TINYINT 타입 컬럼(-128 ~ 127 정수 (1Byte))", required = true, example = "1")
+        @JsonProperty("sampleTinyInt")
+        val sampleTinyInt: Byte,
+        @Schema(description = "TINYINT UNSIGNED 타입 컬럼(0 ~ 255 정수 (1Byte))", required = true, example = "1")
+        @JsonProperty("sampleTinyIntUnsigned")
+        val sampleTinyIntUnsigned: Short,
+        @Schema(description = "SMALLINT 타입 컬럼(-32,768 ~ 32,767 정수 (2Byte))", required = true, example = "1")
+        @JsonProperty("sampleSmallInt")
+        val sampleSmallInt: Short,
+        @Schema(description = "SMALLINT UNSIGNED 타입 컬럼(0 ~ 65,535 정수 (2Byte))", required = true, example = "1")
+        @JsonProperty("sampleSmallIntUnsigned")
+        val sampleSmallIntUnsigned: Int,
+        @Schema(description = "MEDIUMINT 타입 컬럼(-8,388,608 ~ 8,388,607 정수 (3Byte))", required = true, example = "1")
+        @JsonProperty("sampleMediumInt")
+        val sampleMediumInt: Int,
+        @Schema(description = "MEDIUMINT UNSIGNED 타입 컬럼(0 ~ 16,777,215 정수 (3Byte))", required = true, example = "1")
+        @JsonProperty("sampleMediumIntUnsigned")
+        val sampleMediumIntUnsigned: Int,
+        @Schema(description = "INT 타입 컬럼(-2,147,483,648 ~ 2,147,483,647 정수 (4Byte))", required = true, example = "1")
+        @JsonProperty("sampleInt")
+        val sampleInt: Int,
+        @Schema(description = "INT UNSIGNED 타입 컬럼(0 ~ 4,294,967,295 정수 (4Byte))", required = true, example = "1")
+        @JsonProperty("sampleIntUnsigned")
+        val sampleIntUnsigned: Long,
+        @Schema(description = "BIGINT 타입 컬럼(-2^63 ~ 2^63-1 정수 (8Byte))", required = true, example = "1")
+        @JsonProperty("sampleBigInt")
+        val sampleBigInt: Long,
+        @Schema(description = "BIGINT UNSIGNED 타입 컬럼(0 ~ 2^64-1 정수 (8Byte))", required = true, example = "1")
+        @JsonProperty("sampleBigIntUnsigned")
+        val sampleBigIntUnsigned: BigInteger
     )
 }
