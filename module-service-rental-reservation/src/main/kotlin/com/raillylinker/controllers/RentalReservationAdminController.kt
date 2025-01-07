@@ -2822,7 +2822,8 @@ class RentalReservationAdminController(
     // ----
     @Operation(
         summary = "개별 상품 연체 상태 변경 <ADMIN>",
-        description = "개별 상품에 대해 연체 상태로 변경 처리를 합니다."
+        description = "개별 상품에 대해 연체 상태로 변경 처리를 합니다.<br>" +
+                "연체 상태가 되면 기존 상품 준비일은 null 이 됩니다."
     )
     @ApiResponses(
         value = [
