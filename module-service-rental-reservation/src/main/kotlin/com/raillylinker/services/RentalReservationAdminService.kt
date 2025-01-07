@@ -2008,7 +2008,7 @@ class RentalReservationAdminService(
                 Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                     rentableProductReservationInfo,
                     4,
-                    inputVo.stateChangeDesc
+                    "자동 취소 승인 처리"
                 )
             )
 
