@@ -2893,7 +2893,7 @@ class RentalReservationAdminService(
 
 
     // ----
-    // (개별 상품 연체 상태 변경 <ADMIN>)
+    // (개별 상품 손망실 상태 변경 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchRentableProductStockReservationInfoLost(
         httpServletResponse: HttpServletResponse,
@@ -3159,10 +3159,6 @@ class RentalReservationAdminService(
                 inputVo.stateChangeDesc
             )
         )
-
-        // 상품 준비일 설정 초기화
-        rentableProductStockReservationInfo.productReadyDatetime = null
-        db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(rentableProductStockReservationInfo)
 
         httpServletResponse.status = HttpStatus.OK.value()
         return RentalReservationAdminController.DeleteRentableProductStockReservationInfoLostOutputVo(
