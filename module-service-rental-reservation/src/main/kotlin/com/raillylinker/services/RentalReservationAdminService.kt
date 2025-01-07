@@ -1722,7 +1722,7 @@ class RentalReservationAdminService(
                 Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                     rentableProductReservationInfo,
                     1,
-                    "관리자 예약 승인"
+                    inputVo.stateChangeDesc
                 )
             )
 
@@ -1819,7 +1819,7 @@ class RentalReservationAdminService(
                 Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                     rentableProductReservationInfo,
                     2,
-                    "관리자 예약 거부"
+                    inputVo.stateChangeDesc
                 )
             )
 
@@ -1933,7 +1933,7 @@ class RentalReservationAdminService(
                 return null
             }
 
-            if (!notRequestCancelDenyLatest && notRequestCancelLatest) {
+            if (!notRequestCancelDenyLatest) {
                 // 기존 예약 취소 신청에 대한 예약 취소 거부 상태입니다. -> return
                 httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                 httpServletResponse.setHeader("api-result-code", "7")
@@ -1947,7 +1947,7 @@ class RentalReservationAdminService(
                 Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                     rentableProductReservationInfo,
                     4,
-                    "관리자 취소 승인"
+                    inputVo.stateChangeDesc
                 )
             )
 
@@ -2008,7 +2008,7 @@ class RentalReservationAdminService(
                 Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                     rentableProductReservationInfo,
                     4,
-                    "관리자 취소 승인"
+                    inputVo.stateChangeDesc
                 )
             )
 
@@ -2088,7 +2088,7 @@ class RentalReservationAdminService(
                 Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                     rentableProductReservationInfo,
                     5,
-                    "관리자 취소 거부"
+                    inputVo.stateChangeDesc
                 )
             )
 
@@ -2158,7 +2158,7 @@ class RentalReservationAdminService(
                 Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                     rentableProductReservationInfo,
                     0,
-                    "관리자 결제 확인"
+                    inputVo.stateChangeDesc
                 )
             )
 
@@ -2259,7 +2259,7 @@ class RentalReservationAdminService(
                 Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
                     rentableProductReservationInfo,
                     6,
-                    "관리자 환불 완료"
+                    inputVo.stateChangeDesc
                 )
             )
 
