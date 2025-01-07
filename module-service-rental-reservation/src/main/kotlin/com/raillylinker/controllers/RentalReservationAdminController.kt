@@ -2609,14 +2609,14 @@ class RentalReservationAdminController(
             )
         ]
     )
-    @PatchMapping(
-        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/return_check"],
+    @PostMapping(
+        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/return-check"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun patchRentableProductStockReservationInfoReturnCheck(
+    fun postRentableProductStockReservationInfoReturnCheck(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
@@ -2630,9 +2630,9 @@ class RentalReservationAdminController(
         @PathVariable("rentableProductStockReservationInfoUid")
         rentableProductStockReservationInfoUid: Long,
         @RequestBody
-        inputVo: PatchRentableProductStockReservationInfoReturnCheckInputVo
-    ): PatchRentableProductStockReservationInfoReturnCheckOutputVo? {
-        return service.patchRentableProductStockReservationInfoReturnCheck(
+        inputVo: PostRentableProductStockReservationInfoReturnCheckInputVo
+    ): PostRentableProductStockReservationInfoReturnCheckOutputVo? {
+        return service.postRentableProductStockReservationInfoReturnCheck(
             httpServletResponse,
             authorization!!,
             rentableProductStockReservationInfoUid,
@@ -2640,13 +2640,13 @@ class RentalReservationAdminController(
         )
     }
 
-    data class PatchRentableProductStockReservationInfoReturnCheckInputVo(
+    data class PostRentableProductStockReservationInfoReturnCheckInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
         val stateChangeDesc: String
     )
 
-    data class PatchRentableProductStockReservationInfoReturnCheckOutputVo(
+    data class PostRentableProductStockReservationInfoReturnCheckOutputVo(
         @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
         @JsonProperty("stockReservationStateChangeHistoryUid")
         val stockReservationStateChangeHistoryUid: Long
@@ -2693,14 +2693,14 @@ class RentalReservationAdminController(
             )
         ]
     )
-    @DeleteMapping(
-        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/return_check"],
+    @PostMapping(
+        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/return-check-cancel"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun deleteRentableProductStockReservationInfoReturnCheck(
+    fun postRentableProductStockReservationInfoReturnCheckCancel(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
@@ -2714,9 +2714,9 @@ class RentalReservationAdminController(
         @PathVariable("rentableProductStockReservationInfoUid")
         rentableProductStockReservationInfoUid: Long,
         @RequestBody
-        inputVo: DeleteRentableProductStockReservationInfoReturnCheckInputVo
-    ): DeleteRentableProductStockReservationInfoReturnCheckOutputVo? {
-        return service.deleteRentableProductStockReservationInfoReturnCheck(
+        inputVo: PostRentableProductStockReservationInfoReturnCheckCancelInputVo
+    ): PostRentableProductStockReservationInfoReturnCheckCancelOutputVo? {
+        return service.postRentableProductStockReservationInfoReturnCheckCancel(
             httpServletResponse,
             authorization!!,
             rentableProductStockReservationInfoUid,
@@ -2724,13 +2724,13 @@ class RentalReservationAdminController(
         )
     }
 
-    data class DeleteRentableProductStockReservationInfoReturnCheckInputVo(
+    data class PostRentableProductStockReservationInfoReturnCheckCancelInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
         val stateChangeDesc: String
     )
 
-    data class DeleteRentableProductStockReservationInfoReturnCheckOutputVo(
+    data class PostRentableProductStockReservationInfoReturnCheckCancelOutputVo(
         @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
         @JsonProperty("stockReservationStateChangeHistoryUid")
         val stockReservationStateChangeHistoryUid: Long
@@ -2862,14 +2862,14 @@ class RentalReservationAdminController(
             )
         ]
     )
-    @PatchMapping(
+    @PostMapping(
         path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/overdue"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun patchRentableProductStockReservationInfoOverdue(
+    fun postRentableProductStockReservationInfoOverdue(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
@@ -2883,9 +2883,9 @@ class RentalReservationAdminController(
         @PathVariable("rentableProductStockReservationInfoUid")
         rentableProductStockReservationInfoUid: Long,
         @RequestBody
-        inputVo: PatchRentableProductStockReservationInfoOverdueInputVo
-    ): PatchRentableProductStockReservationInfoOverdueOutputVo? {
-        return service.patchRentableProductStockReservationInfoOverdue(
+        inputVo: PostRentableProductStockReservationInfoOverdueInputVo
+    ): PostRentableProductStockReservationInfoOverdueOutputVo? {
+        return service.postRentableProductStockReservationInfoOverdue(
             httpServletResponse,
             authorization!!,
             rentableProductStockReservationInfoUid,
@@ -2893,13 +2893,13 @@ class RentalReservationAdminController(
         )
     }
 
-    data class PatchRentableProductStockReservationInfoOverdueInputVo(
+    data class PostRentableProductStockReservationInfoOverdueInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
         val stateChangeDesc: String
     )
 
-    data class PatchRentableProductStockReservationInfoOverdueOutputVo(
+    data class PostRentableProductStockReservationInfoOverdueOutputVo(
         @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
         @JsonProperty("stockReservationStateChangeHistoryUid")
         val stockReservationStateChangeHistoryUid: Long
@@ -2946,14 +2946,14 @@ class RentalReservationAdminController(
             )
         ]
     )
-    @DeleteMapping(
-        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/overdue"],
+    @PostMapping(
+        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/overdue-cancel"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun deleteRentableProductStockReservationInfoOverdue(
+    fun postRentableProductStockReservationInfoOverdueCancel(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
@@ -2967,9 +2967,9 @@ class RentalReservationAdminController(
         @PathVariable("rentableProductStockReservationInfoUid")
         rentableProductStockReservationInfoUid: Long,
         @RequestBody
-        inputVo: DeleteRentableProductStockReservationInfoOverdueInputVo
-    ): DeleteRentableProductStockReservationInfoOverdueOutputVo? {
-        return service.deleteRentableProductStockReservationInfoOverdue(
+        inputVo: PostRentableProductStockReservationInfoOverdueCancelInputVo
+    ): PostRentableProductStockReservationInfoOverdueCancelOutputVo? {
+        return service.postRentableProductStockReservationInfoOverdueCancel(
             httpServletResponse,
             authorization!!,
             rentableProductStockReservationInfoUid,
@@ -2977,13 +2977,13 @@ class RentalReservationAdminController(
         )
     }
 
-    data class DeleteRentableProductStockReservationInfoOverdueInputVo(
+    data class PostRentableProductStockReservationInfoOverdueCancelInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
         val stateChangeDesc: String
     )
 
-    data class DeleteRentableProductStockReservationInfoOverdueOutputVo(
+    data class PostRentableProductStockReservationInfoOverdueCancelOutputVo(
         @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
         @JsonProperty("stockReservationStateChangeHistoryUid")
         val stockReservationStateChangeHistoryUid: Long
@@ -3032,14 +3032,14 @@ class RentalReservationAdminController(
             )
         ]
     )
-    @PatchMapping(
+    @PostMapping(
         path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/lost"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun patchRentableProductStockReservationInfoLost(
+    fun postRentableProductStockReservationInfoLost(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
@@ -3053,9 +3053,9 @@ class RentalReservationAdminController(
         @PathVariable("rentableProductStockReservationInfoUid")
         rentableProductStockReservationInfoUid: Long,
         @RequestBody
-        inputVo: PatchRentableProductStockReservationInfoLostInputVo
-    ): PatchRentableProductStockReservationInfoLostOutputVo? {
-        return service.patchRentableProductStockReservationInfoLost(
+        inputVo: PostRentableProductStockReservationInfoLostInputVo
+    ): PostRentableProductStockReservationInfoLostOutputVo? {
+        return service.postRentableProductStockReservationInfoLost(
             httpServletResponse,
             authorization!!,
             rentableProductStockReservationInfoUid,
@@ -3063,13 +3063,13 @@ class RentalReservationAdminController(
         )
     }
 
-    data class PatchRentableProductStockReservationInfoLostInputVo(
+    data class PostRentableProductStockReservationInfoLostInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
         val stateChangeDesc: String
     )
 
-    data class PatchRentableProductStockReservationInfoLostOutputVo(
+    data class PostRentableProductStockReservationInfoLostOutputVo(
         @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
         @JsonProperty("stockReservationStateChangeHistoryUid")
         val stockReservationStateChangeHistoryUid: Long
@@ -3116,14 +3116,14 @@ class RentalReservationAdminController(
             )
         ]
     )
-    @DeleteMapping(
-        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/lost"],
+    @PostMapping(
+        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/lost-cancel"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun deleteRentableProductStockReservationInfoLost(
+    fun postRentableProductStockReservationInfoLostCancel(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
@@ -3137,9 +3137,9 @@ class RentalReservationAdminController(
         @PathVariable("rentableProductStockReservationInfoUid")
         rentableProductStockReservationInfoUid: Long,
         @RequestBody
-        inputVo: DeleteRentableProductStockReservationInfoLostInputVo
-    ): DeleteRentableProductStockReservationInfoLostOutputVo? {
-        return service.deleteRentableProductStockReservationInfoLost(
+        inputVo: PostRentableProductStockReservationInfoLostCancelInputVo
+    ): PostRentableProductStockReservationInfoLostCancelOutputVo? {
+        return service.postRentableProductStockReservationInfoLostCancel(
             httpServletResponse,
             authorization!!,
             rentableProductStockReservationInfoUid,
@@ -3147,13 +3147,13 @@ class RentalReservationAdminController(
         )
     }
 
-    data class DeleteRentableProductStockReservationInfoLostInputVo(
+    data class PostRentableProductStockReservationInfoLostCancelInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
         val stateChangeDesc: String
     )
 
-    data class DeleteRentableProductStockReservationInfoLostOutputVo(
+    data class PostRentableProductStockReservationInfoLostCancelOutputVo(
         @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
         @JsonProperty("stockReservationStateChangeHistoryUid")
         val stockReservationStateChangeHistoryUid: Long

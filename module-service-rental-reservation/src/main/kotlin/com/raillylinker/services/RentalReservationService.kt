@@ -458,12 +458,12 @@ class RentalReservationService(
     // (개별 상품 조기 반납 신고 <ADMIN>)
     // 관리자의 상품 반납 확인과 고객의 조기 반납 신고 간의 공유락 처리
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun patchRentableProductStockReservationInfoEarlyReturn(
+    fun postRentableProductStockReservationInfoEarlyReturn(
         httpServletResponse: HttpServletResponse,
         authorization: String,
         rentableProductStockReservationInfoUid: Long,
-        inputVo: RentalReservationController.PatchRentableProductStockReservationInfoEarlyReturnInputVo
-    ): RentalReservationController.PatchRentableProductStockReservationInfoEarlyReturnOutputVo? {
+        inputVo: RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnInputVo
+    ): RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
@@ -517,7 +517,7 @@ class RentalReservationService(
         }
 
         // 관리자의 상품 반납 확인과 고객의 조기 반납 신고 간의 공유락 처리
-        return redis1LockRentableProductStockEarlyReturn.tryLockRepeat<RentalReservationController.PatchRentableProductStockReservationInfoEarlyReturnOutputVo?>(
+        return redis1LockRentableProductStockEarlyReturn.tryLockRepeat<RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnOutputVo?>(
             "$rentableProductStockReservationInfoUid",
             7000L,
             {
@@ -606,7 +606,7 @@ class RentalReservationService(
                     )
 
                 httpServletResponse.status = HttpStatus.OK.value()
-                return@tryLockRepeat RentalReservationController.PatchRentableProductStockReservationInfoEarlyReturnOutputVo(
+                return@tryLockRepeat RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnOutputVo(
                     historyEntity.uid!!
                 )
             }
@@ -618,12 +618,12 @@ class RentalReservationService(
     // (개별 상품 조기 반납 신고 취소 <ADMIN>)
     // 관리자의 상품 반납 확인과 고객의 조기 반납 신고 간의 공유락 처리
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun deleteRentableProductStockReservationInfoEarlyReturn(
+    fun postRentableProductStockReservationInfoEarlyReturnCancel(
         httpServletResponse: HttpServletResponse,
         authorization: String,
         rentableProductStockReservationInfoUid: Long,
-        inputVo: RentalReservationController.DeleteRentableProductStockReservationInfoEarlyReturnInputVo
-    ): RentalReservationController.DeleteRentableProductStockReservationInfoEarlyReturnOutputVo? {
+        inputVo: RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnCancelInputVo
+    ): RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnCancelOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
@@ -650,7 +650,7 @@ class RentalReservationService(
         }
 
         // 관리자의 상품 반납 확인과 고객의 조기 반납 신고 간의 공유락 처리
-        return redis1LockRentableProductStockEarlyReturn.tryLockRepeat<RentalReservationController.DeleteRentableProductStockReservationInfoEarlyReturnOutputVo?>(
+        return redis1LockRentableProductStockEarlyReturn.tryLockRepeat<RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnCancelOutputVo?>(
             "$rentableProductStockReservationInfoUid",
             7000L,
             {
@@ -706,7 +706,7 @@ class RentalReservationService(
                     )
 
                 httpServletResponse.status = HttpStatus.OK.value()
-                return@tryLockRepeat RentalReservationController.DeleteRentableProductStockReservationInfoEarlyReturnOutputVo(
+                return@tryLockRepeat RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnCancelOutputVo(
                     historyEntity.uid!!
                 )
             }

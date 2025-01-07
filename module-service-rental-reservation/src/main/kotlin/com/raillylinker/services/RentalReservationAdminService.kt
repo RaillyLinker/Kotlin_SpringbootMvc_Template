@@ -2308,12 +2308,12 @@ class RentalReservationAdminService(
     // (개별 상품 반납 확인 <ADMIN>)
     // 관리자의 상품 반납 확인과 고객의 조기 반납 신고 간의 공유락 처리
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun patchRentableProductStockReservationInfoReturnCheck(
+    fun postRentableProductStockReservationInfoReturnCheck(
         httpServletResponse: HttpServletResponse,
         authorization: String,
         rentableProductStockReservationInfoUid: Long,
-        inputVo: RentalReservationAdminController.PatchRentableProductStockReservationInfoReturnCheckInputVo
-    ): RentalReservationAdminController.PatchRentableProductStockReservationInfoReturnCheckOutputVo? {
+        inputVo: RentalReservationAdminController.PostRentableProductStockReservationInfoReturnCheckInputVo
+    ): RentalReservationAdminController.PostRentableProductStockReservationInfoReturnCheckOutputVo? {
 //        val memberUid = jwtTokenUtil.getMemberUid(
 //            authorization.split(" ")[1].trim(),
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
@@ -2360,7 +2360,7 @@ class RentalReservationAdminService(
         }
 
         // 관리자의 상품 반납 확인과 고객의 조기 반납 신고 간의 공유락 처리
-        return redis1LockRentableProductStockEarlyReturn.tryLockRepeat<RentalReservationAdminController.PatchRentableProductStockReservationInfoReturnCheckOutputVo?>(
+        return redis1LockRentableProductStockEarlyReturn.tryLockRepeat<RentalReservationAdminController.PostRentableProductStockReservationInfoReturnCheckOutputVo?>(
             "$rentableProductStockReservationInfoUid",
             7000L,
             {
@@ -2439,7 +2439,7 @@ class RentalReservationAdminService(
                     )
 
                 httpServletResponse.status = HttpStatus.OK.value()
-                return@tryLockRepeat RentalReservationAdminController.PatchRentableProductStockReservationInfoReturnCheckOutputVo(
+                return@tryLockRepeat RentalReservationAdminController.PostRentableProductStockReservationInfoReturnCheckOutputVo(
                     historyEntity.uid!!
                 )
             }
@@ -2450,12 +2450,12 @@ class RentalReservationAdminService(
     // ----
     // (개별 상품 반납 확인 취소 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun deleteRentableProductStockReservationInfoReturnCheck(
+    fun postRentableProductStockReservationInfoReturnCheckCancel(
         httpServletResponse: HttpServletResponse,
         authorization: String,
         rentableProductStockReservationInfoUid: Long,
-        inputVo: RentalReservationAdminController.DeleteRentableProductStockReservationInfoReturnCheckInputVo
-    ): RentalReservationAdminController.DeleteRentableProductStockReservationInfoReturnCheckOutputVo? {
+        inputVo: RentalReservationAdminController.PostRentableProductStockReservationInfoReturnCheckCancelInputVo
+    ): RentalReservationAdminController.PostRentableProductStockReservationInfoReturnCheckCancelOutputVo? {
 //        val memberUid = jwtTokenUtil.getMemberUid(
 //            authorization.split(" ")[1].trim(),
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
@@ -2552,7 +2552,7 @@ class RentalReservationAdminService(
         )
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return RentalReservationAdminController.DeleteRentableProductStockReservationInfoReturnCheckOutputVo(
+        return RentalReservationAdminController.PostRentableProductStockReservationInfoReturnCheckCancelOutputVo(
             historyEntity.uid!!
         )
     }
@@ -2620,12 +2620,12 @@ class RentalReservationAdminService(
     // ----
     // (개별 상품 연체 상태 변경 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun patchRentableProductStockReservationInfoOverdue(
+    fun postRentableProductStockReservationInfoOverdue(
         httpServletResponse: HttpServletResponse,
         authorization: String,
         rentableProductStockReservationInfoUid: Long,
-        inputVo: RentalReservationAdminController.PatchRentableProductStockReservationInfoOverdueInputVo
-    ): RentalReservationAdminController.PatchRentableProductStockReservationInfoOverdueOutputVo? {
+        inputVo: RentalReservationAdminController.PostRentableProductStockReservationInfoOverdueInputVo
+    ): RentalReservationAdminController.PostRentableProductStockReservationInfoOverdueOutputVo? {
 //        val memberUid = jwtTokenUtil.getMemberUid(
 //            authorization.split(" ")[1].trim(),
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
@@ -2775,7 +2775,7 @@ class RentalReservationAdminService(
         db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(rentableProductStockReservationInfo)
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return RentalReservationAdminController.PatchRentableProductStockReservationInfoOverdueOutputVo(
+        return RentalReservationAdminController.PostRentableProductStockReservationInfoOverdueOutputVo(
             historyEntity.uid!!
         )
     }
@@ -2784,12 +2784,12 @@ class RentalReservationAdminService(
     // ----
     // (개별 상품 연체 상태 변경 취소 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun deleteRentableProductStockReservationInfoOverdue(
+    fun postRentableProductStockReservationInfoOverdueCancel(
         httpServletResponse: HttpServletResponse,
         authorization: String,
         rentableProductStockReservationInfoUid: Long,
-        inputVo: RentalReservationAdminController.DeleteRentableProductStockReservationInfoOverdueInputVo
-    ): RentalReservationAdminController.DeleteRentableProductStockReservationInfoOverdueOutputVo? {
+        inputVo: RentalReservationAdminController.PostRentableProductStockReservationInfoOverdueCancelInputVo
+    ): RentalReservationAdminController.PostRentableProductStockReservationInfoOverdueCancelOutputVo? {
 //        val memberUid = jwtTokenUtil.getMemberUid(
 //            authorization.split(" ")[1].trim(),
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
@@ -2886,7 +2886,7 @@ class RentalReservationAdminService(
         )
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return RentalReservationAdminController.DeleteRentableProductStockReservationInfoOverdueOutputVo(
+        return RentalReservationAdminController.PostRentableProductStockReservationInfoOverdueCancelOutputVo(
             historyEntity.uid!!
         )
     }
@@ -2895,12 +2895,12 @@ class RentalReservationAdminService(
     // ----
     // (개별 상품 손망실 상태 변경 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun patchRentableProductStockReservationInfoLost(
+    fun postRentableProductStockReservationInfoLost(
         httpServletResponse: HttpServletResponse,
         authorization: String,
         rentableProductStockReservationInfoUid: Long,
-        inputVo: RentalReservationAdminController.PatchRentableProductStockReservationInfoLostInputVo
-    ): RentalReservationAdminController.PatchRentableProductStockReservationInfoLostOutputVo? {
+        inputVo: RentalReservationAdminController.PostRentableProductStockReservationInfoLostInputVo
+    ): RentalReservationAdminController.PostRentableProductStockReservationInfoLostOutputVo? {
 //        val memberUid = jwtTokenUtil.getMemberUid(
 //            authorization.split(" ")[1].trim(),
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
@@ -3050,7 +3050,7 @@ class RentalReservationAdminService(
         db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(rentableProductStockReservationInfo)
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return RentalReservationAdminController.PatchRentableProductStockReservationInfoLostOutputVo(
+        return RentalReservationAdminController.PostRentableProductStockReservationInfoLostOutputVo(
             historyEntity.uid!!
         )
     }
@@ -3059,12 +3059,12 @@ class RentalReservationAdminService(
     // ----
     // (개별 상품 손망실 상태 변경 취소 <ADMIN>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun deleteRentableProductStockReservationInfoLost(
+    fun postRentableProductStockReservationInfoLostCancel(
         httpServletResponse: HttpServletResponse,
         authorization: String,
         rentableProductStockReservationInfoUid: Long,
-        inputVo: RentalReservationAdminController.DeleteRentableProductStockReservationInfoLostInputVo
-    ): RentalReservationAdminController.DeleteRentableProductStockReservationInfoLostOutputVo? {
+        inputVo: RentalReservationAdminController.PostRentableProductStockReservationInfoLostCancelInputVo
+    ): RentalReservationAdminController.PostRentableProductStockReservationInfoLostCancelOutputVo? {
 //        val memberUid = jwtTokenUtil.getMemberUid(
 //            authorization.split(" ")[1].trim(),
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
@@ -3161,7 +3161,7 @@ class RentalReservationAdminService(
         )
 
         httpServletResponse.status = HttpStatus.OK.value()
-        return RentalReservationAdminController.DeleteRentableProductStockReservationInfoLostOutputVo(
+        return RentalReservationAdminController.PostRentableProductStockReservationInfoLostCancelOutputVo(
             historyEntity.uid!!
         )
     }

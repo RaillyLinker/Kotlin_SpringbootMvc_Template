@@ -266,14 +266,14 @@ class RentalReservationController(
             )
         ]
     )
-    @PatchMapping(
+    @PostMapping(
         path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/early-return"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun patchRentableProductStockReservationInfoEarlyReturn(
+    fun postRentableProductStockReservationInfoEarlyReturn(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
@@ -287,9 +287,9 @@ class RentalReservationController(
         @PathVariable("rentableProductStockReservationInfoUid")
         rentableProductStockReservationInfoUid: Long,
         @RequestBody
-        inputVo: PatchRentableProductStockReservationInfoEarlyReturnInputVo
-    ): PatchRentableProductStockReservationInfoEarlyReturnOutputVo? {
-        return service.patchRentableProductStockReservationInfoEarlyReturn(
+        inputVo: PostRentableProductStockReservationInfoEarlyReturnInputVo
+    ): PostRentableProductStockReservationInfoEarlyReturnOutputVo? {
+        return service.postRentableProductStockReservationInfoEarlyReturn(
             httpServletResponse,
             authorization!!,
             rentableProductStockReservationInfoUid,
@@ -297,13 +297,13 @@ class RentalReservationController(
         )
     }
 
-    data class PatchRentableProductStockReservationInfoEarlyReturnInputVo(
+    data class PostRentableProductStockReservationInfoEarlyReturnInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
         val stateChangeDesc: String
     )
 
-    data class PatchRentableProductStockReservationInfoEarlyReturnOutputVo(
+    data class PostRentableProductStockReservationInfoEarlyReturnOutputVo(
         @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
         @JsonProperty("stockReservationStateChangeHistoryUid")
         val stockReservationStateChangeHistoryUid: Long
@@ -349,14 +349,14 @@ class RentalReservationController(
             )
         ]
     )
-    @DeleteMapping(
-        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/early-return"],
+    @PostMapping(
+        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/early-return-cancel"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun deleteRentableProductStockReservationInfoEarlyReturn(
+    fun postRentableProductStockReservationInfoEarlyReturnCancel(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
@@ -370,9 +370,9 @@ class RentalReservationController(
         @PathVariable("rentableProductStockReservationInfoUid")
         rentableProductStockReservationInfoUid: Long,
         @RequestBody
-        inputVo: DeleteRentableProductStockReservationInfoEarlyReturnInputVo
-    ): DeleteRentableProductStockReservationInfoEarlyReturnOutputVo? {
-        return service.deleteRentableProductStockReservationInfoEarlyReturn(
+        inputVo: PostRentableProductStockReservationInfoEarlyReturnCancelInputVo
+    ): PostRentableProductStockReservationInfoEarlyReturnCancelOutputVo? {
+        return service.postRentableProductStockReservationInfoEarlyReturnCancel(
             httpServletResponse,
             authorization!!,
             rentableProductStockReservationInfoUid,
@@ -380,13 +380,13 @@ class RentalReservationController(
         )
     }
 
-    data class DeleteRentableProductStockReservationInfoEarlyReturnInputVo(
+    data class PostRentableProductStockReservationInfoEarlyReturnCancelInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
         val stateChangeDesc: String
     )
 
-    data class DeleteRentableProductStockReservationInfoEarlyReturnOutputVo(
+    data class PostRentableProductStockReservationInfoEarlyReturnCancelOutputVo(
         @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
         @JsonProperty("stockReservationStateChangeHistoryUid")
         val stockReservationStateChangeHistoryUid: Long
