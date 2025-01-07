@@ -97,6 +97,8 @@ class RentalReservationService(
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
+        val nowDatetime = LocalDateTime.now()
+
         val rentalStartDatetime = ZonedDateTime.parse(
             inputVo.rentalStartDatetime,
             DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
@@ -111,6 +113,13 @@ class RentalReservationService(
             // 대여 시작 일시가 끝 일시보다 클 경우 -> return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
+        if (nowDatetime.isAfter(rentalStartDatetime) || nowDatetime.isAfter(rentalEndDatetime)) {
+            // 대여 설정 일시가 현재 일시보다 작을 경우 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "13")
             return null
         }
 
@@ -145,8 +154,6 @@ class RentalReservationService(
                     httpServletResponse.setHeader("api-result-code", "4")
                     return@tryLockRepeat null
                 }
-
-                val nowDatetime = LocalDateTime.now()
 
                 if (nowDatetime.isBefore(rentableProductInfo.firstReservableDatetime)) {
                     // 현재 시간이 예약 가능 일시보다 작음 -> return
