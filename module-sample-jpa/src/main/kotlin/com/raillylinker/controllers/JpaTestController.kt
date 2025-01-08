@@ -2335,7 +2335,21 @@ class JpaTestController(
             example = "2024_05_02_T_15_14_49_552_KST"
         )
         @JsonProperty("sampleTimestamp")
-        val sampleTimestamp: String
+        val sampleTimestamp: String,
+        @Schema(
+            description = "YEAR 타입 컬럼(1901 ~ 2155 년도)",
+            required = true,
+            example = "2024"
+        )
+        @JsonProperty("sampleYear")
+        val sampleYear: Int,
+        @Schema(
+            description = "CHAR(12) 타입 컬럼(12 바이트 입력 허용)",
+            required = true,
+            example = "test"
+        )
+        @JsonProperty("sampleChar12")
+        val sampleChar12: String
     )
 
     data class OrmDatatypeMappingTestOutputVo(
@@ -2423,6 +2437,20 @@ class JpaTestController(
             example = "2024_05_02_T_15_14_49_552_KST"
         )
         @JsonProperty("sampleTimestamp")
-        val sampleTimestamp: String
+        val sampleTimestamp: String,
+        @Schema(
+            description = "YEAR 타입 컬럼(1901 ~ 2155 년도)",
+            required = true,
+            example = "2024"
+        )
+        @JsonProperty("sampleYear")
+        val sampleYear: Int,
+        @Schema(
+            description = "CHAR(12) 타입 컬럼(12 바이트 입력 허용)",
+            required = true,
+            example = "test"
+        )
+        @JsonProperty("sampleChar12")
+        val sampleChar12: String
     )
 }

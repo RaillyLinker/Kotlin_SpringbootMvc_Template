@@ -74,7 +74,18 @@ class Db1_Template_DataTypeMappingTest(
     var sampleTime: LocalTime,
     @Column(name = "sample_timestamp", nullable = false, columnDefinition = "TIMESTAMP(3)")
     @Comment("1970-01-01 00:00:01 ~ 2038-01-19 03:14:07 날짜 데이터 저장시 UTC 기준으로 저장되고, 조회시 시스템 설정에 맞게 반환")
-    var sampleTimestamp: LocalDateTime
+    var sampleTimestamp: LocalDateTime,
+    @Column(name = "sample_year", nullable = false, columnDefinition = "YEAR")
+    @Comment("1901 ~ 2155 년도")
+    var sampleYear: Int,
+    /*
+        문자 관련 데이터는 영문, 숫자를 기준으로 1 바이트 1 문자,
+        그외 문자는 그 이상으로, 인커딩에 따라 달라집니다.
+        UTF-8 에서 한글은 3 바이트, 특수문자는 4 바이트입니다.
+     */
+    @Column(name = "sample_char12", nullable = false, columnDefinition = "CHAR(12)")
+    @Comment("고정 길이 문자열 (최대 255), CHAR 타입은 항상 지정된 길이만큼 공간을 차지하며, 실제 저장되는 문자열이 그보다 짧으면 빈 공간으로 패딩하여 저장합니다.")
+    var sampleChar12: String
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

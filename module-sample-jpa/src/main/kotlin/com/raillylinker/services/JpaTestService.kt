@@ -1302,7 +1302,9 @@ class JpaTestService(
                 ZonedDateTime.parse(
                     inputVo.sampleTimestamp,
                     DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-                ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+                ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime(),
+                inputVo.sampleYear,
+                inputVo.sampleChar12
             )
         )
 
@@ -1329,7 +1331,9 @@ class JpaTestService(
                 .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
             result.sampleTime.format(DateTimeFormatter.ofPattern("HH_mm_ss_SSS")),
             result.sampleTimestamp.atZone(ZoneId.systemDefault())
-                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+            result.sampleYear,
+            result.sampleChar12
         )
     }
 }
