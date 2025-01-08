@@ -53,7 +53,7 @@ class JpaTestService(
                 inputVo.content,
                 (0..99999999).random(),
                 ZonedDateTime.parse(inputVo.dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                    .toLocalDateTime()
+                    .withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
             )
         )
 
@@ -217,7 +217,7 @@ class JpaTestService(
     ): JpaTestController.SelectRowsOrderByRowCreateDateSampleOutputVo? {
         val foundEntityList = db1NativeRepository.findAllFromTemplateTestDataByNotDeletedWithRowCreateDateDistance(
             ZonedDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                .toLocalDateTime()
+                .withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
         )
 
         val testEntityVoList =
@@ -348,7 +348,7 @@ class JpaTestService(
         oldEntity.content = inputVo.content
         oldEntity.testDatetime =
             ZonedDateTime.parse(inputVo.dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                .toLocalDateTime()
+                .withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
 
         val result = db1TemplateTestsRepository.save(oldEntity)
 
@@ -391,7 +391,7 @@ class JpaTestService(
             testTableUid,
             inputVo.content,
             ZonedDateTime.parse(inputVo.dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                .toLocalDateTime()
+                .withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
         )
 
         httpServletResponse.status = HttpStatus.OK.value()

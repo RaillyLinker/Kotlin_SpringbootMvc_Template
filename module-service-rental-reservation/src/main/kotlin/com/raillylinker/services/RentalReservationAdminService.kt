@@ -352,7 +352,7 @@ class RentalReservationAdminService(
                 ZonedDateTime.parse(
                     inputVo.firstReservableDatetime,
                     DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-                ).toLocalDateTime(),
+                ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime(),
                 inputVo.reservationUnitMinute,
                 inputVo.minimumReservationUnitCount,
                 inputVo.maximumReservationUnitCount,
@@ -458,7 +458,7 @@ class RentalReservationAdminService(
                 rentableProduct.firstReservableDatetime = ZonedDateTime.parse(
                     inputVo.firstReservableDatetime,
                     DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-                ).toLocalDateTime()
+                ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
                 rentableProduct.reservationUnitMinute = inputVo.reservationUnitMinute
                 rentableProduct.minimumReservationUnitCount = inputVo.minimumReservationUnitCount
                 rentableProduct.maximumReservationUnitCount = inputVo.maximumReservationUnitCount
@@ -1189,14 +1189,14 @@ class RentalReservationAdminService(
                     ZonedDateTime.parse(
                         inputVo.firstRentableDatetime,
                         DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-                    ).toLocalDateTime(),
+                    ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime(),
                     if (inputVo.lastRentableDatetime == null) {
                         null
                     } else {
                         ZonedDateTime.parse(
                             inputVo.lastRentableDatetime,
                             DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-                        ).toLocalDateTime()
+                        ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
                     },
                     inputVo.nowReservable
                 )
@@ -1347,14 +1347,14 @@ class RentalReservationAdminService(
                 rentableProductStockInfo.firstRentableDatetime = ZonedDateTime.parse(
                     inputVo.firstRentableDatetime,
                     DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-                ).toLocalDateTime()
+                ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
                 rentableProductStockInfo.lastRentableDatetime = if (inputVo.lastRentableDatetime == null) {
                     null
                 } else {
                     ZonedDateTime.parse(
                         inputVo.lastRentableDatetime,
                         DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-                    ).toLocalDateTime()
+                    ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
                 }
                 rentableProductStockInfo.nowReservable = inputVo.nowReservable
 
@@ -2606,7 +2606,7 @@ class RentalReservationAdminService(
             ZonedDateTime.parse(
                 inputVo.readyDatetime,
                 DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-            ).toLocalDateTime()
+            ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
         }
 
         // 개별 상품 반납 확인 내역 추가

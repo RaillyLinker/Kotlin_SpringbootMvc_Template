@@ -102,12 +102,12 @@ class RentalReservationService(
         val rentalStartDatetime = ZonedDateTime.parse(
             inputVo.rentalStartDatetime,
             DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-        ).toLocalDateTime()
+        ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
 
         val rentalEndDatetime = ZonedDateTime.parse(
             inputVo.rentalEndDatetime,
             DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-        ).toLocalDateTime()
+        ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
 
         if (rentalStartDatetime.isAfter(rentalEndDatetime)) {
             // 대여 시작 일시가 끝 일시보다 클 경우 -> return
