@@ -2321,7 +2321,14 @@ class JpaTestController(
             example = "2024_05_02_T_15_14_49_552_KST"
         )
         @JsonProperty("sampleDatetime")
-        val sampleDatetime: String
+        val sampleDatetime: String,
+        @Schema(
+            description = "TIME 타입 컬럼(-838:59:59 ~ 838:59:59, HH_mm_ss_SSS)",
+            required = true,
+            example = "01_01_01_111"
+        )
+        @JsonProperty("sampleTime")
+        val sampleTime: String
     )
 
     data class OrmDatatypeMappingTestOutputVo(
@@ -2383,9 +2390,9 @@ class JpaTestController(
         @JsonProperty("sampleDecimalP65S10")
         val sampleDecimalP65S10: BigDecimal,
         @Schema(
-            description = "DATE 타입 컬럼(1000-01-01 ~ 9999-12-31, yyyy_MM_dd)",
+            description = "DATE 타입 컬럼(1000-01-01 ~ 9999-12-31, yyyy_MM_dd_z, 00시 00분 00초 기준)",
             required = true,
-            example = "2024_05_02"
+            example = "2024_05_02_KST"
         )
         @JsonProperty("sampleDate")
         val sampleDate: String,
@@ -2395,6 +2402,13 @@ class JpaTestController(
             example = "2024_05_02_T_15_14_49_552_KST"
         )
         @JsonProperty("sampleDatetime")
-        val sampleDatetime: String
+        val sampleDatetime: String,
+        @Schema(
+            description = "TIME 타입 컬럼(-838:59:59 ~ 838:59:59, HH_mm_ss_SSS)",
+            required = true,
+            example = "01_01_01_111"
+        )
+        @JsonProperty("sampleTime")
+        val sampleTime: String
     )
 }

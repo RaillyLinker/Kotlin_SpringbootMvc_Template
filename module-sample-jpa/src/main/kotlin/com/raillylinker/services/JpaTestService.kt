@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -1296,7 +1297,8 @@ class JpaTestService(
                 ZonedDateTime.parse(
                     inputVo.sampleDatetime,
                     DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-                ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+                ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime(),
+                LocalTime.parse(inputVo.sampleTime, DateTimeFormatter.ofPattern("HH_mm_ss_SSS"))
             )
         )
 
@@ -1317,9 +1319,11 @@ class JpaTestService(
             result.sampleDouble,
             result.sampleDoubleUnsigned,
             result.sampleDecimalP65S10,
-            result.sampleDate.format(DateTimeFormatter.ofPattern("yyyy_MM_dd")),
+            result.sampleDate.atStartOfDay().atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_z")),
             result.sampleDateTime.atZone(ZoneId.systemDefault())
-                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+            result.sampleTime.format(DateTimeFormatter.ofPattern("HH_mm_ss_SSS"))
         )
     }
 }

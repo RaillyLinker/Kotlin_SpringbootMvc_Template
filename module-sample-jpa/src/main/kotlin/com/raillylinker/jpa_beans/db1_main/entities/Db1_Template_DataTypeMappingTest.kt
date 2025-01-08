@@ -9,6 +9,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Entity
 @Table(
@@ -65,9 +66,12 @@ class Db1_Template_DataTypeMappingTest(
     @Column(name = "sample_date", nullable = false, columnDefinition = "DATE")
     @Comment("1000-01-01 ~ 9999-12-31 날짜 데이터")
     var sampleDate: LocalDate,
-    @Column(name = "sample_datetime", nullable = false, columnDefinition = "DATETIME")
+    @Column(name = "sample_datetime", nullable = false, columnDefinition = "DATETIME(3)")
     @Comment("1000-01-01 00:00:00 ~ 9999-12-31 23:59:59 날짜 데이터")
-    var sampleDateTime: LocalDateTime
+    var sampleDateTime: LocalDateTime,
+    @Column(name = "sample_time", nullable = false, columnDefinition = "TIME(3)")
+    @Comment("-838:59:59 ~ 838:59:59 시간 데이터")
+    var sampleTime: LocalTime
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
