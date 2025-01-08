@@ -2284,21 +2284,44 @@ class JpaTestController(
         @Schema(description = "FLOAT 타입 컬럼(-3.4E38 ~ 3.4E38 단정밀도 부동소수점 (4Byte))", required = true, example = "1.1")
         @JsonProperty("sampleFloat")
         val sampleFloat: Float,
-        @Schema(description = "FLOAT UNSIGNED 타입 컬럼(0 ~ 3.402823466E+38 단정밀도 부동소수점 (4Byte))", required = true, example = "1.1")
+        @Schema(
+            description = "FLOAT UNSIGNED 타입 컬럼(0 ~ 3.402823466E+38 단정밀도 부동소수점 (4Byte))",
+            required = true,
+            example = "1.1"
+        )
         @JsonProperty("sampleFloatUnsigned")
         val sampleFloatUnsigned: Float,
         @Schema(description = "DOUBLE 타입 컬럼(-1.7E308 ~ 1.7E308 배정밀도 부동소수점 (8Byte))", required = true, example = "1.1")
         @JsonProperty("sampleDouble")
         val sampleDouble: Double,
-        @Schema(description = "DOUBLE UNSIGNED 타입 컬럼(0 ~ 1.7976931348623157E+308 배정밀도 부동소수점 (8Byte))", required = true, example = "1.1")
+        @Schema(
+            description = "DOUBLE UNSIGNED 타입 컬럼(0 ~ 1.7976931348623157E+308 배정밀도 부동소수점 (8Byte))",
+            required = true,
+            example = "1.1"
+        )
         @JsonProperty("sampleDoubleUnsigned")
         val sampleDoubleUnsigned: Double,
-        @Schema(description = "DECIMAL(65, 10) 타입 컬럼(p(전체 자릿수, 최대 65), s(소수점 아래 자릿수, p 보다 작거나 같아야 함) 설정 가능 고정 소수점 숫자)", required = true, example = "1.1")
+        @Schema(
+            description = "DECIMAL(65, 10) 타입 컬럼(p(전체 자릿수, 최대 65), s(소수점 아래 자릿수, p 보다 작거나 같아야 함) 설정 가능 고정 소수점 숫자)",
+            required = true,
+            example = "1.1"
+        )
         @JsonProperty("sampleDecimalP65S10")
         val sampleDecimalP65S10: BigDecimal,
-        @Schema(description = "DATE 타입 컬럼(1000-01-01 ~ 9999-12-31, yyyy_MM_dd)", required = true, example = "2024_05_02")
+        @Schema(
+            description = "DATE 타입 컬럼(1000-01-01 ~ 9999-12-31, yyyy_MM_dd)",
+            required = true,
+            example = "2024_05_02"
+        )
         @JsonProperty("sampleDate")
-        val sampleDate: String
+        val sampleDate: String,
+        @Schema(
+            description = "DATETIME 타입 컬럼(1000-01-01 00:00:00 ~ 9999-12-31 23:59:59, yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("sampleDatetime")
+        val sampleDatetime: String
     )
 
     data class OrmDatatypeMappingTestOutputVo(
@@ -2335,20 +2358,43 @@ class JpaTestController(
         @Schema(description = "FLOAT 타입 컬럼(-3.4E38 ~ 3.4E38 단정밀도 부동소수점 (4Byte))", required = true, example = "1.1")
         @JsonProperty("sampleFloat")
         val sampleFloat: Float,
-        @Schema(description = "FLOAT UNSIGNED 타입 컬럼(0 ~ 3.402823466E+38 단정밀도 부동소수점 (4Byte))", required = true, example = "1.1")
+        @Schema(
+            description = "FLOAT UNSIGNED 타입 컬럼(0 ~ 3.402823466E+38 단정밀도 부동소수점 (4Byte))",
+            required = true,
+            example = "1.1"
+        )
         @JsonProperty("sampleFloatUnsigned")
         val sampleFloatUnsigned: Float,
         @Schema(description = "DOUBLE 타입 컬럼(-1.7E308 ~ 1.7E308 배정밀도 부동소수점 (8Byte))", required = true, example = "1.1")
         @JsonProperty("sampleDouble")
         val sampleDouble: Double,
-        @Schema(description = "DOUBLE UNSIGNED 타입 컬럼(0 ~ 1.7976931348623157E+308 배정밀도 부동소수점 (8Byte))", required = true, example = "1.1")
+        @Schema(
+            description = "DOUBLE UNSIGNED 타입 컬럼(0 ~ 1.7976931348623157E+308 배정밀도 부동소수점 (8Byte))",
+            required = true,
+            example = "1.1"
+        )
         @JsonProperty("sampleDoubleUnsigned")
         val sampleDoubleUnsigned: Double,
-        @Schema(description = "DECIMAL(65, 10) 타입 컬럼(p(전체 자릿수, 최대 65), s(소수점 아래 자릿수, p 보다 작거나 같아야 함) 설정 가능 고정 소수점 숫자)", required = true, example = "1.1")
+        @Schema(
+            description = "DECIMAL(65, 10) 타입 컬럼(p(전체 자릿수, 최대 65), s(소수점 아래 자릿수, p 보다 작거나 같아야 함) 설정 가능 고정 소수점 숫자)",
+            required = true,
+            example = "1.1"
+        )
         @JsonProperty("sampleDecimalP65S10")
         val sampleDecimalP65S10: BigDecimal,
-        @Schema(description = "DATE 타입 컬럼(1000-01-01 ~ 9999-12-31, yyyy_MM_dd)", required = true, example = "2024_05_02")
+        @Schema(
+            description = "DATE 타입 컬럼(1000-01-01 ~ 9999-12-31, yyyy_MM_dd)",
+            required = true,
+            example = "2024_05_02"
+        )
         @JsonProperty("sampleDate")
-        val sampleDate: String
+        val sampleDate: String,
+        @Schema(
+            description = "DATETIME 타입 컬럼(1000-01-01 00:00:00 ~ 9999-12-31 23:59:59, yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("sampleDatetime")
+        val sampleDatetime: String
     )
 }

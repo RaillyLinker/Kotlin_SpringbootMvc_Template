@@ -64,7 +64,10 @@ class Db1_Template_DataTypeMappingTest(
     var sampleDecimalP65S10: BigDecimal,
     @Column(name = "sample_date", nullable = false, columnDefinition = "DATE")
     @Comment("1000-01-01 ~ 9999-12-31 날짜 데이터")
-    var sampleDate: LocalDate
+    var sampleDate: LocalDate,
+    @Column(name = "sample_datetime", nullable = false, columnDefinition = "DATETIME")
+    @Comment("1000-01-01 00:00:00 ~ 9999-12-31 23:59:59 날짜 데이터")
+    var sampleDateTime: LocalDateTime
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

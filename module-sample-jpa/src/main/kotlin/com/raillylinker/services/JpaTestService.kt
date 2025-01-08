@@ -1287,7 +1287,11 @@ class JpaTestService(
                 inputVo.sampleDouble,
                 inputVo.sampleDoubleUnsigned,
                 inputVo.sampleDecimalP65S10,
-                LocalDate.parse(inputVo.sampleDate, DateTimeFormatter.ofPattern("yyyy_MM_dd"))
+                LocalDate.parse(inputVo.sampleDate, DateTimeFormatter.ofPattern("yyyy_MM_dd")),
+                ZonedDateTime.parse(
+                    inputVo.sampleDatetime,
+                    DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+                ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
             )
         )
 
@@ -1308,7 +1312,9 @@ class JpaTestService(
             result.sampleDouble,
             result.sampleDoubleUnsigned,
             result.sampleDecimalP65S10,
-            result.sampleDate.format(DateTimeFormatter.ofPattern("yyyy_MM_dd"))
+            result.sampleDate.format(DateTimeFormatter.ofPattern("yyyy_MM_dd")),
+            result.sampleDateTime.atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
         )
     }
 }
