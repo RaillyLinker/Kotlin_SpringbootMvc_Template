@@ -113,7 +113,14 @@ class Db1_Template_DataTypeMappingTest(
     var sampleOneBit: Boolean,
     @Column(name = "sample_6_bit", nullable = false, columnDefinition = "BIT(6)")
     @Comment("n bit 값 (bit 사이즈에 따라 변수 사이즈를 맞춰 매핑)")
-    var sample6Bit: Byte
+    var sample6Bit: Byte,
+
+    // 컬렉션 데이터
+    // todo json
+    @Column(name = "sample_enum_abc", nullable = false, columnDefinition = "ENUM('A', 'B', 'C')")
+    @Enumerated(EnumType.STRING)
+    @Comment("A, B, C 중 하나")
+    var sampleEnumAbc: EnumAbc
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -134,5 +141,7 @@ class Db1_Template_DataTypeMappingTest(
 
     // ---------------------------------------------------------------------------------------------
     // <중첩 클래스 공간>
-
+    enum class EnumAbc {
+        A, B, C
+    }
 }

@@ -1,6 +1,7 @@
 package com.raillylinker.controllers
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_DataTypeMappingTest
 import com.raillylinker.services.JpaTestService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -2398,7 +2399,15 @@ class JpaTestController(
             example = "123"
         )
         @JsonProperty("sample6Bit")
-        val sample6Bit: Short
+        val sample6Bit: Short,
+        // todo json
+        @Schema(
+            description = "A, B, C 중 하나",
+            required = true,
+            example = "A"
+        )
+        @JsonProperty("sampleEnumAbc")
+        val sampleEnumAbc: Db1_Template_DataTypeMappingTest.EnumAbc
     )
 
     data class OrmDatatypeMappingTestOutputVo(
@@ -2549,6 +2558,14 @@ class JpaTestController(
             example = "123"
         )
         @JsonProperty("sample6Bit")
-        val sample6Bit: Short
+        val sample6Bit: Short,
+        // todo json
+        @Schema(
+            description = "A, B, C 중 하나",
+            required = true,
+            example = "A"
+        )
+        @JsonProperty("sampleEnumAbc")
+        val sampleEnumAbc: Db1_Template_DataTypeMappingTest.EnumAbc
     )
 }

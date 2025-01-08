@@ -1312,7 +1312,8 @@ class JpaTestService(
                 inputVo.sampleLongText,
                 inputVo.sampleOneBit,
                 // 6비트만 추출하는 비트 마스크를 사용 (0x3F는 6비트 1을 의미)
-                (inputVo.sample6Bit.toInt() and 0x3F).toByte()
+                (inputVo.sample6Bit.toInt() and 0x3F).toByte(),
+                inputVo.sampleEnumAbc
             )
         )
 
@@ -1348,7 +1349,8 @@ class JpaTestService(
             result.sampleMediumText,
             result.sampleLongText,
             result.sampleOneBit,
-            result.sample6Bit.toShort()
+            result.sample6Bit.toShort(),
+            result.sampleEnumAbc
         )
     }
 }
