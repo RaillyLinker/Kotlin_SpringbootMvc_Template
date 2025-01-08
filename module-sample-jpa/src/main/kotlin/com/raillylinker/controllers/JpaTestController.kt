@@ -2294,8 +2294,8 @@ class JpaTestController(
         @JsonProperty("sampleDoubleUnsigned")
         val sampleDoubleUnsigned: Double,
         @Schema(description = "DECIMAL(65, 10) 타입 컬럼(p(전체 자릿수, 최대 65), s(소수점 아래 자릿수, p 보다 작거나 같아야 함) 설정 가능 고정 소수점 숫자)", required = true, example = "1.1")
-        @JsonProperty("decimalP65S10")
-        val decimalP65S10: BigDecimal
+        @JsonProperty("sampleDecimalP65S10")
+        val sampleDecimalP65S10: BigDecimal
     )
 
     data class OrmDatatypeMappingTestOutputVo(
@@ -2342,7 +2342,7 @@ class JpaTestController(
         @JsonProperty("sampleDoubleUnsigned")
         val sampleDoubleUnsigned: Double,
         @Schema(description = "DECIMAL(65, 10) 타입 컬럼(p(전체 자릿수, 최대 65), s(소수점 아래 자릿수, p 보다 작거나 같아야 함) 설정 가능 고정 소수점 숫자)", required = true, example = "1.1")
-        @JsonProperty("decimalP65S10")
-        val decimalP65S10: BigDecimal
+        @JsonProperty("sampleDecimalP65S10")
+        val sampleDecimalP65S10: BigDecimal
     )
 }

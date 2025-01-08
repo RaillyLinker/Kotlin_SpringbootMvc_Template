@@ -58,9 +58,9 @@ class Db1_Template_DataTypeMappingTest(
     @Column(name = "sample_double_unsigned", nullable = false, columnDefinition = "DOUBLE UNSIGNED")
     @Comment("0 ~ 1.7976931348623157E+308 배정밀도 부동소수점 (8Byte)")
     var sampleDoubleUnsigned: Double,
-    @Column(name = "decimal_p65_s10", nullable = false, columnDefinition = "DECIMAL(65, 10)")
+    @Column(name = "sample_decimal_p65_s10", nullable = false, columnDefinition = "DECIMAL(65, 10)")
     @Comment("p(전체 자릿수, 최대 65), s(소수점 아래 자릿수, p 보다 작거나 같아야 함) 설정 가능 고정 소수점 숫자")
-    var decimalP65S10: BigDecimal
+    var sampleDecimalP65S10: BigDecimal
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

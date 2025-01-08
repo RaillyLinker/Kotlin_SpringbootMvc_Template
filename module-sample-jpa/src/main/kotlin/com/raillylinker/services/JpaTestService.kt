@@ -1285,7 +1285,7 @@ class JpaTestService(
                 inputVo.sampleFloatUnsigned,
                 inputVo.sampleDouble,
                 inputVo.sampleDoubleUnsigned,
-                inputVo.decimalP65S10
+                inputVo.sampleDecimalP65S10
             )
         )
 
@@ -1305,7 +1305,7 @@ class JpaTestService(
             result.sampleFloatUnsigned,
             result.sampleDouble,
             result.sampleDoubleUnsigned,
-            result.decimalP65S10
+            result.sampleDecimalP65S10
         )
     }
 }
