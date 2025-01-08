@@ -5,6 +5,7 @@ import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
+import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.LocalDateTime
 
@@ -44,13 +45,28 @@ class Db1_Template_DataTypeMappingTest(
     var sampleBigInt: Long,
     @Column(name = "sample_big_int_unsigned", nullable = false, columnDefinition = "BIGINT UNSIGNED")
     @Comment("0 ~ 2^64-1 정수 (8Byte)")
-    var sampleBigIntUnsigned: BigInteger
+    var sampleBigIntUnsigned: BigInteger,
+    @Column(name = "sample_float", nullable = false, columnDefinition = "FLOAT")
+    @Comment("-3.4E38 ~ 3.4E38 단정밀도 부동소수점 (4Byte)")
+    var sampleFloat: Float,
+    @Column(name = "sample_float_unsigned", nullable = false, columnDefinition = "FLOAT UNSIGNED")
+    @Comment("0 ~ 3.402823466E+38 단정밀도 부동소수점 (4Byte)")
+    var sampleFloatUnsigned: Float,
+    @Column(name = "sample_double", nullable = false, columnDefinition = "DOUBLE")
+    @Comment("-1.7E308 ~ 1.7E308 배정밀도 부동소수점 (8Byte)")
+    var sampleDouble: Double,
+    @Column(name = "sample_double_unsigned", nullable = false, columnDefinition = "DOUBLE UNSIGNED")
+    @Comment("0 ~ 1.7976931348623157E+308 배정밀도 부동소수점 (8Byte)")
+    var sampleDoubleUnsigned: Double,
+    @Column(name = "decimal_p65_s10", nullable = false, columnDefinition = "DECIMAL(65, 10)")
+    @Comment("p(전체 자릿수, 최대 65), s(소수점 아래 자릿수, p 보다 작거나 같아야 함) 설정 가능 고정 소수점 숫자")
+    var decimalP65S10: BigDecimal
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uid", columnDefinition = "BIGINT")
     @Comment("행 고유값")
-    var uid: BigInteger? = null
+    var uid: Long? = null
 
     @Column(name = "row_create_date", nullable = false, columnDefinition = "DATETIME(3)")
     @CreationTimestamp

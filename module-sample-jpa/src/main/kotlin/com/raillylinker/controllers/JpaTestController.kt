@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
+import java.math.BigDecimal
 import java.math.BigInteger
 
 @Tag(name = "/jpa-test APIs", description = "JPA 테스트 API 컨트롤러")
@@ -2279,7 +2280,22 @@ class JpaTestController(
         val sampleBigInt: Long,
         @Schema(description = "BIGINT UNSIGNED 타입 컬럼(0 ~ 2^64-1 정수 (8Byte))", required = true, example = "1")
         @JsonProperty("sampleBigIntUnsigned")
-        val sampleBigIntUnsigned: BigInteger
+        val sampleBigIntUnsigned: BigInteger,
+        @Schema(description = "FLOAT 타입 컬럼(-3.4E38 ~ 3.4E38 단정밀도 부동소수점 (4Byte))", required = true, example = "1.1")
+        @JsonProperty("sampleFloat")
+        val sampleFloat: Float,
+        @Schema(description = "FLOAT UNSIGNED 타입 컬럼(0 ~ 3.402823466E+38 단정밀도 부동소수점 (4Byte))", required = true, example = "1.1")
+        @JsonProperty("sampleFloatUnsigned")
+        val sampleFloatUnsigned: Float,
+        @Schema(description = "DOUBLE 타입 컬럼(-1.7E308 ~ 1.7E308 배정밀도 부동소수점 (8Byte))", required = true, example = "1.1")
+        @JsonProperty("sampleDouble")
+        val sampleDouble: Double,
+        @Schema(description = "DOUBLE UNSIGNED 타입 컬럼(0 ~ 1.7976931348623157E+308 배정밀도 부동소수점 (8Byte))", required = true, example = "1.1")
+        @JsonProperty("sampleDoubleUnsigned")
+        val sampleDoubleUnsigned: Double,
+        @Schema(description = "DECIMAL(65, 10) 타입 컬럼(p(전체 자릿수, 최대 65), s(소수점 아래 자릿수, p 보다 작거나 같아야 함) 설정 가능 고정 소수점 숫자)", required = true, example = "1.1")
+        @JsonProperty("decimalP65S10")
+        val decimalP65S10: BigDecimal
     )
 
     data class OrmDatatypeMappingTestOutputVo(
@@ -2312,6 +2328,21 @@ class JpaTestController(
         val sampleBigInt: Long,
         @Schema(description = "BIGINT UNSIGNED 타입 컬럼(0 ~ 2^64-1 정수 (8Byte))", required = true, example = "1")
         @JsonProperty("sampleBigIntUnsigned")
-        val sampleBigIntUnsigned: BigInteger
+        val sampleBigIntUnsigned: BigInteger,
+        @Schema(description = "FLOAT 타입 컬럼(-3.4E38 ~ 3.4E38 단정밀도 부동소수점 (4Byte))", required = true, example = "1.1")
+        @JsonProperty("sampleFloat")
+        val sampleFloat: Float,
+        @Schema(description = "FLOAT UNSIGNED 타입 컬럼(0 ~ 3.402823466E+38 단정밀도 부동소수점 (4Byte))", required = true, example = "1.1")
+        @JsonProperty("sampleFloatUnsigned")
+        val sampleFloatUnsigned: Float,
+        @Schema(description = "DOUBLE 타입 컬럼(-1.7E308 ~ 1.7E308 배정밀도 부동소수점 (8Byte))", required = true, example = "1.1")
+        @JsonProperty("sampleDouble")
+        val sampleDouble: Double,
+        @Schema(description = "DOUBLE UNSIGNED 타입 컬럼(0 ~ 1.7976931348623157E+308 배정밀도 부동소수점 (8Byte))", required = true, example = "1.1")
+        @JsonProperty("sampleDoubleUnsigned")
+        val sampleDoubleUnsigned: Double,
+        @Schema(description = "DECIMAL(65, 10) 타입 컬럼(p(전체 자릿수, 최대 65), s(소수점 아래 자릿수, p 보다 작거나 같아야 함) 설정 가능 고정 소수점 숫자)", required = true, example = "1.1")
+        @JsonProperty("decimalP65S10")
+        val decimalP65S10: BigDecimal
     )
 }

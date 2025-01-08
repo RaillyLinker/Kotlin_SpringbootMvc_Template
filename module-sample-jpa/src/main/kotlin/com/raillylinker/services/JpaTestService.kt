@@ -1280,7 +1280,12 @@ class JpaTestService(
                 inputVo.sampleInt,
                 inputVo.sampleIntUnsigned,
                 inputVo.sampleBigInt,
-                inputVo.sampleBigIntUnsigned
+                inputVo.sampleBigIntUnsigned,
+                inputVo.sampleFloat,
+                inputVo.sampleFloatUnsigned,
+                inputVo.sampleDouble,
+                inputVo.sampleDoubleUnsigned,
+                inputVo.decimalP65S10
             )
         )
 
@@ -1295,7 +1300,12 @@ class JpaTestService(
             result.sampleInt,
             result.sampleIntUnsigned,
             result.sampleBigInt,
-            result.sampleBigIntUnsigned
+            result.sampleBigIntUnsigned,
+            result.sampleFloat,
+            result.sampleFloatUnsigned,
+            result.sampleDouble,
+            result.sampleDoubleUnsigned,
+            result.decimalP65S10
         )
     }
 }
