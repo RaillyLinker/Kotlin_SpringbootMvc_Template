@@ -2309,9 +2309,9 @@ class JpaTestController(
         @JsonProperty("sampleDecimalP65S10")
         val sampleDecimalP65S10: BigDecimal,
         @Schema(
-            description = "DATE 타입 컬럼(1000-01-01 ~ 9999-12-31, yyyy_MM_dd)",
+            description = "DATE 타입 컬럼(1000-01-01 ~ 9999-12-31, yyyy_MM_dd_z, 00시 00분 00초 기준)",
             required = true,
-            example = "2024_05_02"
+            example = "2024_05_02_KST"
         )
         @JsonProperty("sampleDate")
         val sampleDate: String,

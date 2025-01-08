@@ -1270,6 +1270,8 @@ class JpaTestService(
         httpServletResponse: HttpServletResponse,
         inputVo: JpaTestController.OrmDatatypeMappingTestInputVo
     ): JpaTestController.OrmDatatypeMappingTestOutputVo? {
+        val sampleDateParts = inputVo.sampleDate.split("_")
+
         val result = db1TemplateDataTypeMappingTestRepository.save(
             Db1_Template_DataTypeMappingTest(
                 inputVo.sampleTinyInt,
@@ -1287,7 +1289,10 @@ class JpaTestService(
                 inputVo.sampleDouble,
                 inputVo.sampleDoubleUnsigned,
                 inputVo.sampleDecimalP65S10,
-                LocalDate.parse(inputVo.sampleDate, DateTimeFormatter.ofPattern("yyyy_MM_dd")),
+                ZonedDateTime.parse(
+                    "${sampleDateParts[0]}_${sampleDateParts[1]}_${sampleDateParts[2]}_T_00_00_00_000_${sampleDateParts[3]}",
+                    DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+                ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDate(),
                 ZonedDateTime.parse(
                     inputVo.sampleDatetime,
                     DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
