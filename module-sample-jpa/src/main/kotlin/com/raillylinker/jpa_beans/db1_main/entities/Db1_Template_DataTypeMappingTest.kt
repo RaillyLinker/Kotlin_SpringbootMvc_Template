@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Entity
@@ -60,7 +61,10 @@ class Db1_Template_DataTypeMappingTest(
     var sampleDoubleUnsigned: Double,
     @Column(name = "sample_decimal_p65_s10", nullable = false, columnDefinition = "DECIMAL(65, 10)")
     @Comment("p(전체 자릿수, 최대 65), s(소수점 아래 자릿수, p 보다 작거나 같아야 함) 설정 가능 고정 소수점 숫자")
-    var sampleDecimalP65S10: BigDecimal
+    var sampleDecimalP65S10: BigDecimal,
+    @Column(name = "sample_date", nullable = false, columnDefinition = "DATE")
+    @Comment("1000-01-01 ~ 9999-12-31 날짜 데이터")
+    var sampleDate: LocalDate
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

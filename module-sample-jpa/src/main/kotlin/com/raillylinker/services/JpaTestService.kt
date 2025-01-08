@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -1285,7 +1286,8 @@ class JpaTestService(
                 inputVo.sampleFloatUnsigned,
                 inputVo.sampleDouble,
                 inputVo.sampleDoubleUnsigned,
-                inputVo.sampleDecimalP65S10
+                inputVo.sampleDecimalP65S10,
+                LocalDate.parse(inputVo.sampleDate, DateTimeFormatter.ofPattern("yyyy_MM_dd"))
             )
         )
 
@@ -1305,7 +1307,8 @@ class JpaTestService(
             result.sampleFloatUnsigned,
             result.sampleDouble,
             result.sampleDoubleUnsigned,
-            result.sampleDecimalP65S10
+            result.sampleDecimalP65S10,
+            result.sampleDate.format(DateTimeFormatter.ofPattern("yyyy_MM_dd"))
         )
     }
 }
