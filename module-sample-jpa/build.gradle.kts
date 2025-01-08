@@ -73,6 +73,10 @@ dependencies {
     // (GSON)
     // : Json - Object 라이브러리
     implementation("com.google.code.gson:gson:2.11.0")
+
+    // (Hibernate ORM)
+    // : ORM Geometry 등 매핑
+    implementation("org.hibernate:hibernate-spatial:6.6.4.Final")
 }
 
 tasks.withType<Test> {

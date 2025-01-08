@@ -6,6 +6,7 @@ import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
+import org.locationtech.jts.geom.Geometry
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.LocalDate
@@ -128,7 +129,12 @@ class Db1_Template_DataTypeMappingTest(
     @Column(name = "sample_set_abc", nullable = false, columnDefinition = "SET('A', 'B', 'C')")
     @Convert(converter = MySqlSetConverter::class)
     @Comment("A, B, C Set 컬렉션")
-    var sampleSetAbc: Set<EnumAbc>
+    var sampleSetAbc: Set<EnumAbc>,
+
+    // 공간 데이터
+    @Column(name = "sample_geometry", nullable = false, columnDefinition = "GEOMETRY")
+    @Comment("GEOMETRY 타입(Point, Line, Polygon 데이터 중 어느것이라도 하나를 넣을 수 있습니다.)")
+    var sampleGeometry: Geometry
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

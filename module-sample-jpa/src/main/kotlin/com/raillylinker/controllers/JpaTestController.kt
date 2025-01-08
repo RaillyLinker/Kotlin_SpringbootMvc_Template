@@ -1,7 +1,6 @@
 package com.raillylinker.controllers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.raillylinker.controllers.JpaTestController.OrmDatatypeMappingTestInputVo.SampleJsonVo
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_DataTypeMappingTest
 import com.raillylinker.services.JpaTestService
 import io.swagger.v3.oas.annotations.Operation
@@ -13,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletResponse
+import org.locationtech.jts.geom.Coordinate
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
@@ -2420,7 +2420,13 @@ class JpaTestController(
             example = "[\"A\", \"B\"]"
         )
         @JsonProperty("sampleSetAbc")
-        val sampleSetAbc: Set<Db1_Template_DataTypeMappingTest.EnumAbc>
+        val sampleSetAbc: Set<Db1_Template_DataTypeMappingTest.EnumAbc>,
+        @Schema(
+            description = "GEOMETRY 타입(Point, Line, Polygon 데이터 중 어느것이라도 하나를 넣을 수 있습니다.), 여기선 Point",
+            required = true
+        )
+        @JsonProperty("sampleGeometry")
+        val sampleGeometry: PointVo
     ) {
         @Schema(description = "Sample Json Value Object")
         data class SampleJsonVo(
@@ -2438,6 +2444,24 @@ class JpaTestController(
             )
             @JsonProperty("sampleJsonInt")
             val sampleJsonInt: Int?
+        )
+
+        @Schema(description = "Point Object")
+        data class PointVo(
+            @Schema(
+                description = "x value",
+                required = false,
+                example = "1.3"
+            )
+            @JsonProperty("x")
+            val x: Double,
+            @Schema(
+                description = "y value",
+                required = false,
+                example = "2.9"
+            )
+            @JsonProperty("y")
+            val y: Double
         )
     }
 
@@ -2609,6 +2633,12 @@ class JpaTestController(
             example = "[\"A\", \"B\"]"
         )
         @JsonProperty("sampleSetAbc")
-        val sampleSetAbc: Set<Db1_Template_DataTypeMappingTest.EnumAbc>
+        val sampleSetAbc: Set<Db1_Template_DataTypeMappingTest.EnumAbc>,
+        @Schema(
+            description = "GEOMETRY 타입(Point, Line, Polygon 데이터 중 어느것이라도 하나를 넣을 수 있습니다.), 여기선 Point",
+            required = true
+        )
+        @JsonProperty("sampleGeometry")
+        val sampleGeometry: OrmDatatypeMappingTestInputVo.PointVo
     )
 }

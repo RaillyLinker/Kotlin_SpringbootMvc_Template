@@ -4,10 +4,14 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.raillylinker.controllers.JpaTestController
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
+import com.raillylinker.controllers.JpaTestController.OrmDatatypeMappingTestInputVo
 import com.raillylinker.jpa_beans.db1_main.entities.*
 import com.raillylinker.jpa_beans.db1_main.repositories.*
 import com.raillylinker.jpa_beans.db1_main.repositories_dsl.Db1_Template_RepositoryDsl
 import jakarta.servlet.http.HttpServletResponse
+import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.Point
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -16,7 +20,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
@@ -1277,6 +1280,29 @@ class JpaTestService(
 
         val sampleDateParts = inputVo.sampleDate.split("_")
 
+        val geometryFactory = GeometryFactory()
+        // Point 데이터
+        val geometryPoint =
+            geometryFactory.createPoint(Coordinate(inputVo.sampleGeometry.x, inputVo.sampleGeometry.y))
+
+        // Line 데이터
+//        val geometryLineString = geometryFactory.createLineString(listOf(
+//            Coordinate(1.0, 1.0),
+//            Coordinate(2.0, 2.0),
+//            Coordinate(3.0, 3.0)
+//        ).toTypedArray())
+
+        // Polygon 데이터
+//        val geometryPolygon = geometryFactory.createPolygon(listOf(
+//            Coordinate(1.0, 1.0),
+//            Coordinate(1.0, 5.0),
+//            Coordinate(4.0, 9.0),
+//            Coordinate(6.0, 9.0),
+//            Coordinate(9.0, 3.0),
+//            Coordinate(7.0, 2.0),
+//            Coordinate(1.0, 1.0)
+//        ).toTypedArray())
+
         val result = db1TemplateDataTypeMappingTestRepository.save(
             Db1_Template_DataTypeMappingTest(
                 inputVo.sampleTinyInt.toByte(),
@@ -1319,7 +1345,8 @@ class JpaTestService(
                 (inputVo.sample6Bit.toInt() and 0x3F).toByte(),
                 gson.fromJson(gson.toJsonTree(inputVo.sampleJson), object : TypeToken<Map<String, Any?>>() {}.type),
                 inputVo.sampleEnumAbc,
-                inputVo.sampleSetAbc
+                inputVo.sampleSetAbc,
+                geometryPoint
             )
         )
 
@@ -1358,7 +1385,11 @@ class JpaTestService(
             result.sample6Bit.toShort(),
             result.sampleJson.toString(),
             result.sampleEnumAbc,
-            result.sampleSetAbc
+            result.sampleSetAbc,
+            OrmDatatypeMappingTestInputVo.PointVo(
+                (result.sampleGeometry as Point).x,
+                (result.sampleGeometry as Point).y
+            )
         )
     }
 }
