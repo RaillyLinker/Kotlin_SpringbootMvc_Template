@@ -2715,4 +2715,8 @@ class JpaTestController(
         @JsonProperty("sampleVarbinary2")
         val sampleVarbinary2: Short
     )
+
+    // todo Blob 타입 테스트용 api 추가
+    // todo 파일 타입 받아서 ByteArray 로 변환해서 Blob 으로 저장
+    // todo Blob 으로 저장된 데이터 가져와서 파일로 저장하기
 }
