@@ -71,7 +71,10 @@ class Db1_Template_DataTypeMappingTest(
     var sampleDateTime: LocalDateTime,
     @Column(name = "sample_time", nullable = false, columnDefinition = "TIME(3)")
     @Comment("-838:59:59 ~ 838:59:59 시간 데이터")
-    var sampleTime: LocalTime
+    var sampleTime: LocalTime,
+    @Column(name = "sample_timestamp", nullable = false, columnDefinition = "TIMESTAMP(3)")
+    @Comment("1970-01-01 00:00:01 ~ 2038-01-19 03:14:07 날짜 데이터 저장시 UTC 기준으로 저장되고, 조회시 시스템 설정에 맞게 반환")
+    var sampleTimestamp: LocalDateTime
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

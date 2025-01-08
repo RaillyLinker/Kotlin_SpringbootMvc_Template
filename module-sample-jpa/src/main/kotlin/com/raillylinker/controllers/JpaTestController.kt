@@ -2328,7 +2328,14 @@ class JpaTestController(
             example = "01_01_01_111"
         )
         @JsonProperty("sampleTime")
-        val sampleTime: String
+        val sampleTime: String,
+        @Schema(
+            description = "TIMESTAMP 타입 컬럼(1970-01-01 00:00:01 ~ 2038-01-19 03:14:07 날짜 데이터 저장시 UTC 기준으로 저장되고, 조회시 시스템 설정에 맞게 반환, yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("sampleTimestamp")
+        val sampleTimestamp: String
     )
 
     data class OrmDatatypeMappingTestOutputVo(
@@ -2409,6 +2416,13 @@ class JpaTestController(
             example = "01_01_01_111"
         )
         @JsonProperty("sampleTime")
-        val sampleTime: String
+        val sampleTime: String,
+        @Schema(
+            description = "TIMESTAMP 타입 컬럼(1970-01-01 00:00:01 ~ 2038-01-19 03:14:07 날짜 데이터 저장시 UTC 기준으로 저장되고, 조회시 시스템 설정에 맞게 반환, yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("sampleTimestamp")
+        val sampleTimestamp: String
     )
 }
