@@ -1,7 +1,6 @@
 package com.raillylinker.controllers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.raillylinker.controllers.JpaTestController.OrmDatatypeMappingTestInputVo.PointVo
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_DataTypeMappingTest
 import com.raillylinker.services.JpaTestService
 import io.swagger.v3.oas.annotations.Operation
@@ -2433,7 +2432,13 @@ class JpaTestController(
             required = true
         )
         @JsonProperty("samplePoint")
-        val samplePoint: PointVo
+        val samplePoint: PointVo,
+        @Schema(
+            description = "직선 좌표 시퀀스",
+            required = true
+        )
+        @JsonProperty("sampleLinestring")
+        val sampleLinestring: LinestringVo
     ) {
         @Schema(description = "Sample Json Value Object")
         data class SampleJsonVo(
@@ -2469,6 +2474,22 @@ class JpaTestController(
             )
             @JsonProperty("y")
             val y: Double
+        )
+
+        @Schema(description = "Linestring Object")
+        data class LinestringVo(
+            @Schema(
+                description = "첫번째 점",
+                required = false
+            )
+            @JsonProperty("point1")
+            val point1: PointVo,
+            @Schema(
+                description = "두번째 점",
+                required = false
+            )
+            @JsonProperty("point2")
+            val point2: PointVo
         )
     }
 
@@ -2652,6 +2673,12 @@ class JpaTestController(
             required = true
         )
         @JsonProperty("samplePoint")
-        val samplePoint: PointVo
+        val samplePoint: OrmDatatypeMappingTestInputVo.PointVo,
+        @Schema(
+            description = "직선 좌표 시퀀스",
+            required = true
+        )
+        @JsonProperty("sampleLinestring")
+        val sampleLinestring: OrmDatatypeMappingTestInputVo.LinestringVo
     )
 }

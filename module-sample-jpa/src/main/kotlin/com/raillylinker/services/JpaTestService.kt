@@ -1289,11 +1289,12 @@ class JpaTestService(
             geometryFactory.createPoint(Coordinate(inputVo.sampleGeometry.x, inputVo.sampleGeometry.y))
 
         // Line 데이터
-//        val geometryLineString = geometryFactory.createLineString(listOf(
-//            Coordinate(1.0, 1.0),
-//            Coordinate(2.0, 2.0),
-//            Coordinate(3.0, 3.0)
-//        ).toTypedArray())
+        val lineString = geometryFactory.createLineString(
+            listOf(
+                Coordinate(inputVo.sampleLinestring.point1.x, inputVo.sampleLinestring.point1.y),
+                Coordinate(inputVo.sampleLinestring.point2.x, inputVo.sampleLinestring.point2.y)
+            ).toTypedArray()
+        )
 
         // Polygon 데이터
 //        val geometryPolygon = geometryFactory.createPolygon(listOf(
@@ -1350,7 +1351,8 @@ class JpaTestService(
                 inputVo.sampleEnumAbc,
                 inputVo.sampleSetAbc,
                 geometryPoint,
-                point
+                point,
+                lineString
             )
         )
 
@@ -1397,6 +1399,16 @@ class JpaTestService(
             OrmDatatypeMappingTestInputVo.PointVo(
                 result.samplePoint.x,
                 result.samplePoint.y
+            ),
+            OrmDatatypeMappingTestInputVo.LinestringVo(
+                OrmDatatypeMappingTestInputVo.PointVo(
+                    result.sampleLinestring.startPoint.x,
+                    result.sampleLinestring.startPoint.y
+                ),
+                OrmDatatypeMappingTestInputVo.PointVo(
+                    result.sampleLinestring.endPoint.x,
+                    result.sampleLinestring.endPoint.y
+                )
             )
         )
     }

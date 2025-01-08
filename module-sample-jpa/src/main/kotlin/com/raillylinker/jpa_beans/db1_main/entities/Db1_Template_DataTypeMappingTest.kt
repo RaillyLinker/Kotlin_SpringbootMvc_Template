@@ -7,6 +7,7 @@ import org.hibernate.annotations.Comment
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.geom.LineString
 import org.locationtech.jts.geom.Point
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -138,7 +139,10 @@ class Db1_Template_DataTypeMappingTest(
     var sampleGeometry: Geometry,
     @Column(name = "sample_point", nullable = false, columnDefinition = "POINT")
     @Comment("(X, Y) 공간 좌표")
-    var samplePoint: Point
+    var samplePoint: Point,
+    @Column(name = "sample_linestring", nullable = false, columnDefinition = "LINESTRING")
+    @Comment("직선의 시퀀스")
+    var sampleLinestring: LineString
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
