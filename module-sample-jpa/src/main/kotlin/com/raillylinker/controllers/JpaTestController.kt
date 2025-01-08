@@ -2679,6 +2679,12 @@ class JpaTestController(
             required = true
         )
         @JsonProperty("sampleLinestring")
-        val sampleLinestring: OrmDatatypeMappingTestInputVo.LinestringVo
+        val sampleLinestring: OrmDatatypeMappingTestInputVo.LinestringVo,
+        @Schema(
+            description = "폴리곤",
+            required = true
+        )
+        @JsonProperty("samplePolygon")
+        val samplePolygon: List<OrmDatatypeMappingTestInputVo.PointVo>
     )
 }

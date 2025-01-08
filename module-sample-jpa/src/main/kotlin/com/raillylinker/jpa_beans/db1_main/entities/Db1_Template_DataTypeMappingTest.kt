@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.LineString
 import org.locationtech.jts.geom.Point
+import org.locationtech.jts.geom.Polygon
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.LocalDate
@@ -142,7 +143,10 @@ class Db1_Template_DataTypeMappingTest(
     var samplePoint: Point,
     @Column(name = "sample_linestring", nullable = false, columnDefinition = "LINESTRING")
     @Comment("직선의 시퀀스")
-    var sampleLinestring: LineString
+    var sampleLinestring: LineString,
+    @Column(name = "sample_polygon", nullable = false, columnDefinition = "POLYGON")
+    @Comment("다각형")
+    var samplePolygon: Polygon
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

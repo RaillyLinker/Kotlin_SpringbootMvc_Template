@@ -1297,15 +1297,17 @@ class JpaTestService(
         )
 
         // Polygon 데이터
-//        val geometryPolygon = geometryFactory.createPolygon(listOf(
-//            Coordinate(1.0, 1.0),
-//            Coordinate(1.0, 5.0),
-//            Coordinate(4.0, 9.0),
-//            Coordinate(6.0, 9.0),
-//            Coordinate(9.0, 3.0),
-//            Coordinate(7.0, 2.0),
-//            Coordinate(1.0, 1.0)
-//        ).toTypedArray())
+        val geometryPolygon = geometryFactory.createPolygon(
+            listOf(
+                Coordinate(1.0, 1.0),
+                Coordinate(1.0, 5.0),
+                Coordinate(4.0, 9.0),
+                Coordinate(6.0, 9.0),
+                Coordinate(9.0, 3.0),
+                Coordinate(7.0, 2.0),
+                Coordinate(1.0, 1.0) // 첫 번째 좌표로 돌아가야 함
+            ).toTypedArray()
+        )
 
         val result = db1TemplateDataTypeMappingTestRepository.save(
             Db1_Template_DataTypeMappingTest(
@@ -1352,9 +1354,20 @@ class JpaTestService(
                 inputVo.sampleSetAbc,
                 geometryPoint,
                 point,
-                lineString
+                lineString,
+                geometryPolygon
             )
         )
+
+        val samplePolygonPoints: MutableList<OrmDatatypeMappingTestInputVo.PointVo> = mutableListOf()
+        for (polygonCoord in result.samplePolygon.coordinates) {
+            samplePolygonPoints.add(
+                OrmDatatypeMappingTestInputVo.PointVo(
+                    polygonCoord.x,
+                    polygonCoord.y
+                )
+            )
+        }
 
         httpServletResponse.status = HttpStatus.OK.value()
         return JpaTestController.OrmDatatypeMappingTestOutputVo(
@@ -1409,7 +1422,8 @@ class JpaTestService(
                     result.sampleLinestring.endPoint.x,
                     result.sampleLinestring.endPoint.y
                 )
-            )
+            ),
+            samplePolygonPoints
         )
     }
 }
