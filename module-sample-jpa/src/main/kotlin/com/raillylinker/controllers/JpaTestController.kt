@@ -2407,7 +2407,14 @@ class JpaTestController(
             example = "A"
         )
         @JsonProperty("sampleEnumAbc")
-        val sampleEnumAbc: Db1_Template_DataTypeMappingTest.EnumAbc
+        val sampleEnumAbc: Db1_Template_DataTypeMappingTest.EnumAbc,
+        @Schema(
+            description = "A, B, C 중 하나",
+            required = true,
+            example = "[\"A\", \"B\"]"
+        )
+        @JsonProperty("sampleSetAbc")
+        val sampleSetAbc: Set<Db1_Template_DataTypeMappingTest.EnumAbc>
     )
 
     data class OrmDatatypeMappingTestOutputVo(
@@ -2566,6 +2573,13 @@ class JpaTestController(
             example = "A"
         )
         @JsonProperty("sampleEnumAbc")
-        val sampleEnumAbc: Db1_Template_DataTypeMappingTest.EnumAbc
+        val sampleEnumAbc: Db1_Template_DataTypeMappingTest.EnumAbc,
+        @Schema(
+            description = "A, B, C 중 하나",
+            required = true,
+            example = "[\"A\", \"B\"]"
+        )
+        @JsonProperty("sampleSetAbc")
+        val sampleSetAbc: Set<Db1_Template_DataTypeMappingTest.EnumAbc>
     )
 }

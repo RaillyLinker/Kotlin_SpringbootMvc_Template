@@ -1,7 +1,7 @@
 package com.raillylinker.jpa_beans.db1_main.entities
 
+import com.raillylinker.converters.MySqlSetConverter
 import jakarta.persistence.*
-import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
@@ -120,7 +120,11 @@ class Db1_Template_DataTypeMappingTest(
     @Column(name = "sample_enum_abc", nullable = false, columnDefinition = "ENUM('A', 'B', 'C')")
     @Enumerated(EnumType.STRING)
     @Comment("A, B, C 중 하나")
-    var sampleEnumAbc: EnumAbc
+    var sampleEnumAbc: EnumAbc,
+    @Column(name = "sample_set_abc", nullable = false, columnDefinition = "SET('A', 'B', 'C')")
+    @Convert(converter = MySqlSetConverter::class)
+    @Comment("A, B, C Set 컬렉션")
+    var sampleSetAbc: Set<EnumAbc>
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
