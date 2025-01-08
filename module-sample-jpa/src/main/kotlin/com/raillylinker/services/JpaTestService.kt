@@ -1275,7 +1275,7 @@ class JpaTestService(
 
         val result = db1TemplateDataTypeMappingTestRepository.save(
             Db1_Template_DataTypeMappingTest(
-                inputVo.sampleTinyInt,
+                inputVo.sampleTinyInt.toByte(),
                 inputVo.sampleTinyIntUnsigned,
                 inputVo.sampleSmallInt,
                 inputVo.sampleSmallIntUnsigned,
@@ -1304,13 +1304,21 @@ class JpaTestService(
                     DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
                 ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime(),
                 inputVo.sampleYear,
-                inputVo.sampleChar12
+                inputVo.sampleChar12,
+                inputVo.sampleVarchar12,
+                inputVo.sampleTinyText,
+                inputVo.sampleText,
+                inputVo.sampleMediumText,
+                inputVo.sampleLongText,
+                inputVo.sampleOneBit,
+                // 6비트만 추출하는 비트 마스크를 사용 (0x3F는 6비트 1을 의미)
+                (inputVo.sample6Bit.toInt() and 0x3F).toByte()
             )
         )
 
         httpServletResponse.status = HttpStatus.OK.value()
         return JpaTestController.OrmDatatypeMappingTestOutputVo(
-            result.sampleTinyInt,
+            result.sampleTinyInt.toShort(),
             result.sampleTinyIntUnsigned,
             result.sampleSmallInt,
             result.sampleSmallIntUnsigned,
@@ -1333,7 +1341,14 @@ class JpaTestService(
             result.sampleTimestamp.atZone(ZoneId.systemDefault())
                 .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
             result.sampleYear,
-            result.sampleChar12
+            result.sampleChar12,
+            result.sampleVarchar12,
+            result.sampleTinyText,
+            result.sampleText,
+            result.sampleMediumText,
+            result.sampleLongText,
+            result.sampleOneBit,
+            result.sample6Bit.toShort()
         )
     }
 }

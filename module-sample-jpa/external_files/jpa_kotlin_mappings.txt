@@ -110,35 +110,35 @@ val yearColumn: Int
 UTF-8 에서 한글은 3 바이트, 특수문자는 4 바이트입니다.
 
 CHAR(n)
-고정 길이 문자열 (최대 255)
+고정 길이 문자열 (최대 255 Byte)
 CHAR 타입은 항상 지정된 길이만큼 공간을 차지하며, 실제 저장되는 문자열이 그보다 짧으면 빈 공간으로 패딩하여 저장합니다.
 @Column(name = "char_column", length = n)
 val charColumn: String
 
 VARCHAR(n)
-가변 길이 문자열 (최대 65,535)
+가변 길이 문자열 (최대 65,535 Byte)
 CHAR 과 달리 저장되는 데이터의 길이에 따라 실제 저장되는 공간이 달라집니다.
 CHAR 에 비해 저장 공간 활용에 강점이 있고 성능에 미비한 약점이 있습니다.
 @Column(name = "varchar_column", length = n)
 val varcharColumn: String
 
 TINYTEXT
-가변 길이 문자열 최대 255자
+가변 길이 문자열 최대 255 Byte
 @Column(name = "tinytext_column", columnDefinition = "TINYTEXT")
 val tinyTextColumn: String
 
 TEXT
-가변 길이 문자열 최대 65,535자
+가변 길이 문자열 최대 65,535 Byte
 @Column(name = "text_column", columnDefinition = "TEXT")
 val textColumn: String
 
 MEDIUMTEXT
-가변 길이 문자열 최대 16,777,215자
+가변 길이 문자열 최대 16,777,215 Byte
 @Column(name = "mediumtext_column", columnDefinition = "MEDIUMTEXT")
 val mediumTextColumn: String
 
 LONGTEXT
-가변 길이 문자열 최대 4,294,967,295자
+가변 길이 문자열 최대 4,294,967,295 Byte
 @Column(name = "longtext_column", columnDefinition = "LONGTEXT")
 val longTextColumn: String
 

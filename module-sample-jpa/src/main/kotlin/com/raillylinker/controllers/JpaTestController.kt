@@ -2253,7 +2253,7 @@ class JpaTestController(
     data class OrmDatatypeMappingTestInputVo(
         @Schema(description = "TINYINT 타입 컬럼(-128 ~ 127 정수 (1Byte))", required = true, example = "1")
         @JsonProperty("sampleTinyInt")
-        val sampleTinyInt: Byte,
+        val sampleTinyInt: Short,
         @Schema(description = "TINYINT UNSIGNED 타입 컬럼(0 ~ 255 정수 (1Byte))", required = true, example = "1")
         @JsonProperty("sampleTinyIntUnsigned")
         val sampleTinyIntUnsigned: Short,
@@ -2349,13 +2349,62 @@ class JpaTestController(
             example = "test"
         )
         @JsonProperty("sampleChar12")
-        val sampleChar12: String
+        val sampleChar12: String,
+        @Schema(
+            description = "VARCHAR(12) 타입 컬럼(12 바이트 입력 허용)",
+            required = true,
+            example = "test"
+        )
+        @JsonProperty("sampleVarchar12")
+        val sampleVarchar12: String,
+        @Schema(
+            description = "TINYTEXT 타입 컬럼(가변 길이 문자열 최대 255 Byte)",
+            required = true,
+            example = "test"
+        )
+        @JsonProperty("sampleTinyText")
+        val sampleTinyText: String,
+        @Schema(
+            description = "TEXT 타입 컬럼(가변 길이 문자열 최대 65,535 Byte)",
+            required = true,
+            example = "test"
+        )
+        @JsonProperty("sampleText")
+        val sampleText: String,
+        @Schema(
+            description = "MEDIUMTEXT 타입 컬럼(가변 길이 문자열 최대 16,777,215 Byte)",
+            required = true,
+            example = "test"
+        )
+        @JsonProperty("sampleMediumText")
+        val sampleMediumText: String,
+        @Schema(
+            description = "LONGTEXT 타입 컬럼(가변 길이 문자열 최대 4,294,967,295 Byte)",
+            required = true,
+            example = "test"
+        )
+        @JsonProperty("sampleLongText")
+        val sampleLongText: String,
+        @Schema(
+            description = "1 bit 값 (Boolean 으로 사용할 수 있습니다. (1 : 참, 0 : 거짓))",
+            required = true,
+            example = "true"
+        )
+        @JsonProperty("sampleOneBit")
+        val sampleOneBit: Boolean,
+        @Schema(
+            description = "6 bit 값 (bit 사이즈에 따라 변수 사이즈를 맞춰 매핑)",
+            required = true,
+            example = "123"
+        )
+        @JsonProperty("sample6Bit")
+        val sample6Bit: Short
     )
 
     data class OrmDatatypeMappingTestOutputVo(
         @Schema(description = "TINYINT 타입 컬럼(-128 ~ 127 정수 (1Byte))", required = true, example = "1")
         @JsonProperty("sampleTinyInt")
-        val sampleTinyInt: Byte,
+        val sampleTinyInt: Short,
         @Schema(description = "TINYINT UNSIGNED 타입 컬럼(0 ~ 255 정수 (1Byte))", required = true, example = "1")
         @JsonProperty("sampleTinyIntUnsigned")
         val sampleTinyIntUnsigned: Short,
@@ -2451,6 +2500,55 @@ class JpaTestController(
             example = "test"
         )
         @JsonProperty("sampleChar12")
-        val sampleChar12: String
+        val sampleChar12: String,
+        @Schema(
+            description = "VARCHAR(12) 타입 컬럼(12 바이트 입력 허용)",
+            required = true,
+            example = "test"
+        )
+        @JsonProperty("sampleVarchar12")
+        val sampleVarchar12: String,
+        @Schema(
+            description = "TINYTEXT 타입 컬럼(가변 길이 문자열 최대 255 Byte)",
+            required = true,
+            example = "test"
+        )
+        @JsonProperty("sampleTinyText")
+        val sampleTinyText: String,
+        @Schema(
+            description = "TEXT 타입 컬럼(가변 길이 문자열 최대 65,535 Byte)",
+            required = true,
+            example = "test"
+        )
+        @JsonProperty("sampleText")
+        val sampleText: String,
+        @Schema(
+            description = "MEDIUMTEXT 타입 컬럼(가변 길이 문자열 최대 16,777,215 Byte)",
+            required = true,
+            example = "test"
+        )
+        @JsonProperty("sampleMediumText")
+        val sampleMediumText: String,
+        @Schema(
+            description = "LONGTEXT 타입 컬럼(가변 길이 문자열 최대 4,294,967,295 Byte)",
+            required = true,
+            example = "test"
+        )
+        @JsonProperty("sampleLongText")
+        val sampleLongText: String,
+        @Schema(
+            description = "1 bit 값 (Boolean 으로 사용할 수 있습니다. (1 : 참, 0 : 거짓))",
+            required = true,
+            example = "true"
+        )
+        @JsonProperty("sampleOneBit")
+        val sampleOneBit: Boolean,
+        @Schema(
+            description = "n bit 값 (bit 사이즈에 따라 변수 사이즈를 맞춰 매핑)",
+            required = true,
+            example = "123"
+        )
+        @JsonProperty("sample6Bit")
+        val sample6Bit: Short
     )
 }

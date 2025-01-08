@@ -18,6 +18,7 @@ import java.time.LocalTime
 )
 @Comment("ORM 과 Database 간 데이터 타입 매핑을 위한 테이블")
 class Db1_Template_DataTypeMappingTest(
+    // 숫자 데이터
     @Column(name = "sample_tiny_int", nullable = false, columnDefinition = "TINYINT")
     @Comment("-128 ~ 127 정수 (1Byte)")
     var sampleTinyInt: Byte,
@@ -63,6 +64,8 @@ class Db1_Template_DataTypeMappingTest(
     @Column(name = "sample_decimal_p65_s10", nullable = false, columnDefinition = "DECIMAL(65, 10)")
     @Comment("p(전체 자릿수, 최대 65), s(소수점 아래 자릿수, p 보다 작거나 같아야 함) 설정 가능 고정 소수점 숫자")
     var sampleDecimalP65S10: BigDecimal,
+
+    // 시간 데이터
     @Column(name = "sample_date", nullable = false, columnDefinition = "DATE")
     @Comment("1000-01-01 ~ 9999-12-31 날짜 데이터")
     var sampleDate: LocalDate,
@@ -78,14 +81,39 @@ class Db1_Template_DataTypeMappingTest(
     @Column(name = "sample_year", nullable = false, columnDefinition = "YEAR")
     @Comment("1901 ~ 2155 년도")
     var sampleYear: Int,
+
+    // 문자 데이터
     /*
         문자 관련 데이터는 영문, 숫자를 기준으로 1 바이트 1 문자,
         그외 문자는 그 이상으로, 인커딩에 따라 달라집니다.
         UTF-8 에서 한글은 3 바이트, 특수문자는 4 바이트입니다.
      */
     @Column(name = "sample_char12", nullable = false, columnDefinition = "CHAR(12)")
-    @Comment("고정 길이 문자열 (최대 255), CHAR 타입은 항상 지정된 길이만큼 공간을 차지하며, 실제 저장되는 문자열이 그보다 짧으면 빈 공간으로 패딩하여 저장합니다.")
-    var sampleChar12: String
+    @Comment("고정 길이 문자열 (최대 255 Byte), CHAR 타입은 항상 지정된 길이만큼 공간을 차지하며, 실제 저장되는 문자열이 그보다 짧으면 빈 공간으로 패딩하여 저장합니다.")
+    var sampleChar12: String,
+    @Column(name = "sample_varchar12", nullable = false, columnDefinition = "VARCHAR(12)")
+    @Comment("가변 길이 문자열 (최대 65,535 Byte), CHAR 과 달리 저장되는 데이터의 길이에 따라 실제 저장되는 공간이 달라집니다. CHAR 에 비해 저장 공간 활용에 강점이 있고 성능에 미비한 약점이 있습니다.")
+    var sampleVarchar12: String,
+    @Column(name = "sample_tiny_text", nullable = false, columnDefinition = "TINYTEXT")
+    @Comment("가변 길이 문자열 최대 255 Byte")
+    var sampleTinyText: String,
+    @Column(name = "sample_text", nullable = false, columnDefinition = "TEXT")
+    @Comment("가변 길이 문자열 최대 65,535 Byte")
+    var sampleText: String,
+    @Column(name = "sample_medium_text", nullable = false, columnDefinition = "MEDIUMTEXT")
+    @Comment("가변 길이 문자열 최대 16,777,215 Byte")
+    var sampleMediumText: String,
+    @Column(name = "sample_long_text", nullable = false, columnDefinition = "LONGTEXT")
+    @Comment("가변 길이 문자열 최대 4,294,967,295 Byte")
+    var sampleLongText: String,
+
+    // Bit 데이터
+    @Column(name = "sample_one_bit", nullable = false, columnDefinition = "BIT(1)")
+    @Comment("1 bit 값 (Boolean 으로 사용할 수 있습니다. (1 : 참, 0 : 거짓))")
+    var sampleOneBit: Boolean,
+    @Column(name = "sample_6_bit", nullable = false, columnDefinition = "BIT(6)")
+    @Comment("n bit 값 (bit 사이즈에 따라 변수 사이즈를 맞춰 매핑)")
+    var sample6Bit: Byte
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
