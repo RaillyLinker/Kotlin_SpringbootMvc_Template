@@ -1285,6 +1285,9 @@ class JpaTestService(
         val geometryPoint =
             geometryFactory.createPoint(Coordinate(inputVo.sampleGeometry.x, inputVo.sampleGeometry.y))
 
+        val point =
+            geometryFactory.createPoint(Coordinate(inputVo.sampleGeometry.x, inputVo.sampleGeometry.y))
+
         // Line 데이터
 //        val geometryLineString = geometryFactory.createLineString(listOf(
 //            Coordinate(1.0, 1.0),
@@ -1346,7 +1349,8 @@ class JpaTestService(
                 gson.fromJson(gson.toJsonTree(inputVo.sampleJson), object : TypeToken<Map<String, Any?>>() {}.type),
                 inputVo.sampleEnumAbc,
                 inputVo.sampleSetAbc,
-                geometryPoint
+                geometryPoint,
+                point
             )
         )
 
@@ -1389,6 +1393,10 @@ class JpaTestService(
             OrmDatatypeMappingTestInputVo.PointVo(
                 (result.sampleGeometry as Point).x,
                 (result.sampleGeometry as Point).y
+            ),
+            OrmDatatypeMappingTestInputVo.PointVo(
+                result.samplePoint.x,
+                result.samplePoint.y
             )
         )
     }

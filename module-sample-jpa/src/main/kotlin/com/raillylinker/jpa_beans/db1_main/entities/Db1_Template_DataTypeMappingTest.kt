@@ -7,6 +7,7 @@ import org.hibernate.annotations.Comment
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.geom.Point
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.LocalDate
@@ -134,7 +135,10 @@ class Db1_Template_DataTypeMappingTest(
     // 공간 데이터
     @Column(name = "sample_geometry", nullable = false, columnDefinition = "GEOMETRY")
     @Comment("GEOMETRY 타입(Point, Line, Polygon 데이터 중 어느것이라도 하나를 넣을 수 있습니다.)")
-    var sampleGeometry: Geometry
+    var sampleGeometry: Geometry,
+    @Column(name = "sample_point", nullable = false, columnDefinition = "POINT")
+    @Comment("(X, Y) 공간 좌표")
+    var samplePoint: Point
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

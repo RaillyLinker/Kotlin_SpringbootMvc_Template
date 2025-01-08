@@ -1,6 +1,7 @@
 package com.raillylinker.controllers
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.raillylinker.controllers.JpaTestController.OrmDatatypeMappingTestInputVo.PointVo
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_DataTypeMappingTest
 import com.raillylinker.services.JpaTestService
 import io.swagger.v3.oas.annotations.Operation
@@ -2426,7 +2427,13 @@ class JpaTestController(
             required = true
         )
         @JsonProperty("sampleGeometry")
-        val sampleGeometry: PointVo
+        val sampleGeometry: PointVo,
+        @Schema(
+            description = "(X, Y) 공간 좌표",
+            required = true
+        )
+        @JsonProperty("samplePoint")
+        val samplePoint: PointVo
     ) {
         @Schema(description = "Sample Json Value Object")
         data class SampleJsonVo(
@@ -2639,6 +2646,12 @@ class JpaTestController(
             required = true
         )
         @JsonProperty("sampleGeometry")
-        val sampleGeometry: OrmDatatypeMappingTestInputVo.PointVo
+        val sampleGeometry: OrmDatatypeMappingTestInputVo.PointVo,
+        @Schema(
+            description = "(X, Y) 공간 좌표",
+            required = true
+        )
+        @JsonProperty("samplePoint")
+        val samplePoint: PointVo
     )
 }
