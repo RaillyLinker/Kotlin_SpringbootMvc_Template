@@ -1,6 +1,7 @@
 package com.raillylinker.controllers
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.raillylinker.controllers.JpaTestController.OrmDatatypeMappingTestInputVo.SampleJsonVo
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_DataTypeMappingTest
 import com.raillylinker.services.JpaTestService
 import io.swagger.v3.oas.annotations.Operation
@@ -2400,7 +2401,12 @@ class JpaTestController(
         )
         @JsonProperty("sample6Bit")
         val sample6Bit: Short,
-        // todo json
+        @Schema(
+            description = "JSON 타입",
+            required = true
+        )
+        @JsonProperty("sampleJson")
+        val sampleJson: SampleJsonVo,
         @Schema(
             description = "A, B, C 중 하나",
             required = true,
@@ -2415,7 +2421,25 @@ class JpaTestController(
         )
         @JsonProperty("sampleSetAbc")
         val sampleSetAbc: Set<Db1_Template_DataTypeMappingTest.EnumAbc>
-    )
+    ) {
+        @Schema(description = "Sample Json Value Object")
+        data class SampleJsonVo(
+            @Schema(
+                description = "json 으로 입력할 String",
+                required = true,
+                example = "sampleJsonStr"
+            )
+            @JsonProperty("sampleJsonStr")
+            val sampleJsonStr: String,
+            @Schema(
+                description = "json 으로 입력할 Int",
+                required = false,
+                example = "1"
+            )
+            @JsonProperty("sampleJsonInt")
+            val sampleJsonInt: Int?
+        )
+    }
 
     data class OrmDatatypeMappingTestOutputVo(
         @Schema(description = "TINYINT 타입 컬럼(-128 ~ 127 정수 (1Byte))", required = true, example = "1")
@@ -2566,7 +2590,12 @@ class JpaTestController(
         )
         @JsonProperty("sample6Bit")
         val sample6Bit: Short,
-        // todo json
+        @Schema(
+            description = "JSON 타입",
+            required = true
+        )
+        @JsonProperty("sampleJson")
+        val sampleJson: String,
         @Schema(
             description = "A, B, C 중 하나",
             required = true,

@@ -1,5 +1,6 @@
 package com.raillylinker.jpa_beans.db1_main.entities
 
+import com.raillylinker.converters.JsonMapConverter
 import com.raillylinker.converters.MySqlSetConverter
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
@@ -116,7 +117,10 @@ class Db1_Template_DataTypeMappingTest(
     var sample6Bit: Byte,
 
     // 컬렉션 데이터
-    // todo json
+    @Column(name = "sample_json", nullable = false, columnDefinition = "JSON")
+    @Convert(converter = JsonMapConverter::class)
+    @Comment("JSON 타입")
+    var sampleJson: Map<String, Any?>,
     @Column(name = "sample_enum_abc", nullable = false, columnDefinition = "ENUM('A', 'B', 'C')")
     @Enumerated(EnumType.STRING)
     @Comment("A, B, C 중 하나")

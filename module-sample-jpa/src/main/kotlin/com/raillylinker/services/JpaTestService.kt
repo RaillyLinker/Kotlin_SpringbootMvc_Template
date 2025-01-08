@@ -1,5 +1,7 @@
 package com.raillylinker.services
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.raillylinker.controllers.JpaTestController
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.jpa_beans.db1_main.entities.*
@@ -1271,6 +1273,8 @@ class JpaTestService(
         httpServletResponse: HttpServletResponse,
         inputVo: JpaTestController.OrmDatatypeMappingTestInputVo
     ): JpaTestController.OrmDatatypeMappingTestOutputVo? {
+        val gson = Gson()
+
         val sampleDateParts = inputVo.sampleDate.split("_")
 
         val result = db1TemplateDataTypeMappingTestRepository.save(
@@ -1313,6 +1317,7 @@ class JpaTestService(
                 inputVo.sampleOneBit,
                 // 6비트만 추출하는 비트 마스크를 사용 (0x3F는 6비트 1을 의미)
                 (inputVo.sample6Bit.toInt() and 0x3F).toByte(),
+                gson.fromJson(gson.toJsonTree(inputVo.sampleJson), object : TypeToken<Map<String, Any?>>() {}.type),
                 inputVo.sampleEnumAbc,
                 inputVo.sampleSetAbc
             )
@@ -1351,6 +1356,7 @@ class JpaTestService(
             result.sampleLongText,
             result.sampleOneBit,
             result.sample6Bit.toShort(),
+            result.sampleJson.toString(),
             result.sampleEnumAbc,
             result.sampleSetAbc
         )
