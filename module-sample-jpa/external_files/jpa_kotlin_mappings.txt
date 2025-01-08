@@ -155,6 +155,34 @@ n bit 값 (bit 사이즈에 따라 변수 사이즈를 맞춰 매핑)
 val nBit: Byte
 
 
+(컬렉션)
+JSON
+JSON 데이터를 저장하기 위한 특수한 데이터 타입(MySQL 5.7부터 지원)
+@Column(name = "json_column", columnDefinition = "JSON")
+val jsonColumn: String
+
+ENUM('A', 'B', ...)
+정해진 문자열 값
+enum class Status {
+    ACTIVE, INACTIVE, PENDING
+}
+@Column(name = "enum_column")
+@Enumerated(EnumType.STRING)
+val enumColumn: Status
+
+SET('A', 'B', ...)
+SET type 은 최대 64개의 Member 를 가질 수 있다.
+여러 값을 표현할 때는 string 안에 , 를 활용하여 구분짓는다.(띄어쓰기 X)
+간단한 예로, SET(‘one’, ‘two’)의 경우, ‘’ / ‘one’ / ‘two’ / ‘one,two’(‘two,one’) 값을 가질 수 있다.
+enum class Status {
+    ACTIVE, INACTIVE, PENDING
+}
+@Column(name = "enum_column")
+@ElementCollection(targetClass = EnumType::class)
+@Enumerated(EnumType.STRING)
+val enumColumn: Set<EnumType>
+
+
 (공간 데이터)
 GEOMETRY
 공간 데이터 타입
@@ -175,22 +203,6 @@ POLYGON
 다각형
 @Column(name = "polygon_column", columnDefinition = "POLYGON")
 val polygonColumn: Polygon
-
-
-(컬렉션)
-JSON
-JSON 데이터를 저장하기 위한 특수한 데이터 타입(MySQL 5.7부터 지원)
-@Column(name = "json_column", columnDefinition = "JSON")
-val jsonColumn: String
-
-ENUM('A', 'B', ...)
-정해진 문자열 값
-enum class Status {
-    ACTIVE, INACTIVE, PENDING
-}
-@Column(name = "enum_column")
-@Enumerated(EnumType.STRING)
-val enumColumn: Status
 
 
 (BINARY 데이터)
