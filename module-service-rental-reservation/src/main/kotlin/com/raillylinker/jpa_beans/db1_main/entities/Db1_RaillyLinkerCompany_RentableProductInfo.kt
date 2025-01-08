@@ -6,7 +6,6 @@ import org.hibernate.annotations.Comment
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.math.BigDecimal
-import java.math.BigInteger
 import java.time.LocalDateTime
 
 // Fk 관계 중 OneToOne 은 논리적 삭제를 적용할시 사용이 불가능합니다.
@@ -53,9 +52,9 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
     @Comment("상품 예약이 가능한 최초 일시(콘서트 티켓 예매와 같은 서비스를 가정, 예약 러시 처리가 필요)")
     var firstReservableDatetime: LocalDateTime,
 
-    @Column(name = "reservation_unit_minute", nullable = false, columnDefinition = "BIGINT UNSIGNED")
+    @Column(name = "reservation_unit_minute", nullable = false, columnDefinition = "BIGINT")
     @Comment("예약 추가 할 수 있는 최소 시간 단위 (분)")
-    var reservationUnitMinute: BigInteger,
+    var reservationUnitMinute: Long,
 
     @Column(name = "minimum_reservation_unit_count", nullable = false, columnDefinition = "INT UNSIGNED")
     @Comment("단위 예약 시간을 대여일 기준에서 최소 몇번 추가 해야 하는지")
@@ -77,21 +76,21 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
     @Comment("재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정 = 활성/비활성 플래그")
     var nowReservable: Boolean,
 
-    @Column(name = "customer_payment_deadline_minute", nullable = false, columnDefinition = "BIGINT UNSIGNED")
+    @Column(name = "customer_payment_deadline_minute", nullable = false, columnDefinition = "BIGINT")
     @Comment("고객에게 이때까지 결제를 해야 한다고 통보하는 기한 설정값(예약일로부터 +N 분)")
-    var customerPaymentDeadlineMinute: BigInteger,
+    var customerPaymentDeadlineMinute: Long,
 
-    @Column(name = "payment_check_deadline_minute", nullable = false, columnDefinition = "BIGINT UNSIGNED")
+    @Column(name = "payment_check_deadline_minute", nullable = false, columnDefinition = "BIGINT")
     @Comment("관리자의 결제 확인 기한 설정값(예약일로 부터 +N 분, 고객 결제 기한 설정값보다 크거나 같음)")
-    var paymentCheckDeadlineMinute: BigInteger,
+    var paymentCheckDeadlineMinute: Long,
 
-    @Column(name = "approval_deadline_minute", nullable = false, columnDefinition = "BIGINT UNSIGNED")
+    @Column(name = "approval_deadline_minute", nullable = false, columnDefinition = "BIGINT")
     @Comment("관리자의 예약 승인 기한 설정값(예약일로부터 +N분, 결제 확인 기한 설정값보다 크거나 같음)")
-    var approvalDeadlineMinute: BigInteger,
+    var approvalDeadlineMinute: Long,
 
-    @Column(name = "cancel_deadline_minute", nullable = false, columnDefinition = "BIGINT UNSIGNED")
+    @Column(name = "cancel_deadline_minute", nullable = false, columnDefinition = "BIGINT")
     @Comment("고객이 예약 취소 가능한 기한 설정값(대여 시작일로부터 -N분이며, 그 결과가 관리자 승인 기한보다 커야함)")
-    var cancelDeadlineMinute: BigInteger
+    var cancelDeadlineMinute: Long
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -114,10 +113,10 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
     @Comment("행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)")
     var rowDeleteDateStr: String = "/"
 
-    @Column(name = "version_seq", nullable = false, columnDefinition = "BIGINT UNSIGNED")
+    @Column(name = "version_seq", nullable = false, columnDefinition = "BIGINT")
     @ColumnDefault("0")
     @Comment("예약 상품 정보 버전 시퀀스(고객이 정보를 확인한 시점의 버전과 예약 신청하는 시점의 버전이 다르면 진행 불가)")
-    var versionSeq: BigInteger = BigInteger.valueOf(0L)
+    var versionSeq: Long = 0L
 
 
     // ---------------------------------------------------------------------------------------------
