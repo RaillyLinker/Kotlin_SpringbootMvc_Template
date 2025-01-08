@@ -1355,7 +1355,15 @@ class JpaTestService(
                 geometryPoint,
                 point,
                 lineString,
-                geometryPolygon
+                geometryPolygon,
+                byteArrayOf(
+                    (inputVo.sampleBinary2.toInt() shr 8).toByte(),  // 상위 바이트
+                    (inputVo.sampleBinary2.toInt() and 0xFF).toByte() // 하위 바이트
+                ),
+                byteArrayOf(
+                    (inputVo.sampleVarbinary2.toInt() shr 8).toByte(),  // 상위 바이트
+                    (inputVo.sampleVarbinary2.toInt() and 0xFF).toByte() // 하위 바이트
+                )
             )
         )
 
@@ -1423,7 +1431,9 @@ class JpaTestService(
                     result.sampleLinestring.endPoint.y
                 )
             ),
-            samplePolygonPoints
+            samplePolygonPoints,
+            ((result.sampleBinary2[0].toInt() shl 8) or (result.sampleBinary2[1].toInt() and 0xFF)).toShort(),
+            ((result.sampleVarbinary2[0].toInt() shl 8) or (result.sampleVarbinary2[1].toInt() and 0xFF)).toShort()
         )
     }
 }

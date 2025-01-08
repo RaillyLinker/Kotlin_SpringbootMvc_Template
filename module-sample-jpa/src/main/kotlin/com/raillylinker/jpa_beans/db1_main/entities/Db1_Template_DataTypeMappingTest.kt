@@ -146,7 +146,15 @@ class Db1_Template_DataTypeMappingTest(
     var sampleLinestring: LineString,
     @Column(name = "sample_polygon", nullable = false, columnDefinition = "POLYGON")
     @Comment("다각형")
-    var samplePolygon: Polygon
+    var samplePolygon: Polygon,
+
+    // Binary 데이터
+    @Column(name = "sample_binary2", nullable = false, columnDefinition = "BINARY(2)")
+    @Comment("고정 길이 이진 데이터 (최대 65535 바이트), 암호화된 값, UUID, 고정 길이 해시값 등을 저장하는 역할")
+    var sampleBinary2: ByteArray,
+    @Column(name = "sample_varbinary2", nullable = false, columnDefinition = "VARBINARY(2)")
+    @Comment("가변 길이 이진 데이터 (최대 65535 바이트), 동적 크기의 바이너리 데이터, 이미지 등을 저장하는 역할")
+    var sampleVarbinary2: ByteArray
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

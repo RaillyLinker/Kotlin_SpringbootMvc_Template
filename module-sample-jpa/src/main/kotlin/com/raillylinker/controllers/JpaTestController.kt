@@ -2438,7 +2438,21 @@ class JpaTestController(
             required = true
         )
         @JsonProperty("sampleLinestring")
-        val sampleLinestring: LinestringVo
+        val sampleLinestring: LinestringVo,
+        @Schema(
+            description = "고정 길이 이진 데이터 (최대 65535 바이트), 암호화된 값, UUID, 고정 길이 해시값 등을 저장하는 역할",
+            required = true,
+            example = "1"
+        )
+        @JsonProperty("sampleBinary2")
+        val sampleBinary2: Short,
+        @Schema(
+            description = "가변 길이 이진 데이터 (최대 65535 바이트), 동적 크기의 바이너리 데이터, 이미지 등을 저장하는 역할",
+            required = true,
+            example = "1"
+        )
+        @JsonProperty("sampleVarbinary2")
+        val sampleVarbinary2: Short
     ) {
         @Schema(description = "Sample Json Value Object")
         data class SampleJsonVo(
@@ -2685,6 +2699,20 @@ class JpaTestController(
             required = true
         )
         @JsonProperty("samplePolygon")
-        val samplePolygon: List<OrmDatatypeMappingTestInputVo.PointVo>
+        val samplePolygon: List<OrmDatatypeMappingTestInputVo.PointVo>,
+        @Schema(
+            description = "고정 길이 이진 데이터 (최대 65535 바이트), 암호화된 값, UUID, 고정 길이 해시값 등을 저장하는 역할",
+            required = true,
+            example = "1"
+        )
+        @JsonProperty("sampleBinary2")
+        val sampleBinary2: Short,
+        @Schema(
+            description = "가변 길이 이진 데이터 (최대 65535 바이트), 동적 크기의 바이너리 데이터, 이미지 등을 저장하는 역할",
+            required = true,
+            example = "1"
+        )
+        @JsonProperty("sampleVarbinary2")
+        val sampleVarbinary2: Short
     )
 }
