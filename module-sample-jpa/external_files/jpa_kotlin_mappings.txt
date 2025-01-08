@@ -174,13 +174,20 @@ SET('A', 'B', ...)
 SET type 은 최대 64개의 Member 를 가질 수 있다.
 여러 값을 표현할 때는 string 안에 , 를 활용하여 구분짓는다.(띄어쓰기 X)
 간단한 예로, SET(‘one’, ‘two’)의 경우, ‘’ / ‘one’ / ‘two’ / ‘one,two’(‘two,one’) 값을 가질 수 있다.
-enum class Status {
-    ACTIVE, INACTIVE, PENDING
+@Converter
+class MySqlSetConverter : AttributeConverter<Set<String>, String> {
+    override fun convertToDatabaseColumn(attribute: Set<String>?): String? {
+        return attribute?.joinToString(",")
+    }
+
+    override fun convertToEntityAttribute(dbData: String?): Set<String>? {
+        return dbData?.split(",")?.toSet()
+    }
 }
-@Column(name = "enum_column")
-@ElementCollection(targetClass = EnumType::class)
-@Enumerated(EnumType.STRING)
-val enumColumn: Set<EnumType>
+@Column(name = "sample_set_abc", nullable = false, columnDefinition = "SET('A', 'B', 'C')")
+@Convert(converter = MySqlSetConverter::class)
+@Comment("A, B, C Set 컬렉션")
+var sampleSetAbc: Set<EnumAbc>
 
 
 (공간 데이터)
