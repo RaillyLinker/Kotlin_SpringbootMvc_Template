@@ -226,7 +226,7 @@ class RentalReservationController(
 
     // ----
     @Operation(
-        summary = "개별 상품 조기 반납 신고 <ADMIN>",
+        summary = "개별 상품 조기 반납 신고 <>",
         description = "개별 상품에 대해 조기 반납 신고 처리를 합니다."
     )
     @ApiResponses(
@@ -271,7 +271,7 @@ class RentalReservationController(
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @PreAuthorize("isAuthenticated()")
     @ResponseBody
     fun postRentableProductStockReservationInfoEarlyReturn(
         @Parameter(hidden = true)
@@ -312,7 +312,7 @@ class RentalReservationController(
 
     // ----
     @Operation(
-        summary = "개별 상품 조기 반납 신고 취소 <ADMIN>",
+        summary = "개별 상품 조기 반납 신고 취소 <>",
         description = "개별 상품에 대해 조기 반납 신고 취소 처리를 합니다."
     )
     @ApiResponses(
@@ -354,7 +354,7 @@ class RentalReservationController(
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @PreAuthorize("isAuthenticated()")
     @ResponseBody
     fun postRentableProductStockReservationInfoEarlyReturnCancel(
         @Parameter(hidden = true)
