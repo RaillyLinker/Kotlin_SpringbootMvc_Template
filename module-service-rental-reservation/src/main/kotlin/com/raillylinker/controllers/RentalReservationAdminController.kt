@@ -267,7 +267,10 @@ class RentalReservationAdminController(
                                 "1 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : 최소,최대 예약 횟수는 0보다 크며, 최소 예약 횟수는 최대 예약 횟수보다 작거나 같아야 합니다.<br>" +
                                 "3 : 결제 통보 기한 설정이 결제 승인 기한 설정보다 크면 안됩니다.<br>" +
-                                "4 : 결제 승인 기한 설정이 예약 승인 기한 설정보다 크면 안됩니다.",
+                                "4 : 결제 승인 기한 설정이 예약 승인 기한 설정보다 크면 안됩니다.<br>" +
+                                "5 : reservationUnitMinute, reservationUnitPrice, customerPaymentDeadlineMinute, " +
+                                "paymentCheckDeadlineMinute, paymentCheckDeadlineMinute, approvalDeadlineMinute, " +
+                                "cancelDeadlineMinute 는 음수가 될 수 없습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -413,7 +416,7 @@ class RentalReservationAdminController(
         @JsonProperty("approvalDeadlineMinute")
         val approvalDeadlineMinute: Long,
         @Schema(
-            description = "고객이 예약 취소 가능한 기한 설정값(대여 시작일로부터 -N분이며, 그 결과가 관리자 승인 기한보다 커야함)",
+            description = "고객이 예약 취소 가능한 기한 설정값(대여 시작일로부터 -N분으로 계산됨)",
             required = true,
             example = "30"
         )

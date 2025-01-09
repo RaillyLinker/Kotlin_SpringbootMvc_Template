@@ -47,6 +47,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.StringUtils
 import java.io.File
+import java.math.BigDecimal
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
@@ -296,6 +297,20 @@ class RentalReservationAdminService(
 //            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
+
+        if (inputVo.reservationUnitMinute < 0 ||
+            inputVo.reservationUnitPrice < BigDecimal.valueOf(0L) ||
+            inputVo.customerPaymentDeadlineMinute < 0 ||
+            inputVo.paymentCheckDeadlineMinute < 0 ||
+            inputVo.approvalDeadlineMinute < 0 ||
+            inputVo.cancelDeadlineMinute < 0
+        ){
+            // reservationUnitMinute, reservationUnitPrice, customerPaymentDeadlineMinute, paymentCheckDeadlineMinute,
+            // paymentCheckDeadlineMinute, approvalDeadlineMinute, cancelDeadlineMinute 는 음수가 될 수 없습니다.-> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "5")
+            return null
+        }
 
         if (inputVo.customerPaymentDeadlineMinute > inputVo.paymentCheckDeadlineMinute) {
             // 결제 통보 기한이 결제 승인 기한보다 클 경우 -> return

@@ -89,7 +89,7 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
     var approvalDeadlineMinute: Long,
 
     @Column(name = "cancel_deadline_minute", nullable = false, columnDefinition = "BIGINT")
-    @Comment("고객이 예약 취소 가능한 기한 설정값(대여 시작일로부터 -N분이며, 그 결과가 관리자 승인 기한보다 커야함)")
+    @Comment("고객이 예약 취소 가능한 기한 설정값(대여 시작일로부터 -N분으로 계산됨)")
     var cancelDeadlineMinute: Long
 ) {
     @Id
