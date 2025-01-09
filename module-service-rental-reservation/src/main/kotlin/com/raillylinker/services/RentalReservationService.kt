@@ -327,6 +327,13 @@ class RentalReservationService(
             return null
         }
 
+        if (reservationEntity.totalAuthMember.uid != memberUid) {
+            // 고객이 진행중인 예약이 아님
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
         val nowDatetime = LocalDateTime.now()
 
         // 예약 취소 신청 가능 상태 확인
