@@ -430,10 +430,8 @@ class RentalReservationAdminService(
             return
         }
 
-        if (inputVo.minimumReservationUnitCount < 0 ||
-            (inputVo.maximumReservationUnitCount != null &&
-                    (inputVo.maximumReservationUnitCount < 0 ||
-                            inputVo.minimumReservationUnitCount > inputVo.maximumReservationUnitCount))
+        if (inputVo.maximumReservationUnitCount != null &&
+            inputVo.minimumReservationUnitCount > inputVo.maximumReservationUnitCount
         ) {
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "3")
