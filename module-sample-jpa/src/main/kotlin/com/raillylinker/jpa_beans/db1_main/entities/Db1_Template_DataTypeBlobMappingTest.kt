@@ -15,15 +15,31 @@ import java.time.LocalDateTime
 class Db1_Template_DataTypeBlobMappingTest(
     // Blob 데이터
     // BLOB 타입 데이터는 주로 이미지, 음악 파일, 문서 파일 등 이진 데이터를 저장하는 데 활용됩니다.
+    @Column(name = "sample_tiny_blob_file_name", nullable = false, columnDefinition = "VARCHAR(255)")
+    @Comment("최대 255 바이트 이진 데이터 파일 이름")
+    var sampleTinyBlobFileName: String,
+    @Lob
     @Column(name = "sample_tiny_blob", nullable = false, columnDefinition = "TINYBLOB")
     @Comment("최대 255 바이트 이진 데이터")
     var sampleTinyBlob: ByteArray,
+    @Column(name = "sample_blob_file_name", nullable = false, columnDefinition = "VARCHAR(255)")
+    @Comment("최대 65,535바이트 이진 데이터 파일 이름")
+    var sampleBlobFileName: String,
+    @Lob
     @Column(name = "sample_blob", nullable = false, columnDefinition = "BLOB")
     @Comment("최대 65,535바이트 이진 데이터")
     var sampleBlob: ByteArray,
+    @Column(name = "sample_medium_blob_file_name", nullable = false, columnDefinition = "VARCHAR(255)")
+    @Comment("최대 16,777,215 바이트 이진 데이터 파일 이름")
+    var sampleMediumBlobFileName: String,
+    @Lob
     @Column(name = "sample_medium_blob", nullable = false, columnDefinition = "MEDIUMBLOB")
     @Comment("최대 16,777,215 바이트 이진 데이터")
     var sampleMediumBlob: ByteArray,
+    @Column(name = "sample_long_blob_file_name", nullable = false, columnDefinition = "VARCHAR(255)")
+    @Comment("최대 4,294,967,295 바이트 이진 데이터 파일 이름")
+    var sampleLongBlobFileName: String,
+    @Lob
     @Column(name = "sample_long_blob", nullable = false, columnDefinition = "LONGBLOB")
     @Comment("최대 4,294,967,295 바이트 이진 데이터")
     var sampleLongBlob: ByteArray

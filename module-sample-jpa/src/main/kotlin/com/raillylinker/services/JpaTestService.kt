@@ -8,6 +8,7 @@ import com.raillylinker.controllers.JpaTestController.OrmDatatypeMappingTestInpu
 import com.raillylinker.jpa_beans.db1_main.entities.*
 import com.raillylinker.jpa_beans.db1_main.repositories.*
 import com.raillylinker.jpa_beans.db1_main.repositories_dsl.Db1_Template_RepositoryDsl
+import com.raillylinker.util_components.CustomUtil
 import jakarta.servlet.http.HttpServletResponse
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
@@ -20,6 +21,9 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
@@ -31,6 +35,8 @@ class JpaTestService(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
 
+    private val customUtil: CustomUtil,
+
     // (Database Repository)
     private val db1NativeRepository: Db1_Native_Repository,
     private val db1TemplateTestsRepository: Db1_Template_Tests_Repository,
@@ -39,6 +45,7 @@ class JpaTestService(
     private val db1TemplateLogicalDeleteUniqueDataRepository: Db1_Template_LogicalDeleteUniqueData_Repository,
     private val db1TemplateJustBooleanTestRepository: Db1_Template_JustBooleanTest_Repository,
     private val db1TemplateDataTypeMappingTestRepository: Db1_Template_DataTypeMappingTest_Repository,
+    private val db1TemplateDataTypeBlobMappingTestRepository: Db1_Template_DataTypeBlobMappingTest_Repository,
 
     // (Database Repository DSL)
     private val db1TemplateRepositoryDsl: Db1_Template_RepositoryDsl
@@ -1435,5 +1442,80 @@ class JpaTestService(
             ((result.sampleBinary2[0].toInt() shl 8) or (result.sampleBinary2[1].toInt() and 0xFF)).toShort(),
             ((result.sampleVarbinary2[0].toInt() shl 8) or (result.sampleVarbinary2[1].toInt() and 0xFF)).toShort()
         )
+    }
+
+
+    // ----
+    // (ORM Blob Datatype Mapping 테이블 Row 입력 테스트 API)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun ormBlobDatatypeMappingTest(
+        httpServletResponse: HttpServletResponse,
+        inputVo: JpaTestController.OrmBlobDatatypeMappingTestInputVo
+    ) {
+        val newDb1TemplateDataTypeBlobMappingTestRepository =
+            db1TemplateDataTypeBlobMappingTestRepository.save(
+                Db1_Template_DataTypeBlobMappingTest(
+                    inputVo.sampleTinyBlob.originalFilename ?: "unknown",
+                    inputVo.sampleTinyBlob.bytes,
+                    inputVo.sampleTinyBlob.originalFilename ?: "unknown",
+                    inputVo.sampleBlob.bytes,
+                    inputVo.sampleTinyBlob.originalFilename ?: "unknown",
+                    inputVo.sampleMediumBlob.bytes,
+                    inputVo.sampleTinyBlob.originalFilename ?: "unknown",
+                    inputVo.sampleLongBlob.bytes
+                )
+            )
+
+        val nowDatetime = LocalDateTime.now()
+
+        // 파일 저장 기본 디렉토리 경로
+        val saveDirectoryPath: Path = Paths.get("./by_product_files/sample_jpa/blob_test").toAbsolutePath().normalize()
+
+        // 파일 저장 기본 디렉토리 생성
+        Files.createDirectories(saveDirectoryPath)
+
+        val sampleTinyBlobFileNameSplit =
+            customUtil.splitFilePath(newDb1TemplateDataTypeBlobMappingTestRepository.sampleTinyBlobFileName)
+        val tinyBlobDestinationFile =
+            saveDirectoryPath.resolve(
+                "${sampleTinyBlobFileNameSplit.fileName}(${
+                    nowDatetime.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                })(1).${sampleTinyBlobFileNameSplit.extension}"
+            ).toFile()
+        tinyBlobDestinationFile.writeBytes(newDb1TemplateDataTypeBlobMappingTestRepository.sampleTinyBlob)
+
+        val sampleBlobFileNameSplit =
+            customUtil.splitFilePath(newDb1TemplateDataTypeBlobMappingTestRepository.sampleBlobFileName)
+        val blobDestinationFile =
+            saveDirectoryPath.resolve(
+                "${sampleBlobFileNameSplit.fileName}(${
+                    nowDatetime.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                })(2).${sampleBlobFileNameSplit.extension}"
+            ).toFile()
+        blobDestinationFile.writeBytes(newDb1TemplateDataTypeBlobMappingTestRepository.sampleBlob)
+
+        val sampleMediumBlobFileNameSplit =
+            customUtil.splitFilePath(newDb1TemplateDataTypeBlobMappingTestRepository.sampleMediumBlobFileName)
+        val mediumBlobDestinationFile =
+            saveDirectoryPath.resolve(
+                "${sampleMediumBlobFileNameSplit.fileName}(${
+                    nowDatetime.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                })(3).${sampleMediumBlobFileNameSplit.extension}"
+            ).toFile()
+        mediumBlobDestinationFile.writeBytes(newDb1TemplateDataTypeBlobMappingTestRepository.sampleMediumBlob)
+
+        val sampleLongBlobFileNameSplit =
+            customUtil.splitFilePath(newDb1TemplateDataTypeBlobMappingTestRepository.sampleLongBlobFileName)
+        val longBlobDestinationFile =
+            saveDirectoryPath.resolve(
+                "${sampleLongBlobFileNameSplit.fileName}(${
+                    nowDatetime.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                })(4).${sampleLongBlobFileNameSplit.extension}"
+            ).toFile()
+        longBlobDestinationFile.writeBytes(newDb1TemplateDataTypeBlobMappingTestRepository.sampleLongBlob)
     }
 }

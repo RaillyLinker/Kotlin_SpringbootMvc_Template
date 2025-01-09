@@ -16,6 +16,7 @@ import org.locationtech.jts.geom.Coordinate
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -2716,7 +2717,48 @@ class JpaTestController(
         val sampleVarbinary2: Short
     )
 
-    // todo Blob 타입 테스트용 api 추가
-    // todo 파일 타입 받아서 ByteArray 로 변환해서 Blob 으로 저장
-    // todo Blob 으로 저장된 데이터 가져와서 파일로 저장하기
+
+    // ----
+    @Operation(
+        summary = "ORM Blob Datatype Mapping 테이블 Row 입력 테스트 API",
+        description = "ORM Blob Datatype Mapping 테이블에 값이 잘 입력되는지 테스트"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/orm-blob-datatype-mapping-test"],
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @ResponseBody
+    fun ormBlobDatatypeMappingTest(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @ModelAttribute
+        @RequestBody
+        inputVo: OrmBlobDatatypeMappingTestInputVo
+    ) {
+        service.ormBlobDatatypeMappingTest(httpServletResponse, inputVo)
+    }
+
+    data class OrmBlobDatatypeMappingTestInputVo(
+        @Schema(description = "최대 255 바이트 파일", required = true)
+        @JsonProperty("sampleTinyBlob")
+        val sampleTinyBlob: MultipartFile,
+        @Schema(description = "최대 65,535바이트 파일", required = true)
+        @JsonProperty("sampleBlob")
+        val sampleBlob: MultipartFile,
+        @Schema(description = "최대 16,777,215 바이트 파일", required = true)
+        @JsonProperty("sampleMediumBlob")
+        val sampleMediumBlob: MultipartFile,
+        @Schema(description = "최대 4,294,967,295 바이트 파일", required = true)
+        @JsonProperty("sampleLongBlob")
+        val sampleLongBlob: MultipartFile
+    )
 }
