@@ -304,7 +304,7 @@ class RentalReservationAdminService(
             inputVo.paymentCheckDeadlineMinute < 0 ||
             inputVo.approvalDeadlineMinute < 0 ||
             inputVo.cancelDeadlineMinute < 0
-        ){
+        ) {
             // reservationUnitMinute, reservationUnitPrice, customerPaymentDeadlineMinute, paymentCheckDeadlineMinute,
             // paymentCheckDeadlineMinute, approvalDeadlineMinute, cancelDeadlineMinute 는 음수가 될 수 없습니다.-> return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
@@ -326,10 +326,8 @@ class RentalReservationAdminService(
             return null
         }
 
-        if (inputVo.minimumReservationUnitCount < 0 ||
-            (inputVo.maximumReservationUnitCount != null &&
-                    (inputVo.maximumReservationUnitCount < 0 ||
-                            inputVo.minimumReservationUnitCount > inputVo.maximumReservationUnitCount))
+        if (inputVo.maximumReservationUnitCount != null &&
+            inputVo.minimumReservationUnitCount > inputVo.maximumReservationUnitCount
         ) {
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "2")
