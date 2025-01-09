@@ -2795,10 +2795,6 @@ class RentalReservationAdminService(
             )
         )
 
-        // 상품 준비일 설정 초기화
-        rentableProductStockReservationInfo.productReadyDatetime = null
-        db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(rentableProductStockReservationInfo)
-
         httpServletResponse.status = HttpStatus.OK.value()
         return RentalReservationAdminController.PostRentableProductStockReservationInfoOverdueOutputVo(
             historyEntity.uid!!
@@ -3069,10 +3065,6 @@ class RentalReservationAdminService(
                 inputVo.stateChangeDesc
             )
         )
-
-        // 상품 준비일 설정 초기화
-        rentableProductStockReservationInfo.productReadyDatetime = null
-        db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(rentableProductStockReservationInfo)
 
         httpServletResponse.status = HttpStatus.OK.value()
         return RentalReservationAdminController.PostRentableProductStockReservationInfoLostOutputVo(
