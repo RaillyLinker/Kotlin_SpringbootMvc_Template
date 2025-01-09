@@ -460,7 +460,10 @@ class RentalReservationAdminController(
                                 "2 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "3 : 최소,최대 예약 횟수는 0보다 크며, 최소 예약 횟수는 최대 예약 횟수보다 작거나 같아야 합니다.<br>" +
                                 "4 : 결제 통보 기한 설정이 결제 승인 기한 설정보다 크면 안됩니다.<br>" +
-                                "5 : 결제 승인 기한 설정이 예약 승인 기한 설정보다 크면 안됩니다.",
+                                "5 : 결제 승인 기한 설정이 예약 승인 기한 설정보다 크면 안됩니다.<br>" +
+                                "6 : reservationUnitMinute, reservationUnitPrice, customerPaymentDeadlineMinute, " +
+                                "paymentCheckDeadlineMinute, paymentCheckDeadlineMinute, approvalDeadlineMinute, " +
+                                "cancelDeadlineMinute 는 음수가 될 수 없습니다.",
                         schema = Schema(type = "string")
                     )
                 ]

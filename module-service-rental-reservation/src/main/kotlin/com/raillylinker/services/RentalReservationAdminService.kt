@@ -402,6 +402,20 @@ class RentalReservationAdminService(
 //            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 //        )
 
+        if (inputVo.reservationUnitMinute < 0 ||
+            inputVo.reservationUnitPrice < BigDecimal.valueOf(0L) ||
+            inputVo.customerPaymentDeadlineMinute < 0 ||
+            inputVo.paymentCheckDeadlineMinute < 0 ||
+            inputVo.approvalDeadlineMinute < 0 ||
+            inputVo.cancelDeadlineMinute < 0
+        ) {
+            // reservationUnitMinute, reservationUnitPrice, customerPaymentDeadlineMinute, paymentCheckDeadlineMinute,
+            // paymentCheckDeadlineMinute, approvalDeadlineMinute, cancelDeadlineMinute 는 음수가 될 수 없습니다.-> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "6")
+            return
+        }
+
         if (inputVo.customerPaymentDeadlineMinute > inputVo.paymentCheckDeadlineMinute) {
             // 결제 통보 기한이 결제 승인 기한보다 클 경우 -> return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
