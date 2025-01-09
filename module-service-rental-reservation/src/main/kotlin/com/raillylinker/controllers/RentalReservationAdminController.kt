@@ -2766,7 +2766,7 @@ class RentalReservationAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : readyDatetime 를 null 로 하려 할 때, 이미 해당 상품이 다른 예약을 진행중입니다.",
+                                "2 : 해당 상품이 다른 예약을 진행중입니다.",
                         schema = Schema(type = "string")
                     )
                 ]

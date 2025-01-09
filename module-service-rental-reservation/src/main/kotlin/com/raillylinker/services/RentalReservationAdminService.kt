@@ -2607,29 +2607,32 @@ class RentalReservationAdminService(
             return
         }
 
-        val anchorDatetime = if (inputVo.readyDatetime == null) {
-            // 대여 가능 상품 재고를 기반으로 최신 순서 개별 상품 예약 정보 리스트 가져오기
-            val latestFirstStockReservationList =
-                db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.findAllByRentableProductStockInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
-                    rentableProductStockReservationInfo.rentableProductStockInfo,
-                    "/"
-                )
-            val latestStockReservation = latestFirstStockReservationList[0]
+        // 대여 가능 상품 재고를 기반으로 최신 순서 개별 상품 예약 정보 리스트 가져오기
+        val latestFirstStockReservationList =
+            db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.findAllByRentableProductStockInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductStockReservationInfo.rentableProductStockInfo,
+                "/"
+            )
 
+        // 가장 최근의 재고 예약 정보
+        val latestStockReservation = latestFirstStockReservationList[0]
+
+        if (latestStockReservation.uid != rentableProductStockReservationInfo.uid) {
             // 최신 개별 상품 예약 정보가 현재 정보와 다를 때(= 새롭게 진행되는 예약이 존재)
-            if (latestStockReservation.uid != rentableProductStockReservationInfo.uid) {
-                httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                httpServletResponse.setHeader("api-result-code", "2")
-                return
-            }
-
-            null
-        } else {
-            ZonedDateTime.parse(
-                inputVo.readyDatetime,
-                DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-            ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return
         }
+
+        val anchorDatetime =
+            if (inputVo.readyDatetime == null) {
+                null
+            } else {
+                ZonedDateTime.parse(
+                    inputVo.readyDatetime,
+                    DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
+                ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+            }
 
         // 개별 상품 반납 확인 내역 추가
         rentableProductStockReservationInfo.productReadyDatetime = anchorDatetime
