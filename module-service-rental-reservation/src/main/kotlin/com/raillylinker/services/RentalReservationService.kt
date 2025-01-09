@@ -89,6 +89,13 @@ class RentalReservationService(
         authorization: String,
         inputVo: RentalReservationController.PostProductReservationInputVo
     ): RentalReservationController.PostProductReservationOutputVo? {
+        if (inputVo.rentalUnitCount < 0) {
+            // 대여 단위 예약 횟수가 음수면 안됩니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "13")
+            return null
+        }
+
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
@@ -104,22 +111,10 @@ class RentalReservationService(
             DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
         ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
 
-        val rentalEndDatetime = ZonedDateTime.parse(
-            inputVo.rentalEndDatetime,
-            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")
-        ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
-
-        if (rentalStartDatetime.isAfter(rentalEndDatetime)) {
-            // 대여 시작 일시가 끝 일시보다 클 경우 -> return
+        if (nowDatetime.isAfter(rentalStartDatetime)) {
+            // 대여 시작 일시가 현재 일시보다 작을 경우 -> return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "2")
-            return null
-        }
-
-        if (nowDatetime.isAfter(rentalStartDatetime) || nowDatetime.isAfter(rentalEndDatetime)) {
-            // 대여 설정 일시가 현재 일시보다 작을 경우 -> return
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "13")
+            httpServletResponse.setHeader("api-result-code", "12")
             return null
         }
 
@@ -144,51 +139,42 @@ class RentalReservationService(
                 if (rentableProductInfo.versionSeq != inputVo.rentableProductVersionSeq) {
                     // 고객이 본 정보와 상품 정보의 버전 시퀀스가 다른 경우 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "3")
+                    httpServletResponse.setHeader("api-result-code", "2")
                     return@tryLockRepeat null
                 }
 
                 if (!rentableProductInfo.nowReservable) {
                     // 현 시점 예약 가능 설정이 아닐 때 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "4")
+                    httpServletResponse.setHeader("api-result-code", "3")
                     return@tryLockRepeat null
                 }
 
                 if (nowDatetime.isBefore(rentableProductInfo.firstReservableDatetime)) {
                     // 현재 시간이 예약 가능 일시보다 작음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "4")
+                    return@tryLockRepeat null
+                }
+
+                if (inputVo.rentalUnitCount < rentableProductInfo.minimumReservationUnitCount) {
+                    // rentalUnitCount 가 단위 예약 최소 횟수보다 작을 때 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                     httpServletResponse.setHeader("api-result-code", "5")
                     return@tryLockRepeat null
                 }
 
-                // 대여 시작 / 끝 시간 차이(분)
-                val rentalStartAndEndTimeDiff = ChronoUnit.MINUTES.between(
-                    rentalStartDatetime,
-                    rentalEndDatetime
-                )
-
-                // 설정 시간을 단위 시간으로 나눈 값 = 단위 설정 횟수
-                val calcTimeUnitCount =
-                    rentalStartAndEndTimeDiff.toDouble() / rentableProductInfo.reservationUnitMinute.toDouble()
-                val calcTimeUnitCountUp = ceil(calcTimeUnitCount).toLong()
-                val calcTimeUnitCountDown = floor(calcTimeUnitCount).toLong()
-
-                if (calcTimeUnitCountUp < rentableProductInfo.minimumReservationUnitCount) {
-                    // 대여 시작 일시와 끝 일시의 차이를 단위 예약 시간으로 나누었을 때, 단위 예약 최소 횟수보다 작을 때 -> return
+                if (rentableProductInfo.maximumReservationUnitCount != null &&
+                    inputVo.rentalUnitCount > rentableProductInfo.maximumReservationUnitCount!!
+                ) {
+                    // rentalUnitCount 가 단위 예약 최대 횟수보다 클 때 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                     httpServletResponse.setHeader("api-result-code", "6")
                     return@tryLockRepeat null
                 }
 
-                if (rentableProductInfo.maximumReservationUnitCount != null &&
-                    calcTimeUnitCountDown > rentableProductInfo.maximumReservationUnitCount!!
-                ) {
-                    // 대여 시작 일시와 끝 일시의 차이를 단위 예약 시간으로 나누었을 때, 단위 예약 최대 횟수보다 클 때 -> return
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "7")
-                    return@tryLockRepeat null
-                }
+                val rentalEndDatetime =
+                    rentalStartDatetime.plusMinutes(rentableProductInfo.reservationUnitMinute * inputVo.rentalUnitCount)
 
                 // 예약할 재고 정보 리스트
                 val rentableProductStockEntityList: MutableList<Db1_RaillyLinkerCompany_RentableProductStockInfo> =
@@ -205,28 +191,28 @@ class RentalReservationService(
                     if (rentableProductStockEntity == null) {
                         // 재고 리스트 중 없는 개체가 있습니다. -> return
                         httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                        httpServletResponse.setHeader("api-result-code", "8")
+                        httpServletResponse.setHeader("api-result-code", "7")
                         return@tryLockRepeat null
                     }
 
                     if (!rentableProductStockEntity.nowReservable) {
                         //  재고 리스트 중 대여 가능 설정이 아닌 상품이 있습니다. -> return
                         httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                        httpServletResponse.setHeader("api-result-code", "9")
+                        httpServletResponse.setHeader("api-result-code", "8")
                         return@tryLockRepeat null
                     }
 
                     if (rentalStartDatetime.isBefore(rentableProductStockEntity.firstRentableDatetime)) {
                         // 재고 리스트 중 대여 가능 최초 일시가 더 큰 개체가 있습니다. -> return
                         httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                        httpServletResponse.setHeader("api-result-code", "10")
+                        httpServletResponse.setHeader("api-result-code", "9")
                         return@tryLockRepeat null
                     }
 
                     if (rentalEndDatetime.isAfter(rentableProductStockEntity.lastRentableDatetime)) {
                         // 재고 리스트 중 대여 가능 마지막 일시가 더 작은 개체가 있습니다. -> return
                         httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                        httpServletResponse.setHeader("api-result-code", "11")
+                        httpServletResponse.setHeader("api-result-code", "10")
                         return@tryLockRepeat null
                     }
 
@@ -239,7 +225,7 @@ class RentalReservationService(
                     ) {
                         // 재고 리스트 중 현재 예약 중인 개체(예약 준비 시간이 결정되지 않은 항목)가 있습니다. -> return
                         httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                        httpServletResponse.setHeader("api-result-code", "12")
+                        httpServletResponse.setHeader("api-result-code", "11")
                         return@tryLockRepeat null
                     }
 
@@ -247,24 +233,25 @@ class RentalReservationService(
                 }
 
                 // 예약 정보 입력
-                val newReservationInfo = db1RaillyLinkerCompanyRentableProductReservationInfoRepository.save(
-                    Db1_RaillyLinkerCompany_RentableProductReservationInfo(
-                        rentableProductInfo,
-                        memberData,
-                        rentalStartDatetime,
-                        rentalEndDatetime,
-                        nowDatetime, // 고객에게 이때까지 결제를 해야 한다고 통보한 기한 임시 입력
-                        nowDatetime, // 예약 결제 확인 기한 임시 입력
-                        nowDatetime, // 관리자 승인 기한 임시 입력
-                        nowDatetime, // 예약 취소 가능 기한 임시 입력
-                        rentableProductInfo.productName,
-                        rentableProductInfo.productIntro,
-                        rentableProductInfo.frontRentableProductImage,
-                        rentableProductInfo.addressCountry,
-                        rentableProductInfo.addressMain,
-                        rentableProductInfo.addressDetail
+                val newReservationInfo =
+                    db1RaillyLinkerCompanyRentableProductReservationInfoRepository.save(
+                        Db1_RaillyLinkerCompany_RentableProductReservationInfo(
+                            rentableProductInfo,
+                            memberData,
+                            rentalStartDatetime,
+                            rentalEndDatetime,
+                            nowDatetime, // 고객에게 이때까지 결제를 해야 한다고 통보한 기한 임시 입력
+                            nowDatetime, // 예약 결제 확인 기한 임시 입력
+                            nowDatetime, // 관리자 승인 기한 임시 입력
+                            nowDatetime, // 예약 취소 가능 기한 임시 입력
+                            rentableProductInfo.productName,
+                            rentableProductInfo.productIntro,
+                            rentableProductInfo.frontRentableProductImage,
+                            rentableProductInfo.addressCountry,
+                            rentableProductInfo.addressMain,
+                            rentableProductInfo.addressDetail
+                        )
                     )
-                )
 
                 // 예약 신청 일시를 기준으로 기한 관련 데이터 계산 및 검증
                 val reservationDatetime = newReservationInfo.rowCreateDate!!
@@ -302,6 +289,8 @@ class RentalReservationService(
                     newReservationInfo.customerPaymentDeadlineDatetime.atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
                     newReservationInfo.reservationCancelDeadlineDatetime.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    rentalEndDatetime.atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
                 )
             }
@@ -356,7 +345,6 @@ class RentalReservationService(
 
         var notApproved = true
         var notPaid = true
-        var requestCancel = false
         var notRequestCancelDenyLatest = true
         var notRequestCancelLatest = true
         for (history in historyList) {
@@ -378,7 +366,6 @@ class RentalReservationService(
 
                 3 -> {
                     // 예약 취소 신청
-                    requestCancel = true
                     if (notRequestCancelDenyLatest) {
                         // 예약 취소 신청 내역이 최신인지
                         notRequestCancelLatest = false
@@ -411,14 +398,11 @@ class RentalReservationService(
             return null
         }
 
-        if (requestCancel) {
-            // 기존 예약 취소 신청 내역이 있고,
-            if (notRequestCancelDenyLatest && !notRequestCancelLatest) {
-                // 예약 취소 신청 상태 -> return
-                httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                httpServletResponse.setHeader("api-result-code", "6")
-                return null
-            }
+        if (!notRequestCancelLatest) {
+            // 예약 취소 신청 상태 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "6")
+            return null
         }
 
         // 예약 취소 신청 정보 추가

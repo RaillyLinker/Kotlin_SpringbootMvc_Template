@@ -47,18 +47,18 @@ class RentalReservationController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : rentalStartDatetime 가 rentalEndDatetime 보다 커서는 안됩니다.<br>" +
-                                "3 : 예약 상품 버전 시퀀스가 일치하지 않습니다.<br>" +
-                                "4 : 예약 상품이 현재 예약 가능 상태가 아닙니다.<br>" +
-                                "5 : 상품 예약 가능 일시 이전입니다.<br>" +
-                                "6 : 대여 단위 예약 최소 횟수보다 작습니다.<br>" +
-                                "7 : 대여 단위 예약 최대 횟수보다 큽니다.<br>" +
-                                "8 : 재고 리스트 중 없는 개체가 있습니다.<br>" +
-                                "9 : 재고 리스트 중 대여 가능 설정이 아닌 상품이 있습니다.<br>" +
-                                "10 : 재고 리스트 중 대여 가능 최초 일시가 대여 시작일보다 큰 상품이 있습니다.<br>" +
-                                "11 : 재고 리스트 중 대여 가능 마지막 일시가 대여 마지막일보다 작은 개체가 있습니다.<br>" +
-                                "12 : 재고 리스트 중 현재 예약 중인 개체가 있습니다.<br>" +
-                                "13 : 대여 설정 일시가 현재 일시보다 작을 경우",
+                                "2 : 예약 상품 버전 시퀀스가 일치하지 않습니다.<br>" +
+                                "3 : 예약 상품이 현재 예약 가능 상태가 아닙니다.<br>" +
+                                "4 : 상품 예약 가능 일시 이전입니다.<br>" +
+                                "5 : rentalUnitCount 가 대여 단위 예약 최소 횟수보다 작습니다.<br>" +
+                                "6 : rentalUnitCount 가 대여 단위 예약 최대 횟수보다 큽니다.<br>" +
+                                "7 : 재고 리스트 중 없는 개체가 있습니다.<br>" +
+                                "8 : 재고 리스트 중 대여 가능 설정이 아닌 상품이 있습니다.<br>" +
+                                "9 : 재고 리스트 중 대여 가능 최초 일시가 대여 시작일보다 큰 상품이 있습니다.<br>" +
+                                "10 : 재고 리스트 중 대여 가능 마지막 일시가 대여 마지막일보다 작은 개체가 있습니다.<br>" +
+                                "11 : 재고 리스트 중 현재 예약 중인 개체가 있습니다.<br>" +
+                                "12 : 대여 시작 일시가 현재 일시보다 작을 경우<br>" +
+                                "13 : 대여 단위 예약 횟수가 음수면 안됩니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -111,12 +111,12 @@ class RentalReservationController(
         @JsonProperty("rentalStartDatetime")
         val rentalStartDatetime: String,
         @Schema(
-            description = "대여 끝 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            description = "대여 단위 예약의 횟수(상품 정보의 단위 예약 시간과 곱하여 대여 끝 일시를 구할 것입니다.)",
             required = true,
-            example = "2024_05_02_T_15_14_49_552_KST"
+            example = "2"
         )
-        @JsonProperty("rentalEndDatetime")
-        val rentalEndDatetime: String
+        @JsonProperty("rentalUnitCount")
+        val rentalUnitCount: Long
     )
 
     data class PostProductReservationOutputVo(
@@ -136,7 +136,14 @@ class RentalReservationController(
             example = "2024_05_02_T_15_14_49_552_KST"
         )
         @JsonProperty("cancelableDeadlineDatetime")
-        val cancelableDeadlineDatetime: String
+        val cancelableDeadlineDatetime: String,
+        @Schema(
+            description = "계산된 대여 마지막 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("rentalEndDatetime")
+        val rentalEndDatetime: String
     )
 
 
