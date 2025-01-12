@@ -18,4 +18,9 @@ interface Db1_RaillyLinkerCompany_RentableProductReservationInfo_Repository :
         totalAuthMember: Db1_RaillyLinkerCompany_TotalAuthMember,
         rowDeleteDateStr: String
     ): Db1_RaillyLinkerCompany_RentableProductReservationInfo?
+
+    fun findAllByTotalAuthMemberUidAndRowDeleteDateStr(
+        totalAuthMemberUid: Long,
+        rowDeleteDateStr: String
+    ): List<Db1_RaillyLinkerCompany_RentableProductReservationInfo>
 }
