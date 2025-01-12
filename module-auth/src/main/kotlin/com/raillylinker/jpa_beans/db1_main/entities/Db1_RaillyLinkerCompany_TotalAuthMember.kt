@@ -63,35 +63,44 @@ class Db1_RaillyLinkerCompany_TotalAuthMember(
 
     // ---------------------------------------------------------------------------------------------
     // [@OneToMany 변수들]
+    // Row 삭제시 삭제 처리
     @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var totalAuthMemberRoleList: MutableList<Db1_RaillyLinkerCompany_TotalAuthMemberRole> = mutableListOf()
 
+    // Row 삭제시 삭제 처리
     @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var totalAuthMemberProfileList: MutableList<Db1_RaillyLinkerCompany_TotalAuthMemberProfile> =
         mutableListOf()
 
+    // Row 삭제시 삭제 처리
     @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var totalAuthMemberPhoneList: MutableList<Db1_RaillyLinkerCompany_TotalAuthMemberPhone> = mutableListOf()
 
+    // Row 삭제시 삭제 처리
     @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var totalAuthMemberOauth2LoginList: MutableList<Db1_RaillyLinkerCompany_TotalAuthMemberOauth2Login> =
         mutableListOf()
 
+    // Row 삭제시 삭제 처리
     @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var totalAuthMemberEmailList: MutableList<Db1_RaillyLinkerCompany_TotalAuthMemberEmail> = mutableListOf()
 
+    // Row 삭제시 삭제 처리
     @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var totalAuthMemberLockHistoryList: MutableList<Db1_RaillyLinkerCompany_TotalAuthMemberLockHistory> =
         mutableListOf()
 
+    // Row 삭제시 삭제 처리
     @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var totalAuthLogInTokenHistoryList: MutableList<Db1_RaillyLinkerCompany_TotalAuthLogInTokenHistory> =
         mutableListOf()
 
+    // Row 삭제시 삭제 처리
     @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var totalAuthAddPhoneVerificationList: MutableList<Db1_RaillyLinkerCompany_TotalAuthAddPhoneVerification> =
         mutableListOf()
 
+    // Row 삭제시 삭제 처리
     @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var totalAuthAddEmailVerificationList: MutableList<Db1_RaillyLinkerCompany_TotalAuthAddEmailVerification> =
         mutableListOf()

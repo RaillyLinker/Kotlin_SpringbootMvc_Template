@@ -46,6 +46,7 @@ class Db1_RaillyLinkerCompany_TotalAuthMemberProfile(
 
     // ---------------------------------------------------------------------------------------------
     // [@OneToMany 변수들]
+    // 정보가 삭제되면 참조 컬럼 null 처리
     @OneToMany(mappedBy = "frontTotalAuthMemberProfile", fetch = FetchType.LAZY)
     var totalAuthMemberList: MutableList<Db1_RaillyLinkerCompany_TotalAuthMember> = mutableListOf()
 

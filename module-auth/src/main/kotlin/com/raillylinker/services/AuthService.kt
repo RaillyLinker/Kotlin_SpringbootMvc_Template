@@ -3470,17 +3470,17 @@ class AuthService(
             (memberData.accountPassword != null && myEmailList.size > 1) ||
             (memberData.accountPassword != null && isMemberPhoneExists)
         ) {
-            // 이메일 지우기
-            myEmailVo.rowDeleteDateStr =
-                LocalDateTime.now().atZone(ZoneId.systemDefault())
-                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-            db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.save(myEmailVo)
-
             if (memberData.frontTotalAuthMemberEmail?.uid == emailUid) {
                 // 대표 이메일 삭제
                 memberData.frontTotalAuthMemberEmail = null
                 db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
             }
+
+            // 이메일 지우기
+            myEmailVo.rowDeleteDateStr =
+                LocalDateTime.now().atZone(ZoneId.systemDefault())
+                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+            db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.save(myEmailVo)
 
             httpServletResponse.status = HttpStatus.OK.value()
             return
@@ -3770,16 +3770,16 @@ class AuthService(
             (memberData.accountPassword != null && myPhoneList.size > 1) ||
             (memberData.accountPassword != null && isMemberEmailExists)
         ) {
+            if (memberData.frontTotalAuthMemberPhone?.uid == phoneUid) {
+                memberData.frontTotalAuthMemberPhone = null
+                db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
+            }
+
             // 전화번호 지우기
             myPhoneVo.rowDeleteDateStr =
                 LocalDateTime.now().atZone(ZoneId.systemDefault())
                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
             db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.save(myPhoneVo)
-
-            if (memberData.frontTotalAuthMemberPhone?.uid == phoneUid) {
-                memberData.frontTotalAuthMemberPhone = null
-                db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
-            }
 
             httpServletResponse.status = HttpStatus.OK.value()
             return
@@ -4073,6 +4073,12 @@ class AuthService(
 //            // !!!프로필 이미지 파일 삭제하세요!!!
 //        }
 
+        // 다른 테이블을 참조중인 컬럼 null 처리
+        memberData.frontTotalAuthMemberProfile = null
+        memberData.frontTotalAuthMemberEmail = null
+        memberData.frontTotalAuthMemberPhone = null
+        db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
+
         for (totalAuthMemberRole in memberData.totalAuthMemberRoleList) {
             totalAuthMemberRole.rowDeleteDateStr =
                 LocalDateTime.now().atZone(ZoneId.systemDefault())
@@ -4354,18 +4360,18 @@ class AuthService(
             return
         }
 
+        if (memberData.frontTotalAuthMemberProfile?.uid == profileUid) {
+            // 대표 프로필을 삭제했을 때 멤버 데이터에 반영
+            memberData.frontTotalAuthMemberProfile = null
+            db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
+        }
+
         // 프로필 비활성화
         profileData.rowDeleteDateStr =
             LocalDateTime.now().atZone(ZoneId.systemDefault())
                 .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
         db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.save(profileData)
         // !!!프로필 이미지 파일 삭제하세요!!!
-
-        if (memberData.frontTotalAuthMemberProfile?.uid == profileUid) {
-            // 대표 프로필을 삭제했을 때 멤버 데이터에 반영
-            memberData.frontTotalAuthMemberProfile = null
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
-        }
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
