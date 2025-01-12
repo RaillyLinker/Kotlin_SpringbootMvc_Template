@@ -15,6 +15,7 @@ import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.C
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_SECRET_KEY_STRING
 import com.raillylinker.controllers.AuthController
 import com.raillylinker.jpa_beans.db1_main.repositories_dsl.Db1_RaillyLinkerCompany_RepositoryDsl
+import com.raillylinker.kafka_components.producers.Kafka1MainProducer
 import com.raillylinker.util_components.AppleOAuthHelperUtil
 import com.raillylinker.util_components.JwtTokenUtil
 import jakarta.servlet.http.HttpServletResponse
@@ -73,7 +74,9 @@ class AuthService(
     private val db1RaillyLinkerCompanyTotalAuthLogInTokenHistoryRepository: Db1_RaillyLinkerCompany_TotalAuthLogInTokenHistory_Repository,
     private val db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepository: Db1_RaillyLinkerCompany_TotalAuthMemberLockHistory_Repository,
 
-    private val db1RaillyLinkerCompanyRepositoryDsl: Db1_RaillyLinkerCompany_RepositoryDsl
+    private val db1RaillyLinkerCompanyRepositoryDsl: Db1_RaillyLinkerCompany_RepositoryDsl,
+
+    private val kafka1MainProducer: Kafka1MainProducer
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -4185,6 +4188,13 @@ class AuthService(
             LocalDateTime.now().atZone(ZoneId.systemDefault())
                 .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
         db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
+
+        // kafkaProducer1 에 토픽 메세지 발행
+        kafka1MainProducer.sendMessageFromAuthDbDeleteFromRaillyLinkerCompanyTotalAuthMember(
+            Kafka1MainProducer.SendMessageFromAuthDbDeleteFromRaillyLinkerCompanyTotalAuthMemberInputVo(
+                memberUid
+            )
+        )
 
         httpServletResponse.status = HttpStatus.OK.value()
     }

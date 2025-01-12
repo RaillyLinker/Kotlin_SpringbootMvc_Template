@@ -112,6 +112,12 @@ dependencies {
 
     // (Apache Common Codec)
     implementation("commons-codec:commons-codec:1.17.1")
+
+    // (Kafka)
+    implementation("org.springframework.kafka:spring-kafka:3.2.4")
+
+    // (jackson)
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.1")
 }
 
 tasks.withType<Test> {
