@@ -20,4 +20,9 @@ interface Db1_RaillyLinkerCompany_SampleBoard_Repository :
         totalAuthMember: Db1_RaillyLinkerCompany_TotalAuthMember,
         rowDeleteDateStr: String
     ): Db1_RaillyLinkerCompany_SampleBoard?
+
+    fun findAllByTotalAuthMemberUidAndRowDeleteDateStr(
+        totalAuthMemberUid: Long,
+        rowDeleteDateStr: String
+    ): List<Db1_RaillyLinkerCompany_SampleBoard>
 }

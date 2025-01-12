@@ -51,6 +51,26 @@ datasource-redis:
     #    node-list: 127.0.0.1:7001, 127.0.0.1:7002, 127.0.0.1:7003, 127.0.0.1:7101, 127.0.0.1:7102, 127.0.0.1:7103
     node-list: 127.0.0.1:7001
 
+# Kafka Cluster 설정
+kafka-cluster:
+  # Kafka 추가
+  # 작명법은, 앞에 kafka{index}-{제목} 형식으로 하여, 충돌을 피하기
+
+  # (주 사용 Kafka)
+  kafka1-main:
+    # Kafka 브로커에 연결하기 위한 주소를 설정합니다. 여러 개의 브로커가 있을 경우, 콤마로 구분하여 나열합니다.
+    uri: localhost:9092,localhost:9093,localhost:9094
+
+    # Consumer용 인증 정보
+    consumer:
+      username: admin
+      password: admin-secret
+
+    # Producer용 인증 정보
+    producer:
+      username: admin
+      password: admin-secret
+
 custom-config: # 프로젝트 내에서 사용하는 커스텀 설정
   # cors 허용 리스트 설정 (설정하지 않으면 모든 요청 허용)
   cors-allow-list: http://localhost:8081, http://127.0.0.1:8081, http://localhost:3000, http://127.0.0.1:3000
