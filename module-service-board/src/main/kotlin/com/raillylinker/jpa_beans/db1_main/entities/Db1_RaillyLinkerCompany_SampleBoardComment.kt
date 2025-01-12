@@ -26,7 +26,7 @@ class Db1_RaillyLinkerCompany_SampleBoardComment(
 
     @ManyToOne
     @JoinColumn(name = "sample_board_comment_uid", nullable = true)
-    @Comment("게시글 댓글 고유번호(railly_linker_company.sample_board_comment.uid)")
+    @Comment("타겟 게시글 댓글 고유번호(railly_linker_company.sample_board_comment.uid)")
     var sampleBoardComment: Db1_RaillyLinkerCompany_SampleBoardComment?,
 
     @Column(name = "comment_content", nullable = false, columnDefinition = "TEXT")
@@ -56,7 +56,11 @@ class Db1_RaillyLinkerCompany_SampleBoardComment(
 
     // ---------------------------------------------------------------------------------------------
     // [@OneToMany 변수들]
-    @OneToMany(mappedBy = "sampleBoardComment", fetch = FetchType.LAZY)
+    @OneToMany(
+        mappedBy = "sampleBoardComment",
+        fetch = FetchType.LAZY,
+        cascade = [CascadeType.ALL]
+    )
     var sampleBoardCommentList: MutableList<Db1_RaillyLinkerCompany_SampleBoardComment> = mutableListOf()
 
 

@@ -54,7 +54,11 @@ class Db1_RaillyLinkerCompany_SampleBoard(
 
     // ---------------------------------------------------------------------------------------------
     // [@OneToMany 변수들]
-    @OneToMany(mappedBy = "sampleBoard", fetch = FetchType.LAZY)
+    @OneToMany(
+        mappedBy = "sampleBoard",
+        fetch = FetchType.LAZY,
+        cascade = [CascadeType.ALL]
+    )
     var sampleBoardCommentList: MutableList<Db1_RaillyLinkerCompany_SampleBoardComment> = mutableListOf()
 
 

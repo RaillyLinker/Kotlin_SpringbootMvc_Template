@@ -63,21 +63,18 @@ class Db1_RaillyLinkerCompany_TotalAuthMember(
 
     // ---------------------------------------------------------------------------------------------
     // [@OneToMany 변수들]
+    // Row 삭제시 삭제 처리
     @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var totalAuthMemberProfileList: MutableList<Db1_RaillyLinkerCompany_TotalAuthMemberProfile> =
         mutableListOf()
 
+    // Row 삭제시 삭제 처리
     @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var totalAuthMemberPhoneList: MutableList<Db1_RaillyLinkerCompany_TotalAuthMemberPhone> = mutableListOf()
 
+    // Row 삭제시 삭제 처리
     @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var totalAuthMemberEmailList: MutableList<Db1_RaillyLinkerCompany_TotalAuthMemberEmail> = mutableListOf()
-
-    @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    var sampleBoardList: MutableList<Db1_RaillyLinkerCompany_SampleBoard> = mutableListOf()
-
-    @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    var sampleBoardCommentList: MutableList<Db1_RaillyLinkerCompany_SampleBoardComment> = mutableListOf()
 
 
     // ---------------------------------------------------------------------------------------------
