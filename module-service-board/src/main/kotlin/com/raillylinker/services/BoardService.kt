@@ -288,6 +288,11 @@ class BoardService(
             return
         }
 
+        // 재귀적으로 댓글과 하위 댓글 삭제
+        boardEntity.sampleBoardCommentList.forEach { comment ->
+            deleteCommentsRecursively(comment)
+        }
+
         boardEntity.rowDeleteDateStr =
             LocalDateTime.now().atZone(ZoneId.systemDefault())
                 .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
@@ -295,6 +300,19 @@ class BoardService(
         db1RaillyLinkerCompanySampleBoardRepository.save(boardEntity)
 
         httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+    fun deleteCommentsRecursively(comment: Db1_RaillyLinkerCompany_SampleBoardComment) {
+        // 자식 댓글 삭제
+        comment.sampleBoardCommentList.forEach { childComment ->
+            deleteCommentsRecursively(childComment)
+        }
+
+        // 현재 댓글 삭제 처리
+        comment.rowDeleteDateStr = LocalDateTime.now()
+            .atZone(ZoneId.systemDefault())
+            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+        db1RaillyLinkerCompanySampleBoardCommentRepository.save(comment)
     }
 
 
@@ -470,6 +488,9 @@ class BoardService(
             httpServletResponse.setHeader("api-result-code", "1")
             return
         }
+
+        // 재귀적으로 댓글과 하위 댓글 삭제
+        deleteCommentsRecursively(commentEntity)
 
         commentEntity.rowDeleteDateStr =
             LocalDateTime.now().atZone(ZoneId.systemDefault())

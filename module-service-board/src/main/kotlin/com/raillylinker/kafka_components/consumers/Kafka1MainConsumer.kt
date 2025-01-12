@@ -3,6 +3,8 @@ package com.raillylinker.kafka_components.consumers
 import com.google.gson.Gson
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.configurations.kafka_configs.Kafka1MainConfig
+import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_SampleBoardComment
+import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_SampleBoardComment_Repository
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_SampleBoard_Repository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -16,7 +18,8 @@ import java.time.format.DateTimeFormatter
 
 @Component
 class Kafka1MainConsumer(
-    private val db1RaillyLinkerCompanySampleBoardRepository: Db1_RaillyLinkerCompany_SampleBoard_Repository
+    private val db1RaillyLinkerCompanySampleBoardRepository: Db1_RaillyLinkerCompany_SampleBoard_Repository,
+    private val db1RaillyLinkerCompanySampleBoardCommentRepository: Db1_RaillyLinkerCompany_SampleBoardComment_Repository
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -60,6 +63,11 @@ class Kafka1MainConsumer(
             )
 
         for (db1RaillyLinkerCompanySampleBoard in db1RaillyLinkerCompanySampleBoardList) {
+            // 재귀적으로 댓글과 하위 댓글 삭제
+            db1RaillyLinkerCompanySampleBoard.sampleBoardCommentList.forEach { comment ->
+                deleteCommentsRecursively(comment)
+            }
+
             // 삭제된 멤버 정보와 연관된 게시판 정보 삭제 처리
             db1RaillyLinkerCompanySampleBoard.rowDeleteDateStr =
                 LocalDateTime.now().atZone(ZoneId.systemDefault())
@@ -72,4 +80,17 @@ class Kafka1MainConsumer(
     data class FromAuthDbDeleteFromRaillyLinkerCompanyTotalAuthMemberListenerInputVo(
         val deletedMemberUid: Long
     )
+
+    fun deleteCommentsRecursively(comment: Db1_RaillyLinkerCompany_SampleBoardComment) {
+        // 자식 댓글 삭제
+        comment.sampleBoardCommentList.forEach { childComment ->
+            deleteCommentsRecursively(childComment)
+        }
+
+        // 현재 댓글 삭제 처리
+        comment.rowDeleteDateStr = LocalDateTime.now()
+            .atZone(ZoneId.systemDefault())
+            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+        db1RaillyLinkerCompanySampleBoardCommentRepository.save(comment)
+    }
 }
