@@ -27,7 +27,7 @@ class Kafka1MainConsumer {
                 KafkaConsumerLog>>
                 {
                     data : {
-                        \"$data\"
+                        "$data"
                     }
                 }
             """.trimIndent()
@@ -57,7 +57,7 @@ class Kafka1MainConsumer {
                 KafkaConsumerLog>>
                 {
                     data : {
-                        \"$data\"
+                        "$data"
                     }
                 }
             """.trimIndent()
@@ -79,7 +79,7 @@ class Kafka1MainConsumer {
                 KafkaConsumerLog>>
                 {
                     data : {
-                        \"$data\"
+                        "$data"
                     }
                 }
             """.trimIndent()
@@ -100,7 +100,7 @@ class Kafka1MainConsumer {
                 KafkaConsumerLog>>
                 {
                     data : {
-                        \"$data\"
+                        "$data"
                     }
                 }
             """.trimIndent()
