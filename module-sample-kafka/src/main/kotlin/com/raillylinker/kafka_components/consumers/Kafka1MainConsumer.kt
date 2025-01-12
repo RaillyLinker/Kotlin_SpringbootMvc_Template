@@ -22,7 +22,16 @@ class Kafka1MainConsumer {
         containerFactory = Kafka1MainConfig.CONSUMER_BEAN_NAME
     )
     fun testTopic1Group0Listener(data: ConsumerRecord<String, String>) {
-        classLogger.info(">> testTopic1 group_1 : $data")
+        classLogger.info(
+            """
+                KafkaConsumerLog>>
+                {
+                    data : {
+                        \"$data\"
+                    }
+                }
+            """.trimIndent()
+        )
 
         // JSON 문자열을 객체로 변환
         val testTopic1Group0ListenerInputVo = Gson().fromJson(data.value(), TestTopic1Group0ListenerInputVo::class.java)
@@ -43,7 +52,16 @@ class Kafka1MainConsumer {
         containerFactory = Kafka1MainConfig.CONSUMER_BEAN_NAME
     )
     fun testTopic2Group0Listener(data: ConsumerRecord<String, String>) {
-        classLogger.info(">> testTopic2 group_1 : $data")
+        classLogger.info(
+            """
+                KafkaConsumerLog>>
+                {
+                    data : {
+                        \"$data\"
+                    }
+                }
+            """.trimIndent()
+        )
     }
 
 
@@ -56,7 +74,16 @@ class Kafka1MainConsumer {
         containerFactory = Kafka1MainConfig.CONSUMER_BEAN_NAME
     )
     fun testTopic2Group0Listener2(data: ConsumerRecord<String, String>) {
-        classLogger.info(">> testTopic2 group_1 2 : $data")
+        classLogger.info(
+            """
+                KafkaConsumerLog>>
+                {
+                    data : {
+                        \"$data\"
+                    }
+                }
+            """.trimIndent()
+        )
     }
 
 
@@ -68,6 +95,15 @@ class Kafka1MainConsumer {
         containerFactory = Kafka1MainConfig.CONSUMER_BEAN_NAME
     )
     fun testTopic2Group1Listener(data: ConsumerRecord<String, String>) {
-        classLogger.info(">> testTopic2 group_2 : $data")
+        classLogger.info(
+            """
+                KafkaConsumerLog>>
+                {
+                    data : {
+                        \"$data\"
+                    }
+                }
+            """.trimIndent()
+        )
     }
 }
