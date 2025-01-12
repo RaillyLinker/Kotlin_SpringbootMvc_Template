@@ -1,5 +1,6 @@
 package com.raillylinker.kafka_components.producers
 
+import com.google.gson.Gson
 import com.raillylinker.configurations.kafka_configs.Kafka1MainConfig
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,7 +20,7 @@ class Kafka1MainProducer(
     // (testTopic1 에 메시지 발송)
     fun sendMessageToTestTopic1(message: SendMessageToTestTopic1InputVo) {
         // kafkaProducer1 에 토픽 메세지 발행
-        kafka1MainProducerTemplate.send("testTopic1", message)
+        kafka1MainProducerTemplate.send("testTopic1", Gson().toJson(message))
     }
 
     data class SendMessageToTestTopic1InputVo(

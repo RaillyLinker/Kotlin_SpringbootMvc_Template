@@ -55,6 +55,10 @@ dependencies {
 
     // (jackson)
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.1")
+
+    // (GSON)
+    // : Json - Object 라이브러리
+    implementation("com.google.code.gson:gson:2.11.0")
 }
 
 tasks.withType<Test> {

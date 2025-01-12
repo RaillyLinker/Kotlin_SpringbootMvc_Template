@@ -1,5 +1,6 @@
 package com.raillylinker.kafka_components.consumers
 
+import com.google.gson.Gson
 import com.raillylinker.configurations.kafka_configs.Kafka1MainConfig
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -20,13 +21,17 @@ class Kafka1MainConsumer {
         groupId = "group_1",
         containerFactory = Kafka1MainConfig.CONSUMER_BEAN_NAME
     )
-    fun testTopic1Group0Listener(data: ConsumerRecord<String, TestTopic1Group0ListenerInputVo>) {
+    fun testTopic1Group0Listener(data: ConsumerRecord<String, String>) {
         classLogger.info(">> testTopic1 group_1 : $data")
+
+        // JSON 문자열을 객체로 변환
+        val testTopic1Group0ListenerInputVo = Gson().fromJson(data.value(), TestTopic1Group0ListenerInputVo::class.java)
+        classLogger.info(">> testTopic1Group0ListenerInputVo : $testTopic1Group0ListenerInputVo")
     }
 
     data class TestTopic1Group0ListenerInputVo(
-        val test : String,
-        val test1 : Int
+        val test: String,
+        val test1: Int
     )
 
 

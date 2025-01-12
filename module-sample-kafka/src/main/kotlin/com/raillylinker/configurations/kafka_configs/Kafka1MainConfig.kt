@@ -12,9 +12,6 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
-import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-import org.springframework.kafka.support.serializer.JsonDeserializer
-import org.springframework.kafka.support.serializer.JsonSerializer
 
 // [Kafka Consumer 설정]
 // kafka_consumers 폴더 안의 Listeners 클래스 파일과 연계하여 사용하세요.
@@ -47,9 +44,7 @@ class Kafka1MainConfig {
         // Kafka 브로커에 연결하기 위한 주소를 설정합니다. 여러 개의 브로커가 있을 경우, 콤마로 구분하여 나열합니다.
         config[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = uri
         config[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
-        config[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = ErrorHandlingDeserializer::class.java
-        config[ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS] = JsonDeserializer::class.java
-        config[JsonDeserializer.TRUSTED_PACKAGES] = "*"
+        config[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
 
         // SASL/SCRAM 인증 설정 추가
         config["security.protocol"] = "SASL_PLAINTEXT"
@@ -69,7 +64,7 @@ class Kafka1MainConfig {
         // Kafka 브로커에 연결하기 위한 주소를 설정합니다. 여러 개의 브로커가 있을 경우, 콤마로 구분하여 나열합니다.
         config[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = uri
         config[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
-        config[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = JsonSerializer::class.java
+        config[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
 
         // SASL/SCRAM 인증 설정 추가
         config["security.protocol"] = "SASL_PLAINTEXT"
