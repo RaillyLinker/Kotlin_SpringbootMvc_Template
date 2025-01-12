@@ -26,6 +26,11 @@ class Kafka1MainConsumer(
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
 
+    companion object {
+        // !!!모듈 컨슈머 그룹 아이디!!!
+        private const val CONSUMER_GROUP_ID = "com.raillylinker.service_rental_reservation"
+    }
+
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
     // (Auth 모듈의 통합 멤버 정보 삭제 이벤트에 대한 리스너)
@@ -33,7 +38,7 @@ class Kafka1MainConsumer(
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     @KafkaListener(
         topics = ["from_auth_db_delete_from_railly_linker_company_total_auth_member"],
-        groupId = "com.raillylinker.service_rental-reservation",
+        groupId = CONSUMER_GROUP_ID,
         containerFactory = Kafka1MainConfig.CONSUMER_BEAN_NAME
     )
     fun fromAuthDbDeleteFromRaillyLinkerCompanyTotalAuthMemberListener(data: ConsumerRecord<String, String>) {
