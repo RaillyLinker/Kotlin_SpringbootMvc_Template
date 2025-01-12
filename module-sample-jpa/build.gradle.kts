@@ -85,12 +85,6 @@ tasks.withType<Test> {
     jvmArgs("-Xshare:off")
 }
 
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2024.0.0") // Cloud version
-    }
-}
-
 // (Querydsl 설정부 추가 - start)
 val generated = file("src/main/generated")
 // querydsl QClass 파일 생성 위치를 지정

@@ -63,9 +63,3 @@ tasks.withType<Test> {
     jvmArgs("-XX:+EnableDynamicAgentLoading")
     jvmArgs("-Xshare:off")
 }
-
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2024.0.0") // Cloud version
-    }
-}

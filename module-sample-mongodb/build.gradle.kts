@@ -67,12 +67,6 @@ tasks.withType<Test> {
     jvmArgs("-Xshare:off")
 }
 
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2024.0.0") // Cloud version
-    }
-}
-
 // kotlin MongoDB : 아래의 어노테이션 클래스에 no-arg 생성자를 생성
 noArg {
     annotation("jakarta.persistence.Entity")
