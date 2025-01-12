@@ -26,7 +26,7 @@ class Kafka1MainConsumer {
             """
                 KafkaConsumerLog>>
                 {
-                    data : {
+                    "data" : {
                         "$data"
                     }
                 }
@@ -56,7 +56,7 @@ class Kafka1MainConsumer {
             """
                 KafkaConsumerLog>>
                 {
-                    data : {
+                    "data" : {
                         "$data"
                     }
                 }
@@ -78,7 +78,7 @@ class Kafka1MainConsumer {
             """
                 KafkaConsumerLog>>
                 {
-                    data : {
+                    "data" : {
                         "$data"
                     }
                 }
@@ -99,7 +99,7 @@ class Kafka1MainConsumer {
             """
                 KafkaConsumerLog>>
                 {
-                    data : {
+                    "data" : {
                         "$data"
                     }
                 }
