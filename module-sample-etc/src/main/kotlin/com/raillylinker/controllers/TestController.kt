@@ -717,4 +717,52 @@ class TestController(
             httpServletResponse
         )
     }
+
+
+    // ----
+    @Operation(
+        summary = "한국 공휴일 정보 가져오기",
+        description = "공공 데이터 API 를 사용하여 한국 공휴일 정보를 가져옵니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @GetMapping(
+        path = ["/public-holiday-korea"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun getPublicHolidayKorea(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(name = "targetYear", description = "예약 불가일 리스트를 가져올 Year", example = "2024")
+        @RequestParam("targetYear")
+        targetYear: Int
+    ): GetPublicHolidayKoreaOutputVo? {
+        return service.getPublicHolidayKorea(
+            httpServletResponse,
+            targetYear
+        )
+    }
+
+    data class GetPublicHolidayKoreaOutputVo(
+        @Schema(description = "공휴일 리스트", required = true)
+        @JsonProperty("holidayList")
+        val holidayList: List<HolidayVo>
+    ) {
+        data class HolidayVo(
+            @Schema(description = "공휴일 년월일(yyyy-MM-dd)", required = true, example = "2024-05-02")
+            @JsonProperty("holidayDate")
+            val holidayDate: String,
+            @Schema(description = "공휴일 이름", required = true, example = "설날")
+            @JsonProperty("holidayName")
+            val holidayName: String
+        )
+    }
 }

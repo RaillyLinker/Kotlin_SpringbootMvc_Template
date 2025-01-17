@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import java.time.LocalDate
 
 // 주의 : NativeRepository 의 반환값으로 기본 Entity 객체는 매핑되지 않으므로 OutputVo Interface 를 작성하여 사용할것.
 // Output Interface 변수에 is 로 시작되는 변수는 매핑이 안되므로 사용하지 말것.
@@ -58,6 +59,8 @@ interface Db1_Native_Repository : JpaRepository<Db1_Template_TestMap, Long> {
         var distanceKiloMeter: Double
     }
 
+
+    // ----
     @Query(
         nativeQuery = true,
         value = """
@@ -96,5 +99,30 @@ interface Db1_Native_Repository : JpaRepository<Db1_Template_TestMap, Long> {
         var uid: Long
         var latitude: Double
         var longitude: Double
+    }
+
+
+    // ----
+    @Query(
+        nativeQuery = true,
+        value = """
+            SELECT
+            public_holiday_korea.holiday_date as holidayDate,
+            public_holiday_korea.holiday_name as holidayName
+            FROM
+            template.public_holiday_korea as public_holiday_korea
+            WHERE
+            public_holiday_korea.row_delete_date_str = '/' AND
+            YEAR(public_holiday_korea.holiday_date) = :anchorYear
+            """
+    )
+    fun findAllThisYearPublicHolidayList(
+        @Param(value = "anchorYear")
+        anchorYear: Int
+    ): List<FindAllThisYearPublicHolidayListOutputVo>
+
+    interface FindAllThisYearPublicHolidayListOutputVo {
+        var holidayDate: LocalDate
+        var holidayName: String
     }
 }

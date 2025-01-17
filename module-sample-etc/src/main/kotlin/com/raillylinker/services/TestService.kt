@@ -2,7 +2,10 @@ package com.raillylinker.services
 
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.controllers.TestController
+import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_PublicHolidayKorea
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_TestBank
+import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Native_Repository
+import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_PublicHolidayKorea_Repository
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestBank_Repository
 import com.raillylinker.redis_map_components.redis1_main.Redis1_Lock_TestBank
 import com.raillylinker.util_components.*
@@ -29,6 +32,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -59,8 +63,13 @@ class TestService(
     private val resourceLoader: ResourceLoader,
 
     private val db1TemplateTestBankRepository: Db1_Template_TestBank_Repository,
+    private val db1TemplatePublicHolidayKoreaRepository: Db1_Template_PublicHolidayKorea_Repository,
 
-    private val redis1LockTestBank: Redis1_Lock_TestBank
+    private val db1NativeRepository: Db1_Native_Repository,
+
+    private val redis1LockTestBank: Redis1_Lock_TestBank,
+
+    private val holidayUtil: HolidayUtil
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -675,6 +684,8 @@ class TestService(
         httpServletResponse.status = HttpStatus.OK.value()
     }
 
+
+    // ----
     // 잔고 값 공유락 처리 함수
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun updateAmountInAsync(
@@ -716,6 +727,72 @@ class TestService(
             0.1,
             // 락 불발 반복시 대기시간 증가 최대시간
             100L
+        )
+    }
+
+
+    // ----
+    // (한국 공휴일 정보 가져오기)
+    // 공휴일 api 는 완벽히 신뢰할 수 없으므로 수동으로 데이터베이스에 입력하는 수단을 따로 마련해야 합니다.
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun getPublicHolidayKorea(
+        httpServletResponse: HttpServletResponse,
+        targetYear: Int
+    ): TestController.GetPublicHolidayKoreaOutputVo? {
+
+        val db1TemplatePublicHolidayKoreaList =
+            db1NativeRepository.findAllThisYearPublicHolidayList(
+                targetYear
+            )
+
+        val holidayList: ArrayList<TestController.GetPublicHolidayKoreaOutputVo.HolidayVo> = arrayListOf()
+        if (db1TemplatePublicHolidayKoreaList.isEmpty()) {
+            // 하나도 없다면 api 로 불러와서 저장하는 로직 실행 후  publicHolidayList 입력
+            val internetHolidayInfoList = holidayUtil.fetchHolidays(targetYear)
+
+            for (internetHolidayInfo in internetHolidayInfoList) {
+                if (
+                    internetHolidayInfo.isHoliday != null &&
+                    internetHolidayInfo.locdate != null &&
+                    internetHolidayInfo.dateKind != null &&
+                    internetHolidayInfo.dateName != null &&
+                    internetHolidayInfo.isHoliday == "Y"
+                ) {
+                    val locDate = LocalDate.parse(
+                        internetHolidayInfo.locdate,
+                        DateTimeFormatter.ofPattern("yyyyMMdd")
+                    )
+
+                    db1TemplatePublicHolidayKoreaRepository.save(
+                        Db1_Template_PublicHolidayKorea(
+                            locDate,
+                            internetHolidayInfo.dateName
+                        )
+                    )
+
+                    holidayList.add(
+                        TestController.GetPublicHolidayKoreaOutputVo.HolidayVo(
+                            locDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                            internetHolidayInfo.dateName
+                        )
+                    )
+                }
+            }
+
+        } else {
+            for (db1TemplatePublicHolidayKorea in db1TemplatePublicHolidayKoreaList) {
+                holidayList.add(
+                    TestController.GetPublicHolidayKoreaOutputVo.HolidayVo(
+                        db1TemplatePublicHolidayKorea.holidayDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                        db1TemplatePublicHolidayKorea.holidayName
+                    )
+                )
+            }
+        }
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return TestController.GetPublicHolidayKoreaOutputVo(
+            holidayList
         )
     }
 }
