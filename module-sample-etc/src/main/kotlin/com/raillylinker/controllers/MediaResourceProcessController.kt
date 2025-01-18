@@ -69,8 +69,7 @@ class MediaResourceProcessController(
     fun resizeImage(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: ResizeImageInputVo
     ): ResponseEntity<Resource>? {
         return service.resizeImage(inputVo, httpServletResponse)
@@ -182,8 +181,7 @@ class MediaResourceProcessController(
     fun resizeGifImage(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: ResizeGifImageInputVo
     ): ResponseEntity<Resource>? {
         return service.resizeGifImage(inputVo, httpServletResponse)

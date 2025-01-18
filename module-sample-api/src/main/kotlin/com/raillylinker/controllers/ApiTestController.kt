@@ -546,8 +546,7 @@ class ApiTestController(
     fun postRequestTestWithFormTypeRequestBody(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: PostRequestTestWithFormTypeRequestBodyInputVo
     ): PostRequestTestWithFormTypeRequestBodyOutputVo? {
         return service.postRequestTestWithFormTypeRequestBody(httpServletResponse, inputVo)
@@ -655,8 +654,9 @@ class ApiTestController(
     fun postRequestTestWithMultipartFormTypeRequestBody(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+//        @ModelAttribute
+//        @RequestBody
+        @Parameter
         inputVo: PostRequestTestWithMultipartFormTypeRequestBodyInputVo
     ): PostRequestTestWithMultipartFormTypeRequestBodyOutputVo? {
         return service.postRequestTestWithMultipartFormTypeRequestBody(httpServletResponse, inputVo)
@@ -770,8 +770,7 @@ class ApiTestController(
     fun postRequestTestWithMultipartFormTypeRequestBody2(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: PostRequestTestWithMultipartFormTypeRequestBody2InputVo
     ): PostRequestTestWithMultipartFormTypeRequestBody2OutputVo? {
         return service.postRequestTestWithMultipartFormTypeRequestBody2(httpServletResponse, inputVo)
@@ -887,8 +886,7 @@ class ApiTestController(
     fun postRequestTestWithMultipartFormTypeRequestBody3(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: PostRequestTestWithMultipartFormTypeRequestBody3InputVo
     ): PostRequestTestWithMultipartFormTypeRequestBody3OutputVo? {
         return service.postRequestTestWithMultipartFormTypeRequestBody3(httpServletResponse, inputVo)
@@ -1070,8 +1068,7 @@ class ApiTestController(
     fun postRequestTestWithMultipartFormTypeRequestBody4(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: PostRequestTestWithMultipartFormTypeRequestBody4InputVo
     ): PostRequestTestWithMultipartFormTypeRequestBody4OutputVo? {
         return service.postRequestTestWithMultipartFormTypeRequestBody4(httpServletResponse, inputVo)
@@ -1567,8 +1564,7 @@ class ApiTestController(
     fun uploadToServerTest(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: UploadToServerTestInputVo
     ): UploadToServerTestOutputVo? {
         return service.uploadToServerTest(httpServletResponse, inputVo)

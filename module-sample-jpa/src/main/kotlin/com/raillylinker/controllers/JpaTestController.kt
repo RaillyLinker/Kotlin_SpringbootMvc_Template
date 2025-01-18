@@ -2740,8 +2740,7 @@ class JpaTestController(
     fun ormBlobDatatypeMappingTest(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: OrmBlobDatatypeMappingTestInputVo
     ) {
         service.ormBlobDatatypeMappingTest(httpServletResponse, inputVo)

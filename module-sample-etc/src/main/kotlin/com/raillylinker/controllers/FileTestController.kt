@@ -159,8 +159,7 @@ class FileTestController(
     fun awsS3UploadTest(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: AwsS3UploadTestInputVo
     ): AwsS3UploadTestOutputVo? {
         return service.awsS3UploadTest(httpServletResponse, inputVo)

@@ -50,8 +50,7 @@ class TestController(
     fun sendEmailTest(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: SendEmailTestInputVo
     ) {
         service.sendEmailTest(httpServletResponse, inputVo)
@@ -101,8 +100,7 @@ class TestController(
     fun sendHtmlEmailTest(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: SendHtmlEmailTestInputVo
     ) {
         service.sendHtmlEmailTest(httpServletResponse, inputVo)
@@ -236,8 +234,7 @@ class TestController(
     fun readExcelFileSample(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: ReadExcelFileSampleInputVo
     ): ReadExcelFileSampleOutputVo? {
         return service.readExcelFileSample(httpServletResponse, inputVo)
@@ -365,8 +362,7 @@ class TestController(
     fun multipartHtmlToPdfSample(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: MultipartHtmlToPdfSampleInputVo
     ): ResponseEntity<Resource>? {
         var controllerBasicMapping: String? = null
@@ -519,8 +515,7 @@ class TestController(
     fun checkFontFileInnerName(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: CheckFontFileInnerNameInputVo
     ): CheckFontFileInnerNameOutputVo? {
         return service.checkFontFileInnerName(httpServletResponse, inputVo)

@@ -215,9 +215,9 @@ class AuthController(
     fun doExpireAccessToken(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @PathVariable("memberUid") memberUid: Long,
-        @ModelAttribute
-        @RequestBody
+        @PathVariable("memberUid")
+        memberUid: Long,
+        @Parameter
         inputVo: DoExpireAccessTokenInputVo
     ) {
         service.doExpireAccessToken(httpServletResponse, memberUid, inputVo)
@@ -973,8 +973,7 @@ class AuthController(
     fun joinTheMembershipForTest(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: JoinTheMembershipForTestInputVo
     ) {
         service.joinTheMembershipForTest(httpServletResponse, inputVo)
@@ -1186,8 +1185,7 @@ class AuthController(
     fun joinTheMembershipWithEmail(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: JoinTheMembershipWithEmailInputVo
     ) {
         service.joinTheMembershipWithEmail(httpServletResponse, inputVo)
@@ -1401,8 +1399,7 @@ class AuthController(
     fun joinTheMembershipWithPhoneNumber(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: JoinTheMembershipWithPhoneNumberInputVo
     ) {
         service.joinTheMembershipWithPhoneNumber(httpServletResponse, inputVo)
@@ -1687,8 +1684,7 @@ class AuthController(
     fun joinTheMembershipWithOauth2(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: JoinTheMembershipWithOauth2InputVo
     ) {
         service.joinTheMembershipWithOauth2(httpServletResponse, inputVo)
@@ -3421,8 +3417,7 @@ class AuthController(
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: AddNewProfileInputVo
     ): AddNewProfileOutputVo? {
         return service.addNewProfile(httpServletResponse, authorization!!, inputVo)

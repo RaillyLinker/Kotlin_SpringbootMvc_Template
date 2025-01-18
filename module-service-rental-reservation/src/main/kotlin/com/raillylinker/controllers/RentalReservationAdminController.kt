@@ -964,8 +964,7 @@ class RentalReservationAdminController(
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: PostRentableProductImageInputVo
     ): PostRentableProductImageOutputVo? {
         return service.postRentableProductImage(httpServletResponse, authorization!!, inputVo)
@@ -1783,8 +1782,7 @@ class RentalReservationAdminController(
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
-        @ModelAttribute
-        @RequestBody
+        @Parameter
         inputVo: PostRentableProductStockImageInputVo
     ): PostRentableProductStockImageOutputVo? {
         return service.postRentableProductStockImage(httpServletResponse, authorization!!, inputVo)
