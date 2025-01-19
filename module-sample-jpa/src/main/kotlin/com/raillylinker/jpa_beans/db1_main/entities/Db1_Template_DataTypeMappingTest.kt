@@ -121,18 +121,18 @@ class Db1_Template_DataTypeMappingTest(
     var sample6Bit: Byte,
 
     // 컬렉션 데이터
-    @Column(name = "sample_json", nullable = false, columnDefinition = "JSON")
+    @Column(name = "sample_json", nullable = true, columnDefinition = "JSON")
     @Convert(converter = JsonMapConverter::class)
     @Comment("JSON 타입")
-    var sampleJson: Map<String, Any?>,
+    var sampleJson: Map<String, Any?>?,
     @Column(name = "sample_enum_abc", nullable = false, columnDefinition = "ENUM('A', 'B', 'C')")
     @Enumerated(EnumType.STRING)
     @Comment("A, B, C 중 하나")
     var sampleEnumAbc: EnumAbc,
-    @Column(name = "sample_set_abc", nullable = false, columnDefinition = "SET('A', 'B', 'C')")
+    @Column(name = "sample_set_abc", nullable = true, columnDefinition = "SET('A', 'B', 'C')")
     @Convert(converter = MySqlSetConverter::class)
     @Comment("A, B, C Set 컬렉션")
-    var sampleSetAbc: Set<EnumAbc>,
+    var sampleSetAbc: Set<EnumAbc>?,
 
     // 공간 데이터
     @Column(name = "sample_geometry", nullable = false, columnDefinition = "GEOMETRY")

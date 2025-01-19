@@ -2404,10 +2404,10 @@ class JpaTestController(
         val sample6Bit: Short,
         @Schema(
             description = "JSON 타입",
-            required = true
+            required = false
         )
         @JsonProperty("sampleJson")
-        val sampleJson: SampleJsonVo,
+        val sampleJson: SampleJsonVo?,
         @Schema(
             description = "A, B, C 중 하나",
             required = true,
@@ -2417,11 +2417,11 @@ class JpaTestController(
         val sampleEnumAbc: Db1_Template_DataTypeMappingTest.EnumAbc,
         @Schema(
             description = "A, B, C 중 하나",
-            required = true,
+            required = false,
             example = "[\"A\", \"B\"]"
         )
         @JsonProperty("sampleSetAbc")
-        val sampleSetAbc: Set<Db1_Template_DataTypeMappingTest.EnumAbc>,
+        val sampleSetAbc: Set<Db1_Template_DataTypeMappingTest.EnumAbc>?,
         @Schema(
             description = "GEOMETRY 타입(Point, Line, Polygon 데이터 중 어느것이라도 하나를 넣을 수 있습니다.), 여기선 Point",
             required = true
@@ -2659,10 +2659,10 @@ class JpaTestController(
         val sample6Bit: Short,
         @Schema(
             description = "JSON 타입",
-            required = true
+            required = false
         )
         @JsonProperty("sampleJson")
-        val sampleJson: String,
+        val sampleJson: String?,
         @Schema(
             description = "A, B, C 중 하나",
             required = true,
@@ -2672,11 +2672,11 @@ class JpaTestController(
         val sampleEnumAbc: Db1_Template_DataTypeMappingTest.EnumAbc,
         @Schema(
             description = "A, B, C 중 하나",
-            required = true,
+            required = false,
             example = "[\"A\", \"B\"]"
         )
         @JsonProperty("sampleSetAbc")
-        val sampleSetAbc: Set<Db1_Template_DataTypeMappingTest.EnumAbc>,
+        val sampleSetAbc: Set<Db1_Template_DataTypeMappingTest.EnumAbc>?,
         @Schema(
             description = "GEOMETRY 타입(Point, Line, Polygon 데이터 중 어느것이라도 하나를 넣을 수 있습니다.), 여기선 Point",
             required = true

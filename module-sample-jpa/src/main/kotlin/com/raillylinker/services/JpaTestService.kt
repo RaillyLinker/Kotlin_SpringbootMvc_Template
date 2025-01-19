@@ -1360,7 +1360,11 @@ class JpaTestService(
                 inputVo.sampleOneBit,
                 // 6비트만 추출하는 비트 마스크를 사용 (0x3F는 6비트 1을 의미)
                 (inputVo.sample6Bit.toInt() and 0x3F).toByte(),
-                gson.fromJson(gson.toJsonTree(inputVo.sampleJson), object : TypeToken<Map<String, Any?>>() {}.type),
+                if (inputVo.sampleJson == null) {
+                    null
+                } else {
+                    gson.fromJson(gson.toJsonTree(inputVo.sampleJson), object : TypeToken<Map<String, Any?>>() {}.type)
+                },
                 inputVo.sampleEnumAbc,
                 inputVo.sampleSetAbc,
                 geometryPoint,
@@ -1421,7 +1425,11 @@ class JpaTestService(
             result.sampleLongText,
             result.sampleOneBit,
             result.sample6Bit.toShort(),
-            result.sampleJson.toString(),
+            if (result.sampleJson == null) {
+                null
+            } else {
+                result.sampleJson.toString()
+            },
             result.sampleEnumAbc,
             result.sampleSetAbc,
             OrmDatatypeMappingTestInputVo.PointVo(
