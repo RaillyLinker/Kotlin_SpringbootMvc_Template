@@ -7,6 +7,9 @@ import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 
+// 서로 다른 스키마의 테이블 끼리도 fk 가 가능합니다.
+// 테스트 하기 위해선 이 테이블의 스키마를 다른 스키마로 변경하여 테스트 해보세요.
+
 // Fk 관계 중 OneToOne 은 논리적 삭제를 적용할시 사용이 불가능합니다.
 //     이때는, One to One 역시 Many to One 을 사용하며, 합성 Unique 로 FK 변수를 유니크 처리 한 후,
 //     로직상으로 활성화된 행이 한개 뿐이라고 처리하면 됩니다.
