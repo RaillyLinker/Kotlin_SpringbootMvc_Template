@@ -30,6 +30,7 @@ import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_TotalAuthMember_Repository
 import com.raillylinker.redis_map_components.redis1_main.Redis1_Lock_RentableProductInfo
 import com.raillylinker.redis_map_components.redis1_main.Redis1_Lock_RentableProductStockEarlyReturn
+import com.raillylinker.util_components.CustomUtil
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -60,6 +61,8 @@ class RentalReservationAdminService(
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
 
     private val jwtTokenUtil: JwtTokenUtil,
+
+    private val customUtil: CustomUtil,
 
     private val db1RaillyLinkerCompanyPaymentRepository: Db1_RaillyLinkerCompany_Payment_Repository,
     private val db1RaillyLinkerCompanyPaymentRefundRepository: Db1_RaillyLinkerCompany_PaymentRefund_Repository,
@@ -791,38 +794,10 @@ class RentalReservationAdminService(
             Paths.get("./by_product_files/service_rental_reservation/rentable_product/images")
                 .toAbsolutePath().normalize()
 
-        // 파일 저장 기본 디렉토리 생성
-        Files.createDirectories(saveDirectoryPath)
-
-        // 원본 파일명(with suffix)
-        val multiPartFileNameString = StringUtils.cleanPath(inputVo.thumbnailImage.originalFilename!!)
-
-        // 파일 확장자 구분 위치
-        val fileExtensionSplitIdx = multiPartFileNameString.lastIndexOf('.')
-
-        // 확장자가 없는 파일명
-        val fileNameWithOutExtension: String
-        // 확장자
-        val fileExtension: String
-
-        if (fileExtensionSplitIdx == -1) {
-            fileNameWithOutExtension = multiPartFileNameString
-            fileExtension = ""
-        } else {
-            fileNameWithOutExtension = multiPartFileNameString.substring(0, fileExtensionSplitIdx)
-            fileExtension =
-                multiPartFileNameString.substring(fileExtensionSplitIdx + 1, multiPartFileNameString.length)
-        }
-
-        val savedFileName = "${fileNameWithOutExtension}(${
-            LocalDateTime.now().atZone(ZoneId.systemDefault())
-                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-        }).$fileExtension"
-
-        // multipartFile 을 targetPath 에 저장
-        inputVo.thumbnailImage.transferTo(
-            // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
-            saveDirectoryPath.resolve(savedFileName).normalize()
+        val savedFileName = customUtil.multipartFileLocalSave(
+            saveDirectoryPath,
+            null,
+            inputVo.thumbnailImage
         )
 
         savedProductImageUrl = "${externalAccessAddress}/rental-reservation-admin/product-image/$savedFileName"
@@ -1466,38 +1441,10 @@ class RentalReservationAdminService(
             Paths.get("./by_product_files/service_rental_reservation/rentable_product_stock/images")
                 .toAbsolutePath().normalize()
 
-        // 파일 저장 기본 디렉토리 생성
-        Files.createDirectories(saveDirectoryPath)
-
-        // 원본 파일명(with suffix)
-        val multiPartFileNameString = StringUtils.cleanPath(inputVo.thumbnailImage.originalFilename!!)
-
-        // 파일 확장자 구분 위치
-        val fileExtensionSplitIdx = multiPartFileNameString.lastIndexOf('.')
-
-        // 확장자가 없는 파일명
-        val fileNameWithOutExtension: String
-        // 확장자
-        val fileExtension: String
-
-        if (fileExtensionSplitIdx == -1) {
-            fileNameWithOutExtension = multiPartFileNameString
-            fileExtension = ""
-        } else {
-            fileNameWithOutExtension = multiPartFileNameString.substring(0, fileExtensionSplitIdx)
-            fileExtension =
-                multiPartFileNameString.substring(fileExtensionSplitIdx + 1, multiPartFileNameString.length)
-        }
-
-        val savedFileName = "${fileNameWithOutExtension}(${
-            LocalDateTime.now().atZone(ZoneId.systemDefault())
-                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-        }).$fileExtension"
-
-        // multipartFile 을 targetPath 에 저장
-        inputVo.thumbnailImage.transferTo(
-            // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
-            saveDirectoryPath.resolve(savedFileName).normalize()
+        val savedFileName = customUtil.multipartFileLocalSave(
+            saveDirectoryPath,
+            null,
+            inputVo.thumbnailImage
         )
 
         savedProductStockImageUrl =

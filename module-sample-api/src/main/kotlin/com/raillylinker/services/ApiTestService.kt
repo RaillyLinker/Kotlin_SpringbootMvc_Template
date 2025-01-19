@@ -242,65 +242,17 @@ class ApiTestService(
         // 파일 저장 기본 디렉토리 경로
         val saveDirectoryPath: Path = Paths.get("./by_product_files/sample_api/test").toAbsolutePath().normalize()
 
-        // 파일 저장 기본 디렉토리 생성
-        Files.createDirectories(saveDirectoryPath)
-
-        // 원본 파일명(with suffix)
-        val multiPartFileNameString = StringUtils.cleanPath(inputVo.multipartFile.originalFilename!!)
-
-        val fileNameSplit = customUtil.splitFilePath(multiPartFileNameString)
-
-        // 확장자가 없는 파일명
-        val fileNameWithOutExtension: String = fileNameSplit.fileName
-        // 확장자
-        val fileExtension: String = fileNameSplit.extension ?: ""
-
-        // multipartFile 을 targetPath 에 저장
-        inputVo.multipartFile.transferTo(
-            // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
-            saveDirectoryPath.resolve(
-                "${fileNameWithOutExtension}(${
-                    LocalDateTime.now().atZone(ZoneId.systemDefault())
-                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                }).$fileExtension"
-            ).normalize()
+        customUtil.multipartFileLocalSave(
+            saveDirectoryPath,
+            null,
+            inputVo.multipartFile
         )
 
         if (inputVo.multipartFileNullable != null) {
-            // 원본 파일명(with suffix)
-            val multiPartFileNullableNameString =
-                StringUtils.cleanPath(inputVo.multipartFileNullable.originalFilename!!)
-
-            // 파일 확장자 구분 위치
-            val nullableFileExtensionSplitIdx = multiPartFileNullableNameString.lastIndexOf('.')
-
-            // 확장자가 없는 파일명
-            val nullableFileNameWithOutExtension: String
-            // 확장자
-            val nullableFileExtension: String
-
-            if (nullableFileExtensionSplitIdx == -1) {
-                nullableFileNameWithOutExtension = multiPartFileNullableNameString
-                nullableFileExtension = ""
-            } else {
-                nullableFileNameWithOutExtension =
-                    multiPartFileNullableNameString.substring(0, nullableFileExtensionSplitIdx)
-                nullableFileExtension =
-                    multiPartFileNullableNameString.substring(
-                        nullableFileExtensionSplitIdx + 1,
-                        multiPartFileNullableNameString.length
-                    )
-            }
-
-            // multipartFile 을 targetPath 에 저장
-            inputVo.multipartFileNullable.transferTo(
-                // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
-                saveDirectoryPath.resolve(
-                    "${nullableFileNameWithOutExtension}(${
-                        LocalDateTime.now().atZone(ZoneId.systemDefault())
-                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                    }).$nullableFileExtension"
-                ).normalize()
+            customUtil.multipartFileLocalSave(
+                saveDirectoryPath,
+                null,
+                inputVo.multipartFileNullable
             )
         }
 
@@ -333,64 +285,19 @@ class ApiTestService(
         Files.createDirectories(saveDirectoryPath)
 
         for (multipartFile in inputVo.multipartFileList) {
-            // 원본 파일명(with suffix)
-            val multiPartFileNameString = StringUtils.cleanPath(multipartFile.originalFilename!!)
-
-            val fileNameSplit = customUtil.splitFilePath(multiPartFileNameString)
-
-            // 확장자가 없는 파일명
-            val fileNameWithOutExtension: String = fileNameSplit.fileName
-            // 확장자
-            val fileExtension: String = fileNameSplit.extension ?: ""
-
-            // multipartFile 을 targetPath 에 저장
-            multipartFile.transferTo(
-                // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
-                saveDirectoryPath.resolve(
-                    "${fileNameWithOutExtension}(${
-                        LocalDateTime.now().atZone(ZoneId.systemDefault())
-                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                    }).$fileExtension"
-                ).normalize()
+            customUtil.multipartFileLocalSave(
+                saveDirectoryPath,
+                null,
+                multipartFile
             )
         }
 
         if (inputVo.multipartFileNullableList != null) {
             for (multipartFileNullable in inputVo.multipartFileNullableList) {
-                // 원본 파일명(with suffix)
-                val multiPartFileNullableNameString =
-                    StringUtils.cleanPath(multipartFileNullable.originalFilename!!)
-
-                // 파일 확장자 구분 위치
-                val nullableFileExtensionSplitIdx = multiPartFileNullableNameString.lastIndexOf('.')
-
-                // 확장자가 없는 파일명
-                val nullableFileNameWithOutExtension: String
-                // 확장자
-                val nullableFileExtension: String
-
-                if (nullableFileExtensionSplitIdx == -1) {
-                    nullableFileNameWithOutExtension = multiPartFileNullableNameString
-                    nullableFileExtension = ""
-                } else {
-                    nullableFileNameWithOutExtension =
-                        multiPartFileNullableNameString.substring(0, nullableFileExtensionSplitIdx)
-                    nullableFileExtension =
-                        multiPartFileNullableNameString.substring(
-                            nullableFileExtensionSplitIdx + 1,
-                            multiPartFileNullableNameString.length
-                        )
-                }
-
-                // multipartFile 을 targetPath 에 저장
-                multipartFileNullable.transferTo(
-                    // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
-                    saveDirectoryPath.resolve(
-                        "${nullableFileNameWithOutExtension}(${
-                            LocalDateTime.now().atZone(ZoneId.systemDefault())
-                                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                        }).$nullableFileExtension"
-                    ).normalize()
+                customUtil.multipartFileLocalSave(
+                    saveDirectoryPath,
+                    null,
+                    multipartFileNullable
                 )
             }
         }
@@ -428,66 +335,17 @@ class ApiTestService(
         // 파일 저장 기본 디렉토리 경로
         val saveDirectoryPath: Path = Paths.get("./by_product_files/sample_api/test").toAbsolutePath().normalize()
 
-        // 파일 저장 기본 디렉토리 생성
-        Files.createDirectories(saveDirectoryPath)
-
-        // 원본 파일명(with suffix)
-        val multiPartFileNameString = StringUtils.cleanPath(inputVo.multipartFile.originalFilename!!)
-
-        val fileNameSplit = customUtil.splitFilePath(multiPartFileNameString)
-
-        // 확장자가 없는 파일명
-        val fileNameWithOutExtension: String = fileNameSplit.fileName
-        // 확장자
-        val fileExtension: String = fileNameSplit.extension ?: ""
-
-        // multipartFile 을 targetPath 에 저장
-        inputVo.multipartFile.transferTo(
-            // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
-            saveDirectoryPath.resolve(
-                "${fileNameWithOutExtension}(${
-                    LocalDateTime.now().atZone(ZoneId.systemDefault())
-                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                }).$fileExtension"
-            ).normalize()
+        customUtil.multipartFileLocalSave(
+            saveDirectoryPath,
+            null,
+            inputVo.multipartFile
         )
 
         if (inputVo.multipartFileNullable != null) {
-            // 원본 파일명(with suffix)
-            val multiPartFileNullableNameString =
-                StringUtils.cleanPath(inputVo.multipartFileNullable.originalFilename!!)
-
-            // 파일 확장자 구분 위치
-            val nullableFileExtensionSplitIdx = multiPartFileNullableNameString.lastIndexOf('.')
-
-            // 확장자가 없는 파일명
-            val nullableFileNameWithOutExtension: String
-            // 확장자
-            val nullableFileExtension: String
-
-            if (nullableFileExtensionSplitIdx == -1) {
-                nullableFileNameWithOutExtension = multiPartFileNullableNameString
-                nullableFileExtension = ""
-            } else {
-                nullableFileNameWithOutExtension =
-                    multiPartFileNullableNameString.substring(0, nullableFileExtensionSplitIdx)
-                nullableFileExtension =
-                    multiPartFileNullableNameString.substring(
-                        nullableFileExtensionSplitIdx + 1,
-                        multiPartFileNullableNameString.length
-                    )
-            }
-
-            // multipartFile 을 targetPath 에 저장
-            inputVo.multipartFileNullable.transferTo(
-                // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
-                saveDirectoryPath.resolve(
-                    "${nullableFileNameWithOutExtension}(${
-                        LocalDateTime.now().format(
-                            DateTimeFormatter.ofPattern("yyyy-MM-dd-HH_mm-ss-SSS")
-                        )
-                    }).$nullableFileExtension"
-                ).normalize()
+            customUtil.multipartFileLocalSave(
+                saveDirectoryPath,
+                null,
+                inputVo.multipartFileNullable
             )
         }
 
@@ -516,66 +374,17 @@ class ApiTestService(
         // 파일 저장 기본 디렉토리 경로
         val saveDirectoryPath: Path = Paths.get("./by_product_files/sample_api/test").toAbsolutePath().normalize()
 
-        // 파일 저장 기본 디렉토리 생성
-        Files.createDirectories(saveDirectoryPath)
-
-        // 원본 파일명(with suffix)
-        val multiPartFileNameString = StringUtils.cleanPath(inputVo.multipartFile.originalFilename!!)
-
-        val fileNameSplit = customUtil.splitFilePath(multiPartFileNameString)
-
-        // 확장자가 없는 파일명
-        val fileNameWithOutExtension: String = fileNameSplit.fileName
-        // 확장자
-        val fileExtension: String = fileNameSplit.extension ?: ""
-
-        // multipartFile 을 targetPath 에 저장
-        inputVo.multipartFile.transferTo(
-            // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
-            saveDirectoryPath.resolve(
-                "${fileNameWithOutExtension}(${
-                    LocalDateTime.now().atZone(ZoneId.systemDefault())
-                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                }).$fileExtension"
-            ).normalize()
+        customUtil.multipartFileLocalSave(
+            saveDirectoryPath,
+            null,
+            inputVo.multipartFile
         )
 
         if (inputVo.multipartFileNullable != null) {
-            // 원본 파일명(with suffix)
-            val multiPartFileNullableNameString =
-                StringUtils.cleanPath(inputVo.multipartFileNullable.originalFilename!!)
-
-            // 파일 확장자 구분 위치
-            val nullableFileExtensionSplitIdx = multiPartFileNullableNameString.lastIndexOf('.')
-
-            // 확장자가 없는 파일명
-            val nullableFileNameWithOutExtension: String
-            // 확장자
-            val nullableFileExtension: String
-
-            if (nullableFileExtensionSplitIdx == -1) {
-                nullableFileNameWithOutExtension = multiPartFileNullableNameString
-                nullableFileExtension = ""
-            } else {
-                nullableFileNameWithOutExtension =
-                    multiPartFileNullableNameString.substring(0, nullableFileExtensionSplitIdx)
-                nullableFileExtension =
-                    multiPartFileNullableNameString.substring(
-                        nullableFileExtensionSplitIdx + 1,
-                        multiPartFileNullableNameString.length
-                    )
-            }
-
-            // multipartFile 을 targetPath 에 저장
-            inputVo.multipartFileNullable.transferTo(
-                // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
-                saveDirectoryPath.resolve(
-                    "${nullableFileNameWithOutExtension}(${
-                        LocalDateTime.now().format(
-                            DateTimeFormatter.ofPattern("yyyy-MM-dd-HH_mm-ss-SSS")
-                        )
-                    }).$nullableFileExtension"
-                ).normalize()
+            customUtil.multipartFileLocalSave(
+                saveDirectoryPath,
+                null,
+                inputVo.multipartFileNullable
             )
         }
 
@@ -828,28 +637,10 @@ class ApiTestService(
         // 파일 저장 기본 디렉토리 경로
         val saveDirectoryPath: Path = Paths.get("./by_product_files/sample_api/test").toAbsolutePath().normalize()
 
-        // 파일 저장 기본 디렉토리 생성
-        Files.createDirectories(saveDirectoryPath)
-
-        // 원본 파일명(with suffix)
-        val multiPartFileNameString = StringUtils.cleanPath(inputVo.multipartFile.originalFilename!!)
-
-        val fileNameSplit = customUtil.splitFilePath(multiPartFileNameString)
-
-        // 확장자가 없는 파일명
-        val fileNameWithOutExtension: String = fileNameSplit.fileName
-        // 확장자
-        val fileExtension: String = fileNameSplit.extension ?: ""
-
-        val savedFileName = "${fileNameWithOutExtension}(${
-            LocalDateTime.now().atZone(ZoneId.systemDefault())
-                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-        }).$fileExtension"
-
-        // multipartFile 을 targetPath 에 저장
-        inputVo.multipartFile.transferTo(
-            // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
-            saveDirectoryPath.resolve(savedFileName).normalize()
+        val savedFileName = customUtil.multipartFileLocalSave(
+            saveDirectoryPath,
+            null,
+            inputVo.multipartFile
         )
 
         httpServletResponse.status = HttpStatus.OK.value()

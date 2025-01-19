@@ -1,7 +1,5 @@
 package com.raillylinker.services
 
-import com.raillylinker.util_components.EmailSender
-import com.raillylinker.util_components.NaverSmsSenderComponent
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.jpa_beans.db1_main.entities.*
 import com.raillylinker.jpa_beans.db1_main.repositories.*
@@ -16,8 +14,7 @@ import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.C
 import com.raillylinker.controllers.AuthController
 import com.raillylinker.jpa_beans.db1_main.repositories_dsl.Db1_RaillyLinkerCompany_TotalAuthMemberLockHistory_RepositoryDsl
 import com.raillylinker.kafka_components.producers.Kafka1MainProducer
-import com.raillylinker.util_components.AppleOAuthHelperUtil
-import com.raillylinker.util_components.JwtTokenUtil
+import com.raillylinker.util_components.*
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -52,6 +49,7 @@ class AuthService(
     private val naverSmsSenderComponent: NaverSmsSenderComponent,
     private val jwtTokenUtil: JwtTokenUtil,
     private val appleOAuthHelperUtil: AppleOAuthHelperUtil,
+    private val customUtil: CustomUtil,
 
     // (Redis Map)
     private val redis1MapTotalAuthForceExpireAuthorizationSet: Redis1_Map_TotalAuthForceExpireAuthorizationSet,
@@ -294,7 +292,10 @@ class AuthService(
 
         // 계정 정지 검증
         val lockList =
-            Db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl.findAllNowActivateMemberLockInfo(memberData.uid!!, LocalDateTime.now())
+            Db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl.findAllNowActivateMemberLockInfo(
+                memberData.uid!!,
+                LocalDateTime.now()
+            )
         if (lockList.isNotEmpty()) {
             // 계정 정지 당한 상황
             val lockedOutputList: MutableList<AuthController.LoginOutputVo.LockedOutput> =
@@ -1493,38 +1494,10 @@ class AuthService(
             val saveDirectoryPath: Path =
                 Paths.get("./by_product_files/auth/member/profile").toAbsolutePath().normalize()
 
-            // 파일 저장 기본 디렉토리 생성
-            Files.createDirectories(saveDirectoryPath)
-
-            // 원본 파일명(with suffix)
-            val multiPartFileNameString = StringUtils.cleanPath(inputVo.profileImageFile.originalFilename!!)
-
-            // 파일 확장자 구분 위치
-            val fileExtensionSplitIdx = multiPartFileNameString.lastIndexOf('.')
-
-            // 확장자가 없는 파일명
-            val fileNameWithOutExtension: String
-            // 확장자
-            val fileExtension: String
-
-            if (fileExtensionSplitIdx == -1) {
-                fileNameWithOutExtension = multiPartFileNameString
-                fileExtension = ""
-            } else {
-                fileNameWithOutExtension = multiPartFileNameString.substring(0, fileExtensionSplitIdx)
-                fileExtension =
-                    multiPartFileNameString.substring(fileExtensionSplitIdx + 1, multiPartFileNameString.length)
-            }
-
-            val savedFileName = "${fileNameWithOutExtension}(${
-                LocalDateTime.now().atZone(ZoneId.systemDefault())
-                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-            }).$fileExtension"
-
-            // multipartFile 을 targetPath 에 저장
-            inputVo.profileImageFile.transferTo(
-                // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
-                saveDirectoryPath.resolve(savedFileName).normalize()
+            val savedFileName = customUtil.multipartFileLocalSave(
+                saveDirectoryPath,
+                null,
+                inputVo.profileImageFile
             )
 
             savedProfileImageUrl = "${externalAccessAddress}/auth/member-profile/$savedFileName"
@@ -1766,38 +1739,10 @@ class AuthService(
                 val saveDirectoryPath: Path =
                     Paths.get("./by_product_files/auth/member/profile").toAbsolutePath().normalize()
 
-                // 파일 저장 기본 디렉토리 생성
-                Files.createDirectories(saveDirectoryPath)
-
-                // 원본 파일명(with suffix)
-                val multiPartFileNameString = StringUtils.cleanPath(inputVo.profileImageFile.originalFilename!!)
-
-                // 파일 확장자 구분 위치
-                val fileExtensionSplitIdx = multiPartFileNameString.lastIndexOf('.')
-
-                // 확장자가 없는 파일명
-                val fileNameWithOutExtension: String
-                // 확장자
-                val fileExtension: String
-
-                if (fileExtensionSplitIdx == -1) {
-                    fileNameWithOutExtension = multiPartFileNameString
-                    fileExtension = ""
-                } else {
-                    fileNameWithOutExtension = multiPartFileNameString.substring(0, fileExtensionSplitIdx)
-                    fileExtension =
-                        multiPartFileNameString.substring(fileExtensionSplitIdx + 1, multiPartFileNameString.length)
-                }
-
-                val savedFileName = "${fileNameWithOutExtension}(${
-                    LocalDateTime.now().atZone(ZoneId.systemDefault())
-                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                }).$fileExtension"
-
-                // multipartFile 을 targetPath 에 저장
-                inputVo.profileImageFile.transferTo(
-                    // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
-                    saveDirectoryPath.resolve(savedFileName).normalize()
+                val savedFileName = customUtil.multipartFileLocalSave(
+                    saveDirectoryPath,
+                    null,
+                    inputVo.profileImageFile
                 )
 
                 savedProfileImageUrl = "${externalAccessAddress}/auth/member-profile/$savedFileName"
@@ -2031,38 +1976,10 @@ class AuthService(
                 val saveDirectoryPath: Path =
                     Paths.get("./by_product_files/auth/member/profile").toAbsolutePath().normalize()
 
-                // 파일 저장 기본 디렉토리 생성
-                Files.createDirectories(saveDirectoryPath)
-
-                // 원본 파일명(with suffix)
-                val multiPartFileNameString = StringUtils.cleanPath(inputVo.profileImageFile.originalFilename!!)
-
-                // 파일 확장자 구분 위치
-                val fileExtensionSplitIdx = multiPartFileNameString.lastIndexOf('.')
-
-                // 확장자가 없는 파일명
-                val fileNameWithOutExtension: String
-                // 확장자
-                val fileExtension: String
-
-                if (fileExtensionSplitIdx == -1) {
-                    fileNameWithOutExtension = multiPartFileNameString
-                    fileExtension = ""
-                } else {
-                    fileNameWithOutExtension = multiPartFileNameString.substring(0, fileExtensionSplitIdx)
-                    fileExtension =
-                        multiPartFileNameString.substring(fileExtensionSplitIdx + 1, multiPartFileNameString.length)
-                }
-
-                val savedFileName = "${fileNameWithOutExtension}(${
-                    LocalDateTime.now().atZone(ZoneId.systemDefault())
-                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                }).$fileExtension"
-
-                // multipartFile 을 targetPath 에 저장
-                inputVo.profileImageFile.transferTo(
-                    // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
-                    saveDirectoryPath.resolve(savedFileName).normalize()
+                val savedFileName = customUtil.multipartFileLocalSave(
+                    saveDirectoryPath,
+                    null,
+                    inputVo.profileImageFile
                 )
 
                 savedProfileImageUrl = "${externalAccessAddress}/auth/member-profile/$savedFileName"
@@ -2464,38 +2381,10 @@ class AuthService(
                 val saveDirectoryPath: Path =
                     Paths.get("./by_product_files/auth/member/profile").toAbsolutePath().normalize()
 
-                // 파일 저장 기본 디렉토리 생성
-                Files.createDirectories(saveDirectoryPath)
-
-                // 원본 파일명(with suffix)
-                val multiPartFileNameString = StringUtils.cleanPath(inputVo.profileImageFile.originalFilename!!)
-
-                // 파일 확장자 구분 위치
-                val fileExtensionSplitIdx = multiPartFileNameString.lastIndexOf('.')
-
-                // 확장자가 없는 파일명
-                val fileNameWithOutExtension: String
-                // 확장자
-                val fileExtension: String
-
-                if (fileExtensionSplitIdx == -1) {
-                    fileNameWithOutExtension = multiPartFileNameString
-                    fileExtension = ""
-                } else {
-                    fileNameWithOutExtension = multiPartFileNameString.substring(0, fileExtensionSplitIdx)
-                    fileExtension =
-                        multiPartFileNameString.substring(fileExtensionSplitIdx + 1, multiPartFileNameString.length)
-                }
-
-                val savedFileName = "${fileNameWithOutExtension}(${
-                    LocalDateTime.now().atZone(ZoneId.systemDefault())
-                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                }).$fileExtension"
-
-                // multipartFile 을 targetPath 에 저장
-                inputVo.profileImageFile.transferTo(
-                    // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
-                    saveDirectoryPath.resolve(savedFileName).normalize()
+                val savedFileName = customUtil.multipartFileLocalSave(
+                    saveDirectoryPath,
+                    null,
+                    inputVo.profileImageFile
                 )
 
                 savedProfileImageUrl = "${externalAccessAddress}/auth/member-profile/$savedFileName"
@@ -4412,38 +4301,10 @@ class AuthService(
         // 파일 저장 기본 디렉토리 경로
         val saveDirectoryPath: Path = Paths.get("./by_product_files/auth/member/profile").toAbsolutePath().normalize()
 
-        // 파일 저장 기본 디렉토리 생성
-        Files.createDirectories(saveDirectoryPath)
-
-        // 원본 파일명(with suffix)
-        val multiPartFileNameString = StringUtils.cleanPath(inputVo.profileImageFile.originalFilename!!)
-
-        // 파일 확장자 구분 위치
-        val fileExtensionSplitIdx = multiPartFileNameString.lastIndexOf('.')
-
-        // 확장자가 없는 파일명
-        val fileNameWithOutExtension: String
-        // 확장자
-        val fileExtension: String
-
-        if (fileExtensionSplitIdx == -1) {
-            fileNameWithOutExtension = multiPartFileNameString
-            fileExtension = ""
-        } else {
-            fileNameWithOutExtension = multiPartFileNameString.substring(0, fileExtensionSplitIdx)
-            fileExtension =
-                multiPartFileNameString.substring(fileExtensionSplitIdx + 1, multiPartFileNameString.length)
-        }
-
-        val savedFileName = "${fileNameWithOutExtension}(${
-            LocalDateTime.now().atZone(ZoneId.systemDefault())
-                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-        }).$fileExtension"
-
-        // multipartFile 을 targetPath 에 저장
-        inputVo.profileImageFile.transferTo(
-            // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
-            saveDirectoryPath.resolve(savedFileName).normalize()
+        val savedFileName = customUtil.multipartFileLocalSave(
+            saveDirectoryPath,
+            null,
+            inputVo.profileImageFile
         )
 
         savedProfileImageUrl = "${externalAccessAddress}/auth/member-profile/$savedFileName"
