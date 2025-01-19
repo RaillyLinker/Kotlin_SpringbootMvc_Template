@@ -1,0 +1,853 @@
+[ls] [2025_01_19_T_19_11_50_184_KST] [INFO ] [HV000001: Hibernate Validator 8.0.1.Final] [le]
+[ls] [2025_01_19_T_19_11_50_234_KST] [INFO ] [Starting ModuleTest using Java 21.0.5 with PID 22232 (started by raill in C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc)] [le]
+[ls] [2025_01_19_T_19_11_50_235_KST] [INFO ] [No active profile set, falling back to 3 default profiles: "local12000", "local", "port12000"] [le]
+[ls] [2025_01_19_T_19_11_51_672_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_11_51_674_KST] [INFO ] [Bootstrapping Spring Data JPA repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_11_51_693_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_11_51_694_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_11_51_917_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_11_51_918_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_11_51_932_KST] [INFO ] [Finished Spring Data repository scanning in 243 ms. Found 3 JPA repository interfaces.] [le]
+[ls] [2025_01_19_T_19_11_53_367_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_11_53_369_KST] [INFO ] [Bootstrapping Spring Data Redis repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_11_53_458_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_PublicHolidayKorea_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_11_53_461_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestBank_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_11_53_462_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestMap_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_11_53_462_KST] [INFO ] [Finished Spring Data repository scanning in 69 ms. Found 0 Redis repository interfaces.] [le]
+[ls] [2025_01_19_T_19_11_55_128_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\entities] does not exist] [le]
+[ls] [2025_01_19_T_19_11_55_163_KST] [INFO ] [HHH000204: Processing PersistenceUnitInfo [name: default]] [le]
+[ls] [2025_01_19_T_19_11_55_290_KST] [INFO ] [HHH000412: Hibernate ORM core version 6.6.2.Final] [le]
+[ls] [2025_01_19_T_19_11_55_352_KST] [INFO ] [HHH000026: Second-level cache disabled] [le]
+[ls] [2025_01_19_T_19_11_55_871_KST] [INFO ] [No LoadTimeWeaver setup: ignoring JPA class transformer] [le]
+[ls] [2025_01_19_T_19_11_55_918_KST] [INFO ] [HikariPool-1 - Starting...] [le]
+[ls] [2025_01_19_T_19_11_56_140_KST] [INFO ] [HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@69c7fe78] [le]
+[ls] [2025_01_19_T_19_11_56_143_KST] [INFO ] [HikariPool-1 - Start completed.] [le]
+[ls] [2025_01_19_T_19_11_56_210_KST] [WARN ] [HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)] [le]
+[ls] [2025_01_19_T_19_11_56_237_KST] [INFO ] [HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 9.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown] [le]
+[ls] [2025_01_19_T_19_11_57_576_KST] [INFO ] [HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)] [le]
+[ls] [2025_01_19_T_19_11_57_663_KST] [INFO ] [Initialized JPA EntityManagerFactory for persistence unit 'default'] [le]
+[ls] [2025_01_19_T_19_11_59_968_KST] [INFO ] [Hibernate is in classpath; If applicable, HQL parser will be used.] [le]
+[ls] [2025_01_19_T_19_12_03_356_KST] [INFO ] [Exposing 14 endpoints beneath base path '/actuator'] [le]
+[ls] [2025_01_19_T_19_12_03_498_KST] [INFO ] [Started ModuleTest in 13.942 seconds (process running for 16.204)] [le]
+[ls] [2025_01_19_T_19_12_04_497_KST] [INFO ] [Closing JPA EntityManagerFactory for persistence unit 'default'] [le]
+[ls] [2025_01_19_T_19_12_04_500_KST] [INFO ] [HikariPool-1 - Shutdown initiated...] [le]
+[ls] [2025_01_19_T_19_12_04_515_KST] [INFO ] [HikariPool-1 - Shutdown completed.] [le]
+[ls] [2025_01_19_T_19_14_13_073_KST] [INFO ] [HV000001: Hibernate Validator 8.0.1.Final] [le]
+[ls] [2025_01_19_T_19_14_13_131_KST] [INFO ] [Starting ModuleTest using Java 21.0.5 with PID 23216 (started by raill in C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc)] [le]
+[ls] [2025_01_19_T_19_14_13_133_KST] [INFO ] [No active profile set, falling back to 3 default profiles: "local12000", "local", "port12000"] [le]
+[ls] [2025_01_19_T_19_14_14_688_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_14_14_688_KST] [INFO ] [Bootstrapping Spring Data JPA repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_14_14_714_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_14_14_715_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_14_14_916_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_14_14_917_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_14_14_932_KST] [INFO ] [Finished Spring Data repository scanning in 224 ms. Found 3 JPA repository interfaces.] [le]
+[ls] [2025_01_19_T_19_14_16_432_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_14_16_435_KST] [INFO ] [Bootstrapping Spring Data Redis repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_14_16_510_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_PublicHolidayKorea_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_14_16_512_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestBank_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_14_16_513_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestMap_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_14_16_513_KST] [INFO ] [Finished Spring Data repository scanning in 56 ms. Found 0 Redis repository interfaces.] [le]
+[ls] [2025_01_19_T_19_14_18_279_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\entities] does not exist] [le]
+[ls] [2025_01_19_T_19_14_18_319_KST] [INFO ] [HHH000204: Processing PersistenceUnitInfo [name: default]] [le]
+[ls] [2025_01_19_T_19_14_18_444_KST] [INFO ] [HHH000412: Hibernate ORM core version 6.6.2.Final] [le]
+[ls] [2025_01_19_T_19_14_18_522_KST] [INFO ] [HHH000026: Second-level cache disabled] [le]
+[ls] [2025_01_19_T_19_14_19_177_KST] [INFO ] [No LoadTimeWeaver setup: ignoring JPA class transformer] [le]
+[ls] [2025_01_19_T_19_14_19_250_KST] [INFO ] [HikariPool-1 - Starting...] [le]
+[ls] [2025_01_19_T_19_14_19_616_KST] [INFO ] [HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@21139739] [le]
+[ls] [2025_01_19_T_19_14_19_618_KST] [INFO ] [HikariPool-1 - Start completed.] [le]
+[ls] [2025_01_19_T_19_14_19_704_KST] [WARN ] [HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)] [le]
+[ls] [2025_01_19_T_19_14_19_743_KST] [INFO ] [HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 9.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown] [le]
+[ls] [2025_01_19_T_19_14_21_291_KST] [INFO ] [HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)] [le]
+[ls] [2025_01_19_T_19_14_21_374_KST] [INFO ] [Initialized JPA EntityManagerFactory for persistence unit 'default'] [le]
+[ls] [2025_01_19_T_19_14_23_566_KST] [INFO ] [Hibernate is in classpath; If applicable, HQL parser will be used.] [le]
+[ls] [2025_01_19_T_19_14_27_172_KST] [INFO ] [Exposing 14 endpoints beneath base path '/actuator'] [le]
+[ls] [2025_01_19_T_19_14_27_316_KST] [INFO ] [Started ModuleTest in 15.02 seconds (process running for 17.504)] [le]
+[ls] [2025_01_19_T_19_14_28_196_KST] [INFO ] [Closing JPA EntityManagerFactory for persistence unit 'default'] [le]
+[ls] [2025_01_19_T_19_14_28_198_KST] [INFO ] [HikariPool-1 - Shutdown initiated...] [le]
+[ls] [2025_01_19_T_19_14_28_208_KST] [INFO ] [HikariPool-1 - Shutdown completed.] [le]
+[ls] [2025_01_19_T_19_16_32_697_KST] [INFO ] [HV000001: Hibernate Validator 8.0.1.Final] [le]
+[ls] [2025_01_19_T_19_16_32_755_KST] [INFO ] [Starting ModuleTest using Java 21.0.5 with PID 14404 (started by raill in C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc)] [le]
+[ls] [2025_01_19_T_19_16_32_756_KST] [INFO ] [No active profile set, falling back to 3 default profiles: "local12000", "local", "port12000"] [le]
+[ls] [2025_01_19_T_19_16_34_449_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_16_34_449_KST] [INFO ] [Bootstrapping Spring Data JPA repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_16_34_482_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_16_34_483_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_16_34_707_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_16_34_707_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_16_34_723_KST] [INFO ] [Finished Spring Data repository scanning in 251 ms. Found 3 JPA repository interfaces.] [le]
+[ls] [2025_01_19_T_19_16_42_534_KST] [INFO ] [HV000001: Hibernate Validator 8.0.1.Final] [le]
+[ls] [2025_01_19_T_19_16_42_593_KST] [INFO ] [Starting ModuleTest using Java 21.0.5 with PID 17508 (started by raill in C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc)] [le]
+[ls] [2025_01_19_T_19_16_42_594_KST] [INFO ] [No active profile set, falling back to 3 default profiles: "local12000", "local", "port12000"] [le]
+[ls] [2025_01_19_T_19_16_44_061_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_16_44_062_KST] [INFO ] [Bootstrapping Spring Data JPA repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_16_44_082_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_16_44_084_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_16_44_352_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_16_44_353_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_16_44_373_KST] [INFO ] [Finished Spring Data repository scanning in 296 ms. Found 3 JPA repository interfaces.] [le]
+[ls] [2025_01_19_T_19_16_45_977_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_16_45_981_KST] [INFO ] [Bootstrapping Spring Data Redis repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_16_46_069_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_PublicHolidayKorea_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_16_46_072_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestBank_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_16_46_073_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestMap_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_16_46_073_KST] [INFO ] [Finished Spring Data repository scanning in 67 ms. Found 0 Redis repository interfaces.] [le]
+[ls] [2025_01_19_T_19_16_48_050_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\entities] does not exist] [le]
+[ls] [2025_01_19_T_19_16_48_123_KST] [INFO ] [HHH000204: Processing PersistenceUnitInfo [name: default]] [le]
+[ls] [2025_01_19_T_19_16_48_235_KST] [INFO ] [HHH000412: Hibernate ORM core version 6.6.2.Final] [le]
+[ls] [2025_01_19_T_19_16_48_308_KST] [INFO ] [HHH000026: Second-level cache disabled] [le]
+[ls] [2025_01_19_T_19_16_48_862_KST] [INFO ] [No LoadTimeWeaver setup: ignoring JPA class transformer] [le]
+[ls] [2025_01_19_T_19_16_48_919_KST] [INFO ] [HikariPool-1 - Starting...] [le]
+[ls] [2025_01_19_T_19_16_49_166_KST] [INFO ] [HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1e40edb7] [le]
+[ls] [2025_01_19_T_19_16_49_169_KST] [INFO ] [HikariPool-1 - Start completed.] [le]
+[ls] [2025_01_19_T_19_16_49_262_KST] [WARN ] [HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)] [le]
+[ls] [2025_01_19_T_19_16_49_298_KST] [INFO ] [HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 9.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown] [le]
+[ls] [2025_01_19_T_19_16_50_816_KST] [INFO ] [HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)] [le]
+[ls] [2025_01_19_T_19_16_50_923_KST] [INFO ] [Initialized JPA EntityManagerFactory for persistence unit 'default'] [le]
+[ls] [2025_01_19_T_19_16_52_963_KST] [INFO ] [Hibernate is in classpath; If applicable, HQL parser will be used.] [le]
+[ls] [2025_01_19_T_19_16_56_451_KST] [INFO ] [Exposing 14 endpoints beneath base path '/actuator'] [le]
+[ls] [2025_01_19_T_19_16_56_596_KST] [INFO ] [Started ModuleTest in 14.81 seconds (process running for 17.198)] [le]
+[ls] [2025_01_19_T_19_16_57_445_KST] [INFO ] [Closing JPA EntityManagerFactory for persistence unit 'default'] [le]
+[ls] [2025_01_19_T_19_16_57_447_KST] [INFO ] [HikariPool-1 - Shutdown initiated...] [le]
+[ls] [2025_01_19_T_19_16_57_460_KST] [INFO ] [HikariPool-1 - Shutdown completed.] [le]
+[ls] [2025_01_19_T_19_21_01_807_KST] [INFO ] [HV000001: Hibernate Validator 8.0.1.Final] [le]
+[ls] [2025_01_19_T_19_21_01_870_KST] [INFO ] [Starting ModuleTest using Java 21.0.5 with PID 21436 (started by raill in C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc)] [le]
+[ls] [2025_01_19_T_19_21_01_871_KST] [INFO ] [No active profile set, falling back to 3 default profiles: "local12000", "local", "port12000"] [le]
+[ls] [2025_01_19_T_19_21_03_408_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_21_03_409_KST] [INFO ] [Bootstrapping Spring Data JPA repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_21_03_439_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_21_03_440_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_21_03_671_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_21_03_672_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_21_03_691_KST] [INFO ] [Finished Spring Data repository scanning in 261 ms. Found 3 JPA repository interfaces.] [le]
+[ls] [2025_01_19_T_19_21_05_448_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_21_05_452_KST] [INFO ] [Bootstrapping Spring Data Redis repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_21_05_529_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_PublicHolidayKorea_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_21_05_532_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestBank_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_21_05_532_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestMap_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_21_05_533_KST] [INFO ] [Finished Spring Data repository scanning in 59 ms. Found 0 Redis repository interfaces.] [le]
+[ls] [2025_01_19_T_19_21_07_299_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\entities] does not exist] [le]
+[ls] [2025_01_19_T_19_21_07_351_KST] [INFO ] [HHH000204: Processing PersistenceUnitInfo [name: default]] [le]
+[ls] [2025_01_19_T_19_21_07_510_KST] [INFO ] [HHH000412: Hibernate ORM core version 6.6.2.Final] [le]
+[ls] [2025_01_19_T_19_21_07_588_KST] [INFO ] [HHH000026: Second-level cache disabled] [le]
+[ls] [2025_01_19_T_19_21_08_203_KST] [INFO ] [No LoadTimeWeaver setup: ignoring JPA class transformer] [le]
+[ls] [2025_01_19_T_19_21_08_264_KST] [INFO ] [HikariPool-1 - Starting...] [le]
+[ls] [2025_01_19_T_19_21_08_515_KST] [INFO ] [HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5ce045e3] [le]
+[ls] [2025_01_19_T_19_21_08_518_KST] [INFO ] [HikariPool-1 - Start completed.] [le]
+[ls] [2025_01_19_T_19_21_08_601_KST] [WARN ] [HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)] [le]
+[ls] [2025_01_19_T_19_21_08_636_KST] [INFO ] [HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 9.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown] [le]
+[ls] [2025_01_19_T_19_21_10_190_KST] [INFO ] [HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)] [le]
+[ls] [2025_01_19_T_19_21_10_278_KST] [INFO ] [Initialized JPA EntityManagerFactory for persistence unit 'default'] [le]
+[ls] [2025_01_19_T_19_21_12_496_KST] [INFO ] [Hibernate is in classpath; If applicable, HQL parser will be used.] [le]
+[ls] [2025_01_19_T_19_21_16_193_KST] [INFO ] [Exposing 14 endpoints beneath base path '/actuator'] [le]
+[ls] [2025_01_19_T_19_21_16_346_KST] [INFO ] [Started ModuleTest in 15.307 seconds (process running for 17.975)] [le]
+[ls] [2025_01_19_T_19_21_17_247_KST] [INFO ] [Closing JPA EntityManagerFactory for persistence unit 'default'] [le]
+[ls] [2025_01_19_T_19_21_17_250_KST] [INFO ] [HikariPool-1 - Shutdown initiated...] [le]
+[ls] [2025_01_19_T_19_21_17_263_KST] [INFO ] [HikariPool-1 - Shutdown completed.] [le]
+[ls] [2025_01_19_T_19_21_41_493_KST] [INFO ] [HV000001: Hibernate Validator 8.0.1.Final] [le]
+[ls] [2025_01_19_T_19_21_41_550_KST] [INFO ] [Starting ModuleTest using Java 21.0.5 with PID 7976 (started by raill in C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc)] [le]
+[ls] [2025_01_19_T_19_21_41_551_KST] [INFO ] [No active profile set, falling back to 3 default profiles: "local12000", "local", "port12000"] [le]
+[ls] [2025_01_19_T_19_21_43_075_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_21_43_076_KST] [INFO ] [Bootstrapping Spring Data JPA repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_21_43_104_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_21_43_104_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_21_43_319_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_21_43_321_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_21_43_340_KST] [INFO ] [Finished Spring Data repository scanning in 244 ms. Found 3 JPA repository interfaces.] [le]
+[ls] [2025_01_19_T_19_21_45_131_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_21_45_134_KST] [INFO ] [Bootstrapping Spring Data Redis repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_21_45_214_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_PublicHolidayKorea_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_21_45_216_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestBank_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_21_45_217_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestMap_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_21_45_218_KST] [INFO ] [Finished Spring Data repository scanning in 61 ms. Found 0 Redis repository interfaces.] [le]
+[ls] [2025_01_19_T_19_21_47_152_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\entities] does not exist] [le]
+[ls] [2025_01_19_T_19_21_47_195_KST] [INFO ] [HHH000204: Processing PersistenceUnitInfo [name: default]] [le]
+[ls] [2025_01_19_T_19_21_47_326_KST] [INFO ] [HHH000412: Hibernate ORM core version 6.6.2.Final] [le]
+[ls] [2025_01_19_T_19_21_47_397_KST] [INFO ] [HHH000026: Second-level cache disabled] [le]
+[ls] [2025_01_19_T_19_21_48_049_KST] [INFO ] [No LoadTimeWeaver setup: ignoring JPA class transformer] [le]
+[ls] [2025_01_19_T_19_21_48_122_KST] [INFO ] [HikariPool-1 - Starting...] [le]
+[ls] [2025_01_19_T_19_21_48_424_KST] [INFO ] [HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4922dc84] [le]
+[ls] [2025_01_19_T_19_21_48_427_KST] [INFO ] [HikariPool-1 - Start completed.] [le]
+[ls] [2025_01_19_T_19_21_48_511_KST] [WARN ] [HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)] [le]
+[ls] [2025_01_19_T_19_21_48_543_KST] [INFO ] [HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 9.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown] [le]
+[ls] [2025_01_19_T_19_21_50_455_KST] [INFO ] [HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)] [le]
+[ls] [2025_01_19_T_19_21_50_546_KST] [INFO ] [Initialized JPA EntityManagerFactory for persistence unit 'default'] [le]
+[ls] [2025_01_19_T_19_21_52_843_KST] [INFO ] [Hibernate is in classpath; If applicable, HQL parser will be used.] [le]
+[ls] [2025_01_19_T_19_21_56_568_KST] [INFO ] [Exposing 14 endpoints beneath base path '/actuator'] [le]
+[ls] [2025_01_19_T_19_21_56_719_KST] [INFO ] [Started ModuleTest in 15.991 seconds (process running for 18.498)] [le]
+[ls] [2025_01_19_T_19_21_57_667_KST] [INFO ] [Closing JPA EntityManagerFactory for persistence unit 'default'] [le]
+[ls] [2025_01_19_T_19_21_57_670_KST] [INFO ] [HikariPool-1 - Shutdown initiated...] [le]
+[ls] [2025_01_19_T_19_21_57_684_KST] [INFO ] [HikariPool-1 - Shutdown completed.] [le]
+[ls] [2025_01_19_T_19_22_13_692_KST] [INFO ] [HV000001: Hibernate Validator 8.0.1.Final] [le]
+[ls] [2025_01_19_T_19_22_13_750_KST] [INFO ] [Starting ModuleTest using Java 21.0.5 with PID 17284 (started by raill in C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc)] [le]
+[ls] [2025_01_19_T_19_22_13_752_KST] [INFO ] [No active profile set, falling back to 3 default profiles: "local12000", "local", "port12000"] [le]
+[ls] [2025_01_19_T_19_22_15_474_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_22_15_474_KST] [INFO ] [Bootstrapping Spring Data JPA repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_22_15_503_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_22_15_504_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_22_15_738_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_22_15_739_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_22_15_755_KST] [INFO ] [Finished Spring Data repository scanning in 259 ms. Found 3 JPA repository interfaces.] [le]
+[ls] [2025_01_19_T_19_22_17_484_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_22_17_486_KST] [INFO ] [Bootstrapping Spring Data Redis repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_22_17_562_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_PublicHolidayKorea_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_22_17_564_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestBank_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_22_17_565_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestMap_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_22_17_566_KST] [INFO ] [Finished Spring Data repository scanning in 58 ms. Found 0 Redis repository interfaces.] [le]
+[ls] [2025_01_19_T_19_22_19_615_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\entities] does not exist] [le]
+[ls] [2025_01_19_T_19_22_19_659_KST] [INFO ] [HHH000204: Processing PersistenceUnitInfo [name: default]] [le]
+[ls] [2025_01_19_T_19_22_19_811_KST] [INFO ] [HHH000412: Hibernate ORM core version 6.6.2.Final] [le]
+[ls] [2025_01_19_T_19_22_19_910_KST] [INFO ] [HHH000026: Second-level cache disabled] [le]
+[ls] [2025_01_19_T_19_22_20_674_KST] [INFO ] [No LoadTimeWeaver setup: ignoring JPA class transformer] [le]
+[ls] [2025_01_19_T_19_22_20_739_KST] [INFO ] [HikariPool-1 - Starting...] [le]
+[ls] [2025_01_19_T_19_22_21_071_KST] [INFO ] [HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@63b4a896] [le]
+[ls] [2025_01_19_T_19_22_21_075_KST] [INFO ] [HikariPool-1 - Start completed.] [le]
+[ls] [2025_01_19_T_19_22_21_158_KST] [WARN ] [HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)] [le]
+[ls] [2025_01_19_T_19_22_21_192_KST] [INFO ] [HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 9.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown] [le]
+[ls] [2025_01_19_T_19_22_23_044_KST] [INFO ] [HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)] [le]
+[ls] [2025_01_19_T_19_22_23_135_KST] [INFO ] [Initialized JPA EntityManagerFactory for persistence unit 'default'] [le]
+[ls] [2025_01_19_T_19_22_25_542_KST] [INFO ] [Hibernate is in classpath; If applicable, HQL parser will be used.] [le]
+[ls] [2025_01_19_T_19_22_29_303_KST] [INFO ] [Exposing 14 endpoints beneath base path '/actuator'] [le]
+[ls] [2025_01_19_T_19_22_29_474_KST] [INFO ] [Started ModuleTest in 16.602 seconds (process running for 19.092)] [le]
+[ls] [2025_01_19_T_19_22_33_748_KST] [WARN ] [Caught exception while invoking 'beforeTestMethod' callback on TestExecutionListener [org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener] for test method [public void com.raillylinker.ModuleTest.splitFilePathTest()] and test instance [com.raillylinker.ModuleTest@4f6dfd28]] [le]
+java.lang.IllegalStateException: Could not initialize plugin: interface org.mockito.plugins.MockMaker (alternate: null)
+	at org.mockito.internal.configuration.plugins.PluginLoader$1.invoke(PluginLoader.java:85)
+	at jdk.proxy3/jdk.proxy3.$Proxy212.getHandler(Unknown Source)
+	at org.mockito.internal.util.MockUtil.getMockHandlerOrNull(MockUtil.java:158)
+	at org.mockito.internal.util.MockUtil.isMock(MockUtil.java:147)
+	at org.mockito.internal.util.DefaultMockingDetails.isMock(DefaultMockingDetails.java:32)
+	at org.springframework.boot.test.mock.mockito.MockReset.get(MockReset.java:110)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.resetMocks(ResetMocksTestExecutionListener.java:89)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.resetMocks(ResetMocksTestExecutionListener.java:77)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.beforeTestMethod(ResetMocksTestExecutionListener.java:64)
+	at org.springframework.test.context.TestContextManager.beforeTestMethod(TestContextManager.java:320)
+	at org.springframework.test.context.junit.jupiter.SpringExtension.beforeEach(SpringExtension.java:237)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeBeforeEachCallbacks$3(TestMethodTestDescriptor.java:166)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeBeforeMethodsOrCallbacksUntilExceptionOccurs$7(TestMethodTestDescriptor.java:202)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeBeforeMethodsOrCallbacksUntilExceptionOccurs(TestMethodTestDescriptor.java:202)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeBeforeEachCallbacks(TestMethodTestDescriptor.java:165)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:132)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:198)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:169)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:93)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:141)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:57)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor.processAllTestClasses(JUnitPlatformTestClassProcessor.java:124)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor.access$000(JUnitPlatformTestClassProcessor.java:99)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor.stop(JUnitPlatformTestClassProcessor.java:94)
+	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.stop(SuiteTestClassProcessor.java:63)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:33)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:92)
+	at jdk.proxy1/jdk.proxy1.$Proxy4.stop(Unknown Source)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker$3.run(TestWorker.java:200)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.executeAndMaintainThreadName(TestWorker.java:132)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:103)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:63)
+	at org.gradle.process.internal.worker.child.ActionExecutionWorker.execute(ActionExecutionWorker.java:56)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:121)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:71)
+	at worker.org.gradle.process.internal.worker.GradleWorkerMain.run(GradleWorkerMain.java:69)
+	at worker.org.gradle.process.internal.worker.GradleWorkerMain.main(GradleWorkerMain.java:74)
+Caused by: java.lang.IllegalStateException: Internal problem occurred, please report it. Mockito is unable to load the default implementation of class that is a part of Mockito distribution. Failed to load interface org.mockito.plugins.MockMaker
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:105)
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.getDefaultPlugin(DefaultMockitoPlugins.java:79)
+	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:75)
+	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:49)
+	at org.mockito.internal.configuration.plugins.PluginRegistry.<init>(PluginRegistry.java:29)
+	at org.mockito.internal.configuration.plugins.Plugins.<clinit>(Plugins.java:26)
+	at org.mockito.internal.MockitoCore.<clinit>(MockitoCore.java:71)
+	at org.mockito.Mockito.<clinit>(Mockito.java:1741)
+	at org.springframework.boot.test.mock.mockito.MockReset.get(MockReset.java:109)
+	... 72 common frames omitted
+Caused by: java.lang.reflect.InvocationTargetException: null
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:74)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:103)
+	... 80 common frames omitted
+Caused by: org.mockito.exceptions.base.MockitoInitializationException: 
+Could not initialize inline Byte Buddy mock maker.
+
+It appears as if your JDK does not supply a working agent attachment mechanism.
+Java               : 21
+JVM vendor name    : Amazon.com Inc.
+JVM vendor version : 21.0.5+11-LTS
+JVM name           : OpenJDK 64-Bit Server VM
+JVM version        : 21.0.5+11-LTS
+JVM info           : mixed mode
+OS name            : Windows 11
+OS version         : 10.0
+
+	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<init>(InlineDelegateByteBuddyMockMaker.java:254)
+	at org.mockito.internal.creation.bytebuddy.InlineByteBuddyMockMaker.<init>(InlineByteBuddyMockMaker.java:23)
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	... 83 common frames omitted
+Caused by: java.lang.IllegalStateException: Could not self-attach to current VM using external process - set a property net.bytebuddy.agent.attacher.dump to dump the process output to a file at the specified location
+	at net.bytebuddy.agent.ByteBuddyAgent.installExternal(ByteBuddyAgent.java:674)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:604)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:584)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:536)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:513)
+	at org.mockito.internal.PremainAttachAccess.getInstrumentation(PremainAttachAccess.java:49)
+	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<clinit>(InlineDelegateByteBuddyMockMaker.java:138)
+	... 85 common frames omitted
+[ls] [2025_01_19_T_19_22_33_765_KST] [WARN ] [Caught exception while invoking 'afterTestMethod' callback on TestExecutionListener [org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener] for test method [public void com.raillylinker.ModuleTest.splitFilePathTest()] and test instance [com.raillylinker.ModuleTest@4f6dfd28]] [le]
+java.lang.IllegalStateException: Could not initialize plugin: interface org.mockito.plugins.MockMaker (alternate: null)
+	at org.mockito.internal.configuration.plugins.PluginLoader$1.invoke(PluginLoader.java:85)
+	at jdk.proxy3/jdk.proxy3.$Proxy212.getHandler(Unknown Source)
+	at org.mockito.internal.util.MockUtil.getMockHandlerOrNull(MockUtil.java:158)
+	at org.mockito.internal.util.MockUtil.isMock(MockUtil.java:147)
+	at org.mockito.internal.util.DefaultMockingDetails.isMock(DefaultMockingDetails.java:32)
+	at org.springframework.boot.test.mock.mockito.MockReset.get(MockReset.java:110)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.resetMocks(ResetMocksTestExecutionListener.java:89)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.resetMocks(ResetMocksTestExecutionListener.java:77)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.afterTestMethod(ResetMocksTestExecutionListener.java:71)
+	at org.springframework.test.context.TestContextManager.afterTestMethod(TestContextManager.java:487)
+	at org.springframework.test.context.junit.jupiter.SpringExtension.afterEach(SpringExtension.java:275)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeAfterEachCallbacks$13(TestMethodTestDescriptor.java:260)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeAllAfterMethodsOrCallbacks$14(TestMethodTestDescriptor.java:276)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeAllAfterMethodsOrCallbacks$15(TestMethodTestDescriptor.java:276)
+	at org.junit.platform.commons.util.CollectionUtils.forEachInReverseOrder(CollectionUtils.java:240)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeAllAfterMethodsOrCallbacks(TestMethodTestDescriptor.java:275)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeAfterEachCallbacks(TestMethodTestDescriptor.java:259)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:144)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:198)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:169)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:93)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:141)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:57)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor.processAllTestClasses(JUnitPlatformTestClassProcessor.java:124)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor.access$000(JUnitPlatformTestClassProcessor.java:99)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor.stop(JUnitPlatformTestClassProcessor.java:94)
+	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.stop(SuiteTestClassProcessor.java:63)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:33)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:92)
+	at jdk.proxy1/jdk.proxy1.$Proxy4.stop(Unknown Source)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker$3.run(TestWorker.java:200)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.executeAndMaintainThreadName(TestWorker.java:132)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:103)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:63)
+	at org.gradle.process.internal.worker.child.ActionExecutionWorker.execute(ActionExecutionWorker.java:56)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:121)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:71)
+	at worker.org.gradle.process.internal.worker.GradleWorkerMain.run(GradleWorkerMain.java:69)
+	at worker.org.gradle.process.internal.worker.GradleWorkerMain.main(GradleWorkerMain.java:74)
+Caused by: java.lang.IllegalStateException: Internal problem occurred, please report it. Mockito is unable to load the default implementation of class that is a part of Mockito distribution. Failed to load interface org.mockito.plugins.MockMaker
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:105)
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.getDefaultPlugin(DefaultMockitoPlugins.java:79)
+	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:75)
+	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:49)
+	at org.mockito.internal.configuration.plugins.PluginRegistry.<init>(PluginRegistry.java:29)
+	at org.mockito.internal.configuration.plugins.Plugins.<clinit>(Plugins.java:26)
+	at org.mockito.internal.MockitoCore.<clinit>(MockitoCore.java:71)
+	at org.mockito.Mockito.<clinit>(Mockito.java:1741)
+	at org.springframework.boot.test.mock.mockito.MockReset.get(MockReset.java:109)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.resetMocks(ResetMocksTestExecutionListener.java:89)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.resetMocks(ResetMocksTestExecutionListener.java:77)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.beforeTestMethod(ResetMocksTestExecutionListener.java:64)
+	at org.springframework.test.context.TestContextManager.beforeTestMethod(TestContextManager.java:320)
+	at org.springframework.test.context.junit.jupiter.SpringExtension.beforeEach(SpringExtension.java:237)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeBeforeEachCallbacks$3(TestMethodTestDescriptor.java:166)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeBeforeMethodsOrCallbacksUntilExceptionOccurs$7(TestMethodTestDescriptor.java:202)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeBeforeMethodsOrCallbacksUntilExceptionOccurs(TestMethodTestDescriptor.java:202)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeBeforeEachCallbacks(TestMethodTestDescriptor.java:165)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:132)
+	... 61 common frames omitted
+Caused by: java.lang.reflect.InvocationTargetException: null
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:74)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:103)
+	... 80 common frames omitted
+Caused by: org.mockito.exceptions.base.MockitoInitializationException: 
+Could not initialize inline Byte Buddy mock maker.
+
+It appears as if your JDK does not supply a working agent attachment mechanism.
+Java               : 21
+JVM vendor name    : Amazon.com Inc.
+JVM vendor version : 21.0.5+11-LTS
+JVM name           : OpenJDK 64-Bit Server VM
+JVM version        : 21.0.5+11-LTS
+JVM info           : mixed mode
+OS name            : Windows 11
+OS version         : 10.0
+
+	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<init>(InlineDelegateByteBuddyMockMaker.java:254)
+	at org.mockito.internal.creation.bytebuddy.InlineByteBuddyMockMaker.<init>(InlineByteBuddyMockMaker.java:23)
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	... 83 common frames omitted
+Caused by: java.lang.IllegalStateException: Could not self-attach to current VM using external process - set a property net.bytebuddy.agent.attacher.dump to dump the process output to a file at the specified location
+	at net.bytebuddy.agent.ByteBuddyAgent.installExternal(ByteBuddyAgent.java:674)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:604)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:584)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:536)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:513)
+	at org.mockito.internal.PremainAttachAccess.getInstrumentation(PremainAttachAccess.java:49)
+	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<clinit>(InlineDelegateByteBuddyMockMaker.java:138)
+	... 85 common frames omitted
+[ls] [2025_01_19_T_19_22_33_799_KST] [WARN ] [Caught exception while invoking 'beforeTestMethod' callback on TestExecutionListener [org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener] for test method [public void com.raillylinker.ModuleTest.bitBooleanListUtilTest()] and test instance [com.raillylinker.ModuleTest@b1982c5]] [le]
+java.lang.IllegalStateException: Could not initialize plugin: interface org.mockito.plugins.MockMaker (alternate: null)
+	at org.mockito.internal.configuration.plugins.PluginLoader$1.invoke(PluginLoader.java:85)
+	at jdk.proxy3/jdk.proxy3.$Proxy212.getHandler(Unknown Source)
+	at org.mockito.internal.util.MockUtil.getMockHandlerOrNull(MockUtil.java:158)
+	at org.mockito.internal.util.MockUtil.isMock(MockUtil.java:147)
+	at org.mockito.internal.util.DefaultMockingDetails.isMock(DefaultMockingDetails.java:32)
+	at org.springframework.boot.test.mock.mockito.MockReset.get(MockReset.java:110)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.resetMocks(ResetMocksTestExecutionListener.java:89)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.resetMocks(ResetMocksTestExecutionListener.java:77)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.beforeTestMethod(ResetMocksTestExecutionListener.java:64)
+	at org.springframework.test.context.TestContextManager.beforeTestMethod(TestContextManager.java:320)
+	at org.springframework.test.context.junit.jupiter.SpringExtension.beforeEach(SpringExtension.java:237)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeBeforeEachCallbacks$3(TestMethodTestDescriptor.java:166)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeBeforeMethodsOrCallbacksUntilExceptionOccurs$7(TestMethodTestDescriptor.java:202)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeBeforeMethodsOrCallbacksUntilExceptionOccurs(TestMethodTestDescriptor.java:202)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeBeforeEachCallbacks(TestMethodTestDescriptor.java:165)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:132)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:198)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:169)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:93)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:141)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:57)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor.processAllTestClasses(JUnitPlatformTestClassProcessor.java:124)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor.access$000(JUnitPlatformTestClassProcessor.java:99)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor.stop(JUnitPlatformTestClassProcessor.java:94)
+	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.stop(SuiteTestClassProcessor.java:63)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:33)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:92)
+	at jdk.proxy1/jdk.proxy1.$Proxy4.stop(Unknown Source)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker$3.run(TestWorker.java:200)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.executeAndMaintainThreadName(TestWorker.java:132)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:103)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:63)
+	at org.gradle.process.internal.worker.child.ActionExecutionWorker.execute(ActionExecutionWorker.java:56)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:121)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:71)
+	at worker.org.gradle.process.internal.worker.GradleWorkerMain.run(GradleWorkerMain.java:69)
+	at worker.org.gradle.process.internal.worker.GradleWorkerMain.main(GradleWorkerMain.java:74)
+Caused by: java.lang.IllegalStateException: Internal problem occurred, please report it. Mockito is unable to load the default implementation of class that is a part of Mockito distribution. Failed to load interface org.mockito.plugins.MockMaker
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:105)
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.getDefaultPlugin(DefaultMockitoPlugins.java:79)
+	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:75)
+	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:49)
+	at org.mockito.internal.configuration.plugins.PluginRegistry.<init>(PluginRegistry.java:29)
+	at org.mockito.internal.configuration.plugins.Plugins.<clinit>(Plugins.java:26)
+	at org.mockito.internal.MockitoCore.<clinit>(MockitoCore.java:71)
+	at org.mockito.Mockito.<clinit>(Mockito.java:1741)
+	at org.springframework.boot.test.mock.mockito.MockReset.get(MockReset.java:109)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.resetMocks(ResetMocksTestExecutionListener.java:89)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.resetMocks(ResetMocksTestExecutionListener.java:77)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.beforeTestMethod(ResetMocksTestExecutionListener.java:64)
+	at org.springframework.test.context.TestContextManager.beforeTestMethod(TestContextManager.java:320)
+	at org.springframework.test.context.junit.jupiter.SpringExtension.beforeEach(SpringExtension.java:237)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+Caused by: java.lang.reflect.InvocationTargetException: null
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:103)
+	... 15 common frames omitted
+Caused by: org.mockito.exceptions.base.MockitoInitializationException: 
+Could not initialize inline Byte Buddy mock maker.
+
+It appears as if your JDK does not supply a working agent attachment mechanism.
+Java               : 21
+JVM vendor name    : Amazon.com Inc.
+JVM vendor version : 21.0.5+11-LTS
+JVM name           : OpenJDK 64-Bit Server VM
+JVM version        : 21.0.5+11-LTS
+JVM info           : mixed mode
+OS name            : Windows 11
+OS version         : 10.0
+
+	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<init>(InlineDelegateByteBuddyMockMaker.java:254)
+	at org.mockito.internal.creation.bytebuddy.InlineByteBuddyMockMaker.<init>(InlineByteBuddyMockMaker.java:23)
+	... 18 common frames omitted
+Caused by: java.lang.IllegalStateException: Could not self-attach to current VM using external process - set a property net.bytebuddy.agent.attacher.dump to dump the process output to a file at the specified location
+	at net.bytebuddy.agent.ByteBuddyAgent.installExternal(ByteBuddyAgent.java:674)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:604)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:584)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:536)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:513)
+	at org.mockito.internal.PremainAttachAccess.getInstrumentation(PremainAttachAccess.java:49)
+	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<clinit>(InlineDelegateByteBuddyMockMaker.java:138)
+	... 19 common frames omitted
+[ls] [2025_01_19_T_19_22_33_801_KST] [WARN ] [Caught exception while invoking 'afterTestMethod' callback on TestExecutionListener [org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener] for test method [public void com.raillylinker.ModuleTest.bitBooleanListUtilTest()] and test instance [com.raillylinker.ModuleTest@b1982c5]] [le]
+java.lang.IllegalStateException: Could not initialize plugin: interface org.mockito.plugins.MockMaker (alternate: null)
+	at org.mockito.internal.configuration.plugins.PluginLoader$1.invoke(PluginLoader.java:85)
+	at jdk.proxy3/jdk.proxy3.$Proxy212.getHandler(Unknown Source)
+	at org.mockito.internal.util.MockUtil.getMockHandlerOrNull(MockUtil.java:158)
+	at org.mockito.internal.util.MockUtil.isMock(MockUtil.java:147)
+	at org.mockito.internal.util.DefaultMockingDetails.isMock(DefaultMockingDetails.java:32)
+	at org.springframework.boot.test.mock.mockito.MockReset.get(MockReset.java:110)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.resetMocks(ResetMocksTestExecutionListener.java:89)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.resetMocks(ResetMocksTestExecutionListener.java:77)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.afterTestMethod(ResetMocksTestExecutionListener.java:71)
+	at org.springframework.test.context.TestContextManager.afterTestMethod(TestContextManager.java:487)
+	at org.springframework.test.context.junit.jupiter.SpringExtension.afterEach(SpringExtension.java:275)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeAfterEachCallbacks$13(TestMethodTestDescriptor.java:260)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeAllAfterMethodsOrCallbacks$14(TestMethodTestDescriptor.java:276)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeAllAfterMethodsOrCallbacks$15(TestMethodTestDescriptor.java:276)
+	at org.junit.platform.commons.util.CollectionUtils.forEachInReverseOrder(CollectionUtils.java:240)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeAllAfterMethodsOrCallbacks(TestMethodTestDescriptor.java:275)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeAfterEachCallbacks(TestMethodTestDescriptor.java:259)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:144)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:198)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:169)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:93)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:141)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:57)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor.processAllTestClasses(JUnitPlatformTestClassProcessor.java:124)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor.access$000(JUnitPlatformTestClassProcessor.java:99)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor.stop(JUnitPlatformTestClassProcessor.java:94)
+	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.stop(SuiteTestClassProcessor.java:63)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:33)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:92)
+	at jdk.proxy1/jdk.proxy1.$Proxy4.stop(Unknown Source)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker$3.run(TestWorker.java:200)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.executeAndMaintainThreadName(TestWorker.java:132)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:103)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:63)
+	at org.gradle.process.internal.worker.child.ActionExecutionWorker.execute(ActionExecutionWorker.java:56)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:121)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:71)
+	at worker.org.gradle.process.internal.worker.GradleWorkerMain.run(GradleWorkerMain.java:69)
+	at worker.org.gradle.process.internal.worker.GradleWorkerMain.main(GradleWorkerMain.java:74)
+Caused by: java.lang.IllegalStateException: Internal problem occurred, please report it. Mockito is unable to load the default implementation of class that is a part of Mockito distribution. Failed to load interface org.mockito.plugins.MockMaker
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:105)
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.getDefaultPlugin(DefaultMockitoPlugins.java:79)
+	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:75)
+	at org.mockito.internal.configuration.plugins.PluginLoader.loadPlugin(PluginLoader.java:49)
+	at org.mockito.internal.configuration.plugins.PluginRegistry.<init>(PluginRegistry.java:29)
+	at org.mockito.internal.configuration.plugins.Plugins.<clinit>(Plugins.java:26)
+	at org.mockito.internal.MockitoCore.<clinit>(MockitoCore.java:71)
+	at org.mockito.Mockito.<clinit>(Mockito.java:1741)
+	at org.springframework.boot.test.mock.mockito.MockReset.get(MockReset.java:109)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.resetMocks(ResetMocksTestExecutionListener.java:89)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.resetMocks(ResetMocksTestExecutionListener.java:77)
+	at org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener.beforeTestMethod(ResetMocksTestExecutionListener.java:64)
+	at org.springframework.test.context.TestContextManager.beforeTestMethod(TestContextManager.java:320)
+	at org.springframework.test.context.junit.jupiter.SpringExtension.beforeEach(SpringExtension.java:237)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+Caused by: java.lang.reflect.InvocationTargetException: null
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+	at org.mockito.internal.configuration.plugins.DefaultMockitoPlugins.create(DefaultMockitoPlugins.java:103)
+	... 15 common frames omitted
+Caused by: org.mockito.exceptions.base.MockitoInitializationException: 
+Could not initialize inline Byte Buddy mock maker.
+
+It appears as if your JDK does not supply a working agent attachment mechanism.
+Java               : 21
+JVM vendor name    : Amazon.com Inc.
+JVM vendor version : 21.0.5+11-LTS
+JVM name           : OpenJDK 64-Bit Server VM
+JVM version        : 21.0.5+11-LTS
+JVM info           : mixed mode
+OS name            : Windows 11
+OS version         : 10.0
+
+	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<init>(InlineDelegateByteBuddyMockMaker.java:254)
+	at org.mockito.internal.creation.bytebuddy.InlineByteBuddyMockMaker.<init>(InlineByteBuddyMockMaker.java:23)
+	... 18 common frames omitted
+Caused by: java.lang.IllegalStateException: Could not self-attach to current VM using external process - set a property net.bytebuddy.agent.attacher.dump to dump the process output to a file at the specified location
+	at net.bytebuddy.agent.ByteBuddyAgent.installExternal(ByteBuddyAgent.java:674)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:604)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:584)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:536)
+	at net.bytebuddy.agent.ByteBuddyAgent.install(ByteBuddyAgent.java:513)
+	at org.mockito.internal.PremainAttachAccess.getInstrumentation(PremainAttachAccess.java:49)
+	at org.mockito.internal.creation.bytebuddy.InlineDelegateByteBuddyMockMaker.<clinit>(InlineDelegateByteBuddyMockMaker.java:138)
+	... 19 common frames omitted
+[ls] [2025_01_19_T_19_22_34_010_KST] [INFO ] [Closing JPA EntityManagerFactory for persistence unit 'default'] [le]
+[ls] [2025_01_19_T_19_22_34_013_KST] [INFO ] [HikariPool-1 - Shutdown initiated...] [le]
+[ls] [2025_01_19_T_19_22_34_043_KST] [INFO ] [HikariPool-1 - Shutdown completed.] [le]
+[ls] [2025_01_19_T_19_23_44_850_KST] [INFO ] [HV000001: Hibernate Validator 8.0.1.Final] [le]
+[ls] [2025_01_19_T_19_23_44_913_KST] [INFO ] [Starting ModuleTest using Java 21.0.5 with PID 6480 (started by raill in C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc)] [le]
+[ls] [2025_01_19_T_19_23_44_914_KST] [INFO ] [No active profile set, falling back to 3 default profiles: "local12000", "local", "port12000"] [le]
+[ls] [2025_01_19_T_19_23_46_548_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_23_46_549_KST] [INFO ] [Bootstrapping Spring Data JPA repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_23_46_572_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_23_46_573_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_23_46_788_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_23_46_789_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_23_46_821_KST] [INFO ] [Finished Spring Data repository scanning in 256 ms. Found 3 JPA repository interfaces.] [le]
+[ls] [2025_01_19_T_19_23_48_419_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_23_48_421_KST] [INFO ] [Bootstrapping Spring Data Redis repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_23_48_512_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_PublicHolidayKorea_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_23_48_515_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestBank_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_23_48_515_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestMap_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_23_48_515_KST] [INFO ] [Finished Spring Data repository scanning in 68 ms. Found 0 Redis repository interfaces.] [le]
+[ls] [2025_01_19_T_19_23_50_391_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\entities] does not exist] [le]
+[ls] [2025_01_19_T_19_23_50_433_KST] [INFO ] [HHH000204: Processing PersistenceUnitInfo [name: default]] [le]
+[ls] [2025_01_19_T_19_23_50_575_KST] [INFO ] [HHH000412: Hibernate ORM core version 6.6.2.Final] [le]
+[ls] [2025_01_19_T_19_23_50_657_KST] [INFO ] [HHH000026: Second-level cache disabled] [le]
+[ls] [2025_01_19_T_19_23_51_303_KST] [INFO ] [No LoadTimeWeaver setup: ignoring JPA class transformer] [le]
+[ls] [2025_01_19_T_19_23_51_361_KST] [INFO ] [HikariPool-1 - Starting...] [le]
+[ls] [2025_01_19_T_19_23_51_632_KST] [INFO ] [HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5096be74] [le]
+[ls] [2025_01_19_T_19_23_51_634_KST] [INFO ] [HikariPool-1 - Start completed.] [le]
+[ls] [2025_01_19_T_19_23_51_722_KST] [WARN ] [HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)] [le]
+[ls] [2025_01_19_T_19_23_51_756_KST] [INFO ] [HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 9.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown] [le]
+[ls] [2025_01_19_T_19_23_53_391_KST] [INFO ] [HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)] [le]
+[ls] [2025_01_19_T_19_23_53_483_KST] [INFO ] [Initialized JPA EntityManagerFactory for persistence unit 'default'] [le]
+[ls] [2025_01_19_T_19_23_55_963_KST] [INFO ] [Hibernate is in classpath; If applicable, HQL parser will be used.] [le]
+[ls] [2025_01_19_T_19_23_59_902_KST] [INFO ] [Exposing 14 endpoints beneath base path '/actuator'] [le]
+[ls] [2025_01_19_T_19_24_00_060_KST] [INFO ] [Started ModuleTest in 16.102 seconds (process running for 18.577)] [le]
+[ls] [2025_01_19_T_19_24_01_002_KST] [INFO ] [Closing JPA EntityManagerFactory for persistence unit 'default'] [le]
+[ls] [2025_01_19_T_19_24_01_005_KST] [INFO ] [HikariPool-1 - Shutdown initiated...] [le]
+[ls] [2025_01_19_T_19_24_01_018_KST] [INFO ] [HikariPool-1 - Shutdown completed.] [le]
+[ls] [2025_01_19_T_19_24_27_427_KST] [INFO ] [HV000001: Hibernate Validator 8.0.1.Final] [le]
+[ls] [2025_01_19_T_19_24_27_487_KST] [INFO ] [Starting ModuleTest using Java 21.0.5 with PID 20756 (started by raill in C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc)] [le]
+[ls] [2025_01_19_T_19_24_27_489_KST] [INFO ] [No active profile set, falling back to 3 default profiles: "local12000", "local", "port12000"] [le]
+[ls] [2025_01_19_T_19_24_29_077_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_24_29_077_KST] [INFO ] [Bootstrapping Spring Data JPA repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_24_29_109_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_24_29_110_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_24_29_454_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_24_29_456_KST] [INFO ] [Skipping search for files matching pattern [**/*Impl.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\java\main\com\raillylinker\jpa_beans\db1_main\repositories] does not exist] [le]
+[ls] [2025_01_19_T_19_24_29_482_KST] [INFO ] [Finished Spring Data repository scanning in 384 ms. Found 3 JPA repository interfaces.] [le]
+[ls] [2025_01_19_T_19_24_31_200_KST] [INFO ] [Multiple Spring Data modules found, entering strict repository configuration mode] [le]
+[ls] [2025_01_19_T_19_24_31_204_KST] [INFO ] [Bootstrapping Spring Data Redis repositories in DEFAULT mode.] [le]
+[ls] [2025_01_19_T_19_24_31_299_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_PublicHolidayKorea_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_24_31_300_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestBank_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_24_31_301_KST] [INFO ] [Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestMap_Repository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository] [le]
+[ls] [2025_01_19_T_19_24_31_302_KST] [INFO ] [Finished Spring Data repository scanning in 73 ms. Found 0 Redis repository interfaces.] [le]
+[ls] [2025_01_19_T_19_24_33_323_KST] [INFO ] [Skipping search for files matching pattern [**/*.class]: directory [C:\dev\springboot\Kotlin_SpringbootMvc_Template\module-sample-etc\build\classes\kotlin\test\com\raillylinker\jpa_beans\db1_main\entities] does not exist] [le]
+[ls] [2025_01_19_T_19_24_33_368_KST] [INFO ] [HHH000204: Processing PersistenceUnitInfo [name: default]] [le]
+[ls] [2025_01_19_T_19_24_33_546_KST] [INFO ] [HHH000412: Hibernate ORM core version 6.6.2.Final] [le]
+[ls] [2025_01_19_T_19_24_33_632_KST] [INFO ] [HHH000026: Second-level cache disabled] [le]
+[ls] [2025_01_19_T_19_24_34_392_KST] [INFO ] [No LoadTimeWeaver setup: ignoring JPA class transformer] [le]
+[ls] [2025_01_19_T_19_24_34_497_KST] [INFO ] [HikariPool-1 - Starting...] [le]
+[ls] [2025_01_19_T_19_24_34_811_KST] [INFO ] [HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5096be74] [le]
+[ls] [2025_01_19_T_19_24_34_813_KST] [INFO ] [HikariPool-1 - Start completed.] [le]
+[ls] [2025_01_19_T_19_24_34_898_KST] [WARN ] [HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)] [le]
+[ls] [2025_01_19_T_19_24_34_933_KST] [INFO ] [HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 9.1
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown] [le]
+[ls] [2025_01_19_T_19_24_36_801_KST] [INFO ] [HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)] [le]
+[ls] [2025_01_19_T_19_24_36_903_KST] [INFO ] [Initialized JPA EntityManagerFactory for persistence unit 'default'] [le]
+[ls] [2025_01_19_T_19_24_39_271_KST] [INFO ] [Hibernate is in classpath; If applicable, HQL parser will be used.] [le]
+[ls] [2025_01_19_T_19_24_43_169_KST] [INFO ] [Exposing 14 endpoints beneath base path '/actuator'] [le]
+[ls] [2025_01_19_T_19_24_43_378_KST] [INFO ] [Started ModuleTest in 16.763 seconds (process running for 19.495)] [le]
+[ls] [2025_01_19_T_19_24_44_420_KST] [INFO ] [Closing JPA EntityManagerFactory for persistence unit 'default'] [le]
+[ls] [2025_01_19_T_19_24_44_423_KST] [INFO ] [HikariPool-1 - Shutdown initiated...] [le]
+[ls] [2025_01_19_T_19_24_44_437_KST] [INFO ] [HikariPool-1 - Shutdown completed.] [le]
