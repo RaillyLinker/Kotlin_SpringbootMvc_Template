@@ -5,6 +5,6 @@ import jakarta.persistence.EntityManager
 import org.springframework.stereotype.Repository
 
 @Repository
-class Db1_Template_RepositoryDsl(entityManager: EntityManager) {
+class Db1_BatchMetadata_BATCH_JOB_EXECUTION_CONTEXT_RepositoryDsl(entityManager: EntityManager) {
     private val queryFactory: JPAQueryFactory = JPAQueryFactory(entityManager)
 }

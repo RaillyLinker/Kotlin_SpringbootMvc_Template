@@ -11,9 +11,6 @@ import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_Rent
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockImage
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockInfo
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockReservationStateChangeHistory
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Native_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Native_Repository.FindAllCategoryTreeUidListOutputVo
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Native_Repository.FindAllStockCategoryTreeUidListOutputVo
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_PaymentRefund_Repository
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_Payment_Repository
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_RentableProductCategory_Repository
@@ -64,7 +61,6 @@ class RentalReservationAdminService(
 
     private val jwtTokenUtil: JwtTokenUtil,
 
-    private val db1NativeRepository: Db1_Native_Repository,
     private val db1RaillyLinkerCompanyPaymentRepository: Db1_RaillyLinkerCompany_Payment_Repository,
     private val db1RaillyLinkerCompanyPaymentRefundRepository: Db1_RaillyLinkerCompany_PaymentRefund_Repository,
     private val db1RaillyLinkerCompanyRentableProductCategoryRepository: Db1_RaillyLinkerCompany_RentableProductCategory_Repository,
@@ -243,8 +239,8 @@ class RentalReservationAdminService(
         }
 
         // 카테고리 트리 내 하위 카테고리들 모두 조회(최하위 컨테이너 우선 정렬)
-        val categoryTreeUidList: List<FindAllCategoryTreeUidListOutputVo> =
-            db1NativeRepository.findAllCategoryTreeUidList(
+        val categoryTreeUidList: List<Db1_RaillyLinkerCompany_RentableProductCategory_Repository.FindAllCategoryTreeUidListOutputVo> =
+            db1RaillyLinkerCompanyRentableProductCategoryRepository.findAllCategoryTreeUidList(
                 rentableProductCategoryUid
             )
 
@@ -1119,8 +1115,8 @@ class RentalReservationAdminService(
         }
 
         // 카테고리 트리 내 하위 카테고리들 모두 조회(최하위 컨테이너 우선 정렬)
-        val categoryTreeUidList: List<FindAllStockCategoryTreeUidListOutputVo> =
-            db1NativeRepository.findAllStockCategoryTreeUidList(
+        val categoryTreeUidList: List<Db1_RaillyLinkerCompany_RentableProductStockCategory_Repository.FindAllStockCategoryTreeUidListOutputVo> =
+            db1RaillyLinkerCompanyRentableProductStockCategoryRepository.findAllStockCategoryTreeUidList(
                 rentableProductStockCategoryUid
             )
 

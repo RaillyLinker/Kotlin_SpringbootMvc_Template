@@ -14,7 +14,7 @@ import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.C
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_REFRESH_TOKEN_EXPIRATION_TIME_SEC
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_SECRET_KEY_STRING
 import com.raillylinker.controllers.AuthController
-import com.raillylinker.jpa_beans.db1_main.repositories_dsl.Db1_RaillyLinkerCompany_RepositoryDsl
+import com.raillylinker.jpa_beans.db1_main.repositories_dsl.Db1_RaillyLinkerCompany_TotalAuthMemberLockHistory_RepositoryDsl
 import com.raillylinker.kafka_components.producers.Kafka1MainProducer
 import com.raillylinker.util_components.AppleOAuthHelperUtil
 import com.raillylinker.util_components.JwtTokenUtil
@@ -57,7 +57,6 @@ class AuthService(
     private val redis1MapTotalAuthForceExpireAuthorizationSet: Redis1_Map_TotalAuthForceExpireAuthorizationSet,
 
     // (Database Repository)
-    private val db1NativeRepository: Db1_Native_Repository,
     private val db1RaillyLinkerCompanyTotalAuthMemberRepository: Db1_RaillyLinkerCompany_TotalAuthMember_Repository,
     private val db1RaillyLinkerCompanyTotalAuthMemberRoleRepository: Db1_RaillyLinkerCompany_TotalAuthMemberRole_Repository,
     private val db1RaillyLinkerCompanyTotalAuthMemberEmailRepository: Db1_RaillyLinkerCompany_TotalAuthMemberEmail_Repository,
@@ -74,7 +73,7 @@ class AuthService(
     private val db1RaillyLinkerCompanyTotalAuthLogInTokenHistoryRepository: Db1_RaillyLinkerCompany_TotalAuthLogInTokenHistory_Repository,
     private val db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepository: Db1_RaillyLinkerCompany_TotalAuthMemberLockHistory_Repository,
 
-    private val db1RaillyLinkerCompanyRepositoryDsl: Db1_RaillyLinkerCompany_RepositoryDsl,
+    private val Db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl: Db1_RaillyLinkerCompany_TotalAuthMemberLockHistory_RepositoryDsl,
 
     private val kafka1MainProducer: Kafka1MainProducer
 ) {
@@ -295,7 +294,7 @@ class AuthService(
 
         // 계정 정지 검증
         val lockList =
-            db1RaillyLinkerCompanyRepositoryDsl.findAllNowActivateMemberLockInfo(memberData.uid!!, LocalDateTime.now())
+            Db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl.findAllNowActivateMemberLockInfo(memberData.uid!!, LocalDateTime.now())
         if (lockList.isNotEmpty()) {
             // 계정 정지 당한 상황
             val lockedOutputList: MutableList<AuthController.LoginOutputVo.LockedOutput> =
@@ -600,7 +599,7 @@ class AuthService(
 
         // 계정 정지 검증
         val lockList =
-            db1RaillyLinkerCompanyRepositoryDsl.findAllNowActivateMemberLockInfo(
+            Db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl.findAllNowActivateMemberLockInfo(
                 snsOauth2.totalAuthMember.uid!!,
                 LocalDateTime.now()
             )
@@ -747,7 +746,7 @@ class AuthService(
 
         // 계정 정지 검증
         val lockList =
-            db1RaillyLinkerCompanyRepositoryDsl.findAllNowActivateMemberLockInfo(
+            Db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl.findAllNowActivateMemberLockInfo(
                 snsOauth2.totalAuthMember.uid!!,
                 LocalDateTime.now()
             )
@@ -985,7 +984,7 @@ class AuthService(
 
                 // 정지 여부 파악
                 val lockList =
-                    db1RaillyLinkerCompanyRepositoryDsl.findAllNowActivateMemberLockInfo(
+                    Db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl.findAllNowActivateMemberLockInfo(
                         memberData.uid!!,
                         LocalDateTime.now()
                     )

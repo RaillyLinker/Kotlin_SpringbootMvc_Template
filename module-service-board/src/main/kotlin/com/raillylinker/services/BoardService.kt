@@ -7,7 +7,8 @@ import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_SampleBoard
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_SampleBoardComment
 import com.raillylinker.jpa_beans.db1_main.repositories.*
-import com.raillylinker.jpa_beans.db1_main.repositories_dsl.Db1_Template_RepositoryDsl
+import com.raillylinker.jpa_beans.db1_main.repositories_dsl.Db1_RaillyLinkerCompany_SampleBoardComment_RepositoryDsl
+import com.raillylinker.jpa_beans.db1_main.repositories_dsl.Db1_RaillyLinkerCompany_SampleBoard_RepositoryDsl
 import com.raillylinker.redis_map_components.redis1_main.Redis1_Lock_BoardView
 import com.raillylinker.util_components.JwtTokenUtil
 import jakarta.servlet.http.HttpServletResponse
@@ -33,7 +34,6 @@ class BoardService(
     private val jwtTokenUtil: JwtTokenUtil,
 
     // (Database Repository)
-    private val db1NativeRepository: Db1_Native_Repository,
     private val db1RaillyLinkerCompanySampleBoardRepository: Db1_RaillyLinkerCompany_SampleBoard_Repository,
     private val db1RaillyLinkerCompanySampleBoardCommentRepository: Db1_RaillyLinkerCompany_SampleBoardComment_Repository,
     private val db1RaillyLinkerCompanyTotalAuthMemberRepository: Db1_RaillyLinkerCompany_TotalAuthMember_Repository,
@@ -42,7 +42,8 @@ class BoardService(
     private val db1RaillyLinkerCompanyTotalAuthMemberProfileRepository: Db1_RaillyLinkerCompany_TotalAuthMemberProfile_Repository,
 
     // (Database Repository DSL)
-    private val db1TemplateRepositoryDsl: Db1_Template_RepositoryDsl,
+    private val db1RaillyLinkerCompanySampleBoardRepositoryDsl: Db1_RaillyLinkerCompany_SampleBoard_RepositoryDsl,
+    private val db1RaillyLinkerCompanySampleBoardCommentRepositoryDsl: Db1_RaillyLinkerCompany_SampleBoardComment_RepositoryDsl,
 
     private val redis1LockBoardView: Redis1_Lock_BoardView
 ) {
@@ -99,7 +100,7 @@ class BoardService(
         searchKeyword: String?
     ): BoardController.GetBoardPageOutputVo? {
         val pageable: Pageable = PageRequest.of(page - 1, pageElementsCount)
-        val entityList = db1TemplateRepositoryDsl.findPageAllFromBoardByNotDeleted(
+        val entityList = db1RaillyLinkerCompanySampleBoardRepositoryDsl.findPageAllFromBoardByNotDeleted(
             sortingTypeEnum,
             sortingDirectionEnum,
             pageable,
@@ -390,7 +391,7 @@ class BoardService(
         pageElementsCount: Int
     ): BoardController.GetCommentPageOutputVo? {
         val pageable: Pageable = PageRequest.of(page - 1, pageElementsCount)
-        val entityList = db1TemplateRepositoryDsl.findPageAllFromBoardCommentByNotDeleted(
+        val entityList = db1RaillyLinkerCompanySampleBoardCommentRepositoryDsl.findPageAllFromBoardCommentByNotDeleted(
             boardUid,
             commentUid,
             pageable

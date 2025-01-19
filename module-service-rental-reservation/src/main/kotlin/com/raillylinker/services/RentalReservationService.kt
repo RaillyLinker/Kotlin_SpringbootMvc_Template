@@ -31,7 +31,6 @@ class RentalReservationService(
 
     private val jwtTokenUtil: JwtTokenUtil,
 
-    private val db1NativeRepository: Db1_Native_Repository,
     private val db1RaillyLinkerCompanyPaymentRepository: Db1_RaillyLinkerCompany_Payment_Repository,
     private val db1RaillyLinkerCompanyPaymentRefundRepository: Db1_RaillyLinkerCompany_PaymentRefund_Repository,
     private val db1RaillyLinkerCompanyRentableProductCategoryRepository: Db1_RaillyLinkerCompany_RentableProductCategory_Repository,

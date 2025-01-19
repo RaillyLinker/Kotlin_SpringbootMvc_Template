@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
 @Repository
-class Db1_RaillyLinkerCompany_RepositoryDsl(entityManager: EntityManager) {
+class Db1_RaillyLinkerCompany_TotalAuthMemberLockHistory_RepositoryDsl(entityManager: EntityManager) {
     private val queryFactory: JPAQueryFactory = JPAQueryFactory(entityManager)
 
     // 부모 테이블과 자식 테이블을 조인하여 조회하는 예시

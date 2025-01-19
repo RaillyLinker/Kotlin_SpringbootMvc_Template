@@ -4,7 +4,6 @@ import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.controllers.TestController
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_PublicHolidayKorea
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_TestBank
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Native_Repository
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_PublicHolidayKorea_Repository
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestBank_Repository
 import com.raillylinker.redis_map_components.redis1_main.Redis1_Lock_TestBank
@@ -64,8 +63,6 @@ class TestService(
 
     private val db1TemplateTestBankRepository: Db1_Template_TestBank_Repository,
     private val db1TemplatePublicHolidayKoreaRepository: Db1_Template_PublicHolidayKorea_Repository,
-
-    private val db1NativeRepository: Db1_Native_Repository,
 
     private val redis1LockTestBank: Redis1_Lock_TestBank,
 
@@ -741,7 +738,7 @@ class TestService(
     ): TestController.GetPublicHolidayKoreaOutputVo? {
 
         val db1TemplatePublicHolidayKoreaList =
-            db1NativeRepository.findAllThisYearPublicHolidayList(
+            db1TemplatePublicHolidayKoreaRepository.findAllThisYearPublicHolidayList(
                 targetYear
             )
 

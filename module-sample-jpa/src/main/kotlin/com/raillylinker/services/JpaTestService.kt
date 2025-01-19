@@ -7,7 +7,8 @@ import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.controllers.JpaTestController.OrmDatatypeMappingTestInputVo
 import com.raillylinker.jpa_beans.db1_main.entities.*
 import com.raillylinker.jpa_beans.db1_main.repositories.*
-import com.raillylinker.jpa_beans.db1_main.repositories_dsl.Db1_Template_RepositoryDsl
+import com.raillylinker.jpa_beans.db1_main.repositories_dsl.Db1_Template_FkTestManyToOneChild_RepositoryDsl
+import com.raillylinker.jpa_beans.db1_main.repositories_dsl.Db1_Template_FkTestParent_RepositoryDsl
 import com.raillylinker.util_components.CustomUtil
 import jakarta.servlet.http.HttpServletResponse
 import org.locationtech.jts.geom.Coordinate
@@ -38,8 +39,7 @@ class JpaTestService(
     private val customUtil: CustomUtil,
 
     // (Database Repository)
-    private val db1NativeRepository: Db1_Native_Repository,
-    private val db1TemplateTestsRepository: Db1_Template_Tests_Repository,
+    private val db1TemplateTestDataRepository: Db1_Template_TestData_Repository,
     private val db1TemplateFkTestParentRepository: Db1_Template_FkTestParent_Repository,
     private val db1TemplateFkTestManyToOneChildRepository: Db1_Template_FkTestManyToOneChild_Repository,
     private val db1TemplateLogicalDeleteUniqueDataRepository: Db1_Template_LogicalDeleteUniqueData_Repository,
@@ -48,7 +48,8 @@ class JpaTestService(
     private val db1TemplateDataTypeBlobMappingTestRepository: Db1_Template_DataTypeBlobMappingTest_Repository,
 
     // (Database Repository DSL)
-    private val db1TemplateRepositoryDsl: Db1_Template_RepositoryDsl
+    private val db1TemplateFkTestParentRepositoryDsl: Db1_Template_FkTestParent_RepositoryDsl,
+    private val db1TemplateFkTestManyToOneChildRepositoryDsl: Db1_Template_FkTestManyToOneChild_RepositoryDsl,
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -62,7 +63,7 @@ class JpaTestService(
         httpServletResponse: HttpServletResponse,
         inputVo: JpaTestController.InsertDataSampleInputVo
     ): JpaTestController.InsertDataSampleOutputVo? {
-        val result = db1TemplateTestsRepository.save(
+        val result = db1TemplateTestDataRepository.save(
             Db1_Template_TestData(
                 inputVo.content,
                 (0..99999999).random(),
@@ -92,15 +93,15 @@ class JpaTestService(
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteRowsSample(httpServletResponse: HttpServletResponse, deleteLogically: Boolean) {
         if (deleteLogically) {
-            val entityList = db1TemplateTestsRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/")
+            val entityList = db1TemplateTestDataRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/")
             for (entity in entityList) {
                 entity.rowDeleteDateStr =
                     LocalDateTime.now().atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                db1TemplateTestsRepository.save(entity)
+                db1TemplateTestDataRepository.save(entity)
             }
         } else {
-            db1TemplateTestsRepository.deleteAll()
+            db1TemplateTestDataRepository.deleteAll()
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
@@ -111,7 +112,7 @@ class JpaTestService(
     // (DB Row 삭제 테스트)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteRowSample(httpServletResponse: HttpServletResponse, index: Long, deleteLogically: Boolean) {
-        val entity = db1TemplateTestsRepository.findByUidAndRowDeleteDateStr(index, "/")
+        val entity = db1TemplateTestDataRepository.findByUidAndRowDeleteDateStr(index, "/")
 
         if (entity == null) {
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
@@ -123,9 +124,9 @@ class JpaTestService(
             entity.rowDeleteDateStr =
                 LocalDateTime.now().atZone(ZoneId.systemDefault())
                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-            db1TemplateTestsRepository.save(entity)
+            db1TemplateTestDataRepository.save(entity)
         } else {
-            db1TemplateTestsRepository.deleteById(index)
+            db1TemplateTestDataRepository.deleteById(index)
         }
 
         httpServletResponse.status = HttpStatus.OK.value()
@@ -137,7 +138,7 @@ class JpaTestService(
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectRowsSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectRowsSampleOutputVo? {
         val resultEntityList =
-            db1TemplateTestsRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/")
+            db1TemplateTestDataRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/")
         val entityVoList =
             ArrayList<JpaTestController.SelectRowsSampleOutputVo.TestEntityVo>()
         for (resultEntity in resultEntityList) {
@@ -158,7 +159,7 @@ class JpaTestService(
         }
 
         val logicalDeleteEntityVoList =
-            db1TemplateTestsRepository.findAllByRowDeleteDateStrNotOrderByRowCreateDate("/")
+            db1TemplateTestDataRepository.findAllByRowDeleteDateStrNotOrderByRowCreateDate("/")
         val logicalDeleteVoList =
             ArrayList<JpaTestController.SelectRowsSampleOutputVo.TestEntityVo>()
         for (resultEntity in logicalDeleteEntityVoList) {
@@ -193,7 +194,8 @@ class JpaTestService(
         httpServletResponse: HttpServletResponse,
         num: Int
     ): JpaTestController.SelectRowsOrderByRandomNumSampleOutputVo? {
-        val foundEntityList = db1NativeRepository.findAllFromTemplateTestDataByNotDeletedWithRandomNumDistance(num)
+        val foundEntityList =
+            db1TemplateTestDataRepository.findAllFromTemplateTestDataByNotDeletedWithRandomNumDistance(num)
 
         val testEntityVoList =
             ArrayList<JpaTestController.SelectRowsOrderByRandomNumSampleOutputVo.TestEntityVo>()
@@ -229,10 +231,11 @@ class JpaTestService(
         httpServletResponse: HttpServletResponse,
         dateString: String
     ): JpaTestController.SelectRowsOrderByRowCreateDateSampleOutputVo? {
-        val foundEntityList = db1NativeRepository.findAllFromTemplateTestDataByNotDeletedWithRowCreateDateDistance(
-            ZonedDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                .withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
-        )
+        val foundEntityList =
+            db1TemplateTestDataRepository.findAllFromTemplateTestDataByNotDeletedWithRowCreateDateDistance(
+                ZonedDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                    .withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+            )
 
         val testEntityVoList =
             ArrayList<JpaTestController.SelectRowsOrderByRowCreateDateSampleOutputVo.TestEntityVo>()
@@ -270,7 +273,7 @@ class JpaTestService(
         pageElementsCount: Int
     ): JpaTestController.SelectRowsPageSampleOutputVo? {
         val pageable: Pageable = PageRequest.of(page - 1, pageElementsCount)
-        val entityList = db1TemplateTestsRepository.findAllByRowDeleteDateStrOrderByRowCreateDate(
+        val entityList = db1TemplateTestDataRepository.findAllByRowDeleteDateStrOrderByRowCreateDate(
             "/",
             pageable
         )
@@ -311,7 +314,7 @@ class JpaTestService(
         num: Int
     ): JpaTestController.SelectRowsNativeQueryPageSampleOutputVo? {
         val pageable: Pageable = PageRequest.of(page - 1, pageElementsCount)
-        val voList = db1NativeRepository.findPageAllFromTemplateTestDataByNotDeletedWithRandomNumDistance(
+        val voList = db1TemplateTestDataRepository.findPageAllFromTemplateTestDataByNotDeletedWithRandomNumDistance(
             num,
             pageable
         )
@@ -351,7 +354,7 @@ class JpaTestService(
         testTableUid: Long,
         inputVo: JpaTestController.UpdateRowSampleInputVo
     ): JpaTestController.UpdateRowSampleOutputVo? {
-        val oldEntity = db1TemplateTestsRepository.findByUidAndRowDeleteDateStr(testTableUid, "/")
+        val oldEntity = db1TemplateTestDataRepository.findByUidAndRowDeleteDateStr(testTableUid, "/")
 
         if (oldEntity == null || oldEntity.rowDeleteDateStr != "/") {
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
@@ -364,7 +367,7 @@ class JpaTestService(
             ZonedDateTime.parse(inputVo.dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
                 .withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
 
-        val result = db1TemplateTestsRepository.save(oldEntity)
+        val result = db1TemplateTestDataRepository.save(oldEntity)
 
         httpServletResponse.status = HttpStatus.OK.value()
         return JpaTestController.UpdateRowSampleOutputVo(
@@ -392,7 +395,7 @@ class JpaTestService(
         // !! 아래는 네이티브 쿼리로 수정하는 예시를 보인 것으로,
         // 이 경우에는 @UpdateTimestamp, @Version 기능이 자동 적용 되지 않습니다.
         // 고로 수정문은 jpa 를 사용하길 권장합니다. !!
-        val testEntity = db1TemplateTestsRepository.findByUidAndRowDeleteDateStr(testTableUid, "/")
+        val testEntity = db1TemplateTestDataRepository.findByUidAndRowDeleteDateStr(testTableUid, "/")
 
         if (testEntity == null || testEntity.rowDeleteDateStr != "/") {
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
@@ -401,7 +404,7 @@ class JpaTestService(
             return
         }
 
-        db1NativeRepository.updateToTemplateTestDataSetContentAndTestDateTimeByUid(
+        db1TemplateTestDataRepository.updateToTemplateTestDataSetContentAndTestDateTimeByUid(
             testTableUid,
             inputVo.content,
             ZonedDateTime.parse(inputVo.dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
@@ -422,7 +425,7 @@ class JpaTestService(
         searchKeyword: String
     ): JpaTestController.SelectRowWhereSearchingKeywordSampleOutputVo? {
         val pageable: Pageable = PageRequest.of(page - 1, pageElementsCount)
-        val voList = db1NativeRepository.findPageAllFromTemplateTestDataBySearchKeyword(
+        val voList = db1TemplateTestDataRepository.findPageAllFromTemplateTestDataBySearchKeyword(
             searchKeyword,
             pageable
         )
@@ -459,7 +462,7 @@ class JpaTestService(
     fun transactionTest(
         httpServletResponse: HttpServletResponse
     ) {
-        db1TemplateTestsRepository.save(
+        db1TemplateTestDataRepository.save(
             Db1_Template_TestData(
                 "error test",
                 (0..99999999).random(),
@@ -474,7 +477,7 @@ class JpaTestService(
     // ----
     // (트랜젝션 비동작 테스트)
     fun nonTransactionTest(httpServletResponse: HttpServletResponse) {
-        db1TemplateTestsRepository.save(
+        db1TemplateTestDataRepository.save(
             Db1_Template_TestData(
                 "error test",
                 (0..99999999).random(),
@@ -493,7 +496,7 @@ class JpaTestService(
         // @CustomTransactional 이 붙어있고, Exception 이 발생해도, 함수 내에서 try catch 로 처리하여 함수 외부로는 전파되지 않기에,
         // 트랜젝션 롤백이 발생하지 않습니다.
         try {
-            db1TemplateTestsRepository.save(
+            db1TemplateTestDataRepository.save(
                 Db1_Template_TestData(
                     "error test",
                     (0..99999999).random(),
@@ -517,13 +520,13 @@ class JpaTestService(
         pageElementsCount: Int
     ): JpaTestController.SelectRowsNoDuplicatePagingSampleOutputVo? {
         // 중복 없는 페이징 쿼리를 사용합니다.
-        val voList = db1NativeRepository.findAllFromTemplateTestDataForNoDuplicatedPaging(
+        val voList = db1TemplateTestDataRepository.findAllFromTemplateTestDataForNoDuplicatedPaging(
             lastItemUid,
             pageElementsCount
         )
 
         // 전체 개수 카운팅은 따로 해주어야 합니다.
-        val count = db1NativeRepository.countFromTemplateTestDataByNotDeleted()
+        val count = db1TemplateTestDataRepository.countFromTemplateTestDataByNotDeleted()
 
         val testEntityVoList =
             ArrayList<JpaTestController.SelectRowsNoDuplicatePagingSampleOutputVo.TestEntityVo>()
@@ -555,7 +558,7 @@ class JpaTestService(
     // (DB Rows 조회 테스트 (카운팅))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectRowsCountSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectRowsCountSampleOutputVo? {
-        val count = db1TemplateTestsRepository.countByRowDeleteDateStr("/")
+        val count = db1TemplateTestDataRepository.countByRowDeleteDateStr("/")
 
         httpServletResponse.status = HttpStatus.OK.value()
         return JpaTestController.SelectRowsCountSampleOutputVo(count)
@@ -566,7 +569,7 @@ class JpaTestService(
     // (DB Rows 조회 테스트 (네이티브 카운팅))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectRowsCountByNativeQuerySample(httpServletResponse: HttpServletResponse): JpaTestController.SelectRowsCountByNativeQuerySampleOutputVo? {
-        val count = db1NativeRepository.countFromTemplateTestDataByNotDeleted()
+        val count = db1TemplateTestDataRepository.countFromTemplateTestDataByNotDeleted()
 
         httpServletResponse.status = HttpStatus.OK.value()
         return JpaTestController.SelectRowsCountByNativeQuerySampleOutputVo(count)
@@ -580,7 +583,7 @@ class JpaTestService(
         httpServletResponse: HttpServletResponse,
         testTableUid: Long
     ): JpaTestController.SelectRowByNativeQuerySampleOutputVo? {
-        val entity = db1NativeRepository.findFromTemplateTestDataByNotDeletedAndUid(testTableUid)
+        val entity = db1TemplateTestDataRepository.findFromTemplateTestDataByNotDeletedAndUid(testTableUid)
 
         if (entity == null) {
             httpServletResponse.status = HttpStatus.OK.value()
@@ -863,7 +866,8 @@ class JpaTestService(
     // (외래키 관련 테이블 Rows 조회 테스트(Native Join))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectFkTestTableRowsByNativeQuerySample(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo? {
-        val resultEntityList = db1NativeRepository.findAllFromTemplateFkTestManyToOneChildInnerJoinParentByNotDeleted()
+        val resultEntityList =
+            db1TemplateFkTestManyToOneChildRepository.findAllFromTemplateFkTestManyToOneChildInnerJoinParentByNotDeleted()
 
         val entityVoList =
             ArrayList<JpaTestController.SelectFkTestTableRowsByNativeQuerySampleDot1OutputVo.ChildEntityVo>()
@@ -906,7 +910,7 @@ class JpaTestService(
             )
         }
 
-        val resultEntity = db1NativeRepository.multiCaseBooleanReturnTest(inputVal)
+        val resultEntity = db1TemplateJustBooleanTestRepository.multiCaseBooleanReturnTest(inputVal)
 
         httpServletResponse.status = HttpStatus.OK.value()
         return JpaTestController.GetNativeQueryReturnValueTestOutputVo(
@@ -931,7 +935,7 @@ class JpaTestService(
     ): JpaTestController.SqlInjectionTestOutputVo? {
         // jpaRepository : Injection Safe
         val jpaRepositoryResultEntityList =
-            db1TemplateTestsRepository.findAllByContentOrderByRowCreateDate(
+            db1TemplateTestDataRepository.findAllByContentOrderByRowCreateDate(
                 searchKeyword
             )
 
@@ -955,7 +959,7 @@ class JpaTestService(
 
         // JPQL : Injection Safe
         val jpqlResultEntityList =
-            db1TemplateTestsRepository.findAllByContentOrderByRowCreateDateJpql(
+            db1TemplateTestDataRepository.findAllByContentOrderByRowCreateDateJpql(
                 searchKeyword
             )
 
@@ -979,7 +983,7 @@ class JpaTestService(
 
         // NativeQuery : Injection Safe
         val nativeQueryResultEntityList =
-            db1NativeRepository.findAllFromTemplateTestDataByContent(
+            db1TemplateTestDataRepository.findAllFromTemplateTestDataByContent(
                 searchKeyword
             )
 
@@ -1020,7 +1024,7 @@ class JpaTestService(
     // (외래키 관련 테이블 Rows 조회 (네이티브 쿼리, 부모 테이블을 자식 테이블의 가장 최근 데이터만 Join))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectFkTableRowsWithLatestChildSample(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTableRowsWithLatestChildSampleOutputVo? {
-        val resultEntityList = db1NativeRepository.findAllFromTemplateFkTestParentWithNearestChildOnly()
+        val resultEntityList = db1TemplateFkTestParentRepository.findAllFromTemplateFkTestParentWithNearestChildOnly()
 
         val entityVoList =
             ArrayList<JpaTestController.SelectFkTableRowsWithLatestChildSampleOutputVo.ParentEntityVo>()
@@ -1060,7 +1064,7 @@ class JpaTestService(
     // (외래키 관련 테이블 Rows 조회 (QueryDsl))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun selectFkTableRowsWithQueryDsl(httpServletResponse: HttpServletResponse): JpaTestController.SelectFkTableRowsWithQueryDslOutputVo? {
-        val resultEntityList = db1TemplateRepositoryDsl.findParentWithChildren()
+        val resultEntityList = db1TemplateFkTestParentRepositoryDsl.findParentWithChildren()
 
         val entityVoList =
             ArrayList<JpaTestController.SelectFkTableRowsWithQueryDslOutputVo.ParentEntityVo>()
@@ -1109,7 +1113,7 @@ class JpaTestService(
         httpServletResponse: HttpServletResponse,
         parentName: String
     ): JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo? {
-        val resultEntityList = db1TemplateRepositoryDsl.findParentWithChildrenByName(parentName)
+        val resultEntityList = db1TemplateFkTestParentRepositoryDsl.findParentWithChildrenByName(parentName)
 
         val entityVoList =
             ArrayList<JpaTestController.SelectFkTableRowsByParentNameFilterWithQueryDslOutputVo.ParentEntityVo>()
@@ -1158,7 +1162,7 @@ class JpaTestService(
         httpServletResponse: HttpServletResponse,
         parentUid: Long
     ): JpaTestController.SelectFkTableChildListWithQueryDslOutputVo? {
-        val resultEntityList = db1TemplateRepositoryDsl.findChildByParentId(parentUid)
+        val resultEntityList = db1TemplateFkTestManyToOneChildRepositoryDsl.findChildByParentId(parentUid)
 
         val entityVoList =
             ArrayList<JpaTestController.SelectFkTableChildListWithQueryDslOutputVo.ChildEntityVo>()

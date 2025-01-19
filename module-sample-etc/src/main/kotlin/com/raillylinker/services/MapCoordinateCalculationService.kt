@@ -4,7 +4,6 @@ import com.raillylinker.controllers.MapCoordinateCalculationController
 import com.raillylinker.util_components.MapCoordinateUtil
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_Template_TestMap
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Native_Repository
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_Template_TestMap_Repository
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
@@ -22,8 +21,7 @@ class MapCoordinateCalculationService(
     private val mapCoordinateUtil: MapCoordinateUtil,
 
     // (Database Repository)
-    private val db1TemplateTestMapRepository: Db1_Template_TestMap_Repository,
-    private val db1NativeRepository: Db1_Native_Repository
+    private val db1TemplateTestMapRepository: Db1_Template_TestMap_Repository
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -202,7 +200,7 @@ class MapCoordinateCalculationService(
         radiusKiloMeter: Double
     ): MapCoordinateCalculationController.SelectCoordinateDataRowsInRadiusKiloMeterSampleOutputVo? {
         val entityList =
-            db1NativeRepository.findAllFromTemplateTestMapInnerHaversineCoordDistanceArea(
+            db1TemplateTestMapRepository.findAllFromTemplateTestMapInnerHaversineCoordDistanceArea(
                 anchorLatitude,
                 anchorLongitude,
                 radiusKiloMeter
@@ -239,7 +237,7 @@ class MapCoordinateCalculationService(
         westLongitude: Double // 남경도 (ex : 126.587602)
     ): MapCoordinateCalculationController.SelectCoordinateDataRowsInCoordinateBoxSampleOutputVo? {
         val entityList =
-            db1NativeRepository.findAllFromTemplateTestMapInnerCoordSquareArea(
+            db1TemplateTestMapRepository.findAllFromTemplateTestMapInnerCoordSquareArea(
                 northLatitude,
                 eastLongitude,
                 southLatitude,
