@@ -39,6 +39,14 @@ info:
   made-by: com.raillylinker
 
 spring:
+  jpa:
+    # View 렌더링 시 데이터베이스 세션을 열지 않도록 설정
+    open-in-view: false
+    hibernate:
+      # 스키마, 테이블명 UpperCase 허용
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
   profiles:
     group: # 프로필 그룹 생성 - 새로운 프로필명에, 하위 프로필들을 조합. 생성한 그룹은 spring.config.activate.on-profile 에서 명시해줘야함
       # !!!모듈별 설정 파일이 늘어나면 아래에 반영하기!!!
