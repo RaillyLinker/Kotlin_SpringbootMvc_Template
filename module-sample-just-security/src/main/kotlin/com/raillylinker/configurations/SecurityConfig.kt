@@ -39,6 +39,7 @@ class SecurityConfig {
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
     // (비밀번호 인코딩, 매칭시 사용할 객체)
+    // 해싱에 사용된 솔트 값은 생성된 암호문에 포함되므로 따로 설정할 필요가 없습니다.
     @Bean
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
