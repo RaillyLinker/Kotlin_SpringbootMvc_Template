@@ -96,6 +96,12 @@ dependencies {
     // (Redis)
     // : 메모리 키 값 데이터 구조 스토어
     implementation("org.springframework.boot:spring-boot-starter-data-redis:3.4.0")
+
+    // (Kafka)
+    implementation("org.springframework.kafka:spring-kafka:3.2.4")
+
+    // (jackson)
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.1")
 }
 
 tasks.withType<Test> {
