@@ -50,6 +50,7 @@ class Kafka1MainConsumer {
         classLogger.info("Deleted Member Uid : ${inputVo.deletedMemberUid}")
 
         // !!!멤버 테이블을 조회중인 테이블이 있을 경우 회원 탈퇴에 따른 처리를 이곳에 작성하세요.!!!
+        // todo 회원 정보 삭제시 스토리지 폴더 정보도 삭제 처리
     }
 
     data class FromAuthDbDeleteFromRaillyLinkerCompanyTotalAuthMemberListenerInputVo(

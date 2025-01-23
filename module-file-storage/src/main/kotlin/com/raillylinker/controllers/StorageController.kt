@@ -170,64 +170,86 @@ class StorageController(
 
 
     // ----
-//    @Operation(
-//        summary = "예약 상품 카테고리 정보 삭제 <>",
-//        description = "예약 상품의 카테고리 정보를 삭제합니다.<br>" +
-//                "하위 카테고리들은 모두 자동 삭제되며, 예약 상품 정보의 카테고리로 설정되어 있다면 null 로 재설정 됩니다."
-//    )
-//    @ApiResponses(
-//        value = [
-//            ApiResponse(
-//                responseCode = "200",
-//                description = "정상 동작"
-//            ),
-//            ApiResponse(
-//                responseCode = "204",
-//                content = [Content()],
-//                description = "Response Body 가 없습니다.<br>" +
-//                        "Response Headers 를 확인하세요.",
-//                headers = [
-//                    Header(
-//                        name = "api-result-code",
-//                        description = "(Response Code 반환 원인) - Required<br>" +
-//                                "1 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-//                        schema = Schema(type = "string")
-//                    )
-//                ]
-//            ),
-//            ApiResponse(
-//                responseCode = "401",
-//                content = [Content()],
-//                description = "인증되지 않은 접근입니다."
-//            ),
-//            ApiResponse(
-//                responseCode = "403",
-//                content = [Content()],
-//                description = "인가되지 않은 접근입니다."
-//            )
-//        ]
-//    )
-//    @DeleteMapping(
-//        path = ["/rentable-product-category/{rentableProductCategoryUid}"],
-//        consumes = [MediaType.ALL_VALUE],
-//        produces = [MediaType.ALL_VALUE]
-//    )
-//    @PreAuthorize("isAuthenticated()")
-//    @ResponseBody
-//    fun deleteRentableProductCategory(
-//        @Parameter(hidden = true)
-//        httpServletResponse: HttpServletResponse,
-//        @Parameter(hidden = true)
-//        @RequestHeader("Authorization")
-//        authorization: String?,
-//        @Parameter(name = "rentableProductCategoryUid", description = "rentableProductCategory 고유값", example = "1")
-//        @PathVariable("rentableProductCategoryUid")
-//        rentableProductCategoryUid: Long
-//    ) {
-//        service.deleteRentableProductCategory(
-//            httpServletResponse,
-//            authorization!!,
-//            rentableProductCategoryUid
-//        )
-//    }
+    @Operation(
+        summary = "스토리지 폴더 삭제 <>",
+        description = "스토리지 폴더 정보를 삭제합니다.<br>" +
+                "하위 폴더들, 그에 속한 하위 파일들은 모두 자동 삭제되며, kafka 에 삭제 이벤트가 전파됩니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : storageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            )
+        ]
+    )
+    @DeleteMapping(
+        path = ["/folder/{storageFolderInfoUid}"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    fun deleteFolder(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "storageFolderInfoUid", description = "storageFolderInfo 고유값", example = "1")
+        @PathVariable("storageFolderInfoUid")
+        storageFolderInfoUid: Long
+    ) {
+        service.deleteFolder(
+            httpServletResponse,
+            authorization!!,
+            storageFolderInfoUid
+        )
+    }
+
+
+    /*
+        폴더 조회(유저 아이디 필터 및 본인 인증 필요, 폴더 트리 반환)
+
+
+        파일 입력(인증 필요)
+        수평 확장 고려, 용량이 부족하면 eureka 가 자동으로 로드 밸런스 탐색을 할 수 있도록 신호를 내려주기
+
+        파일 정보 수정(본인 인증 필요, 실제 파일은 수정 못하고 파일명, 파일 서버 주소, 파일 다운로드 시크릿 코드 수정 가능)
+
+        파일 삭제(본인 인증 필요, 파일 삭제에 따른 kafka 이벤트)
+
+        폴더 내 파일 조회(폴더 고유값 필터 및 본인 인증 필요, 폴더 내 모든 파일 반환)
+
+        파일 다운(비인가, 시크릿 코드 설정 가능)
+        중계를 위한 api 와, 실제로 파일을 다운받는 api 가 따로 필요함
+        중계 api
+        {다운 주소}/storage/{저장위치 암호화}/{파일폴더 + 파일명} ? secret=oooo
+        다운 api
+        {저장위치 복호화}/storage/{파일폴더 + 파일명} ? secret=oooo
+
+        파일 정리(데이터에 없는 파일 삭제, 파일이 없는 데이터 삭제)
+
+        완료되면 auth 등 파일 다루는 부분을 이것으로 대체하기(기존 aws s3 처럼 사용한다고 가정하기)
+        파일 다운로드 파라미터로 경로를 쓸 때에 / 를 - 로 표현하고, 입력시 폴더에 - 를 못 쓰게 하기
+     */
 }

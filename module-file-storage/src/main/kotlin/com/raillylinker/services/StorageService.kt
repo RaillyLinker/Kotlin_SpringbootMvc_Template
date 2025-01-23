@@ -261,4 +261,28 @@ class StorageService(
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
+
+
+    // ----
+    // (스토리지 폴더 삭제 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun deleteFolder(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        storageFolderInfoUid: Long
+    ) {
+        // 멤버 데이터 조회
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+//        val memberEntity =
+//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        // todo 하위 폴더 및 파일 삭제
+        // todo kafka 파일 삭제 이벤트 발행(파일 uid, 파일 다운로드 주소)
+
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
 }
