@@ -30,6 +30,9 @@ include("module-cloud-sample-client-copy")
 // 인증/인가 서버 (11000)
 include("module-auth")
 
+// 파일 저장소 서버 (11001)
+include("module-file-storage")
+
 // 스케쥴러 테스트 샘플 (12003)
 include("module-sample-scheduler")
 
