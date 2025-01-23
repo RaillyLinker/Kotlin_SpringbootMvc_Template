@@ -2,6 +2,7 @@ package com.raillylinker.services
 
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR
+import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_TotalAuthMember_Repository
 import com.raillylinker.util_components.JwtTokenUtil
 import jakarta.servlet.http.HttpServletResponse
@@ -56,7 +57,7 @@ class SecurityService(
 
     // ----
     // (로그인 진입 테스트 <>)
-    @Transactional(readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun loggedInAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
@@ -76,7 +77,7 @@ class SecurityService(
 
     // ----
     // (ADMIN 권한 진입 테스트 <'ADMIN'>)
-    @Transactional(readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun adminAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
@@ -96,7 +97,7 @@ class SecurityService(
 
     // ----
     // (Developer 권한 진입 테스트 <'ADMIN' or 'Developer'>)
-    @Transactional(readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun developerAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
