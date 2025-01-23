@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class SecurityService(
@@ -55,6 +56,7 @@ class SecurityService(
 
     // ----
     // (로그인 진입 테스트 <>)
+    @Transactional(readOnly = true)
     fun loggedInAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
@@ -74,6 +76,7 @@ class SecurityService(
 
     // ----
     // (ADMIN 권한 진입 테스트 <'ADMIN'>)
+    @Transactional(readOnly = true)
     fun adminAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
@@ -93,6 +96,7 @@ class SecurityService(
 
     // ----
     // (Developer 권한 진입 테스트 <'ADMIN' or 'Developer'>)
+    @Transactional(readOnly = true)
     fun developerAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
