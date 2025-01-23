@@ -65,6 +65,10 @@ class Db1_RaillyLinkerCompany_TotalAuthMember(
     // [@OneToMany 변수들]
     // Row 삭제시 삭제 처리
     @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    var totalAuthMemberRoleList: MutableList<Db1_RaillyLinkerCompany_TotalAuthMemberRole> = mutableListOf()
+
+    // Row 삭제시 삭제 처리
+    @OneToMany(mappedBy = "totalAuthMember", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var totalAuthMemberProfileList: MutableList<Db1_RaillyLinkerCompany_TotalAuthMemberProfile> =
         mutableListOf()
 
