@@ -15,7 +15,7 @@ import java.time.LocalDateTime
     name = "storage_folder_info",
     catalog = "railly_linker_company",
     uniqueConstraints = [
-        UniqueConstraint(columnNames = ["parent_storage_folder_info_uid_nn", "folder_name", "row_delete_date_str"])
+        UniqueConstraint(columnNames = ["parent_storage_folder_info_uid_nn", "folder_name"])
     ]
 )
 @Comment("스토리지 폴더 정보")
@@ -58,11 +58,6 @@ class Db1_RaillyLinkerCompany_StorageFolderInfo(
     @UpdateTimestamp
     @Comment("행 수정일")
     var rowUpdateDate: LocalDateTime? = null
-
-    @Column(name = "row_delete_date_str", nullable = false, columnDefinition = "VARCHAR(50)")
-    @ColumnDefault("'/'")
-    @Comment("행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)")
-    var rowDeleteDateStr: String = "/"
 
 
     // ---------------------------------------------------------------------------------------------

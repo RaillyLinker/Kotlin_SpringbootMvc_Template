@@ -9,8 +9,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface Db1_RaillyLinkerCompany_StorageFileInfo_Repository :
     JpaRepository<Db1_RaillyLinkerCompany_StorageFileInfo, Long> {
-    fun findByUidAndRowDeleteDateStr(
-        uid: Long,
-        rowDeleteDateStr: String
-    ): Db1_RaillyLinkerCompany_StorageFileInfo?
+    fun findAllByStorageFolderInfoUid(
+        storageFolderInfoUid: Long
+    ): List<Db1_RaillyLinkerCompany_StorageFileInfo>
 }

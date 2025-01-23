@@ -102,6 +102,11 @@ dependencies {
 
     // (jackson)
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.1")
+
+    // (Apache Common io)
+    // 폴더 삭제용
+    implementation("commons-io:commons-io:2.6")
+
 }
 
 tasks.withType<Test> {

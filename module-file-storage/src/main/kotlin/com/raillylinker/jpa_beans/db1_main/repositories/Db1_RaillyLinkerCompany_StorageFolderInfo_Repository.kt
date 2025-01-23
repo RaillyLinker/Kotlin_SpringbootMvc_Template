@@ -11,10 +11,9 @@ import org.springframework.stereotype.Repository
 @Repository
 interface Db1_RaillyLinkerCompany_StorageFolderInfo_Repository :
     JpaRepository<Db1_RaillyLinkerCompany_StorageFolderInfo, Long> {
-    fun findByUidAndTotalAuthMemberUidAndRowDeleteDateStr(
+    fun findByUidAndTotalAuthMemberUid(
         uid: Long,
-        totalAuthMemberUid: Long,
-        rowDeleteDateStr: String
+        totalAuthMemberUid: Long
     ): Db1_RaillyLinkerCompany_StorageFolderInfo?
 
 
@@ -29,8 +28,7 @@ interface Db1_RaillyLinkerCompany_StorageFolderInfo_Repository :
                 0 AS depth
                 FROM railly_linker_company.storage_folder_info as storage_folder_info
                 WHERE 
-                storage_folder_info.uid = :storageFolderUid and 
-                storage_folder_info.row_delete_date_str = "/"
+                storage_folder_info.uid = :storageFolderUid
                 UNION ALL
                 SELECT 
                 child.*, 
@@ -39,10 +37,7 @@ interface Db1_RaillyLinkerCompany_StorageFolderInfo_Repository :
                 INNER JOIN 
                 StorageFolderTree as parent 
                 ON 
-                child.parent_storage_folder_info_uid = parent.uid and 
-                parent.row_delete_date_str = "/"
-                WHERE 
-                child.row_delete_date_str = "/"
+                child.parent_storage_folder_info_uid = parent.uid
             )
             SELECT 
             StorageFolderTree.uid
