@@ -280,8 +280,21 @@ class StorageService(
 //        val memberEntity =
 //            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        // todo 하위 폴더 및 파일 삭제
-        // todo kafka 파일 삭제 이벤트 발행(파일 uid, 파일 다운로드 주소)
+        // 기준 폴더로부터 모든 하위 폴더 출력
+        val folderTreePathList =
+            db1RaillyLinkerCompanyStorageFolderInfoRepository.findAllStorageFolderTreeUidList(storageFolderInfoUid)
+
+        if (folderTreePathList.isEmpty()) {
+            // 삭제하려는 데이터가 없음
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        for (folderTreePath in folderTreePathList) {
+            // todo 하위 폴더 및 파일 삭제
+            println("folderTreePath : ${folderTreePath.uid}")
+        }
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
