@@ -67,6 +67,13 @@ class StorageService(
         authorization: String,
         inputVo: StorageController.PostFolderInputVo
     ): StorageController.PostFolderOutputVo? {
+        if (inputVo.folderName.contains("/") || inputVo.folderName.contains("-")) {
+            // 사용 불가 특수문자
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
@@ -147,6 +154,13 @@ class StorageService(
         storageFolderInfoUid: Long,
         inputVo: StorageController.PutFolderInputVo
     ) {
+        if (inputVo.folderName.contains("/") || inputVo.folderName.contains("-")) {
+            // 사용 불가 특수문자
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "5")
+            return
+        }
+
         if (inputVo.parentStorageFolderInfoUid == storageFolderInfoUid) {
             // 자기 자신을 상위 폴더로 지정할 수 없음
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
