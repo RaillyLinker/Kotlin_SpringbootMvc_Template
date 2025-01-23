@@ -82,8 +82,9 @@ class StorageService(
                 null
             } else {
                 val parentStorageFolderEntity =
-                    db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndRowDeleteDateStr(
+                    db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUidAndRowDeleteDateStr(
                         inputVo.parentStorageFolderInfoUid,
+                        memberUid,
                         "/"
                     )
 
@@ -153,20 +154,6 @@ class StorageService(
             return
         }
 
-        // 수정하려는 폴더 정보 조회
-        val storageFolderEntity =
-            db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndRowDeleteDateStr(
-                storageFolderInfoUid,
-                "/"
-            )
-
-        if (storageFolderEntity == null) {
-            // 수정하려는 데이터가 없음
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
-
         // 멤버 데이터 조회
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
@@ -176,8 +163,16 @@ class StorageService(
 //        val memberEntity =
 //            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        if (storageFolderEntity.totalAuthMember.uid != memberUid) {
-            // 내가 입력한 데이터가 아니라면 없는 것으로 처리
+        // 수정하려는 폴더 정보 조회
+        val storageFolderEntity =
+            db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUidAndRowDeleteDateStr(
+                storageFolderInfoUid,
+                memberUid,
+                "/"
+            )
+
+        if (storageFolderEntity == null) {
+            // 수정하려는 데이터가 없음
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
             return
@@ -204,8 +199,9 @@ class StorageService(
                 null
             } else {
                 val parentStorageFolderEntity =
-                    db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndRowDeleteDateStr(
+                    db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUidAndRowDeleteDateStr(
                         inputVo.parentStorageFolderInfoUid,
+                        memberUid,
                         "/"
                     )
 
@@ -280,20 +276,29 @@ class StorageService(
 //        val memberEntity =
 //            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        // 기준 폴더로부터 모든 하위 폴더 출력
-        val folderTreePathList =
-            db1RaillyLinkerCompanyStorageFolderInfoRepository.findAllStorageFolderTreeUidList(storageFolderInfoUid)
+        // 삭제하려는 폴더 정보 조회
+        val storageFolderEntity =
+            db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUidAndRowDeleteDateStr(
+                storageFolderInfoUid,
+                memberUid,
+                "/"
+            )
 
-        if (folderTreePathList.isEmpty()) {
+        if (storageFolderEntity == null) {
             // 삭제하려는 데이터가 없음
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
             return
         }
 
+        // 기준 폴더로부터 모든 하위 폴더 출력 (하위 Depth 폴더 우선 정렬)
+        val folderTreePathList =
+            db1RaillyLinkerCompanyStorageFolderInfoRepository.findAllStorageFolderTreeUidList(storageFolderInfoUid)
         for (folderTreePath in folderTreePathList) {
-            // todo 하위 폴더 및 파일 삭제
-            println("folderTreePath : ${folderTreePath.uid}")
+            // todo 테스트
+            // todo 하위 파일 삭제 처리
+
+            // todo 하위 폴더 삭제 처리
         }
 
         httpServletResponse.status = HttpStatus.OK.value()

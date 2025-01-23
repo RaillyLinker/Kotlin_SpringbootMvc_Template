@@ -11,12 +11,13 @@ import org.springframework.stereotype.Repository
 @Repository
 interface Db1_RaillyLinkerCompany_StorageFolderInfo_Repository :
     JpaRepository<Db1_RaillyLinkerCompany_StorageFolderInfo, Long> {
-    fun findByUidAndRowDeleteDateStr(
+    fun findByUidAndTotalAuthMemberUidAndRowDeleteDateStr(
         uid: Long,
+        totalAuthMemberUid: Long,
         rowDeleteDateStr: String
     ): Db1_RaillyLinkerCompany_StorageFolderInfo?
 
-    
+
     // ----
     // (특정 폴더에서 모든 하위 폴더들을 탐색합니다.)
     @Query(
