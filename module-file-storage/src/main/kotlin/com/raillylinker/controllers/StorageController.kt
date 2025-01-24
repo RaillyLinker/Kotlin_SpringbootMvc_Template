@@ -229,11 +229,66 @@ class StorageController(
     }
 
 
+    // ----
+    @Operation(
+        summary = "내 스토리지 폴더 트리 조회 <>",
+        description = "내가 등록한 스토리지 폴더의 트리를 가져옵니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            )
+        ]
+    )
+    @GetMapping(
+        path = ["/my-storage-folder-tree"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    fun getMyStorageFolderTree(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?
+    ): GetMyStorageFolderTreeOutputVo? {
+        return service.getMyStorageFolderTree(
+            httpServletResponse,
+            authorization!!
+        )
+    }
+
+    data class GetMyStorageFolderTreeOutputVo(
+        @Schema(description = "폴더 트리 리스트", required = true)
+        @JsonProperty("folderTree")
+        val folderTree: List<FolderVo>
+    ) {
+        @Schema(description = "폴더 Vo")
+        data class FolderVo(
+            @Schema(description = "폴더 고유값", required = true, example = "1")
+            @JsonProperty("folderUid")
+            val folderUid: Long,
+            @Schema(description = "폴더 이름", required = true, example = "내 문서")
+            @JsonProperty("folderName")
+            val folderName: String,
+            @Schema(description = "자식 폴더 리스트", required = false)
+            @JsonProperty("folderChildren")
+            val folderChildren: List<FolderVo>?
+        )
+    }
+
+
     /*
         todo
-        폴더 조회(본인 인증 필요, 폴더 트리 반환)
-
-
         파일 입력(인증 필요, 파일명에 - 나 / 를 못 쓰게 하기, 폴더 uid 를 사용한 공유락 적용)
         수평 확장 고려, 용량이 부족하면 eureka 가 자동으로 로드 밸런스 탐색을 할 수 있도록 신호를 내려주기
 

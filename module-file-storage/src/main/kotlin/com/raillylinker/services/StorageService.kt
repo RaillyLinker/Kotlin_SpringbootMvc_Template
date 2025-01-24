@@ -358,4 +358,44 @@ class StorageService(
         httpServletResponse.status = HttpStatus.OK.value()
         // todo 파일 정보 삭제 테스트
     }
+
+
+    // ----
+    // (내 스토리지 폴더 트리 조회 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    fun getMyStorageFolderTree(
+        httpServletResponse: HttpServletResponse,
+        authorization: String
+    ): StorageController.GetMyStorageFolderTreeOutputVo? {
+        // 멤버 데이터 조회
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+//        val memberEntity =
+//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        // 최상위 폴더 조회 (parentStorageFolderInfo == null)
+        val rootFolders =
+            db1RaillyLinkerCompanyStorageFolderInfoRepository.findAllByTotalAuthMemberUidAndParentStorageFolderInfoIsNull(
+                memberUid
+            )
+
+        // 폴더 트리 변환
+        val folderTree = rootFolders.map { folder -> mapToFolderVo(folder) }
+
+        return StorageController.GetMyStorageFolderTreeOutputVo(
+            folderTree
+        )
+    }
+
+    // 폴더 트리를 FolderVo로 변환하는 재귀 함수
+    private fun mapToFolderVo(folder: Db1_RaillyLinkerCompany_StorageFolderInfo): StorageController.GetMyStorageFolderTreeOutputVo.FolderVo {
+        return StorageController.GetMyStorageFolderTreeOutputVo.FolderVo(
+            folder.uid!!,
+            folder.folderName,
+            folder.childStorageFolderInfoList.map { child -> mapToFolderVo(child) }
+        )
+    }
 }
