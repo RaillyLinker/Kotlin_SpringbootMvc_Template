@@ -2,6 +2,7 @@ package com.raillylinker.controllers
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.raillylinker.services.StorageService
+import io.swagger.v3.oas.annotations.Hidden
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.headers.Header
@@ -335,6 +336,7 @@ class StorageController(
         consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
+    @PreAuthorize("isAuthenticated()")
     @ResponseBody
     fun postFile(
         @Parameter(hidden = true)
@@ -413,6 +415,7 @@ class StorageController(
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.ALL_VALUE]
     )
+    @PreAuthorize("isAuthenticated()")
     @ResponseBody
     fun patchFileSecret(
         @Parameter(hidden = true)
@@ -442,20 +445,138 @@ class StorageController(
     )
 
 
+    // ----
+    @Operation(
+        summary = "파일 수정 <>",
+        description = "파일 정보를 수정 합니다. (파일별로 요청을 해당 서버로 전달합니다.)"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : storageFileInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : storageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "3 : 파일명에는 - 나 / 를 사용할 수 없습니다.<br>" +
+                                "4 : 동일 이름의 파일이 폴더 내에 존재합니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PutMapping(
+        path = ["/file/{storageFileInfoUid}"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    fun putFile(
+        @Parameter(hidden = true)
+        httpServletRequest: HttpServletRequest,
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "storageFileInfoUid", description = "storageFileInfo 고유값", example = "1")
+        @PathVariable("storageFileInfoUid")
+        storageFileInfoUid: Long,
+        @RequestBody
+        inputVo: PutFileInputVo
+    ) {
+        service.putFile(httpServletRequest, httpServletResponse, authorization!!, storageFileInfoUid, inputVo)
+    }
+
+    data class PutFileInputVo(
+        @Schema(description = "storageFolderInfo 고유값", required = true, example = "1")
+        @JsonProperty("storageFolderInfoUid")
+        val storageFolderInfoUid: Long,
+        @Schema(description = "파일명 (파일명에는 - 나 / 를 사용할 수 없습니다.)", required = true, example = "1")
+        @JsonProperty("fileName")
+        val fileName: String
+    )
+
+
+    // ----
+    @Hidden
+    @Operation(
+        summary = "파일 수정 실제 <>",
+        description = "파일 정보를 실제 수정 합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : storageFileInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : storageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "3 : 파일명에는 - 나 / 를 사용할 수 없습니다.<br>" +
+                                "4 : 동일 이름의 파일이 폴더 내에 존재합니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PutMapping(
+        path = ["/actual-file/{storageFileInfoUid}"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    fun putActualFile(
+        @Parameter(hidden = true)
+        httpServletRequest: HttpServletRequest,
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "storageFileInfoUid", description = "storageFileInfo 고유값", example = "1")
+        @PathVariable("storageFileInfoUid")
+        storageFileInfoUid: Long,
+        @RequestBody
+        inputVo: PutFileInputVo
+    ) {
+        service.putActualFile(httpServletRequest, httpServletResponse, authorization!!, storageFileInfoUid, inputVo)
+    }
+
+
     /*
         todo
-        1. 파일 정보 수정 :
-            본인 인증 필요
-            파일명에 - 나 / 를 못 쓰게 하기
-            파일 저장 위치에 요청 전달
-
-        2. 파일 정보 수정 실제 :
-            본인 인증 필요
-            폴더 uid 를 사용한 공유락 적용
-            unique 에러 처리
-            파일명 수정
-            파일 경로 이동
-
         3. 파일 삭제 :
             본인 인증 필요
             파일 저장 위치에 요청 전달

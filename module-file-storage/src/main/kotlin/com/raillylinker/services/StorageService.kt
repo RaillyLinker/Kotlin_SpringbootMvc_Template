@@ -13,6 +13,7 @@ import com.raillylinker.redis_map_components.redis1_main.Redis1_Lock_StorageFold
 import com.raillylinker.util_components.JwtTokenUtil
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import okhttp3.ResponseBody
 import org.apache.commons.io.FileUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -20,6 +21,13 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
+import retrofit2.http.Header
+import retrofit2.http.PUT
+import retrofit2.http.Path
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
@@ -582,5 +590,121 @@ class StorageService(
 
         fileInfo.fileSecretCode = inputVo.fileSecret
         db1RaillyLinkerCompanyStorageFileInfoRepository.save(fileInfo)
+    }
+
+
+    // ----
+    // (파일 수정 <>)
+    fun putFile(
+        httpServletRequest: HttpServletRequest,
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        storageFileInfoUid: Long,
+        inputVo: StorageController.PutFileInputVo
+    ) {
+        if (inputVo.fileName.contains("/") || inputVo.fileName.contains("-")) {
+            // 사용 불가 특수문자
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return
+        }
+        // 멤버 데이터 조회
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+//        val memberEntity =
+//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        val fileInfoOpt = db1RaillyLinkerCompanyStorageFileInfoRepository.findById(storageFileInfoUid)
+        if (fileInfoOpt.isEmpty) {
+            // 데이터가 없습니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        val fileInfo = fileInfoOpt.get()
+        if (fileInfo.storageFolderInfo.totalAuthMember.uid != memberUid) {
+            // 내가 등록한 정보가 아닙니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        // Retrofit2 요청 호출 및 응답 그대로 반환
+        val retrofit2ActualFileServiceResponse = Retrofit.Builder()
+            .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
+            .addConverterFactory(GsonConverterFactory.create())
+            .build().create(Retrofit2ActualFileService::class.java).updateActualFile(
+                storageFileInfoUid, authorization, inputVo
+            )
+            .execute()
+
+        httpServletResponse.status = retrofit2ActualFileServiceResponse.code()
+
+        if (httpServletResponse.status == 204) {
+            // 응답이 성공적이면, 응답 상태와 헤더를 그대로 반환
+            retrofit2ActualFileServiceResponse.headers().forEach { (key, value) ->
+                httpServletResponse.setHeader(key, value)
+            }
+        }
+    }
+
+    interface Retrofit2ActualFileService {
+        @PUT("/storage/actual-file/{storageFileInfoUid}")
+        fun updateActualFile(
+            @Path("storageFileInfoUid") storageFileInfoUid: Long,
+            @Header("Authorization") authorization: String,
+            @Body inputVo: StorageController.PutFileInputVo
+        ): Call<ResponseBody>
+    }
+
+
+    // ----
+    // (파일 수정 실제 <>)
+    fun putActualFile(
+        httpServletRequest: HttpServletRequest,
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        storageFileInfoUid: Long,
+        inputVo: StorageController.PutFileInputVo
+    ) {
+        // 멤버 데이터 조회
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+//        val memberEntity =
+//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        val fileInfoOpt = db1RaillyLinkerCompanyStorageFileInfoRepository.findById(storageFileInfoUid)
+        if (fileInfoOpt.isEmpty) {
+            // 데이터가 없습니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        val fileInfo = fileInfoOpt.get()
+        if (fileInfo.storageFolderInfo.totalAuthMember.uid != memberUid) {
+            // 내가 등록한 정보가 아닙니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        redis1LockStorageFolderInfo.tryLockRepeat(
+            "${fileInfo.storageFolderInfo.uid!!}",
+            7000L,
+            {
+                // todo 파일 수정 (파일이 본 서버에 있다고 가정. 없을 때는 Exception)
+                //     unique 에러 처리
+                //     파일명 수정
+                //     파일 경로 이동
+            }
+        )
     }
 }
