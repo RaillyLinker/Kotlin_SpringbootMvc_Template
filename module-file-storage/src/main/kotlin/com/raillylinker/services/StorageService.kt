@@ -544,4 +544,43 @@ class StorageService(
             }
         )
     }
+
+
+    // ----
+    // (파일 다운로드 비밀번호 변경 <>)
+    fun patchFileSecret(
+        httpServletRequest: HttpServletRequest,
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        storageFileInfoUid: Long,
+        inputVo: StorageController.PatchFileSecretInputVo
+    ) {
+        // 멤버 데이터 조회
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+//        val memberEntity =
+//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        val fileInfoOpt = db1RaillyLinkerCompanyStorageFileInfoRepository.findById(storageFileInfoUid)
+        if (fileInfoOpt.isEmpty) {
+            // 데이터가 없습니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        val fileInfo = fileInfoOpt.get()
+        if (fileInfo.storageFolderInfo.totalAuthMember.uid != memberUid) {
+            // 내가 등록한 정보가 아닙니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        fileInfo.fileSecretCode = inputVo.fileSecret
+        db1RaillyLinkerCompanyStorageFileInfoRepository.save(fileInfo)
+    }
 }

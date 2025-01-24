@@ -376,6 +376,72 @@ class StorageController(
     )
 
 
+    // ----
+    @Operation(
+        summary = "파일 다운로드 비밀번호 변경 <>",
+        description = "파일 다운로드 비밀번호를 변경 합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : storageFileInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PatchMapping(
+        path = ["/file/{storageFileInfoUid}/file-secret"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @ResponseBody
+    fun patchFileSecret(
+        @Parameter(hidden = true)
+        httpServletRequest: HttpServletRequest,
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "storageFileInfoUid", description = "storageFileInfo 고유값", example = "1")
+        @PathVariable("storageFileInfoUid")
+        storageFileInfoUid: Long,
+        @RequestBody
+        inputVo: PatchFileSecretInputVo
+    ) {
+        service.patchFileSecret(httpServletRequest, httpServletResponse, authorization!!, storageFileInfoUid, inputVo)
+    }
+
+    data class PatchFileSecretInputVo(
+        @Schema(
+            description = "파일 다운로드 비밀번호(본 등록 파일을 다운로드 하기 위해 필요한 비밀번호 설정, 해싱 되지 않습니다.)",
+            required = false,
+            example = "asdfqwer"
+        )
+        @JsonProperty("fileSecret")
+        val fileSecret: String?
+    )
+
+
     /*
         todo
         1. 파일 정보 수정 :
@@ -387,7 +453,7 @@ class StorageController(
             본인 인증 필요
             폴더 uid 를 사용한 공유락 적용
             unique 에러 처리
-            파일명, 파일 다운로드 시크릿 코드 수정
+            파일명 수정
             파일 경로 이동
 
         3. 파일 삭제 :
