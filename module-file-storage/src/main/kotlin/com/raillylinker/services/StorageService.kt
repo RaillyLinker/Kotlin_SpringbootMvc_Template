@@ -425,7 +425,6 @@ class StorageService(
 //        val memberEntity =
 //            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-
         return redis1LockStorageFolderInfo.tryLockRepeat(
             "${inputVo.storageFolderInfoUid}",
             7000L,
@@ -471,9 +470,6 @@ class StorageService(
                     httpServletResponse.status = HttpStatus.SERVICE_UNAVAILABLE.value()
                     return@tryLockRepeat null
                 }
-
-                val fileServerUrlConfigFilePath =
-                    Paths.get("./by_product_files/file_storage/files").toAbsolutePath().normalize()
 
                 // 파일 정보 저장
                 val newFileInfo = db1RaillyLinkerCompanyStorageFileInfoRepository.save(
