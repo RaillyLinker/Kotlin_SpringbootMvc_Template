@@ -13,7 +13,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.core.io.Resource
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
@@ -686,17 +688,101 @@ class StorageController(
     }
 
 
+    // ----
+    @Operation(
+        summary = "파일 다운로드",
+        description = "파일을 다운로드 합니다. (파일별로 요청을 해당 서버로 전달합니다.)"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "404",
+                content = [Content()],
+                description = "파일이 없거나 비밀번호가 일치하지 않습니다."
+            )
+        ]
+    )
+    @GetMapping(
+        path = ["/download-file/{storageFileInfoUid}/{fileName}"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE]
+    )
+    @ResponseBody
+    fun downloadFile(
+        @Parameter(hidden = true)
+        httpServletRequest: HttpServletRequest,
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(name = "storageFileInfoUid", description = "storageFileInfo 고유값", example = "1")
+        @PathVariable("storageFileInfoUid")
+        storageFileInfoUid: Long,
+        @Parameter(name = "fileName", description = "파일명", example = "sample.txt")
+        @PathVariable("fileName")
+        fileName: String,
+        @Parameter(name = "fileSecret", description = "파일 다운로드 시크릿", example = "qwer1234")
+        @RequestParam("fileSecret")
+        fileSecret: String?
+    ): ResponseEntity<Resource>? {
+        return service.downloadFile(httpServletRequest, httpServletResponse, storageFileInfoUid, fileName, fileSecret)
+    }
+
+
+    // ----
+    @Hidden
+    @Operation(
+        summary = "파일 다운로드 실제",
+        description = "파일을 실제 다운로드 합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "404",
+                content = [Content()],
+                description = "파일이 없거나 비밀번호가 일치하지 않습니다."
+            )
+        ]
+    )
+    @GetMapping(
+        path = ["/actual-download-file/{storageFileInfoUid}/{fileName}"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE]
+    )
+    @ResponseBody
+    fun downloadActualFile(
+        @Parameter(hidden = true)
+        httpServletRequest: HttpServletRequest,
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(name = "storageFileInfoUid", description = "storageFileInfo 고유값", example = "1")
+        @PathVariable("storageFileInfoUid")
+        storageFileInfoUid: Long,
+        @Parameter(name = "fileName", description = "파일명", example = "sample.txt")
+        @PathVariable("fileName")
+        fileName: String,
+        @Parameter(name = "fileSecret", description = "파일 다운로드 시크릿", example = "qwer1234")
+        @RequestParam("fileSecret")
+        fileSecret: String?
+    ): ResponseEntity<Resource>? {
+        return service.downloadActualFile(
+            httpServletRequest,
+            httpServletResponse,
+            storageFileInfoUid,
+            fileName,
+            fileSecret
+        )
+    }
+
+
     /*
         todo
-        5. 파일 다운 :
-            {다운 주소}/storage/{파일 고유번호}/{파일명} ? secret=oooo
-            시크릿 코드 검증
-            요청 전달
-
-        6. 파일 다운 실제 :
-            {실제 다운 주소}/storage/{파일 고유번호}/{파일명} ? secret=oooo
-            파일 반환
-
         7. 폴더 내 파일 조회(본인 인증 필요, 폴더 고유값에 해당하는 폴더 내 모든 파일 반환)
 
         9. 완료되면 auth 등 파일 다루는 부분을 이것으로 대체하기(기존 aws s3 처럼 사용한다고 가정하고 util 만들어 사용)

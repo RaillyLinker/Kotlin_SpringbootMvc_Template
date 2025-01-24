@@ -19,4 +19,11 @@ interface Db1_RaillyLinkerCompany_StorageFileInfo_Repository :
         storageFolderInfoUid: Long,
         fileName: String
     ): Boolean
+
+
+    // ----
+    fun findByUidAndFileName(
+        uid: Long,
+        fileName: String
+    ): Db1_RaillyLinkerCompany_StorageFileInfo?
 }

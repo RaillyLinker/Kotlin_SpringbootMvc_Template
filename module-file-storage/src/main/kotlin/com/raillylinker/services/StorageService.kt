@@ -18,17 +18,17 @@ import org.apache.commons.io.FileUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpStatus
+import org.springframework.core.io.InputStreamResource
+import org.springframework.core.io.Resource
+import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.Header
-import retrofit2.http.PUT
-import retrofit2.http.Path
+import retrofit2.http.*
+import java.io.File
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
@@ -904,6 +904,138 @@ class StorageService(
                     Files.delete(saveDirectoryPath)
                 }
             }
+        )
+    }
+
+
+    // ----
+    // (파일 다운로드)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    fun downloadFile(
+        httpServletRequest: HttpServletRequest,
+        httpServletResponse: HttpServletResponse,
+        storageFileInfoUid: Long,
+        fileName: String,
+        fileSecret: String?
+    ): ResponseEntity<Resource>? {
+        val fileInfo =
+            db1RaillyLinkerCompanyStorageFileInfoRepository.findByUidAndFileName(storageFileInfoUid, fileName)
+        if (fileInfo == null) {
+            httpServletResponse.status = HttpStatus.NOT_FOUND.value()
+            return null
+        }
+
+        if (fileSecret != null && fileInfo.fileSecretCode != fileSecret) {
+            httpServletResponse.status = HttpStatus.NOT_FOUND.value()
+            return null
+        }
+
+        // Retrofit2 요청 호출 및 응답 그대로 반환
+        val retrofit2Response = Retrofit.Builder()
+            .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
+            .addConverterFactory(GsonConverterFactory.create())
+            .build().create(Retrofit2ActualFileDownloadService::class.java).downloadActualFile(
+                storageFileInfoUid,
+                fileName,
+                fileSecret
+            )
+            .execute()
+
+        httpServletResponse.status = retrofit2Response.code()
+
+        if (httpServletResponse.status == 200) {
+            val responseBody = retrofit2Response.body()!!
+            return ResponseEntity.ok()
+                .headers { httpHeaders ->
+                    retrofit2Response.headers().forEach { (key, value) ->
+                        httpHeaders[key] = value
+                    }
+                }
+                .contentType(
+                    MediaType.parseMediaType(
+                        retrofit2Response.headers()["Content-Type"] ?: MediaType.APPLICATION_OCTET_STREAM_VALUE
+                    )
+                )
+                .body(InputStreamResource(responseBody.byteStream()))
+        } else {
+            return null
+        }
+    }
+
+    interface Retrofit2ActualFileDownloadService {
+        @GET("/storage/actual-download-file/{storageFileInfoUid}/{fileName}")
+        fun downloadActualFile(
+            @Path("storageFileInfoUid") storageFileInfoUid: Long,
+            @Path("fileName") fileName: String,
+            @Query("fileSecret") fileSecret: String?
+        ): Call<ResponseBody>
+    }
+
+
+    // ----
+    // (파일 다운로드 실제)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    fun downloadActualFile(
+        httpServletRequest: HttpServletRequest,
+        httpServletResponse: HttpServletResponse,
+        storageFileInfoUid: Long,
+        fileName: String,
+        fileSecret: String?
+    ): ResponseEntity<Resource>? {
+        val fileInfo =
+            db1RaillyLinkerCompanyStorageFileInfoRepository.findByUidAndFileName(storageFileInfoUid, fileName)
+        if (fileInfo == null) {
+            httpServletResponse.status = HttpStatus.NOT_FOUND.value()
+            return null
+        }
+
+        if (fileSecret != null && fileInfo.fileSecretCode != fileSecret) {
+            httpServletResponse.status = HttpStatus.NOT_FOUND.value()
+            return null
+        }
+
+        // 기본 파일 저장 위치(./by_product_files/file_storage/files 의 멤버별 할당 폴더)
+        val memberRootPath = storageRootPath + "/member_${fileInfo.storageFolderInfo.totalAuthMember.uid!!}"
+
+        // 상위 폴더에서부터 지금 폴더 까지의 계층 반환
+        val folderPathStringBuilder = StringBuilder()
+        var anchorFolderEntity: Db1_RaillyLinkerCompany_StorageFolderInfo? = fileInfo.storageFolderInfo
+        while (anchorFolderEntity != null) {
+            folderPathStringBuilder.insert(0, "/" + anchorFolderEntity.folderName)
+            anchorFolderEntity = anchorFolderEntity.parentStorageFolderInfo
+        }
+
+        // 경로 String 을 Path 변수로 변환
+        val saveDirectoryPath =
+            Paths.get(memberRootPath + folderPathStringBuilder.toString()).toAbsolutePath().normalize()
+                .resolve(
+                    fileInfo.fileName
+                )
+
+        when {
+            Files.isDirectory(saveDirectoryPath) -> {
+                // 파일이 디렉토리일때
+                httpServletResponse.status = HttpStatus.NOT_FOUND.value()
+                return null
+            }
+
+            Files.notExists(saveDirectoryPath) -> {
+                // 파일이 없을 때
+                httpServletResponse.status = HttpStatus.NOT_FOUND.value()
+                return null
+            }
+        }
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return ResponseEntity<Resource>(
+            InputStreamResource(Files.newInputStream(saveDirectoryPath)),
+            HttpHeaders().apply {
+                this.contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(fileName, StandardCharsets.UTF_8)
+                    .build()
+                this.add(HttpHeaders.CONTENT_TYPE, Files.probeContentType(saveDirectoryPath))
+            },
+            HttpStatus.OK
         )
     }
 }
