@@ -462,6 +462,20 @@ class StorageService(
             "${inputVo.storageFolderInfoUid}",
             7000L,
             {
+                // 동일 폴더 정보가 존재하는지 검증
+                val uniqueInvalid =
+                    db1RaillyLinkerCompanyStorageFileInfoRepository.existsByStorageFolderInfoUidAndFileName(
+                        inputVo.storageFolderInfoUid,
+                        inputVo.fileName
+                    )
+
+                if (uniqueInvalid) {
+                    // 동일 이름의 파일이 폴더 내에 존재합니다.
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "3")
+                    return@tryLockRepeat null
+                }
+
                 // 폴더 정보 조회
                 val storageFolderEntity =
                     db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(

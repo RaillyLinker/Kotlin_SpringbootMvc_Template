@@ -12,4 +12,11 @@ interface Db1_RaillyLinkerCompany_StorageFileInfo_Repository :
     fun findAllByStorageFolderInfoUid(
         storageFolderInfoUid: Long
     ): List<Db1_RaillyLinkerCompany_StorageFileInfo>
+
+
+    // ----
+    fun existsByStorageFolderInfoUidAndFileName(
+        storageFolderInfoUid: Long,
+        fileName: String
+    ): Boolean
 }

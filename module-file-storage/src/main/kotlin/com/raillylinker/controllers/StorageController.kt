@@ -311,7 +311,8 @@ class StorageController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : storageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 파일명에는 - 나 / 를 사용할 수 없습니다.",
+                                "2 : 파일명에는 - 나 / 를 사용할 수 없습니다.<br>" +
+                                "3 : 동일 이름의 파일이 폴더 내에 존재합니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -374,8 +375,6 @@ class StorageController(
 
     /*
         todo
-        1. 파일 입력 unique 에러 처리
-
         2. 파일 정보 수정 :
             unique 에러 처리
             본인 인증 필요, 파일명, 파일 다운로드 시크릿 코드 수정, 파일 경로 이동, 파일명에 - 나 / 를 못 쓰게 하기, 폴더 uid 를 사용한 공유락 적용
@@ -397,5 +396,7 @@ class StorageController(
         6. 파일 정리(데이터에 없는 파일 삭제, 파일이 없는 데이터 삭제)
 
         7. 완료되면 auth 등 파일 다루는 부분을 이것으로 대체하기(기존 aws s3 처럼 사용한다고 가정하고 util 만들어 사용)
+
+        8. 실제 파일과 비교하여 데이터 정리하는 로직
      */
 }
