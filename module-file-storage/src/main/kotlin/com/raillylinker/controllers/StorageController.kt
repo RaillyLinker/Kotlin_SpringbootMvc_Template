@@ -48,7 +48,8 @@ class StorageController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : parentStorageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 폴더명에는 - 나 / 를 사용할 수 없습니다.",
+                                "2 : 폴더명에는 - 나 / 를 사용할 수 없습니다.<br>" +
+                                "3 : 중복된 폴더 경로입니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -123,7 +124,8 @@ class StorageController(
                                 "2 : parentStorageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "3 : 자기 자신을 상위 폴더로 지정할 수 없습니다.<br>" +
                                 "4 : 자기 자신의 하위 폴더를 상위 폴더로 지정할 수 없습니다.<br>" +
-                                "5 : 폴더명에는 - 나 / 를 사용할 수 없습니다.",
+                                "5 : 폴더명에는 - 나 / 를 사용할 수 없습니다.<br>" +
+                                "6 : 중복된 폴더 경로입니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -372,9 +374,10 @@ class StorageController(
 
     /*
         todo
-        1. 폴더 입력/수정, 파일 입력/수정 unique 에러 처리
+        1. 파일 입력 unique 에러 처리
 
         2. 파일 정보 수정 :
+            unique 에러 처리
             본인 인증 필요, 파일명, 파일 다운로드 시크릿 코드 수정, 파일 경로 이동, 파일명에 - 나 / 를 못 쓰게 하기, 폴더 uid 를 사용한 공유락 적용
             중계와 실제 처리 api 분리
 

@@ -87,6 +87,21 @@ class StorageService(
             AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
         )
 
+        // 동일 폴더 정보가 존재하는지 검증
+        val uniqueInvalid =
+            db1RaillyLinkerCompanyStorageFolderInfoRepository.existsByTotalAuthMemberUidAndParentStorageFolderInfoUidAndFolderName(
+                memberUid,
+                inputVo.parentStorageFolderInfoUid,
+                inputVo.folderName
+            )
+
+        if (uniqueInvalid) {
+            // 중복된 폴더 경로
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return null
+        }
+
         // 멤버 데이터 조회
         val memberEntity =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -181,6 +196,22 @@ class StorageService(
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
             AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
         )
+
+        // 동일 폴더 정보가 존재하는지 검증
+        val uniqueInvalid =
+            db1RaillyLinkerCompanyStorageFolderInfoRepository.existsByTotalAuthMemberUidAndParentStorageFolderInfoUidAndFolderName(
+                memberUid,
+                inputVo.parentStorageFolderInfoUid,
+                inputVo.folderName
+            )
+
+        if (uniqueInvalid) {
+            // 중복된 폴더 경로
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "6")
+            return
+        }
+
 //        val memberEntity =
 //            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 

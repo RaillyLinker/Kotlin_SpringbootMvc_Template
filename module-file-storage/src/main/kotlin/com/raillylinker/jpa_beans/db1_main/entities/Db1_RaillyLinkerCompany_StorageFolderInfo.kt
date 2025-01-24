@@ -15,7 +15,7 @@ import java.time.LocalDateTime
     name = "storage_folder_info",
     catalog = "railly_linker_company",
     uniqueConstraints = [
-        UniqueConstraint(columnNames = ["parent_storage_folder_info_uid_nn", "folder_name"])
+        UniqueConstraint(columnNames = ["total_auth_member_uid", "parent_storage_folder_info_uid_nn", "folder_name"])
     ]
 )
 @Comment("스토리지 폴더 정보")

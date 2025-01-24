@@ -24,6 +24,14 @@ interface Db1_RaillyLinkerCompany_StorageFolderInfo_Repository :
 
 
     // ----
+    fun existsByTotalAuthMemberUidAndParentStorageFolderInfoUidAndFolderName(
+        totalAuthMemberUid: Long,
+        parentStorageFolderInfoUid: Long?,
+        folderName: String
+    ): Boolean
+
+
+    // ----
     // (특정 폴더에서 모든 하위 폴더들을 탐색합니다.)
     @Query(
         nativeQuery = true,
