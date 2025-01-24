@@ -28,6 +28,9 @@ class StorageService(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
 
+    // 서버 접근 주소 (ex : http://127.0.0.1:11001)
+    @Value("\${custom-config.server-address}") private var serverAddress: String,
+
     private val jwtTokenUtil: JwtTokenUtil,
     private val db1RaillyLinkerCompanyTotalAuthMemberRepository: Db1_RaillyLinkerCompany_TotalAuthMember_Repository,
     private val db1RaillyLinkerCompanyStorageFolderInfoRepository: Db1_RaillyLinkerCompany_StorageFolderInfo_Repository,
@@ -357,7 +360,6 @@ class StorageService(
         FileUtils.deleteDirectory(saveDirectoryPath.toFile())
 
         httpServletResponse.status = HttpStatus.OK.value()
-        // todo 파일 정보 삭제 테스트
     }
 
 
@@ -476,7 +478,7 @@ class StorageService(
                     Db1_RaillyLinkerCompany_StorageFileInfo(
                         storageFolderEntity,
                         inputVo.fileName,
-                        "", // todo
+                        serverAddress,
                         inputVo.fileSecret
                     )
                 )
