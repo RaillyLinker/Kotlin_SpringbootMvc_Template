@@ -8,6 +8,7 @@ import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_Stor
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_StorageFileInfo_Repository
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_StorageFolderInfo_Repository
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_TotalAuthMember_Repository
+import com.raillylinker.redis_map_components.redis1_main.Redis1_Lock_StorageFolderInfo
 import com.raillylinker.util_components.JwtTokenUtil
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.commons.io.FileUtils
@@ -29,7 +30,9 @@ class StorageService(
     private val jwtTokenUtil: JwtTokenUtil,
     private val db1RaillyLinkerCompanyTotalAuthMemberRepository: Db1_RaillyLinkerCompany_TotalAuthMember_Repository,
     private val db1RaillyLinkerCompanyStorageFolderInfoRepository: Db1_RaillyLinkerCompany_StorageFolderInfo_Repository,
-    private val db1RaillyLinkerCompanyStorageFileInfoRepository: Db1_RaillyLinkerCompany_StorageFileInfo_Repository
+    private val db1RaillyLinkerCompanyStorageFileInfoRepository: Db1_RaillyLinkerCompany_StorageFileInfo_Repository,
+
+    private val redis1LockStorageFolderInfo: Redis1_Lock_StorageFolderInfo
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -177,97 +180,103 @@ class StorageService(
 //        val memberEntity =
 //            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        // 수정하려는 폴더 정보 조회
-        val storageFolderEntity =
-            db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
-                storageFolderInfoUid,
-                memberUid
-            )
-
-        if (storageFolderEntity == null) {
-            // 수정하려는 데이터가 없음
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
-
-        // 기본 파일 저장 위치(./by_product_files/file_storage/files 의 멤버별 할당 폴더)
-        val memberRootPath = storageRootPath + "/member_${memberUid}"
-
-        // 기존 폴더 정보 객체
-        val oldFolderPathStringBuilder = StringBuilder()
-        var oldAnchorFolderEntity: Db1_RaillyLinkerCompany_StorageFolderInfo? = storageFolderEntity
-        while (oldAnchorFolderEntity != null) {
-            oldFolderPathStringBuilder.insert(0, "/" + oldAnchorFolderEntity.folderName)
-            oldAnchorFolderEntity = oldAnchorFolderEntity.parentStorageFolderInfo
-        }
-
-        // 경로 String 을 Path 변수로 변환
-        val oldSaveDirectoryPath =
-            Paths.get(memberRootPath + oldFolderPathStringBuilder.toString()).toAbsolutePath().normalize()
-
-        // 부모 폴더 정보 조회
-        val parentStorageFolderInfo: Db1_RaillyLinkerCompany_StorageFolderInfo? =
-            if (inputVo.parentStorageFolderInfoUid == null) {
-                null
-            } else {
-                val parentStorageFolderEntity =
+        redis1LockStorageFolderInfo.tryLockRepeat(
+            "$storageFolderInfoUid",
+            7000L,
+            {
+                // 수정하려는 폴더 정보 조회
+                val storageFolderEntity =
                     db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
-                        inputVo.parentStorageFolderInfoUid,
+                        storageFolderInfoUid,
                         memberUid
                     )
 
-                if (parentStorageFolderEntity == null) {
-                    // 부모 폴더 정보가 없음
+                if (storageFolderEntity == null) {
+                    // 수정하려는 데이터가 없음
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "2")
-                    return
+                    httpServletResponse.setHeader("api-result-code", "1")
+                    return@tryLockRepeat
                 }
 
-                // 상위 폴더를 자기 자신의 하위 폴더로 설정 못하도록 검증
-                var anchorFolderEntity: Db1_RaillyLinkerCompany_StorageFolderInfo? = parentStorageFolderEntity
-                while (anchorFolderEntity != null) {
-                    // 상위 폴더로 설정할 엔티티가 자기 자신의 하위 폴더로 설정 되어 있는지 확인
-                    if (anchorFolderEntity.uid == storageFolderInfoUid) {
-                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                        httpServletResponse.setHeader("api-result-code", "4")
-                        return
+                // 기본 파일 저장 위치(./by_product_files/file_storage/files 의 멤버별 할당 폴더)
+                val memberRootPath = storageRootPath + "/member_${memberUid}"
+
+                // 기존 폴더 정보 객체
+                val oldFolderPathStringBuilder = StringBuilder()
+                var oldAnchorFolderEntity: Db1_RaillyLinkerCompany_StorageFolderInfo? = storageFolderEntity
+                while (oldAnchorFolderEntity != null) {
+                    oldFolderPathStringBuilder.insert(0, "/" + oldAnchorFolderEntity.folderName)
+                    oldAnchorFolderEntity = oldAnchorFolderEntity.parentStorageFolderInfo
+                }
+
+                // 경로 String 을 Path 변수로 변환
+                val oldSaveDirectoryPath =
+                    Paths.get(memberRootPath + oldFolderPathStringBuilder.toString()).toAbsolutePath().normalize()
+
+                // 부모 폴더 정보 조회
+                val parentStorageFolderInfo: Db1_RaillyLinkerCompany_StorageFolderInfo? =
+                    if (inputVo.parentStorageFolderInfoUid == null) {
+                        null
+                    } else {
+                        val parentStorageFolderEntity =
+                            db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
+                                inputVo.parentStorageFolderInfoUid,
+                                memberUid
+                            )
+
+                        if (parentStorageFolderEntity == null) {
+                            // 부모 폴더 정보가 없음
+                            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                            httpServletResponse.setHeader("api-result-code", "2")
+                            return@tryLockRepeat
+                        }
+
+                        // 상위 폴더를 자기 자신의 하위 폴더로 설정 못하도록 검증
+                        var anchorFolderEntity: Db1_RaillyLinkerCompany_StorageFolderInfo? = parentStorageFolderEntity
+                        while (anchorFolderEntity != null) {
+                            // 상위 폴더로 설정할 엔티티가 자기 자신의 하위 폴더로 설정 되어 있는지 확인
+                            if (anchorFolderEntity.uid == storageFolderInfoUid) {
+                                httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                                httpServletResponse.setHeader("api-result-code", "4")
+                                return@tryLockRepeat
+                            }
+                            anchorFolderEntity = anchorFolderEntity.parentStorageFolderInfo
+                        }
+
+                        parentStorageFolderEntity
                     }
-                    anchorFolderEntity = anchorFolderEntity.parentStorageFolderInfo
+
+                // 폴더 정보 수정
+                storageFolderEntity.parentStorageFolderInfo = parentStorageFolderInfo
+                storageFolderEntity.parentStorageFolderInfoUidNn =
+                    if (parentStorageFolderInfo == null) {
+                        0L
+                    } else {
+                        parentStorageFolderInfo.uid!!
+                    }
+                storageFolderEntity.folderName = inputVo.folderName
+
+                db1RaillyLinkerCompanyStorageFolderInfoRepository.save(storageFolderEntity)
+
+                // 실제로 폴더 수정
+                // 새 폴더 정보 객체
+                val newFolderPathStringBuilder = StringBuilder()
+                var newAnchorFolderEntity: Db1_RaillyLinkerCompany_StorageFolderInfo? = storageFolderEntity
+                while (newAnchorFolderEntity != null) {
+                    newFolderPathStringBuilder.insert(0, "/" + newAnchorFolderEntity.folderName)
+                    newAnchorFolderEntity = newAnchorFolderEntity.parentStorageFolderInfo
                 }
 
-                parentStorageFolderEntity
+                // 경로 String 을 Path 변수로 변환
+                val newSaveDirectoryPath =
+                    Paths.get(memberRootPath + newFolderPathStringBuilder.toString()).toAbsolutePath().normalize()
+
+                // 폴더 이동
+                Files.move(oldSaveDirectoryPath, newSaveDirectoryPath, StandardCopyOption.REPLACE_EXISTING)
+
+                httpServletResponse.status = HttpStatus.OK.value()
             }
-
-        // 폴더 정보 수정
-        storageFolderEntity.parentStorageFolderInfo = parentStorageFolderInfo
-        storageFolderEntity.parentStorageFolderInfoUidNn =
-            if (parentStorageFolderInfo == null) {
-                0L
-            } else {
-                parentStorageFolderInfo.uid!!
-            }
-        storageFolderEntity.folderName = inputVo.folderName
-
-        db1RaillyLinkerCompanyStorageFolderInfoRepository.save(storageFolderEntity)
-
-        // 실제로 폴더 수정
-        // 새 폴더 정보 객체
-        val newFolderPathStringBuilder = StringBuilder()
-        var newAnchorFolderEntity: Db1_RaillyLinkerCompany_StorageFolderInfo? = storageFolderEntity
-        while (newAnchorFolderEntity != null) {
-            newFolderPathStringBuilder.insert(0, "/" + newAnchorFolderEntity.folderName)
-            newAnchorFolderEntity = newAnchorFolderEntity.parentStorageFolderInfo
-        }
-
-        // 경로 String 을 Path 변수로 변환
-        val newSaveDirectoryPath =
-            Paths.get(memberRootPath + newFolderPathStringBuilder.toString()).toAbsolutePath().normalize()
-
-        // 폴더 이동
-        Files.move(oldSaveDirectoryPath, newSaveDirectoryPath, StandardCopyOption.REPLACE_EXISTING)
-
-        httpServletResponse.status = HttpStatus.OK.value()
+        )
     }
 
 
@@ -322,19 +331,25 @@ class StorageService(
         val folderTreePathList =
             db1RaillyLinkerCompanyStorageFolderInfoRepository.findAllStorageFolderTreeUidList(storageFolderInfoUid)
         for (folderTreePath in folderTreePathList) {
-            // 폴더 내 하위 파일들 조회
-            val fileInfoList =
-                db1RaillyLinkerCompanyStorageFileInfoRepository.findAllByStorageFolderInfoUid(
-                    folderTreePath.uid
-                )
+            redis1LockStorageFolderInfo.tryLockRepeat(
+                "${folderTreePath.uid}",
+                7000L,
+                {
+                    // 폴더 내 하위 파일들 조회
+                    val fileInfoList =
+                        db1RaillyLinkerCompanyStorageFileInfoRepository.findAllByStorageFolderInfoUid(
+                            folderTreePath.uid
+                        )
 
-            for (fileInfo in fileInfoList) {
-                // 하위 파일들 삭제 처리
-                db1RaillyLinkerCompanyStorageFileInfoRepository.deleteById(fileInfo.uid!!)
-            }
+                    for (fileInfo in fileInfoList) {
+                        // 하위 파일들 삭제 처리
+                        db1RaillyLinkerCompanyStorageFileInfoRepository.deleteById(fileInfo.uid!!)
+                    }
 
-            // 폴더 삭제 처리
-            db1RaillyLinkerCompanyStorageFolderInfoRepository.deleteById(folderTreePath.uid)
+                    // 폴더 삭제 처리
+                    db1RaillyLinkerCompanyStorageFolderInfoRepository.deleteById(folderTreePath.uid)
+                }
+            )
         }
 
         // 파일 폴더 실제 삭제 처리(선택한 최상위 폴더를 삭제하면 자동으로 아래 파일들 삭제되게)
