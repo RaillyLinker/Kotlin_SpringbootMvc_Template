@@ -508,7 +508,7 @@ class StorageController(
         @Schema(description = "storageFolderInfo 고유값", required = true, example = "1")
         @JsonProperty("storageFolderInfoUid")
         val storageFolderInfoUid: Long,
-        @Schema(description = "파일명 (파일명에는 - 나 / 를 사용할 수 없습니다.)", required = true, example = "1")
+        @Schema(description = "파일명 (파일명에는 - 나 / 를 사용할 수 없습니다.)", required = true, example = "내 파일 1")
         @JsonProperty("fileName")
         val fileName: String
     )

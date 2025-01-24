@@ -700,10 +700,75 @@ class StorageService(
             "${fileInfo.storageFolderInfo.uid!!}",
             7000L,
             {
-                // todo 파일 수정 (파일이 본 서버에 있다고 가정. 없을 때는 Exception)
-                //     unique 에러 처리
-                //     파일명 수정
-                //     파일 경로 이동
+                // 동일 폴더 정보가 존재하는지 검증
+                val uniqueInvalid =
+                    db1RaillyLinkerCompanyStorageFileInfoRepository.existsByStorageFolderInfoUidAndFileName(
+                        inputVo.storageFolderInfoUid,
+                        inputVo.fileName
+                    )
+
+                if (uniqueInvalid) {
+                    // 동일 이름의 파일이 폴더 내에 존재합니다.
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "4")
+                    return@tryLockRepeat
+                }
+
+                // 기본 파일 저장 위치(./by_product_files/file_storage/files 의 멤버별 할당 폴더)
+                val memberRootPath = storageRootPath + "/member_${memberUid}"
+
+                // 상위 폴더에서부터 지금 폴더 까지의 계층 반환
+                val oldFolderPathStringBuilder = StringBuilder()
+                var oldAnchorFolderEntity: Db1_RaillyLinkerCompany_StorageFolderInfo? = fileInfo.storageFolderInfo
+                while (oldAnchorFolderEntity != null) {
+                    oldFolderPathStringBuilder.insert(0, "/" + oldAnchorFolderEntity.folderName)
+                    oldAnchorFolderEntity = oldAnchorFolderEntity.parentStorageFolderInfo
+                }
+
+                // 경로 String 을 Path 변수로 변환
+                val oldSaveDirectoryPath =
+                    Paths.get(memberRootPath + oldFolderPathStringBuilder.toString()).toAbsolutePath().normalize()
+                        .resolve(
+                            fileInfo.fileName
+                        )
+
+                // 폴더 정보 조회
+                val storageFolderEntity =
+                    db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
+                        inputVo.storageFolderInfoUid,
+                        memberUid
+                    )
+
+                if (storageFolderEntity == null) {
+                    // 폴더 데이터가 없음
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "2")
+                    return@tryLockRepeat
+                }
+
+                // 상위 폴더에서부터 지금 폴더 까지의 계층 반환
+                val newFolderPathStringBuilder = StringBuilder()
+                var newAnchorFolderEntity: Db1_RaillyLinkerCompany_StorageFolderInfo? = storageFolderEntity
+                while (newAnchorFolderEntity != null) {
+                    newFolderPathStringBuilder.insert(0, "/" + newAnchorFolderEntity.folderName)
+                    newAnchorFolderEntity = newAnchorFolderEntity.parentStorageFolderInfo
+                }
+
+                // 경로 String 을 Path 변수로 변환
+                val newSaveDirectoryPath =
+                    Paths.get(memberRootPath + newFolderPathStringBuilder.toString()).toAbsolutePath().normalize()
+                        .resolve(
+                            inputVo.fileName
+                        )
+
+                // 폴더 정보, 파일명 수정
+                fileInfo.storageFolderInfo = storageFolderEntity
+                fileInfo.fileName = inputVo.fileName
+
+                db1RaillyLinkerCompanyStorageFileInfoRepository.save(fileInfo)
+
+                // 실제 파일 이동
+                Files.move(oldSaveDirectoryPath, newSaveDirectoryPath, StandardCopyOption.REPLACE_EXISTING)
             }
         )
     }
