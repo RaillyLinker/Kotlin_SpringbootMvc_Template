@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
@@ -337,6 +338,8 @@ class StorageController(
     @ResponseBody
     fun postFile(
         @Parameter(hidden = true)
+        httpServletRequest: HttpServletRequest,
+        @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
@@ -344,7 +347,7 @@ class StorageController(
         @Parameter
         inputVo: PostFileInputVo
     ): PostFileOutputVo? {
-        return service.postFile(httpServletResponse, authorization!!, inputVo)
+        return service.postFile(httpServletRequest, httpServletResponse, authorization!!, inputVo)
     }
 
     data class PostFileInputVo(
@@ -375,17 +378,29 @@ class StorageController(
 
     /*
         todo
-        2. 파일 정보 수정 :
+        1. 파일 정보 수정 :
+            본인 인증 필요
+            파일명에 - 나 / 를 못 쓰게 하기
+            파일 저장 위치에 요청 전달
+
+        2. 파일 정보 수정 실제 :
+            본인 인증 필요
+            폴더 uid 를 사용한 공유락 적용
             unique 에러 처리
-            본인 인증 필요, 파일명, 파일 다운로드 시크릿 코드 수정, 파일 경로 이동, 파일명에 - 나 / 를 못 쓰게 하기, 폴더 uid 를 사용한 공유락 적용
-            중계와 실제 처리 api 분리
+            파일명, 파일 다운로드 시크릿 코드 수정
+            파일 경로 이동
 
-        3. 파일 삭제(본인 인증 필요)
-            중계와 실제 처리 api 분리
+        3. 파일 삭제 :
+            본인 인증 필요
+            파일 저장 위치에 요청 전달
 
-        4. 폴더 내 파일 조회(본인 인증 필요, 폴더 고유값에 해당하는 폴더 내 모든 파일 반환)
+        4. 파일 삭제 실제 :
+            본인 인증 필요
+            파일 삭제 처리
 
-        5. 파일 다운(비인가, 시크릿 코드 설정 가능)
+        5. 폴더 내 파일 조회(본인 인증 필요, 폴더 고유값에 해당하는 폴더 내 모든 파일 반환)
+
+        6. 파일 다운(비인가, 시크릿 코드 설정 가능)
             중계를 위한 api 와, 실제로 파일을 다운받는 api 가 따로 필요함
             중계 api
             {다운 주소}/storage/{저장위치 암호화}/{파일폴더 + 파일명} ? secret=oooo
@@ -393,10 +408,10 @@ class StorageController(
             {저장위치 복호화}/storage/{파일폴더 + 파일명} ? secret=oooo
             파일 다운로드 파라미터로 경로를 쓸 때는 / 를 - 로 표현
 
-        6. 파일 정리(데이터에 없는 파일 삭제, 파일이 없는 데이터 삭제)
+        7. 파일 정리(데이터에 없는 파일 삭제, 파일이 없는 데이터 삭제)
 
-        7. 완료되면 auth 등 파일 다루는 부분을 이것으로 대체하기(기존 aws s3 처럼 사용한다고 가정하고 util 만들어 사용)
+        8. 완료되면 auth 등 파일 다루는 부분을 이것으로 대체하기(기존 aws s3 처럼 사용한다고 가정하고 util 만들어 사용)
 
-        8. 실제 파일과 비교하여 데이터 정리하는 로직
+        9. 실제 파일과 비교하여 데이터 정리하는 로직
      */
 }

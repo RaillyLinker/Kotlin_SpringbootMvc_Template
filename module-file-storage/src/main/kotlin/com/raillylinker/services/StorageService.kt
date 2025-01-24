@@ -11,6 +11,7 @@ import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_TotalAuthMember_Repository
 import com.raillylinker.redis_map_components.redis1_main.Redis1_Lock_StorageFolderInfo
 import com.raillylinker.util_components.JwtTokenUtil
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.commons.io.FileUtils
 import org.slf4j.Logger
@@ -27,9 +28,6 @@ import java.nio.file.StandardCopyOption
 class StorageService(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
-
-    // 서버 접근 주소 (ex : http://127.0.0.1:11001)
-    @Value("\${custom-config.server-address}") private var serverAddress: String,
 
     private val jwtTokenUtil: JwtTokenUtil,
     private val db1RaillyLinkerCompanyTotalAuthMemberRepository: Db1_RaillyLinkerCompany_TotalAuthMember_Repository,
@@ -438,6 +436,7 @@ class StorageService(
     // (파일 및 정보 업로드 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postFile(
+        httpServletRequest: HttpServletRequest,
         httpServletResponse: HttpServletResponse,
         authorization: String,
         inputVo: StorageController.PostFileInputVo
@@ -518,12 +517,15 @@ class StorageService(
                     return@tryLockRepeat null
                 }
 
+                // 본 서버의 주소
+                val thisServerAddress = "http://${httpServletRequest.serverName}:${httpServletRequest.serverPort}"
+
                 // 파일 정보 저장
                 val newFileInfo = db1RaillyLinkerCompanyStorageFileInfoRepository.save(
                     Db1_RaillyLinkerCompany_StorageFileInfo(
                         storageFolderEntity,
                         inputVo.fileName,
-                        serverAddress,
+                        thisServerAddress,
                         inputVo.fileSecret
                     )
                 )
