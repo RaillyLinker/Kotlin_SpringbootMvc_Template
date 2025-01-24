@@ -15,6 +15,7 @@ import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @Tag(name = "/storage APIs", description = "파일 스토리지 API 컨트롤러")
 @Controller
@@ -86,7 +87,7 @@ class StorageController(
         @Schema(description = "부모 폴더 고유번호", required = false, example = "1")
         @JsonProperty("parentStorageFolderInfoUid")
         val parentStorageFolderInfoUid: Long?,
-        @Schema(description = "폴더명", required = true, example = "내 문서")
+        @Schema(description = "폴더명 (폴더명에는 - 나 / 를 사용할 수 없습니다.)", required = true, example = "내 문서")
         @JsonProperty("folderName")
         val folderName: String
     )
@@ -165,7 +166,7 @@ class StorageController(
         @Schema(description = "부모 폴더 고유번호", required = false, example = "1")
         @JsonProperty("parentStorageFolderInfoUid")
         val parentStorageFolderInfoUid: Long?,
-        @Schema(description = "폴더명", required = true, example = "내 문서")
+        @Schema(description = "폴더명 (폴더명에는 - 나 / 를 사용할 수 없습니다.)", required = true, example = "내 문서")
         @JsonProperty("folderName")
         val folderName: String
     )
@@ -287,10 +288,88 @@ class StorageController(
     }
 
 
+    // ----
+    @Operation(
+        summary = "파일 및 정보 업로드 <>",
+        description = "파일 및 정보를 업로드 합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : storageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 파일명에는 - 나 / 를 사용할 수 없습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "503",
+                content = [Content()],
+                description = "파일 저장을 위한 용량이 부족할 때"
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/file"],
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun postFile(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter
+        inputVo: PostFileInputVo
+    ): PostFileOutputVo? {
+        return service.postFile(httpServletResponse, authorization!!, inputVo)
+    }
+
+    data class PostFileInputVo(
+        @Schema(description = "storageFolderInfo 고유값", required = true, example = "1")
+        @JsonProperty("storageFolderInfoUid")
+        val storageFolderInfoUid: Long,
+        @Schema(description = "파일명 (파일명에는 - 나 / 를 사용할 수 없습니다.)", required = true, example = "1")
+        @JsonProperty("fileName")
+        val fileName: String,
+        @Schema(description = "파일 다운로드 비밀번호(본 등록 파일을 다운로드 하기 위해 필요한 비밀번호 설정, 해싱 되지 않습니다.)", required = false, example = "asdfqwer")
+        @JsonProperty("fileSecret")
+        val fileSecret: String?,
+        @Schema(description = "파일", required = true)
+        @JsonProperty("file")
+        val file: MultipartFile
+    )
+
+    data class PostFileOutputVo(
+        @Schema(description = "storageFileInfo 고유값", required = true, example = "1")
+        @JsonProperty("storageFileInfoUid")
+        val storageFileInfoUid: Long
+    )
+
+
     /*
         todo
-        파일 입력(인증 필요, 파일명에 - 나 / 를 못 쓰게 하기, 폴더 uid 를 사용한 공유락 적용)
-        수평 확장 고려, 용량이 부족하면 eureka 가 자동으로 로드 밸런스 탐색을 할 수 있도록 신호를 내려주기
+        폴더, 파일 정보 unique 에러 처리
+
 
         파일 정보 수정(본인 인증 필요, 파일명, 파일 다운로드 시크릿 코드만 수정 가능, 파일명에 - 나 / 를 못 쓰게 하기, 파일명에 - 나 / 를 못 쓰게 하기, 폴더 uid 를 사용한 공유락 적용)
 

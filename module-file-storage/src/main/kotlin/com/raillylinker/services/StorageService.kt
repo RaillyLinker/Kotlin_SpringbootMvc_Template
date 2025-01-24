@@ -4,6 +4,7 @@ import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.C
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.controllers.StorageController
+import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_StorageFileInfo
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_StorageFolderInfo
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_StorageFileInfo_Repository
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_StorageFolderInfo_Repository
@@ -396,6 +397,106 @@ class StorageService(
             folder.uid!!,
             folder.folderName,
             folder.childStorageFolderInfoList.map { child -> mapToFolderVo(child) }
+        )
+    }
+
+
+    // ----
+    // (파일 및 정보 업로드 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun postFile(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: StorageController.PostFileInputVo
+    ): StorageController.PostFileOutputVo? {
+        if (inputVo.fileName.contains("/") || inputVo.fileName.contains("-")) {
+            // 사용 불가 특수문자
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
+        // 멤버 데이터 조회
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+//        val memberEntity =
+//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+
+        return redis1LockStorageFolderInfo.tryLockRepeat(
+            "${inputVo.storageFolderInfoUid}",
+            7000L,
+            {
+                // 폴더 정보 조회
+                val storageFolderEntity =
+                    db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
+                        inputVo.storageFolderInfoUid,
+                        memberUid
+                    )
+
+                if (storageFolderEntity == null) {
+                    // 폴더 데이터가 없음
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "1")
+                    return@tryLockRepeat null
+                }
+
+                // 기본 파일 저장 위치(./by_product_files/file_storage/files 의 멤버별 할당 폴더)
+                val memberRootPath = storageRootPath + "/member_${memberUid}"
+
+                // 상위 폴더에서부터 지금 폴더 까지의 계층 반환
+                val folderPathStringBuilder = StringBuilder()
+                var anchorFolderEntity: Db1_RaillyLinkerCompany_StorageFolderInfo? = storageFolderEntity
+                while (anchorFolderEntity != null) {
+                    folderPathStringBuilder.insert(0, "/" + anchorFolderEntity.folderName)
+                    anchorFolderEntity = anchorFolderEntity.parentStorageFolderInfo
+                }
+
+                // 경로 String 을 Path 변수로 변환
+                val saveDirectoryPath =
+                    Paths.get(memberRootPath + folderPathStringBuilder.toString()).toAbsolutePath().normalize()
+
+                // 파일 저장 가능 공간 검증
+                // 남은 저장 가능 공간 (bytes 단위)
+                val usableSpace = saveDirectoryPath.fileSystem.fileStores.first().usableSpace
+                // 업로드된 파일의 크기 (bytes 단위)
+                val fileSize = inputVo.file.size
+
+                // 저장 가능 여부 반환
+                if (fileSize > usableSpace) {
+                    // 파일 크기가 저장 용량을 능가합니다.
+                    httpServletResponse.status = HttpStatus.SERVICE_UNAVAILABLE.value()
+                    return@tryLockRepeat null
+                }
+
+                val fileServerUrlConfigFilePath =
+                    Paths.get("./by_product_files/file_storage/files").toAbsolutePath().normalize()
+
+                // 파일 정보 저장
+                val newFileInfo = db1RaillyLinkerCompanyStorageFileInfoRepository.save(
+                    Db1_RaillyLinkerCompany_StorageFileInfo(
+                        storageFolderEntity,
+                        inputVo.fileName,
+                        "", // todo
+                        inputVo.fileSecret
+                    )
+                )
+
+                // 파일 실제 저장
+                inputVo.file.transferTo(
+                    // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
+                    saveDirectoryPath.resolve(
+                        inputVo.fileName
+                    ).normalize()
+                )
+
+                return@tryLockRepeat StorageController.PostFileOutputVo(
+                    newFileInfo.uid!!
+                )
+            }
         )
     }
 }
