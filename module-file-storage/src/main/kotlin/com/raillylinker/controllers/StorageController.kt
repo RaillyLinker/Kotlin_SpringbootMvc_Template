@@ -351,7 +351,11 @@ class StorageController(
         @Schema(description = "파일명 (파일명에는 - 나 / 를 사용할 수 없습니다.)", required = true, example = "1")
         @JsonProperty("fileName")
         val fileName: String,
-        @Schema(description = "파일 다운로드 비밀번호(본 등록 파일을 다운로드 하기 위해 필요한 비밀번호 설정, 해싱 되지 않습니다.)", required = false, example = "asdfqwer")
+        @Schema(
+            description = "파일 다운로드 비밀번호(본 등록 파일을 다운로드 하기 위해 필요한 비밀번호 설정, 해싱 되지 않습니다.)",
+            required = false,
+            example = "asdfqwer"
+        )
         @JsonProperty("fileSecret")
         val fileSecret: String?,
         @Schema(description = "파일", required = true)
@@ -368,27 +372,27 @@ class StorageController(
 
     /*
         todo
-        폴더 입력/수정, 파일 입력/수정 unique 에러 처리
+        1. 폴더 입력/수정, 파일 입력/수정 unique 에러 처리
 
+        2. 파일 정보 수정 :
+            본인 인증 필요, 파일명, 파일 다운로드 시크릿 코드 수정, 파일 경로 이동, 파일명에 - 나 / 를 못 쓰게 하기, 폴더 uid 를 사용한 공유락 적용
+            중계와 실제 처리 api 분리
 
-        파일 정보 수정(본인 인증 필요, 파일명, 파일 다운로드 시크릿 코드만 수정 가능, 파일명에 - 나 / 를 못 쓰게 하기, 파일명에 - 나 / 를 못 쓰게 하기, 폴더 uid 를 사용한 공유락 적용)
+        3. 파일 삭제(본인 인증 필요)
+            중계와 실제 처리 api 분리
 
-        파일 삭제(본인 인증 필요)
+        4. 폴더 내 파일 조회(본인 인증 필요, 폴더 고유값에 해당하는 폴더 내 모든 파일 반환)
 
-        폴더 내 파일 조회(본인 인증 필요, 폴더 고유값에 해당하는 폴더 내 모든 파일 반환)
+        5. 파일 다운(비인가, 시크릿 코드 설정 가능)
+            중계를 위한 api 와, 실제로 파일을 다운받는 api 가 따로 필요함
+            중계 api
+            {다운 주소}/storage/{저장위치 암호화}/{파일폴더 + 파일명} ? secret=oooo
+            다운 api
+            {저장위치 복호화}/storage/{파일폴더 + 파일명} ? secret=oooo
+            파일 다운로드 파라미터로 경로를 쓸 때는 / 를 - 로 표현
 
-        파일 다운(비인가, 시크릿 코드 설정 가능)
-        중계를 위한 api 와, 실제로 파일을 다운받는 api 가 따로 필요함
-        중계 api
-        {다운 주소}/storage/{저장위치 암호화}/{파일폴더 + 파일명} ? secret=oooo
-        다운 api
-        {저장위치 복호화}/storage/{파일폴더 + 파일명} ? secret=oooo
-        파일 다운로드 파라미터로 경로를 쓸 때는 / 를 - 로 표현
+        6. 파일 정리(데이터에 없는 파일 삭제, 파일이 없는 데이터 삭제)
 
-
-        파일 정리(데이터에 없는 파일 삭제, 파일이 없는 데이터 삭제)
-
-
-        완료되면 auth 등 파일 다루는 부분을 이것으로 대체하기(기존 aws s3 처럼 사용한다고 가정하고 util 만들어 사용)
+        7. 완료되면 auth 등 파일 다루는 부분을 이것으로 대체하기(기존 aws s3 처럼 사용한다고 가정하고 util 만들어 사용)
      */
 }
