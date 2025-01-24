@@ -575,16 +575,119 @@ class StorageController(
     }
 
 
+    // ----
+    @Operation(
+        summary = "파일 삭제 <>",
+        description = "파일 정보를 삭제 합니다. (파일별로 요청을 해당 서버로 전달합니다.)"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : storageFileInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            )
+        ]
+    )
+    @DeleteMapping(
+        path = ["/file/{storageFileInfoUid}"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    fun deleteFile(
+        @Parameter(hidden = true)
+        httpServletRequest: HttpServletRequest,
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "storageFileInfoUid", description = "storageFileInfo 고유값", example = "1")
+        @PathVariable("storageFileInfoUid")
+        storageFileInfoUid: Long
+    ) {
+        service.deleteFile(httpServletRequest, httpServletResponse, authorization!!, storageFileInfoUid)
+    }
+
+
+    // ----
+    @Hidden
+    @Operation(
+        summary = "파일 삭제 실제 <>",
+        description = "파일 정보를 실제 삭제 합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : storageFileInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            )
+        ]
+    )
+    @DeleteMapping(
+        path = ["/actual-file/{storageFileInfoUid}"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    fun deleteActualFile(
+        @Parameter(hidden = true)
+        httpServletRequest: HttpServletRequest,
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "storageFileInfoUid", description = "storageFileInfo 고유값", example = "1")
+        @PathVariable("storageFileInfoUid")
+        storageFileInfoUid: Long
+    ) {
+        service.deleteActualFile(httpServletRequest, httpServletResponse, authorization!!, storageFileInfoUid)
+    }
+
+
     /*
         todo
-        3. 파일 삭제 :
-            본인 인증 필요
-            파일 저장 위치에 요청 전달
-
-        4. 파일 삭제 실제 :
-            본인 인증 필요
-            파일 삭제 처리
-
         5. 파일 다운 :
             {다운 주소}/storage/{파일 고유번호}/{파일명} ? secret=oooo
             시크릿 코드 검증
@@ -595,8 +698,6 @@ class StorageController(
             파일 반환
 
         7. 폴더 내 파일 조회(본인 인증 필요, 폴더 고유값에 해당하는 폴더 내 모든 파일 반환)
-
-        8. 실제 파일과 비교하여 데이터 정리 대처하는 로직
 
         9. 완료되면 auth 등 파일 다루는 부분을 이것으로 대체하기(기존 aws s3 처럼 사용한다고 가정하고 util 만들어 사용)
      */

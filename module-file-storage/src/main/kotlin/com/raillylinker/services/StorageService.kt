@@ -25,6 +25,7 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.Header
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -556,6 +557,7 @@ class StorageService(
 
     // ----
     // (파일 다운로드 비밀번호 변경 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchFileSecret(
         httpServletRequest: HttpServletRequest,
         httpServletResponse: HttpServletResponse,
@@ -595,6 +597,7 @@ class StorageService(
 
     // ----
     // (파일 수정 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun putFile(
         httpServletRequest: HttpServletRequest,
         httpServletResponse: HttpServletResponse,
@@ -664,6 +667,7 @@ class StorageService(
 
     // ----
     // (파일 수정 실제 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun putActualFile(
         httpServletRequest: HttpServletRequest,
         httpServletResponse: HttpServletResponse,
@@ -769,6 +773,136 @@ class StorageService(
 
                 // 실제 파일 이동
                 Files.move(oldSaveDirectoryPath, newSaveDirectoryPath, StandardCopyOption.REPLACE_EXISTING)
+            }
+        )
+    }
+
+
+    // ----
+    // (파일 삭제 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    fun deleteFile(
+        httpServletRequest: HttpServletRequest,
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        storageFileInfoUid: Long
+    ) {
+        // 멤버 데이터 조회
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+//        val memberEntity =
+//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        val fileInfoOpt = db1RaillyLinkerCompanyStorageFileInfoRepository.findById(storageFileInfoUid)
+        if (fileInfoOpt.isEmpty) {
+            // 데이터가 없습니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        val fileInfo = fileInfoOpt.get()
+        if (fileInfo.storageFolderInfo.totalAuthMember.uid != memberUid) {
+            // 내가 등록한 정보가 아닙니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        // Retrofit2 요청 호출 및 응답 그대로 반환
+        val retrofit2ActualFileServiceResponse = Retrofit.Builder()
+            .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
+            .addConverterFactory(GsonConverterFactory.create())
+            .build().create(Retrofit2ActualFileDeleteService::class.java).deleteActualFile(
+                storageFileInfoUid, authorization
+            )
+            .execute()
+
+        httpServletResponse.status = retrofit2ActualFileServiceResponse.code()
+
+        if (httpServletResponse.status == 204) {
+            // 응답이 성공적이면, 응답 상태와 헤더를 그대로 반환
+            retrofit2ActualFileServiceResponse.headers().forEach { (key, value) ->
+                httpServletResponse.setHeader(key, value)
+            }
+        }
+    }
+
+    interface Retrofit2ActualFileDeleteService {
+        @DELETE("/storage/actual-file/{storageFileInfoUid}")
+        fun deleteActualFile(
+            @Path("storageFileInfoUid") storageFileInfoUid: Long,
+            @Header("Authorization") authorization: String
+        ): Call<ResponseBody>
+    }
+
+
+    // ----
+    // (파일 삭제 실제 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun deleteActualFile(
+        httpServletRequest: HttpServletRequest,
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        storageFileInfoUid: Long
+    ) {
+        // 멤버 데이터 조회
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+//        val memberEntity =
+//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        val fileInfoOpt = db1RaillyLinkerCompanyStorageFileInfoRepository.findById(storageFileInfoUid)
+        if (fileInfoOpt.isEmpty) {
+            // 데이터가 없습니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        val fileInfo = fileInfoOpt.get()
+        if (fileInfo.storageFolderInfo.totalAuthMember.uid != memberUid) {
+            // 내가 등록한 정보가 아닙니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        redis1LockStorageFolderInfo.tryLockRepeat(
+            "${fileInfo.storageFolderInfo.uid!!}",
+            7000L,
+            {
+                // 기본 파일 저장 위치(./by_product_files/file_storage/files 의 멤버별 할당 폴더)
+                val memberRootPath = storageRootPath + "/member_${memberUid}"
+
+                // 상위 폴더에서부터 지금 폴더 까지의 계층 반환
+                val folderPathStringBuilder = StringBuilder()
+                var anchorFolderEntity: Db1_RaillyLinkerCompany_StorageFolderInfo? = fileInfo.storageFolderInfo
+                while (anchorFolderEntity != null) {
+                    folderPathStringBuilder.insert(0, "/" + anchorFolderEntity.folderName)
+                    anchorFolderEntity = anchorFolderEntity.parentStorageFolderInfo
+                }
+
+                // 경로 String 을 Path 변수로 변환
+                val saveDirectoryPath =
+                    Paths.get(memberRootPath + folderPathStringBuilder.toString()).toAbsolutePath().normalize()
+                        .resolve(
+                            fileInfo.fileName
+                        )
+
+                // 파일 정보 삭제
+                db1RaillyLinkerCompanyStorageFileInfoRepository.delete(fileInfo)
+
+                if (saveDirectoryPath.toFile().exists()) {
+                    // 파일 실제 삭제 처리
+                    Files.delete(saveDirectoryPath)
+                }
             }
         )
     }
