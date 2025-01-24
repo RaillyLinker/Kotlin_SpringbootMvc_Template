@@ -548,7 +548,12 @@ class StorageService(
                 )
 
                 return@tryLockRepeat StorageController.PostFileOutputVo(
-                    newFileInfo.uid!!
+                    newFileInfo.uid!!,
+                    if (inputVo.fileSecret == null) {
+                        "/storage/download-file/${newFileInfo.uid}/${inputVo.fileName}"
+                    } else {
+                        "/storage/download-file/${newFileInfo.uid}/${inputVo.fileName}?fileSecret=${inputVo.fileSecret}"
+                    }
                 )
             }
         )

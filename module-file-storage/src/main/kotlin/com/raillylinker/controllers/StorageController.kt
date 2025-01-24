@@ -376,7 +376,14 @@ class StorageController(
     data class PostFileOutputVo(
         @Schema(description = "storageFileInfo 고유값", required = true, example = "1")
         @JsonProperty("storageFileInfoUid")
-        val storageFileInfoUid: Long
+        val storageFileInfoUid: Long,
+        @Schema(
+            description = "업로드 된 파일 다운로드 주소(origin 제외)",
+            required = true,
+            example = "/storage/download-file/{storageFileInfoUid}/{fileName}"
+        )
+        @JsonProperty("fileDownloadUrl")
+        val fileDownloadUrl: String
     )
 
 
