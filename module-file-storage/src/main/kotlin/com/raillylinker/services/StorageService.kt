@@ -27,7 +27,6 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
-import java.io.File
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -1041,6 +1040,59 @@ class StorageService(
                 this.add(HttpHeaders.CONTENT_TYPE, Files.probeContentType(saveDirectoryPath))
             },
             HttpStatus.OK
+        )
+    }
+
+
+    // ----
+    // (내 스토리지 폴더 내 파일 리스트 조회 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    fun getMyStorageFolderFiles(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        storageFolderInfoUid: Long
+    ): StorageController.GetMyStorageFolderFilesOutputVo? {
+        // 멤버 데이터 조회
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+//        val memberEntity =
+//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        // 삭제하려는 폴더 정보 조회
+        val storageFolderEntity =
+            db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
+                storageFolderInfoUid,
+                memberUid
+            )
+
+        if (storageFolderEntity == null) {
+            // 삭제하려는 데이터가 없음
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        val fileList: MutableList<StorageController.GetMyStorageFolderFilesOutputVo.FileInfoVo> = mutableListOf()
+        for (fileInfo in storageFolderEntity.storageFileInfoList) {
+            fileList.add(
+                StorageController.GetMyStorageFolderFilesOutputVo.FileInfoVo(
+                    fileInfo.uid!!,
+                    fileInfo.fileName,
+                    fileInfo.fileSecretCode,
+                    if (fileInfo.fileSecretCode == null) {
+                        "/storage/download-file/${fileInfo.uid}/${fileInfo.fileName}"
+                    } else {
+                        "/storage/download-file/${fileInfo.uid}/${fileInfo.fileName}?fileSecret=${fileInfo.fileSecretCode}"
+                    }
+                )
+            )
+        }
+
+        return StorageController.GetMyStorageFolderFilesOutputVo(
+            fileList
         )
     }
 }

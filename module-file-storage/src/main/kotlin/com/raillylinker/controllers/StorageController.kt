@@ -788,10 +788,89 @@ class StorageController(
     }
 
 
-    /*
-        todo
-        7. 폴더 내 파일 조회(본인 인증 필요, 폴더 고유값에 해당하는 폴더 내 모든 파일 반환)
+    // ----
+    @Operation(
+        summary = "내 스토리지 폴더 내 파일 리스트 조회 <>",
+        description = "내가 등록한 스토리지 폴더 내 파일 리스트를 가져옵니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : storageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            )
+        ]
+    )
+    @GetMapping(
+        path = ["/my-storage-folder/{storageFolderInfoUid}/files"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    fun getMyStorageFolderFiles(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "storageFolderInfoUid", description = "storageFolderInfo 고유값", example = "1")
+        @PathVariable("storageFolderInfoUid")
+        storageFolderInfoUid: Long
+    ): GetMyStorageFolderFilesOutputVo? {
+        return service.getMyStorageFolderFiles(
+            httpServletResponse,
+            authorization!!,
+            storageFolderInfoUid
+        )
+    }
 
-        9. 완료되면 auth 등 파일 다루는 부분을 이것으로 대체하기(기존 aws s3 처럼 사용한다고 가정하고 util 만들어 사용)
-     */
+    data class GetMyStorageFolderFilesOutputVo(
+        @Schema(description = "파일 리스트", required = true)
+        @JsonProperty("fileList")
+        val fileList: List<FileInfoVo>
+    ) {
+        @Schema(description = "파일 정보 Vo")
+        data class FileInfoVo(
+            @Schema(description = "파일 고유값", required = true, example = "1")
+            @JsonProperty("fileUid")
+            val fileUid: Long,
+            @Schema(description = "파일 이름", required = true, example = "내 문서")
+            @JsonProperty("fileName")
+            val fileName: String,
+            @Schema(
+                description = "파일 다운로드 시크릿 코드(이 값이 null 이 아니라면, 본 파일을 다운로드 하기 위해 시크릿 코드가 필요합니다.)",
+                required = false,
+                example = "qwer1234"
+            )
+            @JsonProperty("fileSecretCode")
+            val fileSecretCode: String?,
+            @Schema(
+                description = "파일 다운로드 주소(origin 제외)",
+                required = true,
+                example = "/storage/download-file/{storageFileInfoUid}/{fileName}"
+            )
+            @JsonProperty("fileDownloadUrl")
+            val fileDownloadUrl: String
+        )
+    }
 }
