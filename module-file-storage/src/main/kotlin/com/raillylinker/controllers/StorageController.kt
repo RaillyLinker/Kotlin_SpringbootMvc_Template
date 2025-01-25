@@ -724,27 +724,13 @@ class StorageController(
     @Hidden
     @Operation(
         summary = "파일 삭제 실제 <>",
-        description = "파일 정보를 실제 삭제 합니다."
+        description = "저장된 파일을 실제로 삭제 합니다."
     )
     @ApiResponses(
         value = [
             ApiResponse(
                 responseCode = "200",
                 description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : storageFileInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
             ),
             ApiResponse(
                 responseCode = "401",

@@ -363,8 +363,21 @@ class StorageService(
 
                     for (fileInfo in fileInfoList) {
                         // 하위 파일들 삭제 처리
-                        // todo : 폴더 내 파일 삭제에 대해 각 서버에 요청 보내기
-                        db1RaillyLinkerCompanyStorageFileInfoRepository.deleteById(fileInfo.uid!!)
+                        try {
+                            // 실제 파일 삭제 요청 전달
+                            Retrofit.Builder()
+                                .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
+                                .addConverterFactory(GsonConverterFactory.create())
+                                .build().create(Retrofit2ActualFileDeleteService::class.java).deleteActualFile(
+                                    fileInfo.uid!!, authorization
+                                )
+                                .execute()
+                        } catch (e: Exception) {
+                            classLogger.error("exception : ", e)
+                        }
+
+                        // 파일 정보 삭제
+                        db1RaillyLinkerCompanyStorageFileInfoRepository.delete(fileInfo)
                     }
 
                     // 폴더 삭제 처리
@@ -663,7 +676,7 @@ class StorageService(
 
     // ----
     // (파일 삭제 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun deleteFile(
         httpServletRequest: HttpServletRequest,
         httpServletResponse: HttpServletResponse,
@@ -699,23 +712,21 @@ class StorageService(
             "${fileInfo.storageFolderInfo.uid!!}",
             7000L,
             {
-                // Retrofit2 요청 호출 및 응답 그대로 반환
-                val retrofit2ActualFileServiceResponse = Retrofit.Builder()
-                    .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build().create(Retrofit2ActualFileDeleteService::class.java).deleteActualFile(
-                        storageFileInfoUid, authorization
-                    )
-                    .execute()
-
-                httpServletResponse.status = retrofit2ActualFileServiceResponse.code()
-
-                if (httpServletResponse.status == 204) {
-                    // 응답이 성공적이면, 응답 상태와 헤더를 그대로 반환
-                    retrofit2ActualFileServiceResponse.headers().forEach { (key, value) ->
-                        httpServletResponse.setHeader(key, value)
-                    }
+                try {
+                    //  실제 파일 삭제 요청 전달
+                    Retrofit.Builder()
+                        .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build().create(Retrofit2ActualFileDeleteService::class.java).deleteActualFile(
+                            fileInfo.uid!!, authorization
+                        )
+                        .execute()
+                } catch (e: Exception) {
+                    classLogger.error("exception : ", e)
                 }
+
+                // 파일 정보 삭제
+                db1RaillyLinkerCompanyStorageFileInfoRepository.delete(fileInfo)
             }
         )
     }
@@ -731,7 +742,7 @@ class StorageService(
 
     // ----
     // (파일 삭제 실제 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    // todo 비번 적용
     fun deleteActualFile(
         httpServletRequest: HttpServletRequest,
         httpServletResponse: HttpServletResponse,
@@ -746,9 +757,6 @@ class StorageService(
         )
 //        val memberEntity =
 //            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-
-        // 파일 정보 삭제
-        db1RaillyLinkerCompanyStorageFileInfoRepository.deleteById(storageFileInfoUid)
 
         // 기본 파일 저장 위치(./by_product_files/file_storage/files 의 멤버별 할당 폴더)
         val memberRootPath = storageRootPath + "/member_${memberUid}"
