@@ -108,10 +108,6 @@ class StorageService(
             return null
         }
 
-        // 멤버 데이터 조회
-        val memberEntity =
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-
         // 부모 폴더 정보 조회
         val parentStorageFolderInfo: Db1_RaillyLinkerCompany_StorageFolderInfo? =
             if (inputVo.parentStorageFolderInfoUid == null) {
@@ -132,6 +128,10 @@ class StorageService(
 
                 parentStorageFolderEntity
             }
+
+        // 멤버 데이터 조회
+        val memberEntity =
+            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
         // 폴더 정보 입력
         val newStorageFolderInfo =
