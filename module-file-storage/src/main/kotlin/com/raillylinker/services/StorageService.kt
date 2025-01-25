@@ -229,29 +229,27 @@ class StorageService(
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
             AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
         )
-
 //        val memberEntity =
 //            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        // 동일 폴더 정보가 존재하는지 검증
-        val uniqueInvalid =
-            db1RaillyLinkerCompanyStorageFolderInfoRepository.existsByTotalAuthMemberUidAndParentStorageFolderInfoUidAndFolderName(
-                memberUid,
-                inputVo.parentStorageFolderInfoUid,
-                inputVo.folderName
-            )
-
-        if (uniqueInvalid) {
-            // 중복된 폴더 경로
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "6")
-            return
-        }
-
         redis1LockStorageFolderInfo.tryLockRepeat(
-            "$storageFolderInfoUid",
+            "$memberUid",
             7000L,
             {
+                // 동일 폴더 정보가 존재하는지 검증
+                val uniqueInvalid =
+                    db1RaillyLinkerCompanyStorageFolderInfoRepository.existsByTotalAuthMemberUidAndParentStorageFolderInfoUidAndFolderName(
+                        memberUid,
+                        inputVo.parentStorageFolderInfoUid,
+                        inputVo.folderName
+                    )
+
+                if (uniqueInvalid) {
+                    // 중복된 폴더 경로
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "6")
+                    return@tryLockRepeat
+                }
                 // 수정하려는 폴더 정보 조회
                 val storageFolderEntity =
                     db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
@@ -334,28 +332,30 @@ class StorageService(
 //        val memberEntity =
 //            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        // 삭제하려는 폴더 정보 조회
-        val storageFolderEntity =
-            db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
-                storageFolderInfoUid,
-                memberUid
-            )
+        redis1LockStorageFolderInfo.tryLockRepeat(
+            "$memberUid",
+            7000L,
+            {
+                // 삭제하려는 폴더 정보 조회
+                val storageFolderEntity =
+                    db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
+                        storageFolderInfoUid,
+                        memberUid
+                    )
 
-        if (storageFolderEntity == null) {
-            // 삭제하려는 데이터가 없음
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
+                if (storageFolderEntity == null) {
+                    // 삭제하려는 데이터가 없음
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "1")
+                    return@tryLockRepeat
+                }
 
-        // 기준 폴더로부터 모든 하위 폴더 출력 (하위 Depth 폴더 우선 정렬)
-        val folderTreePathList =
-            db1RaillyLinkerCompanyStorageFolderInfoRepository.findAllStorageFolderTreeUidList(storageFolderInfoUid)
-        for (folderTreePath in folderTreePathList) {
-            redis1LockStorageFolderInfo.tryLockRepeat(
-                "${folderTreePath.uid}",
-                7000L,
-                {
+                // 기준 폴더로부터 모든 하위 폴더 출력 (하위 Depth 폴더 우선 정렬)
+                val folderTreePathList =
+                    db1RaillyLinkerCompanyStorageFolderInfoRepository.findAllStorageFolderTreeUidList(
+                        storageFolderInfoUid
+                    )
+                for (folderTreePath in folderTreePathList) {
                     // 폴더 내 하위 파일들 조회
                     val fileInfoList =
                         db1RaillyLinkerCompanyStorageFileInfoRepository.findAllByStorageFolderInfoUid(
@@ -386,10 +386,10 @@ class StorageService(
                     // 폴더 삭제 처리
                     db1RaillyLinkerCompanyStorageFolderInfoRepository.deleteById(folderTreePath.uid)
                 }
-            )
-        }
 
-        httpServletResponse.status = HttpStatus.OK.value()
+                httpServletResponse.status = HttpStatus.OK.value()
+            }
+        )
     }
 
 
@@ -471,7 +471,7 @@ class StorageService(
 //            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
         return redis1LockStorageFolderInfo.tryLockRepeat(
-            "${inputVo.storageFolderInfoUid}",
+            "$memberUid",
             7000L,
             {
                 // 동일 폴더 정보가 존재하는지 검증
@@ -619,27 +619,27 @@ class StorageService(
 //        val memberEntity =
 //            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        val fileInfoOpt = db1RaillyLinkerCompanyStorageFileInfoRepository.findById(storageFileInfoUid)
-        if (fileInfoOpt.isEmpty) {
-            // 데이터가 없습니다.
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
-
-        val fileInfo = fileInfoOpt.get()
-        if (fileInfo.storageFolderInfo.totalAuthMember.uid != memberUid) {
-            // 내가 등록한 정보가 아닙니다.
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
-
         redis1LockStorageFolderInfo.tryLockRepeat(
-            "${fileInfo.storageFolderInfo.uid!!}",
+            "$memberUid",
             7000L,
             {
-                // 동일 폴더 정보가 존재하는지 검증
+                val fileInfoOpt = db1RaillyLinkerCompanyStorageFileInfoRepository.findById(storageFileInfoUid)
+                if (fileInfoOpt.isEmpty) {
+                    // 데이터가 없습니다.
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "1")
+                    return@tryLockRepeat
+                }
+
+                val fileInfo = fileInfoOpt.get()
+                if (fileInfo.storageFolderInfo.totalAuthMember.uid != memberUid) {
+                    // 내가 등록한 정보가 아닙니다.
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "1")
+                    return@tryLockRepeat
+                }
+
+                // 동일 파일 정보가 존재하는지 검증
                 val uniqueInvalid =
                     db1RaillyLinkerCompanyStorageFileInfoRepository.existsByStorageFolderInfoUidAndFileName(
                         inputVo.storageFolderInfoUid,
@@ -695,26 +695,26 @@ class StorageService(
 //        val memberEntity =
 //            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        val fileInfoOpt = db1RaillyLinkerCompanyStorageFileInfoRepository.findById(storageFileInfoUid)
-        if (fileInfoOpt.isEmpty) {
-            // 데이터가 없습니다.
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
-
-        val fileInfo = fileInfoOpt.get()
-        if (fileInfo.storageFolderInfo.totalAuthMember.uid != memberUid) {
-            // 내가 등록한 정보가 아닙니다.
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
-
         redis1LockStorageFolderInfo.tryLockRepeat(
-            "${fileInfo.storageFolderInfo.uid!!}",
+            "$memberUid",
             7000L,
             {
+                val fileInfoOpt = db1RaillyLinkerCompanyStorageFileInfoRepository.findById(storageFileInfoUid)
+                if (fileInfoOpt.isEmpty) {
+                    // 데이터가 없습니다.
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "1")
+                    return@tryLockRepeat
+                }
+
+                val fileInfo = fileInfoOpt.get()
+                if (fileInfo.storageFolderInfo.totalAuthMember.uid != memberUid) {
+                    // 내가 등록한 정보가 아닙니다.
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "1")
+                    return@tryLockRepeat
+                }
+
                 //  실제 파일 삭제 요청 전달
                 Retrofit.Builder()
                     .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
