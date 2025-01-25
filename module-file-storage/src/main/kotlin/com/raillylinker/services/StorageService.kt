@@ -14,7 +14,6 @@ import com.raillylinker.util_components.JwtTokenUtil
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import okhttp3.ResponseBody
-import org.apache.commons.io.FileUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -30,7 +29,6 @@ import retrofit2.http.*
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 
 @Service
 class StorageService(
@@ -79,6 +77,9 @@ class StorageService(
     // 이는 파일 서버 증량 후 테스트 까지의 시간을 벌기 위한 조치입니다.
     private var thisServerReady: Boolean = false
     private val fileInsertPw = "todopw1234!@"
+
+    // 파일 실제 처리 api 에 사용할 비밀번호
+    private val actualApiSecret = "todopw1234!@"
 
 
     // ---------------------------------------------------------------------------------------------
@@ -369,15 +370,17 @@ class StorageService(
                                 .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
                                 .addConverterFactory(GsonConverterFactory.create())
                                 .build().create(Retrofit2ActualFileDeleteService::class.java).deleteActualFile(
-                                    fileInfo.uid!!, authorization
+                                    fileInfo.uid!!,
+                                    authorization,
+                                    actualApiSecret
                                 )
                                 .execute()
+
+                            // 파일 정보 삭제
+                            db1RaillyLinkerCompanyStorageFileInfoRepository.delete(fileInfo)
                         } catch (e: Exception) {
                             classLogger.error("exception : ", e)
                         }
-
-                        // 파일 정보 삭제
-                        db1RaillyLinkerCompanyStorageFileInfoRepository.delete(fileInfo)
                     }
 
                     // 폴더 삭제 처리
@@ -592,7 +595,7 @@ class StorageService(
 
     // ----
     // (파일 수정 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun putFile(
         httpServletRequest: HttpServletRequest,
         httpServletResponse: HttpServletResponse,
@@ -712,18 +715,16 @@ class StorageService(
             "${fileInfo.storageFolderInfo.uid!!}",
             7000L,
             {
-                try {
-                    //  실제 파일 삭제 요청 전달
-                    Retrofit.Builder()
-                        .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build().create(Retrofit2ActualFileDeleteService::class.java).deleteActualFile(
-                            fileInfo.uid!!, authorization
-                        )
-                        .execute()
-                } catch (e: Exception) {
-                    classLogger.error("exception : ", e)
-                }
+                //  실제 파일 삭제 요청 전달
+                Retrofit.Builder()
+                    .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build().create(Retrofit2ActualFileDeleteService::class.java).deleteActualFile(
+                        fileInfo.uid!!,
+                        authorization,
+                        actualApiSecret
+                    )
+                    .execute()
 
                 // 파일 정보 삭제
                 db1RaillyLinkerCompanyStorageFileInfoRepository.delete(fileInfo)
@@ -735,20 +736,27 @@ class StorageService(
         @DELETE("/storage/actual-file/{storageFileInfoUid}")
         fun deleteActualFile(
             @Path("storageFileInfoUid") storageFileInfoUid: Long,
-            @Header("Authorization") authorization: String
+            @Header("Authorization") authorization: String,
+            @Query("actualApiSecret") actualApiSecret: String
         ): Call<ResponseBody>
     }
 
 
     // ----
     // (파일 삭제 실제 <>)
-    // todo 비번 적용
     fun deleteActualFile(
         httpServletRequest: HttpServletRequest,
         httpServletResponse: HttpServletResponse,
         authorization: String,
-        storageFileInfoUid: Long
+        storageFileInfoUid: Long,
+        actualApiSecret: String
     ) {
+        if (this.actualApiSecret != actualApiSecret) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
         // 멤버 데이터 조회
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
@@ -789,7 +797,7 @@ class StorageService(
             return null
         }
 
-        if (fileSecret != null && fileInfo.fileSecretCode != fileSecret) {
+        if (fileInfo.fileSecretCode != null && fileInfo.fileSecretCode != fileSecret) {
             httpServletResponse.status = HttpStatus.NOT_FOUND.value()
             return null
         }
@@ -799,9 +807,10 @@ class StorageService(
             .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
             .addConverterFactory(GsonConverterFactory.create())
             .build().create(Retrofit2ActualFileDownloadService::class.java).downloadActualFile(
-                storageFileInfoUid,
-                fileName,
-                fileSecret
+                fileInfo.storageFolderInfo.totalAuthMember.uid!!,
+                fileInfo.uid!!,
+                fileInfo.fileName,
+                actualApiSecret
             )
             .execute()
 
@@ -827,43 +836,38 @@ class StorageService(
     }
 
     interface Retrofit2ActualFileDownloadService {
-        @GET("/storage/actual-download-file/{storageFileInfoUid}/{fileName}")
+        @GET("/storage/actual-download-file")
         fun downloadActualFile(
-            @Path("storageFileInfoUid") storageFileInfoUid: Long,
-            @Path("fileName") fileName: String,
-            @Query("fileSecret") fileSecret: String?
+            @Query("memberUid") memberUid: Long,
+            @Query("fileUid") fileUid: Long,
+            @Query("fileName") fileName: String,
+            @Query("actualApiSecret") actualApiSecret: String
         ): Call<ResponseBody>
     }
 
 
     // ----
     // (파일 다운로드 실제)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun downloadActualFile(
         httpServletRequest: HttpServletRequest,
         httpServletResponse: HttpServletResponse,
-        storageFileInfoUid: Long,
+        memberUid: Long,
+        fileUid: Long,
         fileName: String,
-        fileSecret: String?
+        actualApiSecret: String
     ): ResponseEntity<Resource>? {
-        val fileInfo =
-            db1RaillyLinkerCompanyStorageFileInfoRepository.findByUidAndFileName(storageFileInfoUid, fileName)
-        if (fileInfo == null) {
-            httpServletResponse.status = HttpStatus.NOT_FOUND.value()
-            return null
-        }
-
-        if (fileSecret != null && fileInfo.fileSecretCode != fileSecret) {
+        if (actualApiSecret != this.actualApiSecret) {
+            // api 호출 비번이 다를 때
             httpServletResponse.status = HttpStatus.NOT_FOUND.value()
             return null
         }
 
         // 기본 파일 저장 위치(./by_product_files/file_storage/files 의 멤버별 할당 폴더)
-        val memberRootPath = storageRootPath + "/member_${fileInfo.storageFolderInfo.totalAuthMember.uid!!}"
+        val memberRootPath = storageRootPath + "/member_${memberUid}"
 
         // 경로 String 을 Path 변수로 변환
         val saveDirectoryPath =
-            Paths.get(memberRootPath).toAbsolutePath().normalize().resolve("${fileInfo.uid!!}")
+            Paths.get(memberRootPath).toAbsolutePath().normalize().resolve("${fileUid}")
 
         when {
             Files.isDirectory(saveDirectoryPath) -> {

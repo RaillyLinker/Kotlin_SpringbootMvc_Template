@@ -733,6 +733,20 @@ class StorageController(
                 description = "정상 동작"
             ),
             ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : actualApiSecret 이 올바르지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
                 responseCode = "401",
                 content = [Content()],
                 description = "인증되지 않은 접근입니다."
@@ -756,9 +770,18 @@ class StorageController(
         authorization: String?,
         @Parameter(name = "storageFileInfoUid", description = "storageFileInfo 고유값", example = "1")
         @PathVariable("storageFileInfoUid")
-        storageFileInfoUid: Long
+        storageFileInfoUid: Long,
+        @Parameter(name = "actualApiSecret", description = "파일 실제 처리 api 에 사용할 비밀번호", example = "todopw1234!@")
+        @RequestParam("actualApiSecret")
+        actualApiSecret: String
     ) {
-        service.deleteActualFile(httpServletRequest, httpServletResponse, authorization!!, storageFileInfoUid)
+        service.deleteActualFile(
+            httpServletRequest,
+            httpServletResponse,
+            authorization!!,
+            storageFileInfoUid,
+            actualApiSecret
+        )
     }
 
 
@@ -825,7 +848,7 @@ class StorageController(
         ]
     )
     @GetMapping(
-        path = ["/actual-download-file/{storageFileInfoUid}/{fileName}"],
+        path = ["/actual-download-file"],
         consumes = [MediaType.ALL_VALUE],
         produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE]
     )
@@ -835,22 +858,26 @@ class StorageController(
         httpServletRequest: HttpServletRequest,
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @Parameter(name = "storageFileInfoUid", description = "storageFileInfo 고유값", example = "1")
-        @PathVariable("storageFileInfoUid")
-        storageFileInfoUid: Long,
-        @Parameter(name = "fileName", description = "파일명", example = "sample.txt")
-        @PathVariable("fileName")
+        @Parameter(name = "memberUid", description = "멤버 고유번호", example = "1")
+        @RequestParam("memberUid")
+        memberUid: Long,
+        @Parameter(name = "fileUid", description = "파일 고유번호", example = "1")
+        @RequestParam("fileUid")
+        fileUid: Long,
+        @Parameter(name = "fileName", description = "파일명", example = "text.txt")
+        @RequestParam("fileName")
         fileName: String,
-        @Parameter(name = "fileSecret", description = "파일 다운로드 시크릿", example = "qwer1234")
-        @RequestParam("fileSecret")
-        fileSecret: String?
+        @Parameter(name = "actualApiSecret", description = "파일 실제 처리 api 에 사용할 비밀번호", example = "todopw1234!@")
+        @RequestParam("actualApiSecret")
+        actualApiSecret: String
     ): ResponseEntity<Resource>? {
         return service.downloadActualFile(
             httpServletRequest,
             httpServletResponse,
-            storageFileInfoUid,
+            memberUid,
+            fileUid,
             fileName,
-            fileSecret
+            actualApiSecret
         )
     }
 
@@ -940,4 +967,6 @@ class StorageController(
             val fileDownloadUrl: String
         )
     }
+
+    // todo 폴더 다운 api 추가. 폴더 내 모든 파일 압축 후 반환 (중계 적용)
 }
