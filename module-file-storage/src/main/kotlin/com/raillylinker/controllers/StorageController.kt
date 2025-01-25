@@ -967,6 +967,4 @@ class StorageController(
             val fileDownloadUrl: String
         )
     }
-
-    // todo 폴더 다운 api 추가. 폴더 내 모든 파일 압축 후 반환 (중계 적용)
 }
