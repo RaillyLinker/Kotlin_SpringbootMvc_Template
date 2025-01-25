@@ -695,23 +695,29 @@ class StorageService(
             return
         }
 
-        // Retrofit2 요청 호출 및 응답 그대로 반환
-        val retrofit2ActualFileServiceResponse = Retrofit.Builder()
-            .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
-            .addConverterFactory(GsonConverterFactory.create())
-            .build().create(Retrofit2ActualFileDeleteService::class.java).deleteActualFile(
-                storageFileInfoUid, authorization
-            )
-            .execute()
+        redis1LockStorageFolderInfo.tryLockRepeat(
+            "${fileInfo.storageFolderInfo.uid!!}",
+            7000L,
+            {
+                // Retrofit2 요청 호출 및 응답 그대로 반환
+                val retrofit2ActualFileServiceResponse = Retrofit.Builder()
+                    .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build().create(Retrofit2ActualFileDeleteService::class.java).deleteActualFile(
+                        storageFileInfoUid, authorization
+                    )
+                    .execute()
 
-        httpServletResponse.status = retrofit2ActualFileServiceResponse.code()
+                httpServletResponse.status = retrofit2ActualFileServiceResponse.code()
 
-        if (httpServletResponse.status == 204) {
-            // 응답이 성공적이면, 응답 상태와 헤더를 그대로 반환
-            retrofit2ActualFileServiceResponse.headers().forEach { (key, value) ->
-                httpServletResponse.setHeader(key, value)
+                if (httpServletResponse.status == 204) {
+                    // 응답이 성공적이면, 응답 상태와 헤더를 그대로 반환
+                    retrofit2ActualFileServiceResponse.headers().forEach { (key, value) ->
+                        httpServletResponse.setHeader(key, value)
+                    }
+                }
             }
-        }
+        )
     }
 
     interface Retrofit2ActualFileDeleteService {
@@ -741,42 +747,20 @@ class StorageService(
 //        val memberEntity =
 //            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
-        val fileInfoOpt = db1RaillyLinkerCompanyStorageFileInfoRepository.findById(storageFileInfoUid)
-        if (fileInfoOpt.isEmpty) {
-            // 데이터가 없습니다.
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
+        // 파일 정보 삭제
+        db1RaillyLinkerCompanyStorageFileInfoRepository.deleteById(storageFileInfoUid)
+
+        // 기본 파일 저장 위치(./by_product_files/file_storage/files 의 멤버별 할당 폴더)
+        val memberRootPath = storageRootPath + "/member_${memberUid}"
+
+        // 경로 String 을 Path 변수로 변환
+        val saveDirectoryPath =
+            Paths.get(memberRootPath).toAbsolutePath().normalize().resolve("$storageFileInfoUid")
+
+        if (saveDirectoryPath.toFile().exists()) {
+            // 파일 실제 삭제 처리
+            Files.delete(saveDirectoryPath)
         }
-
-        val fileInfo = fileInfoOpt.get()
-        if (fileInfo.storageFolderInfo.totalAuthMember.uid != memberUid) {
-            // 내가 등록한 정보가 아닙니다.
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
-
-        redis1LockStorageFolderInfo.tryLockRepeat(
-            "${fileInfo.storageFolderInfo.uid!!}",
-            7000L,
-            {
-                // 파일 정보 삭제
-                db1RaillyLinkerCompanyStorageFileInfoRepository.delete(fileInfo)
-
-                // 기본 파일 저장 위치(./by_product_files/file_storage/files 의 멤버별 할당 폴더)
-                val memberRootPath = storageRootPath + "/member_${memberUid}"
-
-                // 경로 String 을 Path 변수로 변환
-                val saveDirectoryPath =
-                    Paths.get(memberRootPath).toAbsolutePath().normalize().resolve("${fileInfo.uid!!}")
-
-                if (saveDirectoryPath.toFile().exists()) {
-                    // 파일 실제 삭제 처리
-                    Files.delete(saveDirectoryPath)
-                }
-            }
-        )
     }
 
 
