@@ -33,6 +33,145 @@ class StorageController(
     // ---------------------------------------------------------------------------------------------
     // <매핑 함수 공간>
     @Operation(
+        summary = "파일 서버 상태 정보 조회 <ADMIN>",
+        description = "파일 서버의 상태 정보를 조회합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @GetMapping(
+        path = ["/this-server-state"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun getThisServerState(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?
+    ): GetThisServerStateOutputVo? {
+        return service.getThisServerState(
+            httpServletResponse,
+            authorization!!
+        )
+    }
+
+    data class GetThisServerStateOutputVo(
+        @Schema(
+            description = "본 프로세스가 실행되는 서버 접속 주소. 값이 null 이라면 파일 입력 api 에서 503 을 발생시킬 것입니다.",
+            required = false,
+            example = "http://127.0.0.1:11001"
+        )
+        @JsonProperty("thisServerAddress")
+        val thisServerAddress: String?,
+        @Schema(
+            description = "본 파일 서버가 준비 되었는지에 대한 플래그 입니다. 이것이 true 가 아니라면 파일 입력 api 에서 비밀번호(fileInsertPw)를 입력해야만 파일 저장이 됩니다.",
+            required = true,
+            example = "true"
+        )
+        @JsonProperty("thisServerReady")
+        val thisServerReady: Boolean
+    )
+
+
+    // ----
+    @Operation(
+        summary = "파일 서버 상태 정보 수정 <ADMIN>",
+        description = "파일 서버의 상태 정보를 수정합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : thisServerAddress 가 올바른 URL 형태가 아닙니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PutMapping(
+        path = ["/this-server-state"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun putThisServerState(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @RequestBody
+        inputVo: PutThisServerStateInputVo
+    ) {
+        service.putThisServerState(
+            httpServletResponse,
+            authorization!!,
+            inputVo
+        )
+    }
+
+    data class PutThisServerStateInputVo(
+        @Schema(
+            description = "본 프로세스가 실행되는 서버 접속 주소. 값이 null 이라면 파일 입력 api 에서 503 을 발생시킬 것입니다.",
+            required = false,
+            example = "http://127.0.0.1:11001"
+        )
+        @JsonProperty("thisServerAddress")
+        val thisServerAddress: String?,
+        @Schema(
+            description = "본 파일 서버가 준비 되었는지에 대한 플래그 입니다. 이것이 true 가 아니라면 파일 입력 api 에서 비밀번호(fileInsertPw)를 입력해야만 파일 저장이 됩니다.",
+            required = true,
+            example = "true"
+        )
+        @JsonProperty("thisServerReady")
+        val thisServerReady: Boolean
+    )
+
+
+    // ----
+    @Operation(
         summary = "스토리지 폴더 추가 <>",
         description = "스토리지 폴더를 추가합니다."
     )
@@ -52,7 +191,7 @@ class StorageController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : parentStorageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 폴더명에는 - 나 / 를 사용할 수 없습니다.<br>" +
+                                "2 : 폴더명에는 / 를 사용할 수 없습니다.<br>" +
                                 "3 : 중복된 폴더 경로입니다.",
                         schema = Schema(type = "string")
                     )
@@ -128,7 +267,7 @@ class StorageController(
                                 "2 : parentStorageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "3 : 자기 자신을 상위 폴더로 지정할 수 없습니다.<br>" +
                                 "4 : 자기 자신의 하위 폴더를 상위 폴더로 지정할 수 없습니다.<br>" +
-                                "5 : 폴더명에는 - 나 / 를 사용할 수 없습니다.<br>" +
+                                "5 : 폴더명에는 / 를 사용할 수 없습니다.<br>" +
                                 "6 : 중복된 폴더 경로입니다.",
                         schema = Schema(type = "string")
                     )
@@ -315,7 +454,7 @@ class StorageController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : storageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 파일명에는 - 나 / 를 사용할 수 없습니다.<br>" +
+                                "2 : 파일명에는 / 를 사용할 수 없습니다.<br>" +
                                 "3 : 동일 이름의 파일이 폴더 내에 존재합니다.",
                         schema = Schema(type = "string")
                     )
@@ -355,6 +494,9 @@ class StorageController(
     }
 
     data class PostFileInputVo(
+        @Schema(description = "관리자용 파일 입력 비밀번호(클라이언트는 무시하고 null 로 보내세요.)", required = false, example = "todopw1234!@")
+        @JsonProperty("fileInsertPw")
+        val fileInsertPw: String?,
         @Schema(description = "storageFolderInfo 고유값", required = true, example = "1")
         @JsonProperty("storageFolderInfoUid")
         val storageFolderInfoUid: Long,
@@ -457,7 +599,7 @@ class StorageController(
     // ----
     @Operation(
         summary = "파일 수정 <>",
-        description = "파일 정보를 수정 합니다. (파일별로 요청을 해당 서버로 전달합니다.)"
+        description = "파일 정보를 수정 합니다."
     )
     @ApiResponses(
         value = [
@@ -476,7 +618,7 @@ class StorageController(
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : storageFileInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : storageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "3 : 파일명에는 - 나 / 를 사용할 수 없습니다.<br>" +
+                                "3 : 파일명에는 / 를 사용할 수 없습니다.<br>" +
                                 "4 : 동일 이름의 파일이 폴더 내에 존재합니다.",
                         schema = Schema(type = "string")
                     )
@@ -521,67 +663,6 @@ class StorageController(
         @JsonProperty("fileName")
         val fileName: String
     )
-
-
-    // ----
-    @Hidden
-    @Operation(
-        summary = "파일 수정 실제 <>",
-        description = "파일 정보를 실제 수정 합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : storageFileInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : storageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "3 : 파일명에는 - 나 / 를 사용할 수 없습니다.<br>" +
-                                "4 : 동일 이름의 파일이 폴더 내에 존재합니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PutMapping(
-        path = ["/actual-file/{storageFileInfoUid}"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    fun putActualFile(
-        @Parameter(hidden = true)
-        httpServletRequest: HttpServletRequest,
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(name = "storageFileInfoUid", description = "storageFileInfo 고유값", example = "1")
-        @PathVariable("storageFileInfoUid")
-        storageFileInfoUid: Long,
-        @RequestBody
-        inputVo: PutFileInputVo
-    ) {
-        service.putActualFile(httpServletRequest, httpServletResponse, authorization!!, storageFileInfoUid, inputVo)
-    }
 
 
     // ----
