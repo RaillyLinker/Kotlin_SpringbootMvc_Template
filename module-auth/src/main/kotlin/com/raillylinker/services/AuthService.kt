@@ -3362,6 +3362,59 @@ class AuthService(
 
 
     // ----
+    // (이메일 가중치 수정 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun patchEmailPriority(
+        httpServletResponse: HttpServletResponse,
+        inputVo: AuthController.PatchEmailPriorityInputVo,
+        emailUid: Long,
+        authorization: String
+    ) {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+        val memberData =
+            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        val emailEntity =
+            db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.findByTotalAuthMemberAndUidAndRowDeleteDateStr(
+                memberData,
+                emailUid,
+                "/"
+            )
+
+        if (emailEntity == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        emailEntity.priority =
+            if (inputVo.priority == null) {
+                // null 설정이라면 현재 가장 큰 priority 적용
+                val emailEntityList =
+                    db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.findAllByTotalAuthMemberAndRowDeleteDateStrOrderByPriorityDescRowCreateDateDesc(
+                        memberData,
+                        "/"
+                    )
+                if (emailEntityList.isEmpty()) {
+                    0
+                } else {
+                    emailEntityList.first().priority
+                }
+            } else {
+                inputVo.priority
+            }
+
+        db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.save(emailEntity)
+
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
     // (전화번호 추가하기 본인 인증 문자 발송 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun sendPhoneVerificationForAddNewPhoneNumber(
@@ -3661,6 +3714,59 @@ class AuthService(
             httpServletResponse.setHeader("api-result-code", "2")
             return
         }
+    }
+
+
+    // ----
+    // (전화번호 가중치 수정 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun patchPhoneNumberPriority(
+        httpServletResponse: HttpServletResponse,
+        inputVo: AuthController.PatchPhoneNumberPriorityInputVo,
+        phoneUid: Long,
+        authorization: String
+    ) {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+        val memberData =
+            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        val phoneEntity =
+            db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.findByTotalAuthMemberAndUidAndRowDeleteDateStr(
+                memberData,
+                phoneUid,
+                "/"
+            )
+
+        if (phoneEntity == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        phoneEntity.priority =
+            if (inputVo.priority == null) {
+                // null 설정이라면 현재 가장 큰 priority 적용
+                val phoneEntityList =
+                    db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.findAllByTotalAuthMemberAndRowDeleteDateStrOrderByPriorityDescRowCreateDateDesc(
+                        memberData,
+                        "/"
+                    )
+                if (phoneEntityList.isEmpty()) {
+                    0
+                } else {
+                    phoneEntityList.first().priority
+                }
+            } else {
+                inputVo.priority
+            }
+
+        db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.save(phoneEntity)
+
+        httpServletResponse.status = HttpStatus.OK.value()
     }
 
 
@@ -4139,6 +4245,59 @@ class AuthService(
                 .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
         db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.save(profileData)
         // !!!프로필 이미지 파일 삭제하세요!!!
+
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
+    // (내 프로필 가중치 수정 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun patchProfilePriority(
+        httpServletResponse: HttpServletResponse,
+        inputVo: AuthController.PatchProfilePriorityInputVo,
+        profileUid: Long,
+        authorization: String
+    ) {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+        val memberData =
+            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        val profileEntity =
+            db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.findByUidAndTotalAuthMemberAndRowDeleteDateStr(
+                profileUid,
+                memberData,
+                "/"
+            )
+
+        if (profileEntity == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        profileEntity.priority =
+            if (inputVo.priority == null) {
+                // null 설정이라면 현재 가장 큰 priority 적용
+                val profileEntityList =
+                    db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.findAllByTotalAuthMemberAndRowDeleteDateStrOrderByPriorityDescRowCreateDateDesc(
+                        memberData,
+                        "/"
+                    )
+                if (profileEntityList.isEmpty()) {
+                    0
+                } else {
+                    profileEntityList.first().priority
+                }
+            } else {
+                inputVo.priority
+            }
+
+        db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.save(profileEntity)
 
         httpServletResponse.status = HttpStatus.OK.value()
     }

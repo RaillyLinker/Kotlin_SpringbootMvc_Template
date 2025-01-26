@@ -2648,6 +2648,71 @@ class AuthController(
 
     // ----
     @Operation(
+        summary = "이메일 가중치 수정 <>",
+        description = "내 계정 이메일 가중치 수정"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : emailUid 의 정보가 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PatchMapping(
+        path = ["/my-email/{emailUid}/priority"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    fun patchEmailPriority(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "emailUid", description = "이메일의 고유값", example = "1")
+        @PathVariable("emailUid")
+        emailUid: Long,
+        @RequestBody
+        inputVo: PatchEmailPriorityInputVo
+    ) {
+        return service.patchEmailPriority(httpServletResponse, inputVo, emailUid, authorization!!)
+    }
+
+    data class PatchEmailPriorityInputVo(
+        @Schema(
+            description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다. null 이라면 현재 가장 높은 가중치를 적용합니다.)",
+            required = false,
+            example = "1"
+        )
+        @JsonProperty("priority")
+        val priority: Int?
+    )
+
+
+    // ----
+    @Operation(
         summary = "전화번호 추가하기 본인 인증 문자 발송 <>",
         description = "전화번호 추가하기 본인 전화번호 확인 문자 발송<br>" +
                 "발송 후 10분 후 만료됨"
@@ -2933,6 +2998,71 @@ class AuthController(
     ) {
         service.deleteMyPhoneNumber(httpServletResponse, phoneUid, authorization!!)
     }
+
+
+    // ----
+    @Operation(
+        summary = "전화번호 가중치 수정 <>",
+        description = "내 계정 전화번호 가중치 수정"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : phoneUid 의 정보가 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PatchMapping(
+        path = ["/my-phone-number/{phoneUid}/priority"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    fun patchPhoneNumberPriority(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "phoneUid", description = "전화번호의 고유값", example = "1")
+        @PathVariable("phoneUid")
+        phoneUid: Long,
+        @RequestBody
+        inputVo: PatchPhoneNumberPriorityInputVo
+    ) {
+        return service.patchPhoneNumberPriority(httpServletResponse, inputVo, phoneUid, authorization!!)
+    }
+
+    data class PatchPhoneNumberPriorityInputVo(
+        @Schema(
+            description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다. null 이라면 현재 가장 높은 가중치를 적용합니다.)",
+            required = false,
+            example = "1"
+        )
+        @JsonProperty("priority")
+        val priority: Int?
+    )
 
 
     // ----
@@ -3275,6 +3405,71 @@ class AuthController(
     ) {
         service.deleteMyProfile(authorization!!, httpServletResponse, profileUid)
     }
+
+
+    // ----
+    @Operation(
+        summary = "내 프로필 가중치 수정 <>",
+        description = "내 프로필 가중치 수정"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : profileUid 의 정보가 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PatchMapping(
+        path = ["/my-profile/{profileUid}/priority"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    fun patchProfilePriority(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "profileUid", description = "프로필의 고유값", example = "1")
+        @PathVariable("profileUid")
+        profileUid: Long,
+        @RequestBody
+        inputVo: PatchProfilePriorityInputVo
+    ) {
+        return service.patchProfilePriority(httpServletResponse, inputVo, profileUid, authorization!!)
+    }
+
+    data class PatchProfilePriorityInputVo(
+        @Schema(
+            description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다. null 이라면 현재 가장 높은 가중치를 적용합니다.)",
+            required = false,
+            example = "1"
+        )
+        @JsonProperty("priority")
+        val priority: Int?
+    )
 
 
     // ----

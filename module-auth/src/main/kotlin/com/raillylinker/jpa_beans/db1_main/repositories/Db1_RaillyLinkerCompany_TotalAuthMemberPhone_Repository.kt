@@ -29,4 +29,10 @@ interface Db1_RaillyLinkerCompany_TotalAuthMemberPhone_Repository :
         totalAuthMember: Db1_RaillyLinkerCompany_TotalAuthMember,
         rowDeleteDateStr: String
     ): Boolean
+
+    fun findByTotalAuthMemberAndUidAndRowDeleteDateStr(
+        totalAuthMember: Db1_RaillyLinkerCompany_TotalAuthMember,
+        uid: Long,
+        rowDeleteDateStr: String
+    ): Db1_RaillyLinkerCompany_TotalAuthMemberPhone?
 }
