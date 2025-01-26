@@ -827,6 +827,61 @@ class StorageController(
 
 
     // ----
+    @Operation(
+        summary = "파일 여러개 삭제 <>",
+        description = "파일 정보를 여러개 삭제 합니다. (파일별로 요청을 해당 서버로 전달합니다.)"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : storageFileInfoUidList 중 데이터베이스에 존재하지 않는 것이 있습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            )
+        ]
+    )
+    @DeleteMapping(
+        path = ["/files/{storageFileInfoUidList}"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    fun deleteFiles(
+        @Parameter(hidden = true)
+        httpServletRequest: HttpServletRequest,
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "storageFileInfoUidList", description = "storageFileInfo 고유값 리스트")
+        @PathVariable("storageFileInfoUidList")
+        storageFileInfoUidList: List<Long>
+    ) {
+        service.deleteFiles(httpServletRequest, httpServletResponse, authorization!!, storageFileInfoUidList)
+    }
+
+
+    // ----
     @Hidden
     @Operation(
         summary = "파일 삭제 실제 <>",

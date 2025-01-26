@@ -916,6 +916,70 @@ class StorageService(
 
 
     // ----
+    // (파일 여러개 삭제 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun deleteFiles(
+        httpServletRequest: HttpServletRequest,
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        storageFileInfoUidList: List<Long>
+    ) {
+        // 멤버 데이터 조회
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+//        val memberEntity =
+//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        redis1LockStorageFolderInfo.tryLockRepeat(
+            "$memberUid",
+            7000L,
+            {
+                val fileInfoList: MutableList<Db1_RaillyLinkerCompany_StorageFileInfo> = mutableListOf()
+
+                for (storageFileInfoUid in storageFileInfoUidList) {
+                    val fileInfoOpt = db1RaillyLinkerCompanyStorageFileInfoRepository.findById(storageFileInfoUid)
+                    if (fileInfoOpt.isEmpty) {
+                        // 데이터가 없습니다.
+                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                        httpServletResponse.setHeader("api-result-code", "1")
+                        return@tryLockRepeat
+                    }
+
+                    val fileInfo = fileInfoOpt.get()
+                    if (fileInfo.storageFolderInfo.totalAuthMember.uid != memberUid) {
+                        // 내가 등록한 정보가 아닙니다.
+                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                        httpServletResponse.setHeader("api-result-code", "1")
+                        return@tryLockRepeat
+                    }
+
+                    fileInfoList.add(fileInfo)
+                }
+
+                for (fileInfo in fileInfoList) {
+                    //  실제 파일 삭제 요청 전달
+                    Retrofit.Builder()
+                        .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build().create(Retrofit2ActualFileDeleteService::class.java).deleteActualFile(
+                            fileInfo.uid!!,
+                            authorization,
+                            actualApiSecret
+                        )
+                        .execute()
+
+                    // 파일 정보 삭제
+                    db1RaillyLinkerCompanyStorageFileInfoRepository.delete(fileInfo)
+                }
+            }
+        )
+    }
+
+
+    // ----
     // (파일 삭제 실제 <>)
     fun deleteActualFile(
         httpServletRequest: HttpServletRequest,
