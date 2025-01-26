@@ -1299,7 +1299,7 @@ class AuthService(
         }
 
         val profileData =
-            db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.findAllByTotalAuthMemberAndRowDeleteDateStr(
+            db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.findAllByTotalAuthMemberAndRowDeleteDateStrOrderByPriorityDescRowCreateDateDesc(
                 memberData,
                 "/"
             )
@@ -1316,7 +1316,7 @@ class AuthService(
         }
 
         val emailEntityList =
-            db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.findAllByTotalAuthMemberAndRowDeleteDateStr(
+            db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.findAllByTotalAuthMemberAndRowDeleteDateStrOrderByPriorityDescRowCreateDateDesc(
                 memberData,
                 "/"
             )
@@ -1333,7 +1333,7 @@ class AuthService(
         }
 
         val phoneEntityList =
-            db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.findAllByTotalAuthMemberAndRowDeleteDateStr(
+            db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.findAllByTotalAuthMemberAndRowDeleteDateStrOrderByPriorityDescRowCreateDateDesc(
                 memberData,
                 "/"
             )
@@ -2968,7 +2968,7 @@ class AuthService(
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
         val emailEntityList =
-            db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.findAllByTotalAuthMemberAndRowDeleteDateStr(
+            db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.findAllByTotalAuthMemberAndRowDeleteDateStrOrderByPriorityDescRowCreateDateDesc(
                 memberData,
                 "/"
             )
@@ -3006,7 +3006,7 @@ class AuthService(
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
         val phoneEntityList =
-            db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.findAllByTotalAuthMemberAndRowDeleteDateStr(
+            db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.findAllByTotalAuthMemberAndRowDeleteDateStrOrderByPriorityDescRowCreateDateDesc(
                 memberData,
                 "/"
             )
@@ -3248,7 +3248,21 @@ class AuthService(
                 Db1_RaillyLinkerCompany_TotalAuthMemberEmail(
                     memberData,
                     inputVo.email,
-                    inputVo.priority
+                    if (inputVo.priority == null) {
+                        // null 설정이라면 현재 가장 큰 priority 적용
+                        val emailEntityList =
+                            db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.findAllByTotalAuthMemberAndRowDeleteDateStrOrderByPriorityDescRowCreateDateDesc(
+                                memberData,
+                                "/"
+                            )
+                        if (emailEntityList.isEmpty()) {
+                            0
+                        } else {
+                            emailEntityList.first().priority
+                        }
+                    } else {
+                        inputVo.priority
+                    }
                 )
             )
 
@@ -3288,7 +3302,7 @@ class AuthService(
 
         // 내 계정에 등록된 모든 이메일 리스트 가져오기
         val myEmailList =
-            db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.findAllByTotalAuthMemberAndRowDeleteDateStr(
+            db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.findAllByTotalAuthMemberAndRowDeleteDateStrOrderByPriorityDescRowCreateDateDesc(
                 memberData,
                 "/"
             )
@@ -3537,7 +3551,21 @@ class AuthService(
                 Db1_RaillyLinkerCompany_TotalAuthMemberPhone(
                     memberData,
                     inputVo.phoneNumber,
-                    inputVo.priority
+                    if (inputVo.priority == null) {
+                        // null 설정이라면 현재 가장 큰 priority 적용
+                        val phoneEntityList =
+                            db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.findAllByTotalAuthMemberAndRowDeleteDateStrOrderByPriorityDescRowCreateDateDesc(
+                                memberData,
+                                "/"
+                            )
+                        if (phoneEntityList.isEmpty()) {
+                            0
+                        } else {
+                            phoneEntityList.first().priority
+                        }
+                    } else {
+                        inputVo.priority
+                    }
                 )
             )
 
@@ -3577,7 +3605,7 @@ class AuthService(
 
         // 내 계정에 등록된 모든 전화번호 리스트 가져오기
         val myPhoneList =
-            db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.findAllByTotalAuthMemberAndRowDeleteDateStr(
+            db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.findAllByTotalAuthMemberAndRowDeleteDateStrOrderByPriorityDescRowCreateDateDesc(
                 memberData,
                 "/"
             )
@@ -4051,7 +4079,7 @@ class AuthService(
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
         val profileData =
-            db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.findAllByTotalAuthMemberAndRowDeleteDateStr(
+            db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.findAllByTotalAuthMemberAndRowDeleteDateStrOrderByPriorityDescRowCreateDateDesc(
                 memberData,
                 "/"
             )
@@ -4155,7 +4183,21 @@ class AuthService(
             Db1_RaillyLinkerCompany_TotalAuthMemberProfile(
                 memberData,
                 savedProfileImageUrl,
-                inputVo.priority
+                if (inputVo.priority == null) {
+                    // null 설정이라면 현재 가장 큰 priority 적용
+                    val profileEntityList =
+                        db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.findAllByTotalAuthMemberAndRowDeleteDateStrOrderByPriorityDescRowCreateDateDesc(
+                            memberData,
+                            "/"
+                        )
+                    if (profileEntityList.isEmpty()) {
+                        0
+                    } else {
+                        profileEntityList.first().priority
+                    }
+                } else {
+                    inputVo.priority
+                }
             )
         )
 

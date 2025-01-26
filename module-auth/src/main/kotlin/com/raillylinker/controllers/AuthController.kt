@@ -2576,9 +2576,13 @@ class AuthController(
         @JsonProperty("verificationCode")
         val verificationCode: String,
 
-        @Schema(description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)", required = true, example = "1")
+        @Schema(
+            description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다. null 이라면 현재 가장 높은 가중치를 적용합니다.)",
+            required = false,
+            example = "1"
+        )
         @JsonProperty("priority")
-        val priority: Int
+        val priority: Int?
     )
 
     data class AddNewEmailOutputVo(
@@ -2861,9 +2865,13 @@ class AuthController(
         @JsonProperty("verificationCode")
         val verificationCode: String,
 
-        @Schema(description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)", required = true, example = "1")
+        @Schema(
+            description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다. null 이라면 현재 가장 높은 가중치를 적용합니다.)",
+            required = false,
+            example = "1"
+        )
         @JsonProperty("priority")
-        val priority: Int
+        val priority: Int?
     )
 
     data class AddNewPhoneNumberOutputVo(
@@ -3310,9 +3318,13 @@ class AuthController(
         @Schema(description = "프로필 이미지 파일", required = true)
         @JsonProperty("profileImageFile")
         val profileImageFile: MultipartFile,
-        @Schema(description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)", required = true, example = "1")
+        @Schema(
+            description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다. null 이라면 현재 가장 높은 가중치를 적용합니다.)",
+            required = false,
+            example = "1"
+        )
         @JsonProperty("priority")
-        val priority: Int
+        val priority: Int?
     )
 
     data class AddNewProfileOutputVo(
