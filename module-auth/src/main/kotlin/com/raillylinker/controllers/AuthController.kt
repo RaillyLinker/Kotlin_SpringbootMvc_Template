@@ -208,7 +208,7 @@ class AuthController(
     )
     @PatchMapping(
         path = ["/expire-access-token/{memberUid}"],
-        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.ALL_VALUE]
     )
     @ResponseBody
@@ -217,7 +217,7 @@ class AuthController(
         httpServletResponse: HttpServletResponse,
         @PathVariable("memberUid")
         memberUid: Long,
-        @Parameter
+        @RequestBody
         inputVo: DoExpireAccessTokenInputVo
     ) {
         service.doExpireAccessToken(httpServletResponse, memberUid, inputVo)
