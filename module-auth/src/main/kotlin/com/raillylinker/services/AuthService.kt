@@ -28,7 +28,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.util.StringUtils
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -71,7 +70,7 @@ class AuthService(
     private val db1RaillyLinkerCompanyTotalAuthLogInTokenHistoryRepository: Db1_RaillyLinkerCompany_TotalAuthLogInTokenHistory_Repository,
     private val db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepository: Db1_RaillyLinkerCompany_TotalAuthMemberLockHistory_Repository,
 
-    private val Db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl: Db1_RaillyLinkerCompany_TotalAuthMemberLockHistory_RepositoryDsl,
+    private val db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl: Db1_RaillyLinkerCompany_TotalAuthMemberLockHistory_RepositoryDsl,
 
     private val kafka1MainProducer: Kafka1MainProducer
 ) {
@@ -292,7 +291,7 @@ class AuthService(
 
         // 계정 정지 검증
         val lockList =
-            Db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl.findAllNowActivateMemberLockInfo(
+            db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl.findAllNowActivateMemberLockInfo(
                 memberData.uid!!,
                 LocalDateTime.now()
             )
@@ -600,7 +599,7 @@ class AuthService(
 
         // 계정 정지 검증
         val lockList =
-            Db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl.findAllNowActivateMemberLockInfo(
+            db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl.findAllNowActivateMemberLockInfo(
                 snsOauth2.totalAuthMember.uid!!,
                 LocalDateTime.now()
             )
@@ -747,7 +746,7 @@ class AuthService(
 
         // 계정 정지 검증
         val lockList =
-            Db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl.findAllNowActivateMemberLockInfo(
+            db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl.findAllNowActivateMemberLockInfo(
                 snsOauth2.totalAuthMember.uid!!,
                 LocalDateTime.now()
             )
@@ -985,7 +984,7 @@ class AuthService(
 
                 // 정지 여부 파악
                 val lockList =
-                    Db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl.findAllNowActivateMemberLockInfo(
+                    db1RaillyLinkerCompanyTotalAuthMemberLockHistoryRepositoryDsl.findAllNowActivateMemberLockInfo(
                         memberData.uid!!,
                         LocalDateTime.now()
                     )
@@ -1311,7 +1310,7 @@ class AuthService(
                 AuthController.GetMemberInfoOutputVo.ProfileInfo(
                     profile.uid!!,
                     profile.imageFullUrl,
-                    profile.uid == memberData.frontTotalAuthMemberProfile?.uid
+                    profile.priority
                 )
             )
         }
@@ -1328,7 +1327,7 @@ class AuthService(
                 AuthController.GetMemberInfoOutputVo.EmailInfo(
                     emailEntity.uid!!,
                     emailEntity.emailAddress,
-                    emailEntity.uid == memberData.frontTotalAuthMemberEmail?.uid
+                    emailEntity.priority
                 )
             )
         }
@@ -1345,7 +1344,7 @@ class AuthService(
                 AuthController.GetMemberInfoOutputVo.PhoneNumberInfo(
                     phoneEntity.uid!!,
                     phoneEntity.phoneNumber,
-                    phoneEntity.uid == memberData.frontTotalAuthMemberPhone?.uid
+                    phoneEntity.priority
                 )
             )
         }
@@ -1475,10 +1474,7 @@ class AuthService(
         val memberEntity = db1RaillyLinkerCompanyTotalAuthMemberRepository.save(
             Db1_RaillyLinkerCompany_TotalAuthMember(
                 inputVo.id,
-                password,
-                null,
-                null,
-                null
+                password
             )
         )
 
@@ -1503,41 +1499,35 @@ class AuthService(
             savedProfileImageUrl = "${externalAccessAddress}/auth/member-profile/$savedFileName"
             //----------------------------------------------------------------------------------------------------------
 
-            val memberProfileData =
-                db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.save(
-                    Db1_RaillyLinkerCompany_TotalAuthMemberProfile(
-                        memberEntity,
-                        savedProfileImageUrl
-                    )
+            db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.save(
+                Db1_RaillyLinkerCompany_TotalAuthMemberProfile(
+                    memberEntity,
+                    savedProfileImageUrl,
+                    0
                 )
-
-            memberEntity.frontTotalAuthMemberProfile = memberProfileData
+            )
         }
 
         if (inputVo.email != null) {
             // 이메일 저장
-            val memberEmailData =
-                db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.save(
-                    Db1_RaillyLinkerCompany_TotalAuthMemberEmail(
-                        memberEntity,
-                        inputVo.email
-                    )
+            db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.save(
+                Db1_RaillyLinkerCompany_TotalAuthMemberEmail(
+                    memberEntity,
+                    inputVo.email,
+                    0
                 )
-
-            memberEntity.frontTotalAuthMemberEmail = memberEmailData
+            )
         }
 
         if (inputVo.phoneNumber != null) {
             // 전화번호 저장
-            val memberPhoneData =
-                db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.save(
-                    Db1_RaillyLinkerCompany_TotalAuthMemberPhone(
-                        memberEntity,
-                        inputVo.phoneNumber
-                    )
+            db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.save(
+                Db1_RaillyLinkerCompany_TotalAuthMemberPhone(
+                    memberEntity,
+                    inputVo.phoneNumber,
+                    0
                 )
-
-            memberEntity.frontTotalAuthMemberPhone = memberPhoneData
+            )
         }
 
         db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberEntity)
@@ -1710,22 +1700,18 @@ class AuthService(
             val memberData = db1RaillyLinkerCompanyTotalAuthMemberRepository.save(
                 Db1_RaillyLinkerCompany_TotalAuthMember(
                     inputVo.id,
-                    password,
-                    null,
-                    null,
-                    null
+                    password
                 )
             )
 
             // 이메일 저장
-            val memberEmailData = db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.save(
+            db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.save(
                 Db1_RaillyLinkerCompany_TotalAuthMemberEmail(
                     memberData,
-                    inputVo.email
+                    inputVo.email,
+                    0
                 )
             )
-
-            memberData.frontTotalAuthMemberEmail = memberEmailData
 
             if (inputVo.profileImageFile != null) {
                 // 저장된 프로필 이미지 파일을 다운로드 할 수 있는 URL
@@ -1748,15 +1734,13 @@ class AuthService(
                 savedProfileImageUrl = "${externalAccessAddress}/auth/member-profile/$savedFileName"
                 //----------------------------------------------------------------------------------------------------------
 
-                val memberProfileData =
-                    db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.save(
-                        Db1_RaillyLinkerCompany_TotalAuthMemberProfile(
-                            memberData,
-                            savedProfileImageUrl
-                        )
+                db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.save(
+                    Db1_RaillyLinkerCompany_TotalAuthMemberProfile(
+                        memberData,
+                        savedProfileImageUrl,
+                        0
                     )
-
-                memberData.frontTotalAuthMemberProfile = memberProfileData
+                )
             }
 
             db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
@@ -1946,23 +1930,18 @@ class AuthService(
             val memberUser = db1RaillyLinkerCompanyTotalAuthMemberRepository.save(
                 Db1_RaillyLinkerCompany_TotalAuthMember(
                     inputVo.id,
-                    password,
-                    null,
-                    null,
-                    null
+                    password
                 )
             )
 
             // 전화번호 저장
-            val memberPhoneData =
-                db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.save(
-                    Db1_RaillyLinkerCompany_TotalAuthMemberPhone(
-                        memberUser,
-                        inputVo.phoneNumber
-                    )
+            db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.save(
+                Db1_RaillyLinkerCompany_TotalAuthMemberPhone(
+                    memberUser,
+                    inputVo.phoneNumber,
+                    0
                 )
-
-            memberUser.frontTotalAuthMemberPhone = memberPhoneData
+            )
 
             if (inputVo.profileImageFile != null) {
                 // 저장된 프로필 이미지 파일을 다운로드 할 수 있는 URL
@@ -1985,14 +1964,13 @@ class AuthService(
                 savedProfileImageUrl = "${externalAccessAddress}/auth/member-profile/$savedFileName"
                 //----------------------------------------------------------------------------------------------------------
 
-                val memberProfileData = db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.save(
+                db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.save(
                     Db1_RaillyLinkerCompany_TotalAuthMemberProfile(
                         memberUser,
-                        savedProfileImageUrl
+                        savedProfileImageUrl,
+                        0
                     )
                 )
-
-                memberUser.frontTotalAuthMemberProfile = memberProfileData
             }
 
             db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberUser)
@@ -2353,9 +2331,6 @@ class AuthService(
             val memberEntity = db1RaillyLinkerCompanyTotalAuthMemberRepository.save(
                 Db1_RaillyLinkerCompany_TotalAuthMember(
                     inputVo.id,
-                    null,
-                    null,
-                    null,
                     null
                 )
             )
@@ -2390,14 +2365,13 @@ class AuthService(
                 savedProfileImageUrl = "${externalAccessAddress}/auth/member-profile/$savedFileName"
                 //----------------------------------------------------------------------------------------------------------
 
-                val memberProfileData = db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.save(
+                db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.save(
                     Db1_RaillyLinkerCompany_TotalAuthMemberProfile(
                         memberEntity,
-                        savedProfileImageUrl
+                        savedProfileImageUrl,
+                        0
                     )
                 )
-
-                memberEntity.frontTotalAuthMemberProfile = memberProfileData
             }
 
             db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberEntity)
@@ -3004,7 +2978,7 @@ class AuthService(
                 AuthController.GetMyEmailListOutputVo.EmailInfo(
                     emailEntity.uid!!,
                     emailEntity.emailAddress,
-                    emailEntity.uid == memberData.frontTotalAuthMemberEmail?.uid
+                    emailEntity.priority
                 )
             )
         }
@@ -3042,7 +3016,7 @@ class AuthService(
                 AuthController.GetMyPhoneNumberListOutputVo.PhoneInfo(
                     phoneEntity.uid!!,
                     phoneEntity.phoneNumber,
-                    phoneEntity.uid == memberData.frontTotalAuthMemberPhone?.uid
+                    phoneEntity.priority
                 )
             )
         }
@@ -3273,7 +3247,8 @@ class AuthService(
             val memberEmailData = db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.save(
                 Db1_RaillyLinkerCompany_TotalAuthMemberEmail(
                     memberData,
-                    inputVo.email
+                    inputVo.email,
+                    inputVo.priority
                 )
             )
 
@@ -3282,12 +3257,6 @@ class AuthService(
                 LocalDateTime.now().atZone(ZoneId.systemDefault())
                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
             db1RaillyLinkerCompanyTotalAuthAddEmailVerificationRepository.save(emailVerification)
-
-            if (inputVo.frontEmail) {
-                // 대표 이메일로 설정
-                memberData.frontTotalAuthMemberEmail = memberEmailData
-                db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
-            }
 
             httpServletResponse.status = HttpStatus.OK.value()
             return AuthController.AddNewEmailOutputVo(
@@ -3361,12 +3330,6 @@ class AuthService(
             (memberData.accountPassword != null && myEmailList.size > 1) ||
             (memberData.accountPassword != null && isMemberPhoneExists)
         ) {
-            if (memberData.frontTotalAuthMemberEmail?.uid == emailUid) {
-                // 대표 이메일 삭제
-                memberData.frontTotalAuthMemberEmail = null
-                db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
-            }
-
             // 이메일 지우기
             myEmailVo.rowDeleteDateStr =
                 LocalDateTime.now().atZone(ZoneId.systemDefault())
@@ -3573,7 +3536,8 @@ class AuthService(
             val memberPhoneData = db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.save(
                 Db1_RaillyLinkerCompany_TotalAuthMemberPhone(
                     memberData,
-                    inputVo.phoneNumber
+                    inputVo.phoneNumber,
+                    inputVo.priority
                 )
             )
 
@@ -3582,12 +3546,6 @@ class AuthService(
                 LocalDateTime.now().atZone(ZoneId.systemDefault())
                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
             db1RaillyLinkerCompanyTotalAuthAddPhoneVerificationRepository.save(phoneNumberVerification)
-
-            if (inputVo.frontPhoneNumber) {
-                // 대표 전화로 설정
-                memberData.frontTotalAuthMemberPhone = memberPhoneData
-                db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
-            }
 
             httpServletResponse.status = HttpStatus.OK.value()
             return AuthController.AddNewPhoneNumberOutputVo(
@@ -3661,11 +3619,6 @@ class AuthService(
             (memberData.accountPassword != null && myPhoneList.size > 1) ||
             (memberData.accountPassword != null && isMemberEmailExists)
         ) {
-            if (memberData.frontTotalAuthMemberPhone?.uid == phoneUid) {
-                memberData.frontTotalAuthMemberPhone = null
-                db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
-            }
-
             // 전화번호 지우기
             myPhoneVo.rowDeleteDateStr =
                 LocalDateTime.now().atZone(ZoneId.systemDefault())
@@ -3964,12 +3917,6 @@ class AuthService(
 //            // !!!프로필 이미지 파일 삭제하세요!!!
 //        }
 
-        // 다른 테이블을 참조중인 컬럼 null 처리
-        memberData.frontTotalAuthMemberProfile = null
-        memberData.frontTotalAuthMemberEmail = null
-        memberData.frontTotalAuthMemberPhone = null
-        db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
-
         for (totalAuthMemberRole in memberData.totalAuthMemberRoleList) {
             totalAuthMemberRole.rowDeleteDateStr =
                 LocalDateTime.now().atZone(ZoneId.systemDefault())
@@ -4116,7 +4063,7 @@ class AuthService(
                 AuthController.GetMyProfileListOutputVo.ProfileInfo(
                     profile.uid!!,
                     profile.imageFullUrl,
-                    profile.uid == memberData.frontTotalAuthMemberProfile?.uid
+                    profile.priority
                 )
             )
         }
@@ -4125,106 +4072,6 @@ class AuthService(
         return AuthController.GetMyProfileListOutputVo(
             myProfileList
         )
-    }
-
-
-    // ----
-    // (내 대표 Profile 이미지 정보 가져오기 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-    fun getMyFrontProfile(
-        httpServletResponse: HttpServletResponse,
-        authorization: String
-    ): AuthController.GetMyFrontProfileOutputVo? {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-        val memberData =
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-
-        val profileData =
-            db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.findAllByTotalAuthMemberAndRowDeleteDateStr(
-                memberData,
-                "/"
-            )
-
-        var myProfile: AuthController.GetMyFrontProfileOutputVo.ProfileInfo? = null
-        for (profile in profileData) {
-            if (profile.uid!! == memberData.frontTotalAuthMemberProfile?.uid) {
-                myProfile = AuthController.GetMyFrontProfileOutputVo.ProfileInfo(
-                    profile.uid!!,
-                    profile.imageFullUrl
-                )
-                break
-            }
-        }
-
-        httpServletResponse.status = HttpStatus.OK.value()
-        return AuthController.GetMyFrontProfileOutputVo(
-            myProfile
-        )
-    }
-
-
-    // ----
-    // (내 대표 프로필 설정하기 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun setMyFrontProfile(
-        httpServletResponse: HttpServletResponse,
-        authorization: String,
-        profileUid: Long?
-    ) {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-        val memberData =
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-
-        // 내 프로필 리스트 가져오기
-        val profileDataList =
-            db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.findAllByTotalAuthMemberAndRowDeleteDateStr(
-                memberData,
-                "/"
-            )
-
-        if (profileDataList.isEmpty()) {
-            // 내 프로필이 하나도 없을 때
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
-
-        if (profileUid == null) {
-            memberData.frontTotalAuthMemberProfile = null
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
-
-            httpServletResponse.status = HttpStatus.OK.value()
-            return
-        }
-
-        // 이번에 선택하려는 프로필
-        var selectedProfile: Db1_RaillyLinkerCompany_TotalAuthMemberProfile? = null
-        for (profile in profileDataList) {
-            if (profileUid == profile.uid) {
-                selectedProfile = profile
-            }
-        }
-
-        if (selectedProfile == null) {
-            // 이번에 선택하려는 프로필이 없을 때
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
-
-        // 이번에 선택하려는 프로필을 선택하기
-        memberData.frontTotalAuthMemberProfile = selectedProfile
-        db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
-
-        httpServletResponse.status = HttpStatus.OK.value()
     }
 
 
@@ -4256,12 +4103,6 @@ class AuthService(
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
             return
-        }
-
-        if (memberData.frontTotalAuthMemberProfile?.uid == profileUid) {
-            // 대표 프로필을 삭제했을 때 멤버 데이터에 반영
-            memberData.frontTotalAuthMemberProfile = null
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
         }
 
         // 프로필 비활성화
@@ -4313,14 +4154,10 @@ class AuthService(
         val profileData = db1RaillyLinkerCompanyTotalAuthMemberProfileRepository.save(
             Db1_RaillyLinkerCompany_TotalAuthMemberProfile(
                 memberData,
-                savedProfileImageUrl
+                savedProfileImageUrl,
+                inputVo.priority
             )
         )
-
-        if (inputVo.frontProfile) {
-            memberData.frontTotalAuthMemberProfile = profileData
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
-        }
 
         httpServletResponse.status = HttpStatus.OK.value()
         return AuthController.AddNewProfileOutputVo(
@@ -4370,206 +4207,6 @@ class AuthService(
             },
             HttpStatus.OK
         )
-    }
-
-
-    // ----
-    // (내 대표 이메일 정보 가져오기 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-    fun getMyFrontEmail(
-        httpServletResponse: HttpServletResponse,
-        authorization: String
-    ): AuthController.GetMyFrontEmailOutputVo? {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-        val memberData =
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-
-        val emailData =
-            db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.findAllByTotalAuthMemberAndRowDeleteDateStr(
-                memberData,
-                "/"
-            )
-
-        var myEmail: AuthController.GetMyFrontEmailOutputVo.EmailInfo? = null
-        for (email in emailData) {
-            if (email.uid!! == memberData.frontTotalAuthMemberEmail?.uid) {
-                myEmail = AuthController.GetMyFrontEmailOutputVo.EmailInfo(
-                    email.uid!!,
-                    email.emailAddress
-                )
-                break
-            }
-        }
-
-        httpServletResponse.status = HttpStatus.OK.value()
-        return AuthController.GetMyFrontEmailOutputVo(
-            myEmail
-        )
-    }
-
-
-    // ----
-    // (내 대표 이메일 설정하기 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun setMyFrontEmail(
-        httpServletResponse: HttpServletResponse,
-        authorization: String,
-        emailUid: Long?
-    ) {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-        val memberData =
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-
-        // 내 이메일 리스트 가져오기
-        val emailDataList =
-            db1RaillyLinkerCompanyTotalAuthMemberEmailRepository.findAllByTotalAuthMemberAndRowDeleteDateStr(
-                memberData,
-                "/"
-            )
-
-        if (emailDataList.isEmpty()) {
-            // 내 이메일이 하나도 없을 때
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
-
-        if (emailUid == null) {
-            memberData.frontTotalAuthMemberEmail = null
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
-
-            httpServletResponse.status = HttpStatus.OK.value()
-            return
-        }
-
-        // 이번에 선택하려는 이메일
-        var selectedEmail: Db1_RaillyLinkerCompany_TotalAuthMemberEmail? = null
-        for (email in emailDataList) {
-            if (emailUid == email.uid) {
-                selectedEmail = email
-            }
-        }
-
-        if (selectedEmail == null) {
-            // 이번에 선택하려는 이메일이 없을 때
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
-
-        // 이번에 선택하려는 프로필을 선택하기
-        memberData.frontTotalAuthMemberEmail = selectedEmail
-        db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
-
-        httpServletResponse.status = HttpStatus.OK.value()
-    }
-
-
-    // ----
-    // (내 대표 전화번호 정보 가져오기 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-    fun getMyFrontPhoneNumber(
-        httpServletResponse: HttpServletResponse,
-        authorization: String
-    ): AuthController.GetMyFrontPhoneNumberOutputVo? {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-        val memberData =
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-
-        val phoneNumberData =
-            db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.findAllByTotalAuthMemberAndRowDeleteDateStr(
-                memberData,
-                "/"
-            )
-
-        var myPhone: AuthController.GetMyFrontPhoneNumberOutputVo.PhoneNumberInfo? = null
-        for (phone in phoneNumberData) {
-            if (phone.uid!! == memberData.frontTotalAuthMemberPhone?.uid) {
-                myPhone = AuthController.GetMyFrontPhoneNumberOutputVo.PhoneNumberInfo(
-                    phone.uid!!,
-                    phone.phoneNumber
-                )
-                break
-            }
-        }
-
-        httpServletResponse.status = HttpStatus.OK.value()
-        return AuthController.GetMyFrontPhoneNumberOutputVo(
-            myPhone
-        )
-    }
-
-
-    // ----
-    // (내 대표 전화번호 설정하기 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun setMyFrontPhoneNumber(
-        httpServletResponse: HttpServletResponse,
-        authorization: String,
-        phoneNumberUid: Long?
-    ) {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-        val memberData =
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-
-        // 내 전화번호 리스트 가져오기
-        val phoneNumberData =
-            db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository.findAllByTotalAuthMemberAndRowDeleteDateStr(
-                memberData,
-                "/"
-            )
-
-        if (phoneNumberData.isEmpty()) {
-            // 내 전화번호가 하나도 없을 때
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
-
-        if (phoneNumberUid == null) {
-            memberData.frontTotalAuthMemberPhone = null
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
-
-            httpServletResponse.status = HttpStatus.OK.value()
-            return
-        }
-
-        // 이번에 선택하려는 전화번호
-        var selectedPhone: Db1_RaillyLinkerCompany_TotalAuthMemberPhone? = null
-        for (phone in phoneNumberData) {
-            if (phoneNumberUid == phone.uid) {
-                selectedPhone = phone
-            }
-        }
-
-        if (selectedPhone == null) {
-            // 이번에 선택하려는 전화번호가 없을 때
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
-
-        // 이번에 선택하려는 프로필을 선택하기
-        memberData.frontTotalAuthMemberPhone = selectedPhone
-        db1RaillyLinkerCompanyTotalAuthMemberRepository.save(memberData)
-
-        httpServletResponse.status = HttpStatus.OK.value()
     }
 
 

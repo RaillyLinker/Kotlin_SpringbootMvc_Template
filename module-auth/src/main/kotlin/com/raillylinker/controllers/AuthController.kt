@@ -805,9 +805,9 @@ class AuthController(
             @Schema(description = "프로필 이미지 Full URL", required = true, example = "https://profile-image.com/1.jpg")
             @JsonProperty("imageFullUrl")
             val imageFullUrl: String,
-            @Schema(description = "대표 프로필 여부", required = true, example = "true")
-            @JsonProperty("isFront")
-            val isFront: Boolean
+            @Schema(description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)", required = true, example = "1")
+            @JsonProperty("priority")
+            val priority: Int
         )
 
         @Schema(description = "이메일 정보")
@@ -818,9 +818,9 @@ class AuthController(
             @Schema(description = "이메일 주소", required = true, example = "test@gmail.com")
             @JsonProperty("emailAddress")
             val emailAddress: String,
-            @Schema(description = "대표 이메일 여부", required = true, example = "true")
-            @JsonProperty("isFront")
-            val isFront: Boolean
+            @Schema(description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)", required = true, example = "1")
+            @JsonProperty("priority")
+            val priority: Int
         )
 
         @Schema(description = "전화번호 정보")
@@ -831,9 +831,9 @@ class AuthController(
             @Schema(description = "전화번호", required = true, example = "82)010-6222-6461")
             @JsonProperty("phoneNumber")
             val phoneNumber: String,
-            @Schema(description = "대표 전화번호 여부", required = true, example = "true")
-            @JsonProperty("isFront")
-            val isFront: Boolean
+            @Schema(description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)", required = true, example = "1")
+            @JsonProperty("priority")
+            val priority: Int
         )
     }
 
@@ -2236,9 +2236,9 @@ class AuthController(
             @Schema(description = "이메일 주소", required = true, example = "test@gmail.com")
             @JsonProperty("emailAddress")
             val emailAddress: String,
-            @Schema(description = "대표 이메일 여부", required = true, example = "true")
-            @JsonProperty("isFront")
-            val isFront: Boolean
+            @Schema(description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)", required = true, example = "1")
+            @JsonProperty("priority")
+            val priority: Int
         )
     }
 
@@ -2291,9 +2291,9 @@ class AuthController(
             @Schema(description = "전화번호", required = true, example = "82)010-6222-6461")
             @JsonProperty("phoneNumber")
             val phoneNumber: String,
-            @Schema(description = "대표 전화번호 여부", required = true, example = "true")
-            @JsonProperty("isFront")
-            val isFront: Boolean
+            @Schema(description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)", required = true, example = "1")
+            @JsonProperty("priority")
+            val priority: Int
         )
     }
 
@@ -2576,13 +2576,9 @@ class AuthController(
         @JsonProperty("verificationCode")
         val verificationCode: String,
 
-        @Schema(
-            description = "대표 이메일 설정 여부",
-            required = true,
-            example = "true"
-        )
-        @JsonProperty("frontEmail")
-        val frontEmail: Boolean
+        @Schema(description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)", required = true, example = "1")
+        @JsonProperty("priority")
+        val priority: Int
     )
 
     data class AddNewEmailOutputVo(
@@ -2865,13 +2861,9 @@ class AuthController(
         @JsonProperty("verificationCode")
         val verificationCode: String,
 
-        @Schema(
-            description = "대표 전화번호 설정 여부",
-            required = true,
-            example = "true"
-        )
-        @JsonProperty("frontPhoneNumber")
-        val frontPhoneNumber: Boolean
+        @Schema(description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)", required = true, example = "1")
+        @JsonProperty("priority")
+        val priority: Int
     )
 
     data class AddNewPhoneNumberOutputVo(
@@ -3216,118 +3208,9 @@ class AuthController(
             @Schema(description = "프로필 이미지 Full URL", required = true, example = "https://profile-image.com/1.jpg")
             @JsonProperty("imageFullUrl")
             val imageFullUrl: String,
-            @Schema(description = "대표 프로필 여부", required = true, example = "true")
-            @JsonProperty("isFront")
-            val isFront: Boolean
-        )
-    }
-
-
-    // ----
-    @Operation(
-        summary = "내 대표 Profile 이미지 정보 가져오기 <>",
-        description = "내 대표 Profile 이미지 정보 가져오기"
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            )
-        ]
-    )
-    @GetMapping(
-        path = ["/my-front-profile"],
-        consumes = [MediaType.ALL_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    fun getMyFrontProfile(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?
-    ): GetMyFrontProfileOutputVo? {
-        return service.getMyFrontProfile(httpServletResponse, authorization!!)
-    }
-
-    data class GetMyFrontProfileOutputVo(
-        @Schema(description = "내 대표 Profile 이미지 정보", required = false)
-        @JsonProperty("myFrontProfileInfo")
-        val myFrontProfileInfo: ProfileInfo?
-    ) {
-        @Schema(description = "Profile 정보")
-        data class ProfileInfo(
-            @Schema(description = "행 고유값", required = true, example = "1")
-            @JsonProperty("uid")
-            val uid: Long,
-            @Schema(description = "프로필 이미지 Full URL", required = true, example = "https://profile-image.com/1.jpg")
-            @JsonProperty("imageFullUrl")
-            val imageFullUrl: String
-        )
-    }
-
-
-    // ----
-    @Operation(
-        summary = "내 대표 프로필 설정하기 <>",
-        description = "내가 등록한 프로필들 중 대표 프로필 설정하기"
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : profileUid 가 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PatchMapping(
-        path = ["/my-front-profile"],
-        consumes = [MediaType.ALL_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    fun setMyFrontProfile(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(name = "profileUid", description = "대표 프로필로 설정할 프로필의 고유값(null 이라면 대표 프로필 해제)", example = "1")
-        @RequestParam(value = "profileUid")
-        profileUid: Long?
-    ) {
-        service.setMyFrontProfile(
-            httpServletResponse,
-            authorization!!,
-            profileUid
+            @Schema(description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)", required = true, example = "1")
+            @JsonProperty("priority")
+            val priority: Int
         )
     }
 
@@ -3427,9 +3310,9 @@ class AuthController(
         @Schema(description = "프로필 이미지 파일", required = true)
         @JsonProperty("profileImageFile")
         val profileImageFile: MultipartFile,
-        @Schema(description = "대표 이미지로 설정할 것인지 여부", required = true)
-        @JsonProperty("frontProfile")
-        val frontProfile: Boolean
+        @Schema(description = "가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)", required = true, example = "1")
+        @JsonProperty("priority")
+        val priority: Int
     )
 
     data class AddNewProfileOutputVo(
@@ -3484,224 +3367,6 @@ class AuthController(
         fileName: String
     ): ResponseEntity<Resource>? {
         return service.downloadProfileFile(httpServletResponse, fileName)
-    }
-
-
-    // ----
-    @Operation(
-        summary = "내 대표 이메일 정보 가져오기 <>",
-        description = "내 대표 이메일 정보 가져오기"
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            )
-        ]
-    )
-    @GetMapping(
-        path = ["/my-front-email"],
-        consumes = [MediaType.ALL_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    fun getMyFrontEmail(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?
-    ): GetMyFrontEmailOutputVo? {
-        return service.getMyFrontEmail(httpServletResponse, authorization!!)
-    }
-
-    data class GetMyFrontEmailOutputVo(
-        @Schema(description = "내 대표 이메일 정보", required = false)
-        @JsonProperty("myFrontEmailInfo")
-        val myFrontEmailInfo: EmailInfo?
-    ) {
-        @Schema(description = "이메일 정보")
-        data class EmailInfo(
-            @Schema(description = "행 고유값", required = true, example = "1")
-            @JsonProperty("uid")
-            val uid: Long,
-            @Schema(description = "이메일 주소", required = true, example = "test@gmail.com")
-            @JsonProperty("emailAddress")
-            val emailAddress: String
-        )
-    }
-
-
-    // ----
-    @Operation(
-        summary = "내 대표 이메일 설정하기 <>",
-        description = "내가 등록한 이메일들 중 대표 이메일 설정하기"
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : 선택한 emailUid 가 없습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PatchMapping(
-        path = ["/my-front-email"],
-        consumes = [MediaType.ALL_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    fun setMyFrontEmail(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(name = "emailUid", description = "대표 이메일로 설정할 이메일의 고유값(null 이라면 대표 이메일 해제)", example = "1")
-        @RequestParam(value = "emailUid")
-        emailUid: Long?
-    ) {
-        service.setMyFrontEmail(
-            httpServletResponse,
-            authorization!!,
-            emailUid
-        )
-    }
-
-
-    // ----
-    @Operation(
-        summary = "내 대표 전화번호 정보 가져오기 <>",
-        description = "내 대표 전화번호 정보 가져오기"
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            )
-        ]
-    )
-    @GetMapping(
-        path = ["/my-front-phone-number"],
-        consumes = [MediaType.ALL_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    fun getMyFrontPhoneNumber(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?
-    ): GetMyFrontPhoneNumberOutputVo? {
-        return service.getMyFrontPhoneNumber(httpServletResponse, authorization!!)
-    }
-
-    data class GetMyFrontPhoneNumberOutputVo(
-        @Schema(description = "내 대표 전화번호 정보", required = false)
-        @JsonProperty("myFrontPhoneNumberInfo")
-        val myFrontPhoneNumberInfo: PhoneNumberInfo?
-    ) {
-        @Schema(description = "전화번호 정보")
-        data class PhoneNumberInfo(
-            @Schema(description = "행 고유값", required = true, example = "1")
-            @JsonProperty("uid")
-            val uid: Long,
-            @Schema(description = "전화번호", required = true, example = "82)010-6222-6461")
-            @JsonProperty("phoneNumber")
-            val phoneNumber: String
-        )
-    }
-
-
-    // ----
-    @Operation(
-        summary = "내 대표 전화번호 설정하기 <>",
-        description = "내가 등록한 전화번호들 중 대표 전화번호 설정하기"
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : 선택한 phoneNumberUid 가 없습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PatchMapping(
-        path = ["/my-front-phone-number"],
-        consumes = [MediaType.ALL_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    fun setMyFrontPhoneNumber(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(name = "phoneNumberUid", description = "대표 전화번호로 설정할 전화번호의 고유값(null 이라면 대표 전화번호 해제)", example = "1")
-        @RequestParam(value = "phoneNumberUid")
-        phoneNumberUid: Long?
-    ) {
-        service.setMyFrontPhoneNumber(
-            httpServletResponse,
-            authorization!!,
-            phoneNumberUid
-        )
     }
 
 
