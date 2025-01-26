@@ -554,6 +554,179 @@ class StorageService(
 
 
     // ----
+    // (파일 및 정보 업로드 여러개 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun postFiles(
+        httpServletRequest: HttpServletRequest,
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: StorageController.PostFilesInputVo
+    ): StorageController.PostFilesOutputVo? {
+        val storageFolderInfoUidListSize = inputVo.storageFolderInfoUidList.size
+        val fileNameListSize = inputVo.fileNameList.size
+        val fileSecretListSize = inputVo.fileSecretList.size
+        val fileListSize = inputVo.fileList.size
+
+        if (storageFolderInfoUidListSize != fileNameListSize ||
+            storageFolderInfoUidListSize != fileSecretListSize ||
+            storageFolderInfoUidListSize != fileListSize
+        ) {
+            // 리스트 사이즈가 맞지 않습니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
+            return null
+        }
+
+        if (thisServerAddress == null || !Regex("^https?://\\d{1,3}(\\.\\d{1,3}){3}:\\d+$").matches(thisServerAddress!!)) {
+            // 서버 주소 미설정이거나 올바른 형태가 아님
+            httpServletResponse.status = HttpStatus.SERVICE_UNAVAILABLE.value()
+            return null
+        }
+
+        if (!thisServerReady && inputVo.fileInsertPw != fileInsertPw) {
+            // 서버 준비 플래그가 true 가 아닌데 파일 비밀번호가 일치하지 않은 경우
+            httpServletResponse.status = HttpStatus.SERVICE_UNAVAILABLE.value()
+            return null
+        }
+
+        // 멤버 데이터 조회
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+//        val memberEntity =
+//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+
+        return redis1LockStorageFolderInfo.tryLockRepeat(
+            "$memberUid",
+            7000L,
+            {
+                val storageFolderEntityList: MutableList<Db1_RaillyLinkerCompany_StorageFolderInfo> = mutableListOf()
+
+                // 업로드된 파일의 크기 (bytes 단위)
+                var filesSize = 0L
+
+                // 검증
+                val uidAndNameList: MutableList<String> = mutableListOf()
+                for (i in inputVo.fileList.indices) {
+                    val storageFolderInfoUid = inputVo.storageFolderInfoUidList[i]
+                    val fileName = inputVo.fileNameList[i]
+                    val file = inputVo.fileList[i]
+
+                    if (fileName.contains("/")) {
+                        // 사용 불가 특수문자
+                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                        httpServletResponse.setHeader("api-result-code", "2")
+                        return@tryLockRepeat null
+                    }
+
+                    // 동일 폴더 정보가 존재하는지 검증
+                    val uidAndName = "$storageFolderInfoUid$fileName"
+
+                    val uniqueInvalid =
+                        db1RaillyLinkerCompanyStorageFileInfoRepository.existsByStorageFolderInfoUidAndFileName(
+                            storageFolderInfoUid,
+                            fileName
+                        )
+
+                    if (uniqueInvalid || uidAndNameList.contains(uidAndName)) {
+                        // 동일 이름의 파일이 폴더 내에 존재합니다.
+                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                        httpServletResponse.setHeader("api-result-code", "3")
+                        return@tryLockRepeat null
+                    }
+
+                    uidAndNameList.add(uidAndName)
+
+                    // 폴더 정보 조회
+                    val storageFolderEntity =
+                        db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
+                            storageFolderInfoUid,
+                            memberUid
+                        )
+
+                    if (storageFolderEntity == null) {
+                        // 폴더 데이터가 없음
+                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                        httpServletResponse.setHeader("api-result-code", "1")
+                        return@tryLockRepeat null
+                    }
+
+                    storageFolderEntityList.add(storageFolderEntity)
+
+                    filesSize += file.size
+                }
+
+                // 기본 파일 저장 위치(./by_product_files/file_storage/files 의 멤버별 할당 폴더)
+                val memberRootPath = storageRootPath + "/member_${memberUid}"
+
+                // 경로 String 을 Path 변수로 변환
+                val saveDirectoryPath =
+                    Paths.get(memberRootPath).toAbsolutePath().normalize()
+
+                // 파일 저장 가능 공간 검증
+                // 남은 저장 가능 공간 (bytes 단위)
+                val usableSpace = saveDirectoryPath.fileSystem.fileStores.first().usableSpace
+
+                // 저장 가능 여부 반환
+                if (filesSize > usableSpace) {
+                    // 파일 크기가 저장 용량을 능가합니다.
+                    httpServletResponse.status = HttpStatus.SERVICE_UNAVAILABLE.value()
+                    return@tryLockRepeat null
+                }
+
+                // 파일 정보 저장
+                val fileOutputList: MutableList<StorageController.PostFilesOutputVo.FileOutputVo> = mutableListOf()
+                for (i in inputVo.fileList.indices) {
+                    val storageFolderEntity = storageFolderEntityList[i]
+                    val fileName = inputVo.fileNameList[i]
+                    val fileSecret =
+                        if (inputVo.fileSecretList[i].trim().isEmpty()) {
+                            null
+                        } else {
+                            inputVo.fileSecretList[i]
+                        }
+                    val file = inputVo.fileList[i]
+
+                    val newFileInfo = db1RaillyLinkerCompanyStorageFileInfoRepository.save(
+                        Db1_RaillyLinkerCompany_StorageFileInfo(
+                            storageFolderEntity,
+                            fileName,
+                            thisServerAddress!!,
+                            fileSecret
+                        )
+                    )
+
+                    // 파일 실제 저장
+                    Files.createDirectories(saveDirectoryPath)
+                    file.transferTo(
+                        // 파일 저장 경로와 파일명(with index) 을 합친 path 객체
+                        // 실제 파일은 member 별 폴더 안에 fileInfo uid 로 저장됩니다.
+                        saveDirectoryPath.resolve("${newFileInfo.uid!!}").normalize()
+                    )
+
+                    fileOutputList.add(
+                        StorageController.PostFilesOutputVo.FileOutputVo(
+                            newFileInfo.uid!!,
+                            if (fileSecret == null) {
+                                "/storage/download-file/${newFileInfo.uid}/${fileName}"
+                            } else {
+                                "/storage/download-file/${newFileInfo.uid}/${fileName}?fileSecret=${fileSecret}"
+                            }
+                        )
+                    )
+                }
+
+                return@tryLockRepeat StorageController.PostFilesOutputVo(
+                    fileOutputList
+                )
+            }
+        )
+    }
+
+
+    // ----
     // (파일 다운로드 비밀번호 변경 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun patchFileSecret(

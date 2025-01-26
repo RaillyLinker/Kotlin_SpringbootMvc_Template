@@ -531,6 +531,112 @@ class StorageController(
 
     // ----
     @Operation(
+        summary = "파일 및 정보 업로드 여러개 <>",
+        description = "파일 및 정보를 여러개 업로드 합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : storageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않는 정보가 있습니다.<br>" +
+                                "2 : 파일명에는 / 를 사용할 수 없는 정보가 있습니다.<br>" +
+                                "3 : 동일 이름의 파일이 폴더 내에 존재하는 정보가 있습니다.<br>" +
+                                "4 : 파일 정보 리스트들의 개수가 맞지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "503",
+                content = [Content()],
+                description = "파일 저장을 위한 용량이 부족할 때"
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/files"],
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    fun postFiles(
+        @Parameter(hidden = true)
+        httpServletRequest: HttpServletRequest,
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter
+        inputVo: PostFilesInputVo
+    ): PostFilesOutputVo? {
+        return service.postFiles(httpServletRequest, httpServletResponse, authorization!!, inputVo)
+    }
+
+    data class PostFilesInputVo(
+        @Schema(description = "관리자용 파일 입력 비밀번호(클라이언트는 무시하고 null 로 보내세요.)", required = false, example = "todopw1234!@")
+        @JsonProperty("fileInsertPw")
+        val fileInsertPw: String?,
+        @Schema(description = "storageFolderInfo 고유값 리스트", required = true)
+        @JsonProperty("storageFolderInfoUidList")
+        val storageFolderInfoUidList: List<Long>,
+        @Schema(description = "파일명 리스트 (파일명에는 - 나 / 를 사용할 수 없습니다.)", required = true)
+        @JsonProperty("fileNameList")
+        val fileNameList: List<String>,
+        @Schema(
+            description = "파일 다운로드 비밀번호 리스트(본 등록 파일을 다운로드 하기 위해 필요한 비밀번호 설정, '' 를 입력하면 비번 입력되지 않습니다. 해싱 되지 않습니다.)",
+            required = true
+        )
+        @JsonProperty("fileSecretList")
+        val fileSecretList: List<String>,
+        @Schema(description = "파일 리스트", required = true)
+        @JsonProperty("fileList")
+        val fileList: List<MultipartFile>
+    )
+
+    data class PostFilesOutputVo(
+        @Schema(
+            description = "업로드 된 파일 다운로드 정보 리스트",
+            required = true
+        )
+        @JsonProperty("fileOutputList")
+        val fileOutputList: List<FileOutputVo>
+    ) {
+        @Schema(description = "FileOutputVo")
+        data class FileOutputVo(
+            @Schema(description = "storageFileInfo 고유값", required = true, example = "1")
+            @JsonProperty("storageFileInfoUid")
+            val storageFileInfoUid: Long,
+            @Schema(
+                description = "업로드 된 파일 다운로드 주소(origin 제외)",
+                required = true,
+                example = "/storage/download-file/{storageFileInfoUid}/{fileName}"
+            )
+            @JsonProperty("fileDownloadUrl")
+            val fileDownloadUrl: String
+        )
+    }
+
+
+    // ----
+    @Operation(
         summary = "파일 다운로드 비밀번호 변경 <>",
         description = "파일 다운로드 비밀번호를 변경 합니다."
     )
