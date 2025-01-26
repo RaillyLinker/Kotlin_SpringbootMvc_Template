@@ -164,10 +164,10 @@ class BoardService(
             boardEntity.viewCount,
             boardEntity.totalAuthMember.uid!!,
             boardEntity.totalAuthMember.accountId,
-            if (boardEntity.totalAuthMember.frontTotalAuthMemberProfile == null) {
+            if (boardEntity.totalAuthMember.totalAuthMemberProfileList.isEmpty()) {
                 null
             } else {
-                boardEntity.totalAuthMember.frontTotalAuthMemberProfile!!.imageFullUrl
+                boardEntity.totalAuthMember.totalAuthMemberProfileList.first().imageFullUrl
             }
         )
     }

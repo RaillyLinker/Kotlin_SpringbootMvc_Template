@@ -20,9 +20,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
-import kotlin.math.ceil
-import kotlin.math.floor
 
 @Service
 class RentalReservationService(
