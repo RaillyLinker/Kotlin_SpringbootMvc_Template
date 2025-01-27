@@ -172,269 +172,6 @@ class StorageController(
 
     // ----
     @Operation(
-        summary = "스토리지 폴더 추가 <>",
-        description = "스토리지 폴더를 추가합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : parentStorageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 폴더명에는 / 를 사용할 수 없습니다.<br>" +
-                                "3 : 중복된 폴더 경로입니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PostMapping(
-        path = ["/folder"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    fun postFolder(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @RequestBody
-        inputVo: PostFolderInputVo
-    ): PostFolderOutputVo? {
-        return service.postFolder(
-            httpServletResponse,
-            authorization!!,
-            inputVo
-        )
-    }
-
-    data class PostFolderInputVo(
-        @Schema(description = "부모 폴더 고유번호", required = false, example = "1")
-        @JsonProperty("parentStorageFolderInfoUid")
-        val parentStorageFolderInfoUid: Long?,
-        @Schema(description = "폴더명 (폴더명에는 - 나 / 를 사용할 수 없습니다.)", required = true, example = "내 문서")
-        @JsonProperty("folderName")
-        val folderName: String
-    )
-
-    data class PostFolderOutputVo(
-        @Schema(description = "storageFolderInfo 고유값", required = true, example = "1")
-        @JsonProperty("storageFolderInfoUid")
-        val storageFolderInfoUid: Long
-    )
-
-
-    // ----
-    @Operation(
-        summary = "스토리지 폴더 수정 <>",
-        description = "스토리지 폴더 정보를 수정합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : storageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : parentStorageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "3 : 자기 자신을 상위 폴더로 지정할 수 없습니다.<br>" +
-                                "4 : 자기 자신의 하위 폴더를 상위 폴더로 지정할 수 없습니다.<br>" +
-                                "5 : 폴더명에는 / 를 사용할 수 없습니다.<br>" +
-                                "6 : 중복된 폴더 경로입니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PutMapping(
-        path = ["/folder/{storageFolderInfoUid}"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    fun putFolder(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(name = "storageFolderInfoUid", description = "storageFolderInfo 고유값", example = "1")
-        @PathVariable("storageFolderInfoUid")
-        storageFolderInfoUid: Long,
-        @RequestBody
-        inputVo: PutFolderInputVo
-    ) {
-        service.putFolder(
-            httpServletResponse,
-            authorization!!,
-            storageFolderInfoUid,
-            inputVo
-        )
-    }
-
-    data class PutFolderInputVo(
-        @Schema(description = "부모 폴더 고유번호", required = false, example = "1")
-        @JsonProperty("parentStorageFolderInfoUid")
-        val parentStorageFolderInfoUid: Long?,
-        @Schema(description = "폴더명 (폴더명에는 - 나 / 를 사용할 수 없습니다.)", required = true, example = "내 문서")
-        @JsonProperty("folderName")
-        val folderName: String
-    )
-
-
-    // ----
-    @Operation(
-        summary = "스토리지 폴더 삭제 <>",
-        description = "스토리지 폴더 정보를 삭제합니다.<br>" +
-                "하위 폴더들, 그에 속한 하위 파일들은 모두 자동 삭제되며, kafka 에 삭제 이벤트가 전파됩니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : storageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            )
-        ]
-    )
-    @DeleteMapping(
-        path = ["/folder/{storageFolderInfoUid}"],
-        consumes = [MediaType.ALL_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    fun deleteFolder(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(name = "storageFolderInfoUid", description = "storageFolderInfo 고유값", example = "1")
-        @PathVariable("storageFolderInfoUid")
-        storageFolderInfoUid: Long
-    ) {
-        service.deleteFolder(
-            httpServletResponse,
-            authorization!!,
-            storageFolderInfoUid
-        )
-    }
-
-
-    // ----
-    @Operation(
-        summary = "내 스토리지 폴더 트리 조회 <>",
-        description = "내가 등록한 스토리지 폴더의 트리를 가져옵니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            )
-        ]
-    )
-    @GetMapping(
-        path = ["/my-storage-folder-tree"],
-        consumes = [MediaType.ALL_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    fun getMyStorageFolderTree(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?
-    ): GetMyStorageFolderTreeOutputVo? {
-        return service.getMyStorageFolderTree(
-            httpServletResponse,
-            authorization!!
-        )
-    }
-
-    data class GetMyStorageFolderTreeOutputVo(
-        @Schema(description = "폴더 트리 리스트", required = true)
-        @JsonProperty("folderTree")
-        val folderTree: List<FolderVo>
-    ) {
-        @Schema(description = "폴더 Vo")
-        data class FolderVo(
-            @Schema(description = "폴더 고유값", required = true, example = "1")
-            @JsonProperty("folderUid")
-            val folderUid: Long,
-            @Schema(description = "폴더 이름", required = true, example = "내 문서")
-            @JsonProperty("folderName")
-            val folderName: String,
-            @Schema(description = "자식 폴더 리스트", required = false)
-            @JsonProperty("folderChildren")
-            val folderChildren: List<FolderVo>?
-        )
-    }
-
-
-    // ----
-    @Operation(
         summary = "파일 및 정보 업로드 <>",
         description = "파일 및 정보를 업로드 합니다."
     )
@@ -453,9 +190,8 @@ class StorageController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : storageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 파일명에는 / 를 사용할 수 없습니다.<br>" +
-                                "3 : 동일 이름의 파일이 폴더 내에 존재합니다.",
+                                "1 : 파일명에는 / 를 사용할 수 없습니다.<br>" +
+                                "2 : 동일 이름의 파일이 존재합니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -497,9 +233,6 @@ class StorageController(
         @Schema(description = "관리자용 파일 입력 비밀번호(클라이언트는 무시하고 null 로 보내세요.)", required = false, example = "todopw1234!@")
         @JsonProperty("fileInsertPw")
         val fileInsertPw: String?,
-        @Schema(description = "storageFolderInfo 고유값", required = true, example = "1")
-        @JsonProperty("storageFolderInfoUid")
-        val storageFolderInfoUid: Long,
         @Schema(description = "파일명 (파일명에는 - 나 / 를 사용할 수 없습니다.)", required = true, example = "1")
         @JsonProperty("fileName")
         val fileName: String,
@@ -549,10 +282,9 @@ class StorageController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : storageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않는 정보가 있습니다.<br>" +
-                                "2 : 파일명에는 / 를 사용할 수 없는 정보가 있습니다.<br>" +
-                                "3 : 동일 이름의 파일이 폴더 내에 존재하는 정보가 있습니다.<br>" +
-                                "4 : 파일 정보 리스트들의 개수가 맞지 않습니다.",
+                                "1 : 파일명에는 / 를 사용할 수 없는 정보가 있습니다.<br>" +
+                                "2 : 동일 이름의 파일이 존재하는 정보가 있습니다.<br>" +
+                                "3 : 파일 정보 리스트들의 개수가 맞지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -594,9 +326,6 @@ class StorageController(
         @Schema(description = "관리자용 파일 입력 비밀번호(클라이언트는 무시하고 null 로 보내세요.)", required = false, example = "todopw1234!@")
         @JsonProperty("fileInsertPw")
         val fileInsertPw: String?,
-        @Schema(description = "storageFolderInfo 고유값 리스트", required = true)
-        @JsonProperty("storageFolderInfoUidList")
-        val storageFolderInfoUidList: List<Long>,
         @Schema(description = "파일명 리스트 (파일명에는 - 나 / 를 사용할 수 없습니다.)", required = true)
         @JsonProperty("fileNameList")
         val fileNameList: List<String>,
@@ -637,73 +366,6 @@ class StorageController(
 
     // ----
     @Operation(
-        summary = "파일 다운로드 비밀번호 변경 <>",
-        description = "파일 다운로드 비밀번호를 변경 합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : storageFileInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PatchMapping(
-        path = ["/file/{storageFileInfoUid}/file-secret"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    fun patchFileSecret(
-        @Parameter(hidden = true)
-        httpServletRequest: HttpServletRequest,
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(name = "storageFileInfoUid", description = "storageFileInfo 고유값", example = "1")
-        @PathVariable("storageFileInfoUid")
-        storageFileInfoUid: Long,
-        @RequestBody
-        inputVo: PatchFileSecretInputVo
-    ) {
-        service.patchFileSecret(httpServletRequest, httpServletResponse, authorization!!, storageFileInfoUid, inputVo)
-    }
-
-    data class PatchFileSecretInputVo(
-        @Schema(
-            description = "파일 다운로드 비밀번호(본 등록 파일을 다운로드 하기 위해 필요한 비밀번호 설정, 해싱 되지 않습니다.)",
-            required = false,
-            example = "asdfqwer"
-        )
-        @JsonProperty("fileSecret")
-        val fileSecret: String?
-    )
-
-
-    // ----
-    @Operation(
         summary = "파일 수정 <>",
         description = "파일 정보를 수정 합니다."
     )
@@ -723,9 +385,8 @@ class StorageController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : storageFileInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : storageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "3 : 파일명에는 / 를 사용할 수 없습니다.<br>" +
-                                "4 : 동일 이름의 파일이 폴더 내에 존재합니다.",
+                                "2 : 파일명에는 / 를 사용할 수 없습니다.<br>" +
+                                "3 : 동일 이름의 파일이 존재합니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -762,9 +423,13 @@ class StorageController(
     }
 
     data class PutFileInputVo(
-        @Schema(description = "storageFolderInfo 고유값", required = true, example = "1")
-        @JsonProperty("storageFolderInfoUid")
-        val storageFolderInfoUid: Long,
+        @Schema(
+            description = "파일 다운로드 비밀번호(본 등록 파일을 다운로드 하기 위해 필요한 비밀번호 설정, 해싱 되지 않습니다.)",
+            required = false,
+            example = "asdfqwer"
+        )
+        @JsonProperty("fileSecret")
+        val fileSecret: String?,
         @Schema(description = "파일명 (파일명에는 - 나 / 를 사용할 수 없습니다.)", required = true, example = "내 파일 1")
         @JsonProperty("fileName")
         val fileName: String
@@ -1039,93 +704,6 @@ class StorageController(
             fileUid,
             fileName,
             actualApiSecret
-        )
-    }
-
-
-    // ----
-    @Operation(
-        summary = "내 스토리지 폴더 내 파일 리스트 조회 <>",
-        description = "내가 등록한 스토리지 폴더 내 파일 리스트를 가져옵니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : storageFolderInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            )
-        ]
-    )
-    @GetMapping(
-        path = ["/my-storage-folder/{storageFolderInfoUid}/files"],
-        consumes = [MediaType.ALL_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    fun getMyStorageFolderFiles(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(name = "storageFolderInfoUid", description = "storageFolderInfo 고유값", example = "1")
-        @PathVariable("storageFolderInfoUid")
-        storageFolderInfoUid: Long
-    ): GetMyStorageFolderFilesOutputVo? {
-        return service.getMyStorageFolderFiles(
-            httpServletResponse,
-            authorization!!,
-            storageFolderInfoUid
-        )
-    }
-
-    data class GetMyStorageFolderFilesOutputVo(
-        @Schema(description = "파일 리스트", required = true)
-        @JsonProperty("fileList")
-        val fileList: List<FileInfoVo>
-    ) {
-        @Schema(description = "파일 정보 Vo")
-        data class FileInfoVo(
-            @Schema(description = "파일 고유값", required = true, example = "1")
-            @JsonProperty("fileUid")
-            val fileUid: Long,
-            @Schema(description = "파일 이름", required = true, example = "내 문서")
-            @JsonProperty("fileName")
-            val fileName: String,
-            @Schema(
-                description = "파일 다운로드 시크릿 코드(이 값이 null 이 아니라면, 본 파일을 다운로드 하기 위해 시크릿 코드가 필요합니다.)",
-                required = false,
-                example = "qwer1234"
-            )
-            @JsonProperty("fileSecretCode")
-            val fileSecretCode: String?,
-            @Schema(
-                description = "파일 다운로드 주소(origin 제외)",
-                required = true,
-                example = "/storage/download-file/{storageFileInfoUid}/{fileName}"
-            )
-            @JsonProperty("fileDownloadUrl")
-            val fileDownloadUrl: String
         )
     }
 }

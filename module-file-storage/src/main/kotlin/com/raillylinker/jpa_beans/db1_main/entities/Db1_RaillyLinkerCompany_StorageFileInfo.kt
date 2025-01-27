@@ -14,15 +14,15 @@ import java.time.LocalDateTime
     name = "storage_file_info",
     catalog = "railly_linker_company",
     uniqueConstraints = [
-        UniqueConstraint(columnNames = ["storage_folder_info_uid", "file_name"])
+        UniqueConstraint(columnNames = ["total_auth_member_uid", "file_name"])
     ]
 )
 @Comment("스토리지 파일 정보")
 class Db1_RaillyLinkerCompany_StorageFileInfo(
     @ManyToOne
-    @JoinColumn(name = "storage_folder_info_uid", nullable = false)
-    @Comment("폴더 정보 고유값 (railly_linker_company.storage_folder_info.uid)")
-    var storageFolderInfo: Db1_RaillyLinkerCompany_StorageFolderInfo,
+    @JoinColumn(name = "total_auth_member_uid", nullable = false)
+    @Comment("멤버 고유번호(railly_linker_company.total_auth_member.uid)")
+    var totalAuthMember: Db1_RaillyLinkerCompany_TotalAuthMember,
 
     @Column(name = "file_name", nullable = false, columnDefinition = "VARCHAR(45)")
     @Comment("파일명")

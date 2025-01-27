@@ -5,9 +5,7 @@ import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.C
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.controllers.StorageController
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_StorageFileInfo
-import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_StorageFolderInfo
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_StorageFileInfo_Repository
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_StorageFolderInfo_Repository
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_TotalAuthMember_Repository
 import com.raillylinker.redis_map_components.redis1_main.Redis1_Lock_StorageFolderInfo
 import com.raillylinker.util_components.JwtTokenUtil
@@ -37,7 +35,6 @@ class StorageService(
 
     private val jwtTokenUtil: JwtTokenUtil,
     private val db1RaillyLinkerCompanyTotalAuthMemberRepository: Db1_RaillyLinkerCompany_TotalAuthMember_Repository,
-    private val db1RaillyLinkerCompanyStorageFolderInfoRepository: Db1_RaillyLinkerCompany_StorageFolderInfo_Repository,
     private val db1RaillyLinkerCompanyStorageFileInfoRepository: Db1_RaillyLinkerCompany_StorageFileInfo_Repository,
 
     private val redis1LockStorageFolderInfo: Redis1_Lock_StorageFolderInfo
@@ -118,322 +115,6 @@ class StorageService(
 
 
     // ----
-    // (스토리지 폴더 추가 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun postFolder(
-        httpServletResponse: HttpServletResponse,
-        authorization: String,
-        inputVo: StorageController.PostFolderInputVo
-    ): StorageController.PostFolderOutputVo? {
-        if (inputVo.folderName.contains("/")) {
-            // 사용 불가 특수문자
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "2")
-            return null
-        }
-
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-
-        // 동일 폴더 정보가 존재하는지 검증
-        val uniqueInvalid =
-            db1RaillyLinkerCompanyStorageFolderInfoRepository.existsByTotalAuthMemberUidAndParentStorageFolderInfoUidAndFolderName(
-                memberUid,
-                inputVo.parentStorageFolderInfoUid,
-                inputVo.folderName
-            )
-
-        if (uniqueInvalid) {
-            // 중복된 폴더 경로
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "3")
-            return null
-        }
-
-        // 부모 폴더 정보 조회
-        val parentStorageFolderInfo: Db1_RaillyLinkerCompany_StorageFolderInfo? =
-            if (inputVo.parentStorageFolderInfoUid == null) {
-                null
-            } else {
-                val parentStorageFolderEntity =
-                    db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
-                        inputVo.parentStorageFolderInfoUid,
-                        memberUid
-                    )
-
-                if (parentStorageFolderEntity == null) {
-                    // 부모 폴더 정보가 없습니다.
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "1")
-                    return null
-                }
-
-                parentStorageFolderEntity
-            }
-
-        // 멤버 데이터 조회
-        val memberEntity =
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-
-        // 폴더 정보 입력
-        val newStorageFolderInfo =
-            db1RaillyLinkerCompanyStorageFolderInfoRepository.save(
-                Db1_RaillyLinkerCompany_StorageFolderInfo(
-                    memberEntity,
-                    parentStorageFolderInfo,
-                    if (parentStorageFolderInfo == null) {
-                        0L
-                    } else {
-                        parentStorageFolderInfo.uid!!
-                    },
-                    inputVo.folderName
-                )
-            )
-
-        httpServletResponse.status = HttpStatus.OK.value()
-        return StorageController.PostFolderOutputVo(
-            newStorageFolderInfo.uid!!
-        )
-    }
-
-
-    // ----
-    // (스토리지 폴더 수정 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun putFolder(
-        httpServletResponse: HttpServletResponse,
-        authorization: String,
-        storageFolderInfoUid: Long,
-        inputVo: StorageController.PutFolderInputVo
-    ) {
-        if (inputVo.folderName.contains("/")) {
-            // 사용 불가 특수문자
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "5")
-            return
-        }
-
-        if (inputVo.parentStorageFolderInfoUid == storageFolderInfoUid) {
-            // 자기 자신을 상위 폴더로 지정할 수 없음
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "3")
-            return
-        }
-
-        // 멤버 데이터 조회
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-//        val memberEntity =
-//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-
-        redis1LockStorageFolderInfo.tryLockRepeat(
-            "$memberUid",
-            7000L,
-            {
-                // 동일 폴더 정보가 존재하는지 검증
-                val uniqueInvalid =
-                    db1RaillyLinkerCompanyStorageFolderInfoRepository.existsByTotalAuthMemberUidAndParentStorageFolderInfoUidAndFolderName(
-                        memberUid,
-                        inputVo.parentStorageFolderInfoUid,
-                        inputVo.folderName
-                    )
-
-                if (uniqueInvalid) {
-                    // 중복된 폴더 경로
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "6")
-                    return@tryLockRepeat
-                }
-                // 수정하려는 폴더 정보 조회
-                val storageFolderEntity =
-                    db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
-                        storageFolderInfoUid,
-                        memberUid
-                    )
-
-                if (storageFolderEntity == null) {
-                    // 수정하려는 데이터가 없음
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "1")
-                    return@tryLockRepeat
-                }
-
-                // 부모 폴더 정보 조회
-                val parentStorageFolderInfo: Db1_RaillyLinkerCompany_StorageFolderInfo? =
-                    if (inputVo.parentStorageFolderInfoUid == null) {
-                        null
-                    } else {
-                        val parentStorageFolderEntity =
-                            db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
-                                inputVo.parentStorageFolderInfoUid,
-                                memberUid
-                            )
-
-                        if (parentStorageFolderEntity == null) {
-                            // 부모 폴더 정보가 없음
-                            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                            httpServletResponse.setHeader("api-result-code", "2")
-                            return@tryLockRepeat
-                        }
-
-                        // 상위 폴더를 자기 자신의 하위 폴더로 설정 못하도록 검증
-                        var anchorFolderEntity: Db1_RaillyLinkerCompany_StorageFolderInfo? = parentStorageFolderEntity
-                        while (anchorFolderEntity != null) {
-                            // 상위 폴더로 설정할 엔티티가 자기 자신의 하위 폴더로 설정 되어 있는지 확인
-                            if (anchorFolderEntity.uid == storageFolderInfoUid) {
-                                httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                                httpServletResponse.setHeader("api-result-code", "4")
-                                return@tryLockRepeat
-                            }
-                            anchorFolderEntity = anchorFolderEntity.parentStorageFolderInfo
-                        }
-
-                        parentStorageFolderEntity
-                    }
-
-                // 폴더 정보 수정
-                storageFolderEntity.parentStorageFolderInfo = parentStorageFolderInfo
-                storageFolderEntity.parentStorageFolderInfoUidNn =
-                    if (parentStorageFolderInfo == null) {
-                        0L
-                    } else {
-                        parentStorageFolderInfo.uid!!
-                    }
-                storageFolderEntity.folderName = inputVo.folderName
-
-                db1RaillyLinkerCompanyStorageFolderInfoRepository.save(storageFolderEntity)
-
-                httpServletResponse.status = HttpStatus.OK.value()
-            }
-        )
-    }
-
-
-    // ----
-    // (스토리지 폴더 삭제 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun deleteFolder(
-        httpServletResponse: HttpServletResponse,
-        authorization: String,
-        storageFolderInfoUid: Long
-    ) {
-        // 멤버 데이터 조회
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-//        val memberEntity =
-//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-
-        redis1LockStorageFolderInfo.tryLockRepeat(
-            "$memberUid",
-            7000L,
-            {
-                // 삭제하려는 폴더 정보 조회
-                val storageFolderEntity =
-                    db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
-                        storageFolderInfoUid,
-                        memberUid
-                    )
-
-                if (storageFolderEntity == null) {
-                    // 삭제하려는 데이터가 없음
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "1")
-                    return@tryLockRepeat
-                }
-
-                // 기준 폴더로부터 모든 하위 폴더 출력 (하위 Depth 폴더 우선 정렬)
-                val folderTreePathList =
-                    db1RaillyLinkerCompanyStorageFolderInfoRepository.findAllStorageFolderTreeUidList(
-                        storageFolderInfoUid
-                    )
-                for (folderTreePath in folderTreePathList) {
-                    // 폴더 내 하위 파일들 조회
-                    val fileInfoList =
-                        db1RaillyLinkerCompanyStorageFileInfoRepository.findAllByStorageFolderInfoUid(
-                            folderTreePath.uid
-                        )
-
-                    for (fileInfo in fileInfoList) {
-                        // 하위 파일들 삭제 처리
-                        try {
-                            // 실제 파일 삭제 요청 전달
-                            Retrofit.Builder()
-                                .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build().create(Retrofit2ActualFileDeleteService::class.java).deleteActualFile(
-                                    fileInfo.uid!!,
-                                    authorization,
-                                    actualApiSecret
-                                )
-                                .execute()
-
-                            // 파일 정보 삭제
-                            db1RaillyLinkerCompanyStorageFileInfoRepository.delete(fileInfo)
-                        } catch (e: Exception) {
-                            classLogger.error("exception : ", e)
-                        }
-                    }
-
-                    // 폴더 삭제 처리
-                    db1RaillyLinkerCompanyStorageFolderInfoRepository.deleteById(folderTreePath.uid)
-                }
-
-                httpServletResponse.status = HttpStatus.OK.value()
-            }
-        )
-    }
-
-
-    // ----
-    // (내 스토리지 폴더 트리 조회 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-    fun getMyStorageFolderTree(
-        httpServletResponse: HttpServletResponse,
-        authorization: String
-    ): StorageController.GetMyStorageFolderTreeOutputVo? {
-        // 멤버 데이터 조회
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-//        val memberEntity =
-//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-
-        // 최상위 폴더 조회 (parentStorageFolderInfo == null)
-        val rootFolders =
-            db1RaillyLinkerCompanyStorageFolderInfoRepository.findAllByTotalAuthMemberUidAndParentStorageFolderInfoIsNull(
-                memberUid
-            )
-
-        // 폴더 트리 변환
-        val folderTree = rootFolders.map { folder -> mapToFolderVo(folder) }
-
-        return StorageController.GetMyStorageFolderTreeOutputVo(
-            folderTree
-        )
-    }
-
-    // 폴더 트리를 FolderVo로 변환하는 재귀 함수
-    private fun mapToFolderVo(folder: Db1_RaillyLinkerCompany_StorageFolderInfo): StorageController.GetMyStorageFolderTreeOutputVo.FolderVo {
-        return StorageController.GetMyStorageFolderTreeOutputVo.FolderVo(
-            folder.uid!!,
-            folder.folderName,
-            folder.childStorageFolderInfoList.map { child -> mapToFolderVo(child) }
-        )
-    }
-
-
-    // ----
     // (파일 및 정보 업로드 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postFile(
@@ -457,7 +138,7 @@ class StorageService(
         if (inputVo.fileName.contains("/")) {
             // 사용 불가 특수문자
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "2")
+            httpServletResponse.setHeader("api-result-code", "1")
             return null
         }
 
@@ -467,8 +148,8 @@ class StorageService(
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
             AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
         )
-//        val memberEntity =
-//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+        val memberEntity =
+            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
         return redis1LockStorageFolderInfo.tryLockRepeat(
             "$memberUid",
@@ -476,29 +157,15 @@ class StorageService(
             {
                 // 동일 폴더 정보가 존재하는지 검증
                 val uniqueInvalid =
-                    db1RaillyLinkerCompanyStorageFileInfoRepository.existsByStorageFolderInfoUidAndFileName(
-                        inputVo.storageFolderInfoUid,
+                    db1RaillyLinkerCompanyStorageFileInfoRepository.existsByTotalAuthMemberUidAndFileName(
+                        memberUid,
                         inputVo.fileName
                     )
 
                 if (uniqueInvalid) {
                     // 동일 이름의 파일이 폴더 내에 존재합니다.
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "3")
-                    return@tryLockRepeat null
-                }
-
-                // 폴더 정보 조회
-                val storageFolderEntity =
-                    db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
-                        inputVo.storageFolderInfoUid,
-                        memberUid
-                    )
-
-                if (storageFolderEntity == null) {
-                    // 폴더 데이터가 없음
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "1")
+                    httpServletResponse.setHeader("api-result-code", "2")
                     return@tryLockRepeat null
                 }
 
@@ -525,7 +192,7 @@ class StorageService(
                 // 파일 정보 저장
                 val newFileInfo = db1RaillyLinkerCompanyStorageFileInfoRepository.save(
                     Db1_RaillyLinkerCompany_StorageFileInfo(
-                        storageFolderEntity,
+                        memberEntity,
                         inputVo.fileName,
                         thisServerAddress!!,
                         inputVo.fileSecret
@@ -562,18 +229,16 @@ class StorageService(
         authorization: String,
         inputVo: StorageController.PostFilesInputVo
     ): StorageController.PostFilesOutputVo? {
-        val storageFolderInfoUidListSize = inputVo.storageFolderInfoUidList.size
         val fileNameListSize = inputVo.fileNameList.size
         val fileSecretListSize = inputVo.fileSecretList.size
         val fileListSize = inputVo.fileList.size
 
-        if (storageFolderInfoUidListSize != fileNameListSize ||
-            storageFolderInfoUidListSize != fileSecretListSize ||
-            storageFolderInfoUidListSize != fileListSize
+        if (fileNameListSize != fileSecretListSize ||
+            fileNameListSize != fileListSize
         ) {
             // 리스트 사이즈가 맞지 않습니다.
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "4")
+            httpServletResponse.setHeader("api-result-code", "3")
             return null
         }
 
@@ -595,65 +260,44 @@ class StorageService(
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
             AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
         )
-//        val memberEntity =
-//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+        val memberEntity =
+            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
 
         return redis1LockStorageFolderInfo.tryLockRepeat(
             "$memberUid",
             7000L,
             {
-                val storageFolderEntityList: MutableList<Db1_RaillyLinkerCompany_StorageFolderInfo> = mutableListOf()
-
                 // 업로드된 파일의 크기 (bytes 단위)
                 var filesSize = 0L
 
                 // 검증
-                val uidAndNameList: MutableList<String> = mutableListOf()
+                val fileNameList: MutableList<String> = mutableListOf()
                 for (i in inputVo.fileList.indices) {
-                    val storageFolderInfoUid = inputVo.storageFolderInfoUidList[i]
                     val fileName = inputVo.fileNameList[i]
                     val file = inputVo.fileList[i]
 
                     if (fileName.contains("/")) {
                         // 사용 불가 특수문자
                         httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                        httpServletResponse.setHeader("api-result-code", "2")
-                        return@tryLockRepeat null
-                    }
-
-                    // 동일 폴더 정보가 존재하는지 검증
-                    val uidAndName = "$storageFolderInfoUid$fileName"
-
-                    val uniqueInvalid =
-                        db1RaillyLinkerCompanyStorageFileInfoRepository.existsByStorageFolderInfoUidAndFileName(
-                            storageFolderInfoUid,
-                            fileName
-                        )
-
-                    if (uniqueInvalid || uidAndNameList.contains(uidAndName)) {
-                        // 동일 이름의 파일이 폴더 내에 존재합니다.
-                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                        httpServletResponse.setHeader("api-result-code", "3")
-                        return@tryLockRepeat null
-                    }
-
-                    uidAndNameList.add(uidAndName)
-
-                    // 폴더 정보 조회
-                    val storageFolderEntity =
-                        db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
-                            storageFolderInfoUid,
-                            memberUid
-                        )
-
-                    if (storageFolderEntity == null) {
-                        // 폴더 데이터가 없음
-                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                         httpServletResponse.setHeader("api-result-code", "1")
                         return@tryLockRepeat null
                     }
 
-                    storageFolderEntityList.add(storageFolderEntity)
+                    // 동일 폴더 정보가 존재하는지 검증
+                    val uniqueInvalid =
+                        db1RaillyLinkerCompanyStorageFileInfoRepository.existsByTotalAuthMemberUidAndFileName(
+                            memberUid,
+                            fileName
+                        )
+
+                    if (uniqueInvalid || fileNameList.contains(fileName)) {
+                        // 동일 이름의 파일이 존재합니다.
+                        httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                        httpServletResponse.setHeader("api-result-code", "2")
+                        return@tryLockRepeat null
+                    }
+
+                    fileNameList.add(fileName)
 
                     filesSize += file.size
                 }
@@ -679,7 +323,6 @@ class StorageService(
                 // 파일 정보 저장
                 val fileOutputList: MutableList<StorageController.PostFilesOutputVo.FileOutputVo> = mutableListOf()
                 for (i in inputVo.fileList.indices) {
-                    val storageFolderEntity = storageFolderEntityList[i]
                     val fileName = inputVo.fileNameList[i]
                     val fileSecret =
                         if (inputVo.fileSecretList[i].trim().isEmpty()) {
@@ -691,7 +334,7 @@ class StorageService(
 
                     val newFileInfo = db1RaillyLinkerCompanyStorageFileInfoRepository.save(
                         Db1_RaillyLinkerCompany_StorageFileInfo(
-                            storageFolderEntity,
+                            memberEntity,
                             fileName,
                             thisServerAddress!!,
                             fileSecret
@@ -727,46 +370,6 @@ class StorageService(
 
 
     // ----
-    // (파일 다운로드 비밀번호 변경 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-    fun patchFileSecret(
-        httpServletRequest: HttpServletRequest,
-        httpServletResponse: HttpServletResponse,
-        authorization: String,
-        storageFileInfoUid: Long,
-        inputVo: StorageController.PatchFileSecretInputVo
-    ) {
-        // 멤버 데이터 조회
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-//        val memberEntity =
-//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-
-        val fileInfoOpt = db1RaillyLinkerCompanyStorageFileInfoRepository.findById(storageFileInfoUid)
-        if (fileInfoOpt.isEmpty) {
-            // 데이터가 없습니다.
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
-
-        val fileInfo = fileInfoOpt.get()
-        if (fileInfo.storageFolderInfo.totalAuthMember.uid != memberUid) {
-            // 내가 등록한 정보가 아닙니다.
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return
-        }
-
-        fileInfo.fileSecretCode = inputVo.fileSecret
-        db1RaillyLinkerCompanyStorageFileInfoRepository.save(fileInfo)
-    }
-
-
-    // ----
     // (파일 수정 <>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun putFile(
@@ -779,7 +382,7 @@ class StorageService(
         if (inputVo.fileName.contains("/")) {
             // 사용 불가 특수문자
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "3")
+            httpServletResponse.setHeader("api-result-code", "2")
             return
         }
 
@@ -805,7 +408,7 @@ class StorageService(
                 }
 
                 val fileInfo = fileInfoOpt.get()
-                if (fileInfo.storageFolderInfo.totalAuthMember.uid != memberUid) {
+                if (fileInfo.totalAuthMember.uid != memberUid) {
                     // 내가 등록한 정보가 아닙니다.
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                     httpServletResponse.setHeader("api-result-code", "1")
@@ -814,34 +417,20 @@ class StorageService(
 
                 // 동일 파일 정보가 존재하는지 검증
                 val uniqueInvalid =
-                    db1RaillyLinkerCompanyStorageFileInfoRepository.existsByStorageFolderInfoUidAndFileName(
-                        inputVo.storageFolderInfoUid,
+                    db1RaillyLinkerCompanyStorageFileInfoRepository.existsByTotalAuthMemberUidAndFileName(
+                        memberUid,
                         inputVo.fileName
                     )
 
                 if (uniqueInvalid) {
                     // 동일 이름의 파일이 폴더 내에 존재합니다.
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "4")
-                    return@tryLockRepeat
-                }
-
-                // 폴더 정보 조회
-                val storageFolderEntity =
-                    db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
-                        inputVo.storageFolderInfoUid,
-                        memberUid
-                    )
-
-                if (storageFolderEntity == null) {
-                    // 폴더 데이터가 없음
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "2")
+                    httpServletResponse.setHeader("api-result-code", "3")
                     return@tryLockRepeat
                 }
 
                 // 폴더 정보, 파일명 수정
-                fileInfo.storageFolderInfo = storageFolderEntity
+                fileInfo.fileSecretCode = inputVo.fileSecret
                 fileInfo.fileName = inputVo.fileName
 
                 db1RaillyLinkerCompanyStorageFileInfoRepository.save(fileInfo)
@@ -881,7 +470,7 @@ class StorageService(
                 }
 
                 val fileInfo = fileInfoOpt.get()
-                if (fileInfo.storageFolderInfo.totalAuthMember.uid != memberUid) {
+                if (fileInfo.totalAuthMember.uid != memberUid) {
                     // 내가 등록한 정보가 아닙니다.
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                     httpServletResponse.setHeader("api-result-code", "1")
@@ -889,15 +478,19 @@ class StorageService(
                 }
 
                 //  실제 파일 삭제 요청 전달
-                Retrofit.Builder()
-                    .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build().create(Retrofit2ActualFileDeleteService::class.java).deleteActualFile(
-                        fileInfo.uid!!,
-                        authorization,
-                        actualApiSecret
-                    )
-                    .execute()
+                try {
+                    Retrofit.Builder()
+                        .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build().create(Retrofit2ActualFileDeleteService::class.java).deleteActualFile(
+                            fileInfo.uid!!,
+                            authorization,
+                            actualApiSecret
+                        )
+                        .execute()
+                } catch (e: Exception) {
+                    classLogger.error("", e)
+                }
 
                 // 파일 정보 삭제
                 db1RaillyLinkerCompanyStorageFileInfoRepository.delete(fileInfo)
@@ -949,7 +542,7 @@ class StorageService(
                     }
 
                     val fileInfo = fileInfoOpt.get()
-                    if (fileInfo.storageFolderInfo.totalAuthMember.uid != memberUid) {
+                    if (fileInfo.totalAuthMember.uid != memberUid) {
                         // 내가 등록한 정보가 아닙니다.
                         httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                         httpServletResponse.setHeader("api-result-code", "1")
@@ -961,15 +554,19 @@ class StorageService(
 
                 for (fileInfo in fileInfoList) {
                     //  실제 파일 삭제 요청 전달
-                    Retrofit.Builder()
-                        .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build().create(Retrofit2ActualFileDeleteService::class.java).deleteActualFile(
-                            fileInfo.uid!!,
-                            authorization,
-                            actualApiSecret
-                        )
-                        .execute()
+                    try {
+                        Retrofit.Builder()
+                            .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build().create(Retrofit2ActualFileDeleteService::class.java).deleteActualFile(
+                                fileInfo.uid!!,
+                                authorization,
+                                actualApiSecret
+                            )
+                            .execute()
+                    } catch (e: Exception) {
+                        classLogger.error("", e)
+                    }
 
                     // 파일 정보 삭제
                     db1RaillyLinkerCompanyStorageFileInfoRepository.delete(fileInfo)
@@ -1044,7 +641,7 @@ class StorageService(
             .baseUrl(fileInfo.fileServerAddress)  // 동적으로 서버 주소 설정
             .addConverterFactory(GsonConverterFactory.create())
             .build().create(Retrofit2ActualFileDownloadService::class.java).downloadActualFile(
-                fileInfo.storageFolderInfo.totalAuthMember.uid!!,
+                fileInfo.totalAuthMember.uid!!,
                 fileInfo.uid!!,
                 fileInfo.fileName,
                 actualApiSecret
@@ -1130,59 +727,6 @@ class StorageService(
                 this.add(HttpHeaders.CONTENT_TYPE, Files.probeContentType(saveDirectoryPath))
             },
             HttpStatus.OK
-        )
-    }
-
-
-    // ----
-    // (내 스토리지 폴더 내 파일 리스트 조회 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-    fun getMyStorageFolderFiles(
-        httpServletResponse: HttpServletResponse,
-        authorization: String,
-        storageFolderInfoUid: Long
-    ): StorageController.GetMyStorageFolderFilesOutputVo? {
-        // 멤버 데이터 조회
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-//        val memberEntity =
-//            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-
-        // 삭제하려는 폴더 정보 조회
-        val storageFolderEntity =
-            db1RaillyLinkerCompanyStorageFolderInfoRepository.findByUidAndTotalAuthMemberUid(
-                storageFolderInfoUid,
-                memberUid
-            )
-
-        if (storageFolderEntity == null) {
-            // 삭제하려는 데이터가 없음
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return null
-        }
-
-        val fileList: MutableList<StorageController.GetMyStorageFolderFilesOutputVo.FileInfoVo> = mutableListOf()
-        for (fileInfo in storageFolderEntity.storageFileInfoList) {
-            fileList.add(
-                StorageController.GetMyStorageFolderFilesOutputVo.FileInfoVo(
-                    fileInfo.uid!!,
-                    fileInfo.fileName,
-                    fileInfo.fileSecretCode,
-                    if (fileInfo.fileSecretCode == null) {
-                        "/storage/download-file/${fileInfo.uid}/${fileInfo.fileName}"
-                    } else {
-                        "/storage/download-file/${fileInfo.uid}/${fileInfo.fileName}?fileSecret=${fileInfo.fileSecretCode}"
-                    }
-                )
-            )
-        }
-
-        return StorageController.GetMyStorageFolderFilesOutputVo(
-            fileList
         )
     }
 }

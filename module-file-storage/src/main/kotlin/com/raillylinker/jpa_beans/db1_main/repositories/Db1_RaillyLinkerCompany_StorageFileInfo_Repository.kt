@@ -9,14 +9,8 @@ import org.springframework.stereotype.Repository
 @Repository
 interface Db1_RaillyLinkerCompany_StorageFileInfo_Repository :
     JpaRepository<Db1_RaillyLinkerCompany_StorageFileInfo, Long> {
-    fun findAllByStorageFolderInfoUid(
-        storageFolderInfoUid: Long
-    ): List<Db1_RaillyLinkerCompany_StorageFileInfo>
-
-
-    // ----
-    fun existsByStorageFolderInfoUidAndFileName(
-        storageFolderInfoUid: Long,
+    fun existsByTotalAuthMemberUidAndFileName(
+        totalAuthMemberUid: Long,
         fileName: String
     ): Boolean
 
