@@ -187,7 +187,7 @@
         <mxCell id="CvlWErG64kKq0DU1_9UF-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="CvlWErG64kKq0DU1_9UF-3" target="CvlWErG64kKq0DU1_9UF-6" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="CvlWErG64kKq0DU1_9UF-3" value="환불 완료&lt;div&gt;처리&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+        <mxCell id="CvlWErG64kKq0DU1_9UF-3" value="환불 완료&lt;div&gt;처리&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
           <mxGeometry x="200" y="280.5" width="79" height="40" as="geometry" />
         </mxCell>
         <mxCell id="CvlWErG64kKq0DU1_9UF-6" value="진행 종료" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
@@ -220,7 +220,7 @@
         <mxCell id="CvlWErG64kKq0DU1_9UF-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="CvlWErG64kKq0DU1_9UF-14" target="CvlWErG64kKq0DU1_9UF-19" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="CvlWErG64kKq0DU1_9UF-14" value="환불 완료&lt;div&gt;처리&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+        <mxCell id="CvlWErG64kKq0DU1_9UF-14" value="환불 완료&lt;div&gt;처리&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
           <mxGeometry x="158" y="361" width="79" height="40" as="geometry" />
         </mxCell>
         <mxCell id="CvlWErG64kKq0DU1_9UF-96" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="CvlWErG64kKq0DU1_9UF-16" target="CvlWErG64kKq0DU1_9UF-92" edge="1">
