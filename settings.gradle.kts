@@ -33,6 +33,9 @@ include("module-auth")
 // 파일 저장소 서버 (11001)
 include("module-file-storage")
 
+// 결제 서버 (11002)
+include("module-payment")
+
 // 스케쥴러 테스트 샘플 (12003)
 include("module-sample-scheduler")
 
