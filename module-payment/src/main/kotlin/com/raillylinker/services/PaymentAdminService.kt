@@ -3,7 +3,7 @@ package com.raillylinker.services
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
-import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_TotalAuthMember_Repository
+import com.raillylinker.jpa_beans.db1_main.repositories.*
 import com.raillylinker.util_components.JwtTokenUtil
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
@@ -19,7 +19,12 @@ class PaymentAdminService(
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
 
     private val jwtTokenUtil: JwtTokenUtil,
-    private val db1RaillyLinkerCompanyTotalAuthMemberRepository: Db1_RaillyLinkerCompany_TotalAuthMember_Repository
+    private val db1RaillyLinkerCompanyTotalAuthMemberRepository: Db1_RaillyLinkerCompany_TotalAuthMember_Repository,
+
+    private val db1RaillyLinkerCompanyPaymentRequestRepository: Db1_RaillyLinkerCompany_PaymentRequest_Repository,
+    private val db1RaillyLinkerCompanyPaymentRefundRequestRepository: Db1_RaillyLinkerCompany_PaymentRefundRequest_Repository,
+    private val db1RaillyLinkerCompanyPaymentRequestDetailBankTransferRepository: Db1_RaillyLinkerCompany_PaymentRequestDetailBankTransfer_Repository,
+    private val db1RaillyLinkerCompanyPaymentRequestDetailTossPaymentsRepository: Db1_RaillyLinkerCompany_PaymentRequestDetailTossPayments_Repository
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -56,49 +61,9 @@ class PaymentAdminService(
 
 
     // ----
-    // (로그인 진입 테스트 <>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-    fun loggedInAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-
-        // 멤버 데이터 조회
-        val memberEntity =
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-        classLogger.info("Member Id : ${memberEntity.accountId}")
-
-        httpServletResponse.status = HttpStatus.OK.value()
-        return "Member No.$memberUid : Test Success"
-    }
-
-
-    // ----
     // (ADMIN 권한 진입 테스트 <'ADMIN'>)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
     fun adminAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-
-        // 멤버 데이터 조회
-        val memberEntity =
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-        classLogger.info("Member Id : ${memberEntity.accountId}")
-
-        httpServletResponse.status = HttpStatus.OK.value()
-        return "Member No.$memberUid : Test Success"
-    }
-
-
-    // ----
-    // (Developer 권한 진입 테스트 <'ADMIN' or 'Developer'>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-    fun developerAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
             AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
