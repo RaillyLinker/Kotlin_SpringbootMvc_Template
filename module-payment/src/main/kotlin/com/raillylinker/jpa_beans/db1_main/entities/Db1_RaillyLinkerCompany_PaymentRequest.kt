@@ -34,6 +34,10 @@ class Db1_RaillyLinkerCompany_PaymentRequest(
     @Comment("결제 금액 통화 코드(IOS 4217, ex : KRW, USD, EUR...)")
     var paymentCurrencyCode: String,
 
+    @Column(name = "payment_reason", nullable = false, columnDefinition = "VARCHAR(300)")
+    @Comment("결제 이유")
+    var paymentReason: String,
+
     @Column(name = "payment_fail_reason", nullable = true, columnDefinition = "VARCHAR(300)")
     @Comment("결제 실패 이유(결제 실패라면 Not Null)")
     var paymentFailReason: String?,

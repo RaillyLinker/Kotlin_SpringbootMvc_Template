@@ -41,6 +41,7 @@ CREATE TABLE `payment_request` (
 	`payment_detail_type`	TINYINT UNSIGNED	NOT NULL	COMMENT '결제 타입. 결제 상세 테이블의 종류를 의미합니다. (1 : 수동 계좌이체, 2 : 토스 페이)',
 	`payment_amount`	DECIMAL(15, 2)	NOT NULL	COMMENT '결제 금액',
 	`payment_currency_code`	CHAR(3)	NOT NULL	COMMENT '결제 금액 통화 코드(IOS 4217, ex : KRW, USD, EUR...)',
+	`payment_reason`	VARCHAR(300)	NOT NULL	COMMENT '결제이유',
 	`payment_fail_reason`	VARCHAR(300)	NULL	COMMENT '결제 실패 이유(결제 실패라면 Not Null)',
 	`payment_end_datetime`	DATETIME(3)	NULL	COMMENT '결제 프로세스 종결일시(payment_fail_reason 이 null 이라면 완료일, not null 이라면 실패일)'
 );

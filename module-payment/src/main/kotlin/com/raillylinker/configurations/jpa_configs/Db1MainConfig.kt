@@ -65,7 +65,7 @@ class Db1MainConfig {
 //        create - 스프링부트 서버가 시작될때 모두 drop 하고 다시 생성한다.
 //        create-drop - create 와 동일하다. 하지만 종료시에도 모두 drop 한다.
 //        개발 환경에서는 보통 update 모드를 사용하고 운영환경에서는 none 또는 validate 모드를 사용
-        properties["hibernate.hbm2ddl.auto"] = "validate"
+        properties["hibernate.hbm2ddl.auto"] = "create"
 //        ********* 주의 : ddl-auto 설정을 바꿀 때는 극도로 주의할 것!!!!!! *********
 //        ********* 주의 : ddl-auto 설정을 바꿀 때는 극도로 주의할 것!!!!!! *********
         properties["hibernate.dialect"] = databasePlatform
