@@ -3,13 +3,11 @@ package com.raillylinker.controllers
 import com.raillylinker.services.PaymentService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
-import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.MediaType
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 
@@ -48,4 +46,13 @@ class PaymentController(
     ): String? {
         return service.noLoggedInAccessTest(httpServletResponse)
     }
+
+    // todo : 수동 결제 요청
+    // todo : 수동 결제 전액 환불 신청
+    // todo : 수동 결제 부분 환불 신청
+
+    // todo : PG 결제 요청
+    // todo : PG 결제 요청 billing pay
+    // todo : PG 결제 전액 환불 신청
+    // todo : PG 결제 부분 환불 신청
 }
