@@ -17,7 +17,7 @@ class Kafka1MainProducer(
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
-    // (testTopic1 에 메시지 발송)
+    // (from_auth_db_delete_from_railly_linker_company_total_auth_member 에 메시지 발송)
     fun sendMessageFromAuthDbDeleteFromRaillyLinkerCompanyTotalAuthMember(message: SendMessageFromAuthDbDeleteFromRaillyLinkerCompanyTotalAuthMemberInputVo) {
         // kafkaProducer1 에 토픽 메세지 발행
         kafka1MainProducerTemplate.send("from_auth_db_delete_from_railly_linker_company_total_auth_member",  Gson().toJson(message))

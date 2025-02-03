@@ -1,6 +1,7 @@
 package com.raillylinker.services
 
 import com.raillylinker.jpa_beans.db1_main.repositories.*
+import com.raillylinker.kafka_components.producers.Kafka1MainProducer
 import com.raillylinker.util_components.JwtTokenUtil
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
@@ -20,7 +21,9 @@ class PaymentService(
     private val db1RaillyLinkerCompanyPaymentRequestRepository: Db1_RaillyLinkerCompany_PaymentRequest_Repository,
     private val db1RaillyLinkerCompanyPaymentRefundRequestRepository: Db1_RaillyLinkerCompany_PaymentRefundRequest_Repository,
     private val db1RaillyLinkerCompanyPaymentRequestDetailBankTransferRepository: Db1_RaillyLinkerCompany_PaymentRequestDetailBankTransfer_Repository,
-    private val db1RaillyLinkerCompanyPaymentRequestDetailTossPaymentsRepository: Db1_RaillyLinkerCompany_PaymentRequestDetailTossPayments_Repository
+    private val db1RaillyLinkerCompanyPaymentRequestDetailTossPaymentsRepository: Db1_RaillyLinkerCompany_PaymentRequestDetailTossPayments_Repository,
+
+    private val kafka1MainProducer: Kafka1MainProducer
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)

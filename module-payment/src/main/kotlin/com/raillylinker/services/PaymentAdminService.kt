@@ -3,6 +3,7 @@ package com.raillylinker.services
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.controllers.PaymentAdminController
 import com.raillylinker.jpa_beans.db1_main.repositories.*
+import com.raillylinker.kafka_components.producers.Kafka1MainProducer
 import com.raillylinker.util_components.JwtTokenUtil
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
@@ -24,7 +25,9 @@ class PaymentAdminService(
     private val db1RaillyLinkerCompanyPaymentRequestRepository: Db1_RaillyLinkerCompany_PaymentRequest_Repository,
     private val db1RaillyLinkerCompanyPaymentRefundRequestRepository: Db1_RaillyLinkerCompany_PaymentRefundRequest_Repository,
     private val db1RaillyLinkerCompanyPaymentRequestDetailBankTransferRepository: Db1_RaillyLinkerCompany_PaymentRequestDetailBankTransfer_Repository,
-    private val db1RaillyLinkerCompanyPaymentRequestDetailTossPaymentsRepository: Db1_RaillyLinkerCompany_PaymentRequestDetailTossPayments_Repository
+    private val db1RaillyLinkerCompanyPaymentRequestDetailTossPaymentsRepository: Db1_RaillyLinkerCompany_PaymentRequestDetailTossPayments_Repository,
+
+    private val kafka1MainProducer: Kafka1MainProducer
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -90,7 +93,12 @@ class PaymentAdminService(
         paymentRequest.paymentEndDatetime = LocalDateTime.now()
         db1RaillyLinkerCompanyPaymentRequestRepository.save(paymentRequest)
 
-        // todo : kafka
+        // kafka 발송
+        kafka1MainProducer.sendMessageFromPaymentPaymentFailed(
+            Kafka1MainProducer.SendMessageFromPaymentPaymentFailedInputVo(
+                paymentRequestUid
+            )
+        )
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
@@ -132,7 +140,12 @@ class PaymentAdminService(
         paymentRequest.paymentEndDatetime = LocalDateTime.now()
         db1RaillyLinkerCompanyPaymentRequestRepository.save(paymentRequest)
 
-        // todo : kafka
+        // kafka 발송
+        kafka1MainProducer.sendMessageFromPaymentPaymentCompleted(
+            Kafka1MainProducer.SendMessageFromPaymentPaymentCompletedInputVo(
+                paymentRequestUid
+            )
+        )
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
@@ -179,7 +192,12 @@ class PaymentAdminService(
         paymentRefundRequest.refundEndDatetime = LocalDateTime.now()
         db1RaillyLinkerCompanyPaymentRefundRequestRepository.save(paymentRefundRequest)
 
-        // todo : kafka
+        // kafka 발송
+        kafka1MainProducer.sendMessageFromPaymentPaymentRefundFailed(
+            Kafka1MainProducer.SendMessageFromPaymentPaymentRefundFailedInputVo(
+                paymentRefundRequestUid
+            )
+        )
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
@@ -224,7 +242,12 @@ class PaymentAdminService(
         paymentRefundRequest.refundEndDatetime = LocalDateTime.now()
         db1RaillyLinkerCompanyPaymentRefundRequestRepository.save(paymentRefundRequest)
 
-        // todo : kafka
+        // kafka 발송
+        kafka1MainProducer.sendMessageFromPaymentPaymentRefundCompleted(
+            Kafka1MainProducer.SendMessageFromPaymentPaymentRefundCompletedInputVo(
+                paymentRefundRequestUid
+            )
+        )
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
