@@ -1,8 +1,7 @@
 package com.raillylinker.services
 
-import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
+import com.raillylinker.controllers.PaymentAdminController
 import com.raillylinker.jpa_beans.db1_main.repositories.*
 import com.raillylinker.util_components.JwtTokenUtil
 import jakarta.servlet.http.HttpServletResponse
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Service
 class PaymentAdminService(
@@ -53,29 +53,43 @@ class PaymentAdminService(
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
-    // (비 로그인 접속 테스트)
-    fun noLoggedInAccessTest(httpServletResponse: HttpServletResponse): String? {
+    // (결제 실패 처리 <'ADMIN'>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun putPaymentRequestFail(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        paymentRequestUid: Long,
+        inputVo: PaymentAdminController.PutPaymentRequestFailInputVo
+    ) {
+        val paymentRequest =
+            db1RaillyLinkerCompanyPaymentRequestRepository.findByUidAndRowDeleteDateStr(paymentRequestUid, "/")
+
+        if (paymentRequest == null) {
+            // 정보가 없음
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        if (paymentRequest.paymentFailReason != null && paymentRequest.paymentEndDatetime != null) {
+            // 이미 실패 처리 됨
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return
+        }
+
+        if (paymentRequest.paymentEndDatetime != null) {
+            // 결제 완료 처리 됨
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return
+        }
+
+        // 결제 실패 처리
+        paymentRequest.paymentFailReason = inputVo.paymentFailReason
+        paymentRequest.paymentEndDatetime = LocalDateTime.now()
+        db1RaillyLinkerCompanyPaymentRequestRepository.save(paymentRequest)
+
         httpServletResponse.status = HttpStatus.OK.value()
-        return externalAccessAddress
-    }
-
-
-    // ----
-    // (ADMIN 권한 진입 테스트 <'ADMIN'>)
-    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME, readOnly = true)
-    fun adminAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
-        val memberUid = jwtTokenUtil.getMemberUid(
-            authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-        )
-
-        // 멤버 데이터 조회
-        val memberEntity =
-            db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
-        classLogger.info("Member Id : ${memberEntity.accountId}")
-
-        httpServletResponse.status = HttpStatus.OK.value()
-        return "Member No.$memberUid : Test Success"
     }
 }

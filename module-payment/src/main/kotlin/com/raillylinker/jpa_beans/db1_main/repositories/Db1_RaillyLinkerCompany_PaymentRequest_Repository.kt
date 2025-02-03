@@ -9,4 +9,8 @@ import org.springframework.stereotype.Repository
 @Repository
 interface Db1_RaillyLinkerCompany_PaymentRequest_Repository :
     JpaRepository<Db1_RaillyLinkerCompany_PaymentRequest, Long> {
+    fun findByUidAndRowDeleteDateStr(
+        uid: Long,
+        rowDeleteDateStr: String
+    ): Db1_RaillyLinkerCompany_PaymentRequest?
 }
