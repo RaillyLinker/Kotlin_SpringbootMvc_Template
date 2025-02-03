@@ -70,7 +70,7 @@ class PaymentAdminController(
     )
     @PutMapping(
         path = ["/payment-request/{paymentRequestUid}/fail"],
-        consumes = [MediaType.ALL_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.ALL_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
