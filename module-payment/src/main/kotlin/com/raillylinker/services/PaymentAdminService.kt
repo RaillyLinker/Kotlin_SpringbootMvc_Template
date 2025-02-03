@@ -90,6 +90,8 @@ class PaymentAdminService(
         paymentRequest.paymentEndDatetime = LocalDateTime.now()
         db1RaillyLinkerCompanyPaymentRequestRepository.save(paymentRequest)
 
+        // todo : kafka, 메신저
+
         httpServletResponse.status = HttpStatus.OK.value()
     }
 
@@ -129,6 +131,100 @@ class PaymentAdminService(
         // 결제 완료 처리
         paymentRequest.paymentEndDatetime = LocalDateTime.now()
         db1RaillyLinkerCompanyPaymentRequestRepository.save(paymentRequest)
+
+        // todo : kafka, 메신저
+
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
+    // (환불 거부 처리 <'ADMIN'>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun putPaymentRefundRequestReject(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        paymentRefundRequestUid: Long,
+        inputVo: PaymentAdminController.PutPaymentRefundRequestRejectInputVo
+    ) {
+        val paymentRefundRequest =
+            db1RaillyLinkerCompanyPaymentRefundRequestRepository.findByUidAndRowDeleteDateStr(
+                paymentRefundRequestUid,
+                "/"
+            )
+
+        if (paymentRefundRequest == null) {
+            // 정보가 없음
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        if (paymentRefundRequest.refundFailReason != null && paymentRefundRequest.refundEndDatetime != null) {
+            // 이미 실패 처리 됨
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return
+        }
+
+        if (paymentRefundRequest.refundEndDatetime != null) {
+            // 환불 완료 처리 됨
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return
+        }
+
+        // 결제 실패 처리
+        paymentRefundRequest.refundFailReason = inputVo.paymentRefundRejectReason
+        paymentRefundRequest.refundEndDatetime = LocalDateTime.now()
+        db1RaillyLinkerCompanyPaymentRefundRequestRepository.save(paymentRefundRequest)
+
+        // todo : kafka, 메신저
+
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
+
+
+    // ----
+    // (환불 완료 처리 <'ADMIN'>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun putPaymentRefundRequestComplete(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        paymentRefundRequestUid: Long
+    ) {
+        val paymentRefundRequest =
+            db1RaillyLinkerCompanyPaymentRefundRequestRepository.findByUidAndRowDeleteDateStr(
+                paymentRefundRequestUid,
+                "/"
+            )
+
+        if (paymentRefundRequest == null) {
+            // 정보가 없음
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        if (paymentRefundRequest.refundFailReason != null && paymentRefundRequest.refundEndDatetime != null) {
+            // 이미 실패 처리 됨
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return
+        }
+
+        if (paymentRefundRequest.refundEndDatetime != null) {
+            // 환불 완료 처리 됨
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return
+        }
+
+        // 결제 완료 처리
+        paymentRefundRequest.refundEndDatetime = LocalDateTime.now()
+        db1RaillyLinkerCompanyPaymentRefundRequestRepository.save(paymentRefundRequest)
+
+        // todo : kafka, 메신저
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
