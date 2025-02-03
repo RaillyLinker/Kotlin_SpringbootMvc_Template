@@ -90,7 +90,7 @@ class PaymentAdminService(
         paymentRequest.paymentEndDatetime = LocalDateTime.now()
         db1RaillyLinkerCompanyPaymentRequestRepository.save(paymentRequest)
 
-        // todo : kafka, 메신저
+        // todo : kafka
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
@@ -132,7 +132,7 @@ class PaymentAdminService(
         paymentRequest.paymentEndDatetime = LocalDateTime.now()
         db1RaillyLinkerCompanyPaymentRequestRepository.save(paymentRequest)
 
-        // todo : kafka, 메신저
+        // todo : kafka
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
@@ -179,7 +179,7 @@ class PaymentAdminService(
         paymentRefundRequest.refundEndDatetime = LocalDateTime.now()
         db1RaillyLinkerCompanyPaymentRefundRequestRepository.save(paymentRefundRequest)
 
-        // todo : kafka, 메신저
+        // todo : kafka
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
@@ -224,7 +224,7 @@ class PaymentAdminService(
         paymentRefundRequest.refundEndDatetime = LocalDateTime.now()
         db1RaillyLinkerCompanyPaymentRefundRequestRepository.save(paymentRefundRequest)
 
-        // todo : kafka, 메신저
+        // todo : kafka
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
