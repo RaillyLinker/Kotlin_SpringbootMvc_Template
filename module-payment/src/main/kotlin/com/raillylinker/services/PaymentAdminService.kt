@@ -92,4 +92,44 @@ class PaymentAdminService(
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
+
+
+    // ----
+    // (결제 완료 처리 <'ADMIN'>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun putPaymentRequestComplete(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        paymentRequestUid: Long
+    ) {
+        val paymentRequest =
+            db1RaillyLinkerCompanyPaymentRequestRepository.findByUidAndRowDeleteDateStr(paymentRequestUid, "/")
+
+        if (paymentRequest == null) {
+            // 정보가 없음
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        if (paymentRequest.paymentFailReason != null && paymentRequest.paymentEndDatetime != null) {
+            // 이미 실패 처리 됨
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return
+        }
+
+        if (paymentRequest.paymentEndDatetime != null) {
+            // 결제 완료 처리 됨
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return
+        }
+
+        // 결제 완료 처리
+        paymentRequest.paymentEndDatetime = LocalDateTime.now()
+        db1RaillyLinkerCompanyPaymentRequestRepository.save(paymentRequest)
+
+        httpServletResponse.status = HttpStatus.OK.value()
+    }
 }

@@ -50,7 +50,7 @@ class PaymentAdminController(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : paymentRequestUid 에 해당하는 정보가 없습니다.<br>" +
-                                "2 : 이미 실패 처리 된 정보입니다.<br>" +
+                                "2 : 결제 실패 처리 된 정보입니다.<br>" +
                                 "3 : 결제 완료 처리 된 정보입니다.",
                         schema = Schema(type = "string")
                     )
@@ -95,4 +95,64 @@ class PaymentAdminController(
         @JsonProperty("paymentFailReason")
         val paymentFailReason: String
     )
+
+
+    // ----
+    @Operation(
+        summary = "결제 완료 처리 <'ADMIN'>",
+        description = "결제 완료 처리"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : paymentRequestUid 에 해당하는 정보가 없습니다.<br>" +
+                                "2 : 결제 실패 처리 된 정보입니다.<br>" +
+                                "3 : 결제 완료 처리 된 정보입니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PutMapping(
+        path = ["/payment-request/{paymentRequestUid}/complete"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun putPaymentRequestComplete(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(name = "paymentRequestUid", description = "결제 요청 정보 고유값", example = "1")
+        @PathVariable("paymentRequestUid")
+        paymentRequestUid: Long
+    ) {
+        service.putPaymentRequestComplete(httpServletResponse, authorization!!, paymentRequestUid)
+    }
 }
