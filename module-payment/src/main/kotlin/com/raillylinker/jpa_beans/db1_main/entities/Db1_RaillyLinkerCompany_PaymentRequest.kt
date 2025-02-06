@@ -19,7 +19,7 @@ import java.time.LocalDateTime
 @Comment("결제 요청 정보 테이블")
 class Db1_RaillyLinkerCompany_PaymentRequest(
     @Column(name = "payment_code", nullable = false, columnDefinition = "VARCHAR(100)")
-    @Comment("결제 코드입니다. 외부 모듈에서 결제를 의뢰할 때에 구분을 위해 입력하는 정보로, {모듈간 구분할 수 있는 고유값}_{모듈 내에서 구분 가능한 고유값} 으로 이루어집니다.")
+    @Comment("결제 코드입니다. 외부 모듈에서 결제를 의뢰할 때에 구분을 위해 입력하는 정보로, {모듈간 구분할 수 있는 고유값}_{모듈 내에서 구분 가능한 고유값} 으로 이루어집니다. 환불 요청시의 비밀번호 역할도 겸하므로, 모듈 내 고유값에 유저 고유값과 랜덤값을 섞는 것이 좋습니다.")
     var paymentCode: String,
 
     @Column(name = "payment_detail_type", nullable = false, columnDefinition = "TINYINT UNSIGNED")

@@ -73,7 +73,9 @@ class PaymentController(
 
     data class PostBankTransferRequestInputVo(
         @Schema(
-            description = "결제 코드입니다. 외부 모듈에서 결제를 의뢰할 때에 구분을 위해 입력하는 정보로, {모듈 고유값}_{모듈 내 고유값} 으로 이루어집니다.",
+            description = "결제 코드입니다.<br>" +
+                    "외부 모듈에서 결제를 의뢰할 때에 구분을 위해 입력하는 정보로, {모듈 고유값}_{모듈 내 고유값} 으로 이루어집니다.<br>" +
+                    "환불 요청시의 비밀번호 역할도 겸하므로, 모듈 내 고유값에 유저 고유값과 랜덤값을 섞는 것이 좋습니다.",
             required = true,
             example = "module1_uid1"
         )
