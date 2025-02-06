@@ -6,8 +6,7 @@
 	`payment_request_uid`	BIGINT	NOT NULL	COMMENT '결제 요청 정보 고유번호',
 	`receive_bank_name`	VARCHAR(60)	NOT NULL	COMMENT '입금 받을 은행명',
 	`receive_bank_account`	VARCHAR(60)	NOT NULL	COMMENT '입금 받을 은행 계좌번호',
-	`depositor_name`	VARCHAR(60)	NULL	COMMENT '입금자 이름',
-	`payment_check_deadline`	DATETIME	NOT NULL	COMMENT '결제 확인 기한(이 기한이 지날 때 까지 결제 완료 처리가 되지 않았다면 결제 취소로 간주합니다. 다만, 결제 테이블의 결제 완료일 설정이 우선됩니다.)'
+	`depositor_name`	VARCHAR(60)	NULL	COMMENT '입금자 이름'
 );
 
 CREATE TABLE `payment_refund_request` (

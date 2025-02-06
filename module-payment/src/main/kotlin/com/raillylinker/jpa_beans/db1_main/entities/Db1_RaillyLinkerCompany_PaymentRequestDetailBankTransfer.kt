@@ -30,11 +30,7 @@ class Db1_RaillyLinkerCompany_PaymentRequestDetailBankTransfer(
 
     @Column(name = "depositor_name", nullable = true, columnDefinition = "VARCHAR(60)")
     @Comment("입금자 이름")
-    var depositorName: String?,
-
-    @Column(name = "payment_check_deadline", nullable = false, columnDefinition = "DATETIME")
-    @Comment("결제 확인 기한(이 기한이 지날 때 까지 결제 완료 처리가 되지 않았다면 결제 취소로 간주합니다. 다만, 결제 테이블의 결제 완료일 설정이 우선됩니다.)")
-    var paymentCheckDeadline: LocalDateTime
+    var depositorName: String?
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

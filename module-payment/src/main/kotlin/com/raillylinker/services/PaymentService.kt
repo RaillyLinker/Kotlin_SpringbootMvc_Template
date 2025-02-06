@@ -1,5 +1,9 @@
 package com.raillylinker.services
 
+import com.raillylinker.configurations.jpa_configs.Db1MainConfig
+import com.raillylinker.controllers.PaymentController
+import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_PaymentRequest
+import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_PaymentRequestDetailBankTransfer
 import com.raillylinker.jpa_beans.db1_main.repositories.*
 import com.raillylinker.kafka_components.producers.Kafka1MainProducer
 import com.raillylinker.util_components.JwtTokenUtil
@@ -9,6 +13,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class PaymentService(
@@ -52,9 +57,43 @@ class PaymentService(
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
-    // (비 로그인 접속 테스트)
-    fun noLoggedInAccessTest(httpServletResponse: HttpServletResponse): String? {
-        httpServletResponse.status = HttpStatus.OK.value()
-        return externalAccessAddress
+    // (수동 결제 요청)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun postBankTransferRequest(
+        httpServletResponse: HttpServletResponse,
+        inputVo: PaymentController.PostBankTransferRequestInputVo
+    ): PaymentController.PostBankTransferRequestOutputVo? {
+        if (inputVo.currencyCode.length != 3) {
+            // 통화 코드값의 길이는 3이어야 합니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        val paymentRequest =
+            db1RaillyLinkerCompanyPaymentRequestRepository.save(
+                Db1_RaillyLinkerCompany_PaymentRequest(
+                    inputVo.paymentCode,
+                    1,
+                    inputVo.paymentAmount,
+                    inputVo.currencyCode.uppercase(),
+                    inputVo.paymentReason,
+                    null,
+                    null
+                )
+            )
+
+        db1RaillyLinkerCompanyPaymentRequestDetailBankTransferRepository.save(
+            Db1_RaillyLinkerCompany_PaymentRequestDetailBankTransfer(
+                paymentRequest,
+                inputVo.receiveBankName,
+                inputVo.receiveBankAccount,
+                inputVo.depositoryName
+            )
+        )
+
+        return PaymentController.PostBankTransferRequestOutputVo(
+            paymentRequest.uid!!
+        )
     }
 }
