@@ -2,6 +2,7 @@ package com.raillylinker.services
 
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.controllers.PaymentController
+import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_PaymentRefundRequest
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_PaymentRequest
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_PaymentRequestDetailBankTransfer
 import com.raillylinker.jpa_beans.db1_main.repositories.*
@@ -94,6 +95,74 @@ class PaymentService(
 
         return PaymentController.PostBankTransferRequestOutputVo(
             paymentRequest.uid!!
+        )
+    }
+
+
+    // ----
+    // (수동 결제 전체 환불 요청)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun postRequestBankTransferRefundAll(
+        httpServletResponse: HttpServletResponse,
+        paymentRequestUid: Long,
+        inputVo: PaymentController.PostRequestBankTransferRefundAllInputVo
+    ): PaymentController.PostRequestBankTransferRefundAllOutputVo? {
+        val paymentRequest =
+            db1RaillyLinkerCompanyPaymentRequestRepository.findByUidAndRowDeleteDateStr(paymentRequestUid, "/")
+
+        if (paymentRequest == null ||
+            paymentRequest.paymentCode != inputVo.paymentCode
+        ) {
+            // 정보가 없거나 코드가 다릅니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        if (paymentRequest.paymentEndDatetime == null) {
+            // 완료되지 않은 결제입니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
+        if (paymentRequest.paymentFailReason != null) {
+            // 실패한 결제입니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return null
+        }
+
+        val refundOnProcess = false
+        for (refundRequest in paymentRequest.paymentRefundRequestList) {
+            if (refundRequest.rowDeleteDateStr != "/") {
+                // 삭제 처리된 데이터 skip
+                continue
+            }
+
+            // todo 거부되지 않은 전액 환불 존재 || 거부되지 않은 부분 환불 하나라도 존재하는지 확인
+        }
+
+        if (refundOnProcess) {
+            // 환불 진행중
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
+            return null
+        }
+
+        val refundRequest =
+            db1RaillyLinkerCompanyPaymentRefundRequestRepository.save(
+                Db1_RaillyLinkerCompany_PaymentRefundRequest(
+                    paymentRequest,
+                    null,
+                    inputVo.refundReason,
+                    null,
+                    null
+                )
+            )
+
+        return PaymentController.PostRequestBankTransferRefundAllOutputVo(
+            refundRequest.uid!!
         )
     }
 }

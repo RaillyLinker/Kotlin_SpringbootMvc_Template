@@ -111,7 +111,78 @@ class PaymentController(
         val paymentRequestUid: Long
     )
 
-    // todo : 수동 결제 전액 환불 신청
+
+    // ----
+    @Operation(
+        summary = "수동 결제 전체 환불 요청",
+        description = "수동 결제 전체 환불 요청 API"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : 정보가 없거나 코드가 다릅니다.<br>" +
+                                "2 : 완료되지 않은 결제입니다.<br>" +
+                                "3 : 실패한 결제입니다.<br>" +
+                                "4 : 환불 진행중",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/request/{paymentRequestUid}/bank-transfer-refund-all"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun postRequestBankTransferRefundAll(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(name = "paymentRequestUid", description = "결제 요청 정보 고유값", example = "1")
+        @PathVariable("paymentRequestUid")
+        paymentRequestUid: Long,
+        @RequestBody
+        inputVo: PostRequestBankTransferRefundAllInputVo
+    ): PostRequestBankTransferRefundAllOutputVo? {
+        return service.postRequestBankTransferRefundAll(
+            httpServletResponse,
+            paymentRequestUid,
+            inputVo
+        )
+    }
+
+    data class PostRequestBankTransferRefundAllInputVo(
+        @Schema(
+            description = "결제 요청에 사용한 결제 코드",
+            required = true,
+            example = "module1_uid1"
+        )
+        @JsonProperty("paymentCode")
+        val paymentCode: String,
+        @Schema(description = "환불 이유", required = true, example = "상품 하자")
+        @JsonProperty("refundReason")
+        val refundReason: String
+    )
+
+    data class PostRequestBankTransferRefundAllOutputVo(
+        @Schema(description = "payment refund 고유값", required = true, example = "1")
+        @JsonProperty("paymentRefundUid")
+        val paymentRefundUid: Long
+    )
+
     // todo : 수동 결제 부분 환불 신청
 
     // todo : PG 결제 요청
