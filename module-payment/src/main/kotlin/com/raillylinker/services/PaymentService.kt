@@ -133,14 +133,17 @@ class PaymentService(
             return null
         }
 
-        val refundOnProcess = false
+        var refundOnProcess = false
         for (refundRequest in paymentRequest.paymentRefundRequestList) {
-            if (refundRequest.rowDeleteDateStr != "/") {
-                // 삭제 처리된 데이터 skip
+            if (refundRequest.rowDeleteDateStr != "/" ||
+                (refundRequest.refundFailReason != null && refundRequest.refundEndDatetime != null)
+            ) {
+                // 삭제 처리된 데이터 skip, 거부 처리된 데이터 skip
                 continue
             }
 
-            // todo 거부되지 않은 전액 환불 존재 || 거부되지 않은 부분 환불 하나라도 존재하는지 확인
+            //  전액 환불 존재 || 부분 환불 하나라도 존재
+            refundOnProcess = true
         }
 
         if (refundOnProcess) {
