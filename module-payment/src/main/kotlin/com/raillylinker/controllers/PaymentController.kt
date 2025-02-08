@@ -16,6 +16,8 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
 
+// PG 사 별 API 는 별도로 분리합니다.
+// 이유는, PG 사별 요구하는 데이터 종류, 정책, 처리 방식 등이 다를 수 있기 때문입니다.
 @Tag(name = "/payment APIs", description = "결제 API 컨트롤러")
 @Controller
 @RequestMapping("/payment")
