@@ -402,31 +402,67 @@ class PaymentService(
             return null
         }
 
-        if (tossEntity.tossMethod == "가상계좌" && inputVo.refundReceiveAccountObj == null) {
-            // 가상 계좌 결제이지만 필수 refundReceiveAccountObj 가 null 입니다.
+        var refundReceiveAccountInfoObj: TossPaymentsRequestApi.PostV1PaymentsCancelInputVO.RefundReceiveAccount? = null
+        if (tossEntity.tossMethod == "가상계좌") {
+            if (inputVo.refundReceiveAccountObj == null) {
+                // 가상 계좌 결제이지만 필수 refundReceiveAccountObj 가 null 입니다.
+                httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                httpServletResponse.setHeader("api-result-code", "5")
+                return null
+            }
+
+            refundReceiveAccountInfoObj =
+                TossPaymentsRequestApi.PostV1PaymentsCancelInputVO.RefundReceiveAccount(
+                    inputVo.refundReceiveAccountObj.bank,
+                    inputVo.refundReceiveAccountObj.accountNumber,
+                    inputVo.refundReceiveAccountObj.holderName
+                )
+        }
+
+        // api 요청. 실패시 api-result-code 6 반환
+        val requestPaymentResponse =
+            networkRetrofit2.tossPaymentsRequestApi.postV1PaymentsCancel(
+                tossPaymentsAuthorization,
+                tossEntity.tossPaymentKey,
+                TossPaymentsRequestApi.PostV1PaymentsCancelInputVO(
+                    inputVo.refundReason,
+                    null,
+                    refundReceiveAccountInfoObj
+                )
+            ).execute()
+
+        if (requestPaymentResponse.isSuccessful) {
+            // 정상 응답 (200 OK)
+//            val successData = requestPaymentResponse.body()!!
+
+            val refundRequest =
+                db1RaillyLinkerCompanyPaymentRefundRequestRepository.save(
+                    Db1_RaillyLinkerCompany_PaymentRefundRequest(
+                        paymentRequest,
+                        null,
+                        inputVo.refundReason,
+                        null,
+                        null,
+                        inputVo.refundReceiveAccountObj?.bank,
+                        inputVo.refundReceiveAccountObj?.accountNumber,
+                        inputVo.refundReceiveAccountObj?.holderName
+                    )
+                )
+
+            return PaymentController.PostRequestPgTossPaymentsRefundAllOutputVo(
+                refundRequest.uid!!
+            )
+        } else {
+            // 오류 응답 (400, 500 등)
+//            val errorBody = requestPaymentResponse.errorBody()?.string()
+//            val errorData =
+//                Gson().fromJson(errorBody, TossPaymentsRequestApi.PostV1PaymentsCancelErrorOutputVO::class.java)
+
+            // Toss Payments API 호출 실패
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "5")
+            httpServletResponse.setHeader("api-result-code", "6")
             return null
         }
 
-        // todo : api 요청. 실패시 api-result-code 6 반환
-
-        val refundRequest =
-            db1RaillyLinkerCompanyPaymentRefundRequestRepository.save(
-                Db1_RaillyLinkerCompany_PaymentRefundRequest(
-                    paymentRequest,
-                    null,
-                    inputVo.refundReason,
-                    null,
-                    null,
-                    inputVo.refundReceiveAccountObj?.bank,
-                    inputVo.refundReceiveAccountObj?.accountNumber,
-                    inputVo.refundReceiveAccountObj?.holderName
-                )
-            )
-
-        return PaymentController.PostRequestPgTossPaymentsRefundAllOutputVo(
-            refundRequest.uid!!
-        )
     }
 }
