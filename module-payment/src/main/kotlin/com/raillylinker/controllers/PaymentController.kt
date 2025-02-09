@@ -261,8 +261,84 @@ class PaymentController(
         val paymentRefundUid: Long
     )
 
-    // todo : PG 결제 요청
-    // todo : PG 결제 요청 billing pay
+
+    // ----
+    @Operation(
+        summary = "PG 결제 요청(Toss Payments)",
+        description = "PG 결제 요청(Toss Payments) API"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : Toss Payments API 호출 실패",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/pg-toss-payments/request"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun postPgTossPaymentsRequest(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @RequestBody
+        inputVo: PostPgTossPaymentsRequestInputVo
+    ): PostPgTossPaymentsRequestOutputVo? {
+        return service.postPgTossPaymentsRequest(
+            httpServletResponse,
+            inputVo
+        )
+    }
+
+    data class PostPgTossPaymentsRequestInputVo(
+        @Schema(
+            description = "결제 코드입니다.<br>" +
+                    "외부 모듈에서 결제를 의뢰할 때에 구분을 위해 입력하는 정보로, {모듈 고유값}_{모듈 내 고유값} 으로 이루어집니다.<br>" +
+                    "환불 요청시의 비밀번호 역할도 겸하므로, 모듈 내 고유값에 유저 고유값과 랜덤값을 섞는 것이 좋습니다.",
+            required = true,
+            example = "module1_uid1"
+        )
+        @JsonProperty("paymentCode")
+        val paymentCode: String,
+        @Schema(description = "결제 금액(통화 코드는 KRW 로 간주합니다.)", required = true, example = "1000")
+        @JsonProperty("paymentAmount")
+        val paymentAmount: Long,
+        @Schema(description = "결제 이유", required = true, example = "상품 구입")
+        @JsonProperty("paymentReason")
+        val paymentReason: String,
+        @Schema(description = "Toss Payments 결제 키값", required = true, example = "qwer1234")
+        @JsonProperty("paymentKey")
+        val paymentKey: String,
+        @Schema(description = "Toss Payments 주문 아이디", required = true, example = "qwer1234")
+        @JsonProperty("orderId")
+        val orderId: String
+    )
+
+    data class PostPgTossPaymentsRequestOutputVo(
+        @Schema(description = "payment request 고유값", required = true, example = "1")
+        @JsonProperty("paymentRequestUid")
+        val paymentRequestUid: Long
+    )
+
     // todo : PG 결제 전액 환불 신청
-    // todo : PG 결제 부분 환불 신청
+    // todo : PG 결제 부분 환불
+
+    // todo : PG 결제 요청 billing pay
 }

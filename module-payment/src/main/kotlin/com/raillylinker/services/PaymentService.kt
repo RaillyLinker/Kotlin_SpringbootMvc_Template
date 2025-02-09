@@ -1,12 +1,16 @@
 package com.raillylinker.services
 
+import com.google.gson.Gson
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.controllers.PaymentController
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_PaymentRefundRequest
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_PaymentRequest
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_PaymentRequestDetailBankTransfer
+import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_PaymentRequestDetailTossPayments
 import com.raillylinker.jpa_beans.db1_main.repositories.*
 import com.raillylinker.kafka_components.producers.Kafka1MainProducer
+import com.raillylinker.retrofit2_classes.RepositoryNetworkRetrofit2
+import com.raillylinker.retrofit2_classes.request_apis.TossPaymentsRequestApi
 import com.raillylinker.util_components.JwtTokenUtil
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
@@ -55,6 +59,13 @@ class PaymentService(
                 }
             }
         }
+
+    // Retrofit2 요청 객체
+    val networkRetrofit2: RepositoryNetworkRetrofit2 = RepositoryNetworkRetrofit2.getInstance()
+
+    // tossPayments Authorization
+    // !!!Toss Payments API 키 수정!!!
+    val tossPaymentsAuthorization = "Basic dGVzdF9za196WExrS0V5cE5BcldtbzUwblgzbG1lYXhZRzVSOg=="
 
 
     // ---------------------------------------------------------------------------------------------
@@ -254,5 +265,64 @@ class PaymentService(
         return PaymentController.PostRequestBankTransferRefundPartOutputVo(
             refundRequest.uid!!
         )
+    }
+
+
+    // ----
+    // (PG 결제 요청(Toss Payments))
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun postPgTossPaymentsRequest(
+        httpServletResponse: HttpServletResponse,
+        inputVo: PaymentController.PostPgTossPaymentsRequestInputVo
+    ): PaymentController.PostPgTossPaymentsRequestOutputVo? {
+        val requestPaymentResponse =
+            networkRetrofit2.tossPaymentsRequestApi.postV1PaymentsConfirm(
+                tossPaymentsAuthorization,
+                TossPaymentsRequestApi.PostV1PaymentsConfirmInputVO(
+                    inputVo.paymentKey,
+                    inputVo.orderId,
+                    inputVo.paymentAmount
+                )
+            ).execute()
+
+        if (requestPaymentResponse.isSuccessful) {
+            // 정상 응답 (200 OK)
+//            val successData = requestPaymentResponse.body()
+
+            val paymentRequest =
+                db1RaillyLinkerCompanyPaymentRequestRepository.save(
+                    Db1_RaillyLinkerCompany_PaymentRequest(
+                        inputVo.paymentCode,
+                        2,
+                        BigDecimal.valueOf(inputVo.paymentAmount),
+                        "KRW",
+                        inputVo.paymentReason,
+                        null,
+                        null
+                    )
+                )
+
+            db1RaillyLinkerCompanyPaymentRequestDetailTossPaymentsRepository.save(
+                Db1_RaillyLinkerCompany_PaymentRequestDetailTossPayments(
+                    paymentRequest,
+                    inputVo.paymentKey,
+                    inputVo.orderId
+                )
+            )
+
+            return PaymentController.PostPgTossPaymentsRequestOutputVo(
+                paymentRequest.uid!!
+            )
+        } else {
+            // 오류 응답 (400, 500 등)
+//            val errorBody = requestPaymentResponse.errorBody()?.string()
+//            val errorData =
+//                Gson().fromJson(errorBody, TossPaymentsRequestApi.PostV1PaymentsConfirmErrorOutputVO::class.java)
+
+            // Toss Payments API 호출 실패
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
     }
 }

@@ -102,6 +102,15 @@ dependencies {
 
     // (jackson)
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.1")
+
+    // (retrofit2 네트워크 요청)
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
+
+    // (OkHttp3)
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 }
 
 tasks.withType<Test> {
