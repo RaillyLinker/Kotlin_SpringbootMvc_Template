@@ -18,7 +18,10 @@ CREATE TABLE `payment_refund_request` (
 	`refund_amount`	DECIMAL(15, 2)	NULL	COMMENT '환불 금액(통화 코드는 결제 정보 테이블과 동일합니다. null 이라면 전액 환불입니다.)',
 	`refund_reason`	VARCHAR(300)	NOT NULL	COMMENT '환불 요청 이유',
 	`refund_fail_reason`	VARCHAR(300)	NULL	COMMENT '환불 실패 이유(환불 실패라면 Not Null)',
-	`refund_end_datetime`	DATETIME(3)	NULL	COMMENT '환불 프로세스 종결일시(refund_fail_reason  이 null 이라면 완료일, not null 이라면 실패일)'
+	`refund_end_datetime`	DATETIME(3)	NULL	COMMENT '환불 프로세스 종결일시(refund_fail_reason  이 null 이라면 완료일, not null 이라면 실패일)',
+	`refund_bank_name`	VARCHAR(60)	NULL	COMMENT '환불 받을 은행명',
+	`refund_bank_account`	VARCHAR(60)	NULL	COMMENT '환불 받을 은행 계좌번호',
+	`refund_holder_name`	VARCHAR(60)	NULL	COMMENT '환불 받을 은행 예금주'
 );
 
 CREATE TABLE `payment_request_detail_toss_payments` (

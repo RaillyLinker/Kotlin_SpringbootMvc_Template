@@ -34,7 +34,19 @@ class Db1_RaillyLinkerCompany_PaymentRefundRequest(
 
     @Column(name = "refund_end_datetime", nullable = true, columnDefinition = "DATETIME(3)")
     @Comment("환불 프로세스 종결일시(refund_fail_reason  이 null 이라면 완료일, not null 이라면 실패일)")
-    var refundEndDatetime: LocalDateTime?
+    var refundEndDatetime: LocalDateTime?,
+
+    @Column(name = "refund_bank_name", nullable = true, columnDefinition = "VARCHAR(60)")
+    @Comment("환불 요청 이유")
+    var refundBankName: String?,
+
+    @Column(name = "refund_bank_account", nullable = true, columnDefinition = "VARCHAR(60)")
+    @Comment("환불 요청 이유")
+    var refundBankAccount: String?,
+
+    @Column(name = "refund_holder_name", nullable = true, columnDefinition = "VARCHAR(60)")
+    @Comment("환불 요청 이유")
+    var refundHolderName: String?
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
