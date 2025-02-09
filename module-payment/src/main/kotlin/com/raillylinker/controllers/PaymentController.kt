@@ -483,7 +483,113 @@ class PaymentController(
         val paymentRefundUid: Long
     )
 
-    // todo : PG 결제 부분 환불
+
+    // ----
+    @Operation(
+        summary = "PG 결제(Toss Payments) 부분 환불 요청",
+        description = "PG 결제(Toss Payments) 부분 환불 요청 API"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : 정보가 없거나 코드가 다릅니다.<br>" +
+                                "2 : 완료되지 않은 결제입니다.<br>" +
+                                "3 : 실패한 결제입니다.<br>" +
+                                "4 : 전액 환불 내역이 존재합니다.<br>" +
+                                "5 : 가상 계좌 결제이지만 필수 refundReceiveAccountObj 가 null 입니다.<br>" +
+                                "6 : Toss Payments 환불 API 호출 실패<br>" +
+                                "7 : 환불 가능 금액을 넘어섰습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/request/{paymentRequestUid}/pg-toss-payments-refund-part"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun postRequestPgTossPaymentsRefundPart(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(name = "paymentRequestUid", description = "결제 요청 정보 고유값", example = "1")
+        @PathVariable("paymentRequestUid")
+        paymentRequestUid: Long,
+        @RequestBody
+        inputVo: PostRequestPgTossPaymentsRefundPartInputVo
+    ): PostRequestPgTossPaymentsRefundPartOutputVo? {
+        return service.postRequestPgTossPaymentsRefundPart(
+            httpServletResponse,
+            paymentRequestUid,
+            inputVo
+        )
+    }
+
+    data class PostRequestPgTossPaymentsRefundPartInputVo(
+        @Schema(
+            description = "결제 요청에 사용한 결제 코드",
+            required = true,
+            example = "module1_uid1"
+        )
+        @JsonProperty("paymentCode")
+        val paymentCode: String,
+        @Schema(description = "결제 금액(통화 코드는 KRW 로 간주합니다.)", required = true, example = "1000")
+        @JsonProperty("prefundAmount")
+        val refundAmount: Long,
+        @Schema(description = "환불 이유", required = true, example = "상품 하자")
+        @JsonProperty("refundReason")
+        val refundReason: String,
+        @Schema(description = "결제 취소 후 금액이 환불될 계좌의 정보(가상계좌 결제에만 필수)", required = false)
+        @JsonProperty("refundReceiveAccountObj")
+        val refundReceiveAccountObj: RefundReceiveAccount?
+    ) {
+        @Schema(description = "결제 취소 후 금액이 환불될 계좌의 정보(가상계좌 결제에만 필수)")
+        data class RefundReceiveAccount(
+            // 은행 코드 : https://docs.tosspayments.com/codes/org-codes#%EC%9D%80%ED%96%89-%EC%BD%94%EB%93%9C
+            // 증권사 코드 : https://docs.tosspayments.com/codes/org-codes#%EC%A6%9D%EA%B6%8C%EC%82%AC-%EC%BD%94%EB%93%9C
+            @Schema(
+                description = "취소 금액을 환불받을 계좌의 은행 코드입니다.",
+                required = true,
+                example = "경남"
+            )
+            @JsonProperty("bank")
+            val bank: String,
+            @Schema(
+                description = "취소 금액을 환불받을 계좌의 계좌번호입니다. - 없이 숫자만 넣어야 합니다. 최대 길이는 20자입니다.",
+                required = true,
+                example = "1123456789120"
+            )
+            @JsonProperty("accountNumber")
+            val accountNumber: String,
+            @Schema(
+                description = "취소 금액을 환불받을 계좌의 예금주입니다. 최대 길이는 60자입니다.",
+                required = true,
+                example = "홍길동"
+            )
+            @JsonProperty("holderName")
+            val holderName: String
+        )
+    }
+
+    data class PostRequestPgTossPaymentsRefundPartOutputVo(
+        @Schema(description = "payment refund 고유값", required = true, example = "1")
+        @JsonProperty("paymentRefundUid")
+        val paymentRefundUid: Long
+    )
 
     // PG 결제 요청 billing pay 의 경우는 별도 결제 타입, 별도 테이블, 별도 api 를 추가하세요.
 }
