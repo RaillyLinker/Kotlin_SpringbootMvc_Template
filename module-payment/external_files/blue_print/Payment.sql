@@ -28,7 +28,8 @@ CREATE TABLE `payment_request_detail_toss_payments` (
 	`row_delete_date_str`	VARCHAR(50)	NOT NULL	DEFAULT /	COMMENT '행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)',
 	`payment_request_uid`	BIGINT	NOT NULL	COMMENT '결제 요청 정보 고유번호',
 	`toss_payment_key`	VARCHAR(200)	NOT NULL	COMMENT '결제의 키값입니다. 최대 길이는 200자입니다. 결제를 식별하는 역할로, 중복되지 않는 고유한 값입니다.',
-	`toss_order_id`	VARCHAR(64)	NOT NULL	COMMENT '주문번호입니다. 결제 요청에서 내 상점이 직접 생성한 영문 대소문자, 숫자, 특수문자 -, _로 이루어진 6자 이상 64자 이하의 문자열입니다. 각 주문을 식별하는 역할입니다.'
+	`toss_order_id`	VARCHAR(64)	NOT NULL	COMMENT '주문번호입니다. 결제 요청에서 내 상점이 직접 생성한 영문 대소문자, 숫자, 특수문자 -, _로 이루어진 6자 이상 64자 이하의 문자열입니다. 각 주문을 식별하는 역할입니다.',
+	`toss_method`	VARCHAR(45)	NOT NULL	COMMENT '결제수단입니다. 카드, 가상계좌, 간편결제, 휴대폰, 계좌이체, 문화상품권, 도서문화상품권, 게임문화상품권 중 하나입니다.'
 );
 
 CREATE TABLE `payment_request` (

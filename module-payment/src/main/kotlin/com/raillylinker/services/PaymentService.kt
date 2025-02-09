@@ -287,7 +287,7 @@ class PaymentService(
 
         if (requestPaymentResponse.isSuccessful) {
             // 정상 응답 (200 OK)
-//            val successData = requestPaymentResponse.body()
+            val successData = requestPaymentResponse.body()!!
 
             val paymentRequest =
                 db1RaillyLinkerCompanyPaymentRequestRepository.save(
@@ -306,7 +306,8 @@ class PaymentService(
                 Db1_RaillyLinkerCompany_PaymentRequestDetailTossPayments(
                     paymentRequest,
                     inputVo.paymentKey,
-                    inputVo.orderId
+                    inputVo.orderId,
+                    successData.method
                 )
             )
 

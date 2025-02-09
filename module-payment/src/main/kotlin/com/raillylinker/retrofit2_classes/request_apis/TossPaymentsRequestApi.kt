@@ -44,6 +44,10 @@ interface TossPaymentsRequestApi {
         @SerializedName("mid")
         @Expose
         val mid: String,
+        // 결제수단입니다. 카드, 가상계좌, 간편결제, 휴대폰, 계좌이체, 문화상품권, 도서문화상품권, 게임문화상품권 중 하나입니다.
+        @SerializedName("method")
+        @Expose
+        val method: String,
         /*
             마지막 거래의 키값입니다.
             한 결제 건의 승인 거래와 취소 거래를 구분하는 데 사용됩니다.
