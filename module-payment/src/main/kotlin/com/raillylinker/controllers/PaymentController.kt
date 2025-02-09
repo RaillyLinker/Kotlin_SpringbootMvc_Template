@@ -403,7 +403,9 @@ class PaymentController(
                                 "1 : 정보가 없거나 코드가 다릅니다.<br>" +
                                 "2 : 완료되지 않은 결제입니다.<br>" +
                                 "3 : 실패한 결제입니다.<br>" +
-                                "4 : 환불 내역이 존재합니다.",
+                                "4 : 환불 내역이 존재합니다.<br>" +
+                                "5 : 가상 계좌 결제이지만 필수 refundReceiveAccountObj 가 null 입니다.<br>" +
+                                "6 : Toss Payments 환불 API 호출 실패",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -483,5 +485,5 @@ class PaymentController(
 
     // todo : PG 결제 부분 환불
 
-    // todo : PG 결제 요청 billing pay
+    // PG 결제 요청 billing pay 의 경우는 별도 결제 타입, 별도 테이블, 별도 api 를 추가하세요.
 }
