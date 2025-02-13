@@ -54,7 +54,7 @@ CREATE TABLE `rental_product_reservation_history` (
 	`row_update_date`	DATETIME(3)	NOT NULL	COMMENT '행 수정일',
 	`row_delete_date_str`	VARCHAR(50)	NOT NULL	DEFAULT /	COMMENT '행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)',
 	`rental_product_reservation_uid`	BIGINT	NOT NULL	COMMENT '상품 예약 정보 행 고유키',
-	`state_code`	TINYINT UNSIGNED	NOT NULL	COMMENT '예약 상태 코드(0 : 예약 신청, 1 : 예약 취소 신청, 2 : 예약 취소 신청 승인, 3 : 예약 신청 거부, 4 : 예약 신청 승인, 5 :결제 확인, 6: 결제 확인 취소, 7 : 예약 취소 신청 거부, 8 : 상품 조기 반납 신고, 9 : 상품 조기 반납 취소, 10 : 상품 반납 확인, 11 : 상품 연체 상태, 12 : 상품 연체 상태 취소, 13 : 예약 시간 연장 신청, 14 : 예약 시간 연장 신청 거부, 15 : 예약 시간 연장 신청 승인)',
+	`history_code`	TINYINT UNSIGNED	NOT NULL	COMMENT '히스토리 코드(0 : 예약 신청, 1 : 예약 취소 신청, 2 : 예약 취소 신청 승인, 3 : 예약 신청 거부, 4 : 예약 신청 승인, 5 :결제 확인, 6: 결제 확인 취소, 7 : 예약 취소 신청 거부, 8 : 상품 조기 반납 신고, 9 : 상품 조기 반납 취소, 10 : 상품 반납 확인, 11 : 상품 연체 상태, 12 : 상품 연체 상태 취소, 13 : 예약 시간 연장 신청, 14 : 예약 시간 연장 신청 거부, 15 : 예약 시간 연장 신청 승인)',
 	`state_change_desc`	VARCHAR(600)	NOT NULL	COMMENT '상태 변경 상세'
 );
 
