@@ -3,7 +3,6 @@ package com.raillylinker.kafka_components.consumers
 import com.google.gson.Gson
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.configurations.kafka_configs.Kafka1MainConfig
-import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentableProductStockReservationInfo
 import com.raillylinker.jpa_beans.db1_main.repositories.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -17,11 +16,8 @@ import java.time.format.DateTimeFormatter
 
 @Component
 class Kafka1MainConsumer(
-    private val db1RaillyLinkerCompanyRentableProductReservationInfoRepository: Db1_RaillyLinkerCompany_RentableProductReservationInfo_Repository,
-    private val db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository: Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory_Repository,
-    private val db1RaillyLinkerCompanyRentableProductReservationPaymentRepository: Db1_RaillyLinkerCompany_RentableProductReservationPayment_Repository,
-    private val db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository: Db1_RaillyLinkerCompany_RentableProductStockReservationInfo_Repository,
-    private val db1RaillyLinkerCompanyRentableProductStockReservationStateChangeHistoryRepository: Db1_RaillyLinkerCompany_RentableProductStockReservationStateChangeHistory_Repository
+    private val db1RaillyLinkerCompanyRentalProductReservationRepository: Db1_RaillyLinkerCompany_RentalProductReservation_Repository,
+    private val db1RaillyLinkerCompanyRentalProductReservationHistoryRepository: Db1_RaillyLinkerCompany_RentalProductReservationHistory_Repository
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -58,62 +54,29 @@ class Kafka1MainConsumer(
             FromAuthDbDeleteFromRaillyLinkerCompanyTotalAuthMemberListenerInputVo::class.java
         )
 
-        val db1RaillyLinkerCompanyRentableProductReservationInfoList =
-            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findAllByTotalAuthMemberUidAndRowDeleteDateStr(
+        val reservationInfoList =
+            db1RaillyLinkerCompanyRentalProductReservationRepository.findAllByTotalAuthMemberUidAndRowDeleteDateStr(
                 inputVo.deletedMemberUid,
                 "/"
             )
 
-        for (db1RaillyLinkerCompanyRentableProductReservationInfo in db1RaillyLinkerCompanyRentableProductReservationInfoList) {
+        for (reservationInfo in reservationInfoList) {
             // 삭제된 멤버 정보와 연관된 정보 삭제 처리
-            val rentableProductReservationStateChangeHistoryList =
-                db1RaillyLinkerCompanyRentableProductReservationInfo.rentableProductReservationStateChangeHistoryList
-            for (rentableProductReservationStateChangeHistory in rentableProductReservationStateChangeHistoryList) {
-                rentableProductReservationStateChangeHistory.rowDeleteDateStr =
+            val reservationHistoryList = reservationInfo.rentalProductReservationHistoryList
+            for (reservationHistory in reservationHistoryList) {
+                reservationHistory.rowDeleteDateStr =
                     LocalDateTime.now().atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
-                    rentableProductReservationStateChangeHistory
+                db1RaillyLinkerCompanyRentalProductReservationHistoryRepository.save(
+                    reservationHistory
                 )
             }
 
-            val rentableProductReservationPaymentList =
-                db1RaillyLinkerCompanyRentableProductReservationInfo.rentableProductReservationPaymentList
-            for (rentableProductReservationPayment in rentableProductReservationPaymentList) {
-                rentableProductReservationPayment.rowDeleteDateStr =
-                    LocalDateTime.now().atZone(ZoneId.systemDefault())
-                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                db1RaillyLinkerCompanyRentableProductReservationPaymentRepository.save(rentableProductReservationPayment)
-            }
-
-            val rentableProductStockReservationInfoList =
-                db1RaillyLinkerCompanyRentableProductReservationInfo.rentableProductStockReservationInfoList
-            for (rentableProductStockReservationInfo in rentableProductStockReservationInfoList) {
-                val rentableProductStockReservationStateChangeHistoryList =
-                    rentableProductStockReservationInfo.rentableProductStockReservationStateChangeHistoryList
-
-                for (rentableProductStockReservationStateChangeHistory in rentableProductStockReservationStateChangeHistoryList) {
-                    rentableProductStockReservationStateChangeHistory.rowDeleteDateStr =
-                        LocalDateTime.now().atZone(ZoneId.systemDefault())
-                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                    db1RaillyLinkerCompanyRentableProductStockReservationStateChangeHistoryRepository.save(
-                        rentableProductStockReservationStateChangeHistory
-                    )
-                }
-
-                rentableProductStockReservationInfo.rowDeleteDateStr =
-                    LocalDateTime.now().atZone(ZoneId.systemDefault())
-                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.save(
-                    rentableProductStockReservationInfo
-                )
-            }
-
-            db1RaillyLinkerCompanyRentableProductReservationInfo.rowDeleteDateStr =
+            reservationInfo.rowDeleteDateStr =
                 LocalDateTime.now().atZone(ZoneId.systemDefault())
                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.save(
-                db1RaillyLinkerCompanyRentableProductReservationInfo
+            db1RaillyLinkerCompanyRentalProductReservationRepository.save(
+                reservationInfo
             )
         }
     }

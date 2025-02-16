@@ -12,23 +12,43 @@ import java.time.LocalDateTime
 //     로직상으로 활성화된 행이 한개 뿐이라고 처리하면 됩니다.
 @Entity
 @Table(
-    name = "rentable_product_reservation_state_change_history",
+    name = "rental_product_reservation_history",
     catalog = "railly_linker_company"
 )
 @Comment("대여 가능 상품 예약 상태 변경 히스토리")
-class Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory(
+class Db1_RaillyLinkerCompany_RentalProductReservationHistory(
     @ManyToOne
     @JoinColumn(name = "rentable_product_reservation_info_uid", nullable = false)
     @Comment("rentable_product_reservation_info 테이블 고유번호 (railly_linker_company.rentable_product_reservation_info.uid)")
-    var rentableProductReservationInfo: Db1_RaillyLinkerCompany_RentableProductReservationInfo,
+    var rentalProductReservation: Db1_RaillyLinkerCompany_RentalProductReservation,
 
     @Column(name = "state_code", nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    @Comment("예약 상태 코드(0 : 관리자 결제 확인, 1 : 관리자 예약 승인, 2 : 관리자 예약 거부, 3 : 사용자 예약 취소 신청, 4 : 관리자 예약 취소 승인, 5 : 예약 취소 거부, 6: 사용자 조기반납신고, 7: 관리자 조기반납 확인, 8: 결제 환불 처리)")
-    var stateCode: Short,
+    @Comment(
+        "히스토리 코드(" +
+                "0 : 예약 신청, " +
+                "1 : 예약 취소 신청, " +
+                "2 : 예약 취소 신청 승인, " +
+                "3 : 예약 신청 거부, " +
+                "4 : 예약 신청 승인, " +
+                "5 : 예약 신청 승인 취소, " +
+                "6 :결제 확인, " +
+                "7: 결제 확인 취소, " +
+                "8 : 예약 취소 신청 거부, " +
+                "9 : 상품 조기 반납 신고, " +
+                "10 : 상품 조기 반납 취소, " +
+                "11 : 상품 반납 확인, " +
+                "12 : 상품 연체 상태, " +
+                "13 : 상품 연체 상태 취소, " +
+                "14 : 예약 시간 연장 신청, " +
+                "15 : 예약 시간 연장 신청 거부, " +
+                "16 : 예약 시간 연장 신청 승인" +
+                ")"
+    )
+    var historyCode: Short,
 
-    @Column(name = "state_change_desc", nullable = false, columnDefinition = "VARCHAR(600)")
-    @Comment("상태 변경 상세")
-    var stateChangeDesc: String
+    @Column(name = "history_desc", nullable = false, columnDefinition = "VARCHAR(600)")
+    @Comment("히스토리 상세")
+    var historyDesc: String
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

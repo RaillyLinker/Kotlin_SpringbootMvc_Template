@@ -12,19 +12,19 @@ import java.time.LocalDateTime
 //     로직상으로 활성화된 행이 한개 뿐이라고 처리하면 됩니다.
 @Entity
 @Table(
-    name = "rentable_product_reservation_info",
+    name = "rental_product_reservation",
     catalog = "railly_linker_company"
 )
-@Comment("대여 가능 상품 예약 정보")
-class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
+@Comment("상품 예약 정보")
+class Db1_RaillyLinkerCompany_RentalProductReservation(
     @ManyToOne
-    @JoinColumn(name = "rentable_product_info_uid", nullable = true)
-    @Comment("rentable_product_info 테이블 고유번호 (railly_linker_company.rentable_product_info.uid)")
-    var rentableProductInfo: Db1_RaillyLinkerCompany_RentableProductInfo?,
+    @JoinColumn(name = "rental_product_uid", nullable = true)
+    @Comment("예약 상품 정보 행 고유키")
+    var rentalProduct: Db1_RaillyLinkerCompany_RentalProduct?,
 
     @ManyToOne
-    @JoinColumn(name = "total_auth_member_uid", nullable = false)
-    @Comment("멤버 고유번호(railly_linker_company.total_auth_member.uid)")
+    @JoinColumn(name = "customer_member_uid", nullable = false)
+    @Comment("예약자 멤버 행 고유키")
     var totalAuthMember: Db1_RaillyLinkerCompany_TotalAuthMember,
 
     @Column(name = "rental_start_datetime", nullable = false, columnDefinition = "DATETIME")
@@ -43,13 +43,17 @@ class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
     @Comment("예약 결제 확인 기한 (예약 요청일로부터 생성, 이 시점이 지났고, payment_complete_datetime 가 충족되지 않았다면 취소로 간주)")
     var paymentCheckDeadlineDatetime: LocalDateTime,
 
-    @Column(name = "reservation_approval_deadline_datetime", nullable = false, columnDefinition = "DATETIME")
+    @Column(name = "approval_deadline_datetime", nullable = false, columnDefinition = "DATETIME")
     @Comment("관리자 승인 기한 (이 시점이 지났고, reservation_approval_datetime 가 충족되지 않았다면 취소로 간주)")
-    var reservationApprovalDeadlineDatetime: LocalDateTime,
+    var approvalDeadlineDatetime: LocalDateTime,
 
-    @Column(name = "reservation_cancel_deadline_datetime", nullable = false, columnDefinition = "DATETIME")
+    @Column(name = "cancel_deadline_datetime", nullable = false, columnDefinition = "DATETIME")
     @Comment("예약 취소 가능 기한")
-    var reservationCancelDeadlineDatetime: LocalDateTime,
+    var cancelDeadlineDatetime: LocalDateTime,
+
+    @Column(name = "product_ready_datetime", nullable = true, columnDefinition = "DATETIME")
+    @Comment("상품이 대여 반납 이후 준비가 완료된 시간(미리 설정도 가능, 히스토리 테이블 내역보다 우선됩니다.)")
+    var productReadyDatetime: LocalDateTime?,
 
     // 아래는 예약 당시 영수증으로서의 기능을 하는 컬럼
     @Column(name = "product_name", nullable = false, columnDefinition = "VARCHAR(90)")
@@ -60,10 +64,9 @@ class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
     @Comment("고객에게 보일 상품 소개")
     var productIntro: String,
 
-    @ManyToOne
-    @JoinColumn(name = "front_rentable_product_image_uid", nullable = true)
-    @Comment("상품 대표 이미지 rentable_product_image 테이블 고유번호 (railly_linker_company.rentable_product_image.uid)")
-    var frontRentableProductImage: Db1_RaillyLinkerCompany_RentableProductImage?,
+    @Column(name = "image_full_url", nullable = false, columnDefinition = "VARCHAR(200)")
+    @Comment("프로필 이미지 Full URL (가장 가중치가 높은 대표 이미지 1개)")
+    var imageFullUrl: String,
 
     @Column(name = "address_country", nullable = false, columnDefinition = "VARCHAR(60)")
     @Comment("상품이 위치한 주소 (대여 가능 위치의 기준으로 사용됨) - 국가")
@@ -101,30 +104,12 @@ class Db1_RaillyLinkerCompany_RentableProductReservationInfo(
 
     // ---------------------------------------------------------------------------------------------
     // <중첩 클래스 공간>
-    // 예약 정보가 삭제되면 개별 예약 내역 삭제
-    @OneToMany(
-        mappedBy = "rentableProductReservationInfo",
-        fetch = FetchType.LAZY,
-        cascade = [CascadeType.ALL]
-    )
-    var rentableProductStockReservationInfoList: MutableList<Db1_RaillyLinkerCompany_RentableProductStockReservationInfo> =
-        mutableListOf()
-
     // 예약 정보가 삭제되면 예약 정보 히스토리 삭제
     @OneToMany(
-        mappedBy = "rentableProductReservationInfo",
+        mappedBy = "rentalProductReservation",
         fetch = FetchType.LAZY,
         cascade = [CascadeType.ALL]
     )
-    var rentableProductReservationStateChangeHistoryList: MutableList<Db1_RaillyLinkerCompany_RentableProductReservationStateChangeHistory> =
-        mutableListOf()
-
-    // 예약 정보가 삭제되면 예약 결제 정보 삭제
-    @OneToMany(
-        mappedBy = "rentableProductReservationInfo",
-        fetch = FetchType.LAZY,
-        cascade = [CascadeType.ALL]
-    )
-    var rentableProductReservationPaymentList: MutableList<Db1_RaillyLinkerCompany_RentableProductReservationPayment> =
+    var rentalProductReservationHistoryList: MutableList<Db1_RaillyLinkerCompany_RentalProductReservationHistory> =
         mutableListOf()
 }

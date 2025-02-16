@@ -6,6 +6,7 @@ import org.hibernate.annotations.Comment
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.math.BigDecimal
+import java.math.BigInteger
 import java.time.LocalDateTime
 
 // Fk 관계 중 OneToOne 은 논리적 삭제를 적용할시 사용이 불가능합니다.
@@ -13,27 +14,17 @@ import java.time.LocalDateTime
 //     로직상으로 활성화된 행이 한개 뿐이라고 처리하면 됩니다.
 @Entity
 @Table(
-    name = "rentable_product_info",
+    name = "rental_product",
     catalog = "railly_linker_company"
 )
-@Comment("대여 가능 상품 정보")
-class Db1_RaillyLinkerCompany_RentableProductInfo(
-    @ManyToOne
-    @JoinColumn(name = "rentable_product_category_uid", nullable = true)
-    @Comment("rentable_product_category 테이블 고유번호 (railly_linker_company.rentable_product_category.uid)")
-    var rentableProductCategory: Db1_RaillyLinkerCompany_RentableProductCategory?,
-
-    @ManyToOne
-    @JoinColumn(name = "front_rentable_product_image_uid", nullable = true)
-    @Comment("상품 대표 이미지 rentable_product_image 테이블 고유번호 (railly_linker_company.rentable_product_image.uid)")
-    var frontRentableProductImage: Db1_RaillyLinkerCompany_RentableProductImage?,
-
+@Comment("예약 상품 정보")
+class Db1_RaillyLinkerCompany_RentalProduct(
     @Column(name = "product_name", nullable = false, columnDefinition = "VARCHAR(90)")
-    @Comment("고객에게 보일 상품명")
+    @Comment("상품명")
     var productName: String,
 
     @Column(name = "product_intro", nullable = false, columnDefinition = "VARCHAR(6000)")
-    @Comment("고객에게 보일 상품 소개")
+    @Comment("상품 소개")
     var productIntro: String,
 
     @Column(name = "address_country", nullable = false, columnDefinition = "VARCHAR(60)")
@@ -51,6 +42,14 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
     @Column(name = "first_reservable_datetime", nullable = false, columnDefinition = "DATETIME")
     @Comment("상품 예약이 가능한 최초 일시(콘서트 티켓 예매와 같은 서비스를 가정, 예약 러시 처리가 필요)")
     var firstReservableDatetime: LocalDateTime,
+
+    @Column(name = "first_rental_datetime", nullable = false, columnDefinition = "DATETIME")
+    @Comment("상품 대여가 가능한 최초 일시")
+    var firstRentalDatetime: LocalDateTime,
+
+    @Column(name = "last_rental_datetime", nullable = true, columnDefinition = "DATETIME")
+    @Comment("상품 대여가 가능한 마지막 일시(null 이라면 제한 없음)")
+    var lastRentalDatetime: LocalDateTime?,
 
     @Column(name = "reservation_unit_minute", nullable = false, columnDefinition = "BIGINT")
     @Comment("예약 추가 할 수 있는 최소 시간 단위 (분)")
@@ -81,16 +80,20 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
     var customerPaymentDeadlineMinute: Long,
 
     @Column(name = "payment_check_deadline_minute", nullable = false, columnDefinition = "BIGINT")
-    @Comment("관리자의 결제 확인 기한 설정값(예약일로 부터 +N 분, 고객 결제 기한 설정값보다 크거나 같음)")
+    @Comment("관리자의 결제 확인 기한 설정값(고객 결제 기한 설정값으로 부터 +N 분)")
     var paymentCheckDeadlineMinute: Long,
 
     @Column(name = "approval_deadline_minute", nullable = false, columnDefinition = "BIGINT")
-    @Comment("관리자의 예약 승인 기한 설정값(예약일로부터 +N분, 결제 확인 기한 설정값보다 크거나 같음)")
+    @Comment("관리자의 예약 승인 기한 설정값(결제 확인 기한 설정값으로부터 +N분)")
     var approvalDeadlineMinute: Long,
 
     @Column(name = "cancel_deadline_minute", nullable = false, columnDefinition = "BIGINT")
-    @Comment("고객이 예약 취소 가능한 기한 설정값(대여 시작일로부터 -N분으로 계산됨)")
-    var cancelDeadlineMinute: Long
+    @Comment("고객이 예약 취소 가능한 기한 설정값(대여 시작일로부터 -N분이며, 그 결과가 관리자 승인 기한보다 커야함)")
+    var cancelDeadlineMinute: Long,
+
+    @Column(name = "product_state_desc", nullable = false, columnDefinition = "VARCHAR(2000)")
+    @Comment("상품 상태 설명(예를 들어 손망실의 경우 now_reservable 이 false 이며, 이곳에 손망실 이유가 기재됩니다.)")
+    var productStateDesc: String
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -123,26 +126,18 @@ class Db1_RaillyLinkerCompany_RentableProductInfo(
     // <중첩 클래스 공간>
     // 상품 정보 삭제시 이미지 정보도 삭제
     @OneToMany(
-        mappedBy = "rentableProductInfo",
+        mappedBy = "rentalProduct",
         fetch = FetchType.LAZY,
         cascade = [CascadeType.ALL]
     )
-    var rentableProductImageList: MutableList<Db1_RaillyLinkerCompany_RentableProductImage> =
+    var rentalProductImageList: MutableList<Db1_RaillyLinkerCompany_RentalProductImage> =
         mutableListOf()
-
-    // 상품 정보 삭제시 재고 정보도 삭제
-    @OneToMany(
-        mappedBy = "rentableProductInfo",
-        fetch = FetchType.LAZY,
-        cascade = [CascadeType.ALL]
-    )
-    var rentableProductStockInfoList: MutableList<Db1_RaillyLinkerCompany_RentableProductStockInfo> = mutableListOf()
 
     // 상품 정보 삭제시 예약 내역에서 null 처리
     @OneToMany(
-        mappedBy = "rentableProductInfo",
+        mappedBy = "rentalProduct",
         fetch = FetchType.LAZY
     )
-    var rentableProductReservationInfoList: MutableList<Db1_RaillyLinkerCompany_RentableProductReservationInfo> =
+    var rentalProductReservationList: MutableList<Db1_RaillyLinkerCompany_RentalProductReservation> =
         mutableListOf()
 }

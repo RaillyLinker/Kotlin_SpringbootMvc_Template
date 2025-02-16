@@ -19,6 +19,8 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.math.BigDecimal
+import java.math.BigInteger
+
 
 @Tag(name = "/rental-reservation-admin APIs", description = "대여 예약 서비스 관리자 API 컨트롤러")
 @Controller
@@ -32,8 +34,8 @@ class RentalReservationAdminController(
     // ---------------------------------------------------------------------------------------------
     // <매핑 함수 공간>
     @Operation(
-        summary = "예약 상품 카테고리 정보 등록 <ADMIN>",
-        description = "예약 상품의 카테고리 정보를 등록합니다."
+        summary = "예약 상품 등록 <ADMIN>",
+        description = "예약 상품 정보를 등록합니다."
     )
     @ApiResponses(
         value = [
@@ -50,7 +52,9 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : parentRentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                                "1 : 최소 예약 횟수는 최대 예약 횟수보다 작거나 같아야 합니다.<br>" +
+                                "2 : 결제 통보 기한 설정이 결제 승인 기한 설정보다 크면 안됩니다.<br>" +
+                                "3 : 결제 승인 기한 설정이 예약 승인 기한 설정보다 크면 안됩니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -68,255 +72,28 @@ class RentalReservationAdminController(
         ]
     )
     @PostMapping(
-        path = ["/rentable-product-category"],
+        path = ["/rental-product"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun postRentableProductCategory(
+    fun postRentalProduct(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
         @RequestBody
-        inputVo: PostRentableProductCategoryInputVo
-    ): PostRentableProductCategoryOutputVo? {
-        return service.postRentableProductCategory(
-            httpServletResponse,
-            authorization!!,
-            inputVo
-        )
+        inputVo: PostRentalProductInputVo
+    ): PostRentalProductOutputVo? {
+        return service.postRentalProduct(httpServletResponse, authorization!!, inputVo)
     }
 
-    data class PostRentableProductCategoryInputVo(
-        @Schema(description = "부모 카테고리 고유번호", required = false, example = "1")
-        @JsonProperty("parentRentableProductCategoryUid")
-        val parentRentableProductCategoryUid: Long?,
-        @Schema(description = "카테고리 이름", required = true, example = "유머")
-        @JsonProperty("categoryName")
-        val categoryName: String
-    )
-
-    data class PostRentableProductCategoryOutputVo(
-        @Schema(description = "rentableProductCategory 고유값", required = true, example = "1")
-        @JsonProperty("rentableProductCategoryUid")
-        val rentableProductCategoryUid: Long
-    )
-
-
-    // ----
-    @Operation(
-        summary = "예약 상품 카테고리 정보 수정 <ADMIN>",
-        description = "예약 상품의 카테고리 정보를 수정합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "1 : parentRentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PutMapping(
-        path = ["/rentable-product-category/{rentableProductCategoryUid}"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun putRentableProductCategory(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(name = "rentableProductCategoryUid", description = "rentableProductCategory 고유값", example = "1")
-        @PathVariable("rentableProductCategoryUid")
-        rentableProductCategoryUid: Long,
-        @RequestBody
-        inputVo: PutRentableProductCategoryInputVo
-    ) {
-        service.putRentableProductCategory(
-            httpServletResponse,
-            authorization!!,
-            rentableProductCategoryUid,
-            inputVo
-        )
-    }
-
-    data class PutRentableProductCategoryInputVo(
-        @Schema(description = "부모 카테고리 고유번호", required = false, example = "1")
-        @JsonProperty("parentRentableProductCategoryUid")
-        val parentRentableProductCategoryUid: Long?,
-        @Schema(description = "카테고리 이름", required = true, example = "유머")
-        @JsonProperty("categoryName")
-        val categoryName: String
-    )
-
-
-    // ----
-    @Operation(
-        summary = "예약 상품 카테고리 정보 삭제 <ADMIN>",
-        description = "예약 상품의 카테고리 정보를 삭제합니다.<br>" +
-                "하위 카테고리들은 모두 자동 삭제되며, 예약 상품 정보의 카테고리로 설정되어 있다면 null 로 재설정 됩니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @DeleteMapping(
-        path = ["/rentable-product-category/{rentableProductCategoryUid}"],
-        consumes = [MediaType.ALL_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun deleteRentableProductCategory(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(name = "rentableProductCategoryUid", description = "rentableProductCategory 고유값", example = "1")
-        @PathVariable("rentableProductCategoryUid")
-        rentableProductCategoryUid: Long
-    ) {
-        service.deleteRentableProductCategory(
-            httpServletResponse,
-            authorization!!,
-            rentableProductCategoryUid
-        )
-    }
-
-
-    // ----
-    @Operation(
-        summary = "대여 가능 상품 등록 <ADMIN>",
-        description = "대여 상품 정보를 등록합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 최소 예약 횟수는 최대 예약 횟수보다 작거나 같아야 합니다.<br>" +
-                                "3 : 결제 통보 기한 설정이 결제 승인 기한 설정보다 크면 안됩니다.<br>" +
-                                "4 : 결제 승인 기한 설정이 예약 승인 기한 설정보다 크면 안됩니다.<br>" +
-                                "5 : reservationUnitMinute, reservationUnitPrice, customerPaymentDeadlineMinute, " +
-                                "paymentCheckDeadlineMinute, paymentCheckDeadlineMinute, approvalDeadlineMinute, " +
-                                "cancelDeadlineMinute 는 음수가 될 수 없습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PostMapping(
-        path = ["/rentable-product-info"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun postRentableProductInfo(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @RequestBody
-        inputVo: PostRentableProductInfoInputVo
-    ): PostRentableProductInfoOutputVo? {
-        return service.postRentableProductInfo(httpServletResponse, authorization!!, inputVo)
-    }
-
-    data class PostRentableProductInfoInputVo(
+    data class PostRentalProductInputVo(
         @Schema(description = "고객에게 보일 상품명", required = true, example = "testString")
         @JsonProperty("productName")
         val productName: String,
-        @Schema(
-            description = "상품 카테고리 고유값",
-            required = true,
-            example = "1"
-        )
-        @JsonProperty("rentableProductCategoryUid")
-        val rentableProductCategoryUid: Long?,
         @Schema(
             description = "고객에게 보일 상품 소개",
             required = true,
@@ -346,12 +123,26 @@ class RentalReservationAdminController(
         @JsonProperty("addressDetail")
         val addressDetail: String,
         @Schema(
-            description = "상품 예약이 가능한 최초 일시(콘서트 티켓 예매 선공개 기능을 가정)(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            description = "상품 예약이 가능한 최초 일시(콘서트 티켓 예매 선공개 기능을 가정)(yyyy_MM_dd_'T'_HH_mm_ss_z)",
             required = true,
-            example = "2024_05_02_T_15_14_49_552_KST"
+            example = "2024_05_02_T_15_14_49_KST"
         )
         @JsonProperty("firstReservableDatetime")
         val firstReservableDatetime: String,
+        @Schema(
+            description = "상품 대여가 가능한 최초 일시(yyyy_MM_dd_'T'_HH_mm_ss_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_KST"
+        )
+        @JsonProperty("firstRentalDatetime")
+        val firstRentalDatetime: String,
+        @Schema(
+            description = "상품 대여가 가능한 마지막 일시(null 이라면 제한 없음)(yyyy_MM_dd_'T'_HH_mm_ss_z)",
+            required = false,
+            example = "2024_05_02_T_15_14_49_KST"
+        )
+        @JsonProperty("lastRentalDatetime")
+        val lastRentalDatetime: String?,
         @Schema(
             description = "예약 추가 할 수 있는 최소 시간 단위 (분)",
             required = true,
@@ -428,10 +219,10 @@ class RentalReservationAdminController(
         }
     }
 
-    data class PostRentableProductInfoOutputVo(
-        @Schema(description = "rentableProductInfo 고유값", required = true, example = "1")
-        @JsonProperty("rentableProductInfoUid")
-        val rentableProductInfoUid: Long
+    data class PostRentalProductOutputVo(
+        @Schema(description = "rentalProduct 고유값", required = true, example = "1")
+        @JsonProperty("rentalProductUid")
+        val rentalProductUid: Long
     )
 
 
@@ -456,14 +247,10 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : rentableProductCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "3 : 최소 예약 횟수는 최대 예약 횟수보다 작거나 같아야 합니다.<br>" +
-                                "4 : 결제 통보 기한 설정이 결제 승인 기한 설정보다 크면 안됩니다.<br>" +
-                                "5 : 결제 승인 기한 설정이 예약 승인 기한 설정보다 크면 안됩니다.<br>" +
-                                "6 : reservationUnitMinute, reservationUnitPrice, customerPaymentDeadlineMinute, " +
-                                "paymentCheckDeadlineMinute, paymentCheckDeadlineMinute, approvalDeadlineMinute, " +
-                                "cancelDeadlineMinute 는 음수가 될 수 없습니다.",
+                                "1 : rentalProductUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 최소 예약 횟수는 최대 예약 횟수보다 작거나 같아야 합니다.<br>" +
+                                "3 : 결제 통보 기한 설정이 결제 승인 기한 설정보다 크면 안됩니다.<br>" +
+                                "4 : 결제 승인 기한 설정이 예약 승인 기한 설정보다 크면 안됩니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -481,38 +268,31 @@ class RentalReservationAdminController(
         ]
     )
     @PutMapping(
-        path = ["/rentable-product-info/{rentableProductInfoUid}"],
+        path = ["/rental-product/{rentalProductUid}"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.ALL_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun putRentableProductInfo(
+    fun putRentalProduct(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
-        @Parameter(name = "rentableProductInfoUid", description = "rentableProductInfo 고유값", example = "1")
-        @PathVariable("rentableProductInfoUid")
-        rentableProductInfoUid: Long,
+        @Parameter(name = "rentalProductUid", description = "rentalProduct 고유값", example = "1")
+        @PathVariable("rentalProductUid")
+        rentalProductUid: Long,
         @RequestBody
-        inputVo: PutRentableProductInfoInputVo
+        inputVo: PutRentalProductInputVo
     ) {
-        service.putRentableProductInfo(httpServletResponse, authorization!!, rentableProductInfoUid, inputVo)
+        service.putRentalProduct(httpServletResponse, authorization!!, rentalProductUid, inputVo)
     }
 
-    data class PutRentableProductInfoInputVo(
+    data class PutRentalProductInputVo(
         @Schema(description = "고객에게 보일 상품명", required = true, example = "testString")
         @JsonProperty("productName")
         val productName: String,
-        @Schema(
-            description = "상품 카테고리 고유값",
-            required = true,
-            example = "1"
-        )
-        @JsonProperty("rentableProductCategoryUid")
-        val rentableProductCategoryUid: Long?,
         @Schema(
             description = "고객에게 보일 상품 소개",
             required = true,
@@ -542,12 +322,26 @@ class RentalReservationAdminController(
         @JsonProperty("addressDetail")
         val addressDetail: String,
         @Schema(
-            description = "상품 예약이 가능한 최초 일시(콘서트 티켓 예매 선공개 기능을 가정)(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            description = "상품 예약이 가능한 최초 일시(콘서트 티켓 예매 선공개 기능을 가정)(yyyy_MM_dd_'T'_HH_mm_ss_z)",
             required = true,
-            example = "2024_05_02_T_15_14_49_552_KST"
+            example = "2024_05_02_T_15_14_49_KST"
         )
         @JsonProperty("firstReservableDatetime")
         val firstReservableDatetime: String,
+        @Schema(
+            description = "상품 대여가 가능한 최초 일시(yyyy_MM_dd_'T'_HH_mm_ss_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_KST"
+        )
+        @JsonProperty("firstRentalDatetime")
+        val firstRentalDatetime: String,
+        @Schema(
+            description = "상품 대여가 가능한 마지막 일시(null 이라면 제한 없음)(yyyy_MM_dd_'T'_HH_mm_ss_z)",
+            required = false,
+            example = "2024_05_02_T_15_14_49_KST"
+        )
+        @JsonProperty("lastRentalDatetime")
+        val lastRentalDatetime: String?,
         @Schema(
             description = "예약 추가 할 수 있는 최소 시간 단위 (분)",
             required = true,
@@ -612,7 +406,7 @@ class RentalReservationAdminController(
         @JsonProperty("approvalDeadlineMinute")
         val approvalDeadlineMinute: Long,
         @Schema(
-            description = "고객이 예약 취소 가능한 기한 설정값(대여 시작일로부터 -N분이며, 그 결과가 관리자 승인 기한보다 커야함)",
+            description = "고객이 예약 취소 가능한 기한 설정값(대여 시작일로부터 -N분으로 계산됨)",
             required = true,
             example = "30"
         )
@@ -645,7 +439,7 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                                "1 : rentalProductUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -663,23 +457,23 @@ class RentalReservationAdminController(
         ]
     )
     @DeleteMapping(
-        path = ["/rentable-product-info/{rentableProductInfoUid}"],
+        path = ["/rental-product/{rentalProductUid}"],
         consumes = [MediaType.ALL_VALUE],
         produces = [MediaType.ALL_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun deleteRentableProductInfo(
+    fun deleteRentalProduct(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
-        @Parameter(name = "rentableProductInfoUid", description = "rentableProductInfo 고유값", example = "1")
-        @PathVariable("rentableProductInfoUid")
-        rentableProductInfoUid: Long
+        @Parameter(name = "rentalProductUid", description = "rentalProduct 고유값", example = "1")
+        @PathVariable("rentalProductUid")
+        rentalProductUid: Long
     ) {
-        service.deleteRentableProductInfo(httpServletResponse, authorization!!, rentableProductInfoUid)
+        service.deleteRentalProduct(httpServletResponse, authorization!!, rentalProductUid)
     }
 
 
@@ -704,7 +498,7 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                                "1 : rentalProductUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -722,33 +516,33 @@ class RentalReservationAdminController(
         ]
     )
     @PatchMapping(
-        path = ["/rentable-product-info/{rentableProductInfoUid}/reservable"],
+        path = ["/rental-product/{rentalProductUid}/reservable"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.ALL_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun patchRentableProductInfoReservable(
+    fun patchRentalProductReservable(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
-        @Parameter(name = "rentableProductInfoUid", description = "rentableProductInfo 고유값", example = "1")
-        @PathVariable("rentableProductInfoUid")
-        rentableProductInfoUid: Long,
+        @Parameter(name = "rentalProductUid", description = "rentableProductInfo 고유값", example = "1")
+        @PathVariable("rentalProductUid")
+        rentalProductUid: Long,
         @RequestBody
-        inputVo: PatchRentableProductInfoReservableInputVo
+        inputVo: PatchRentalProductReservableInputVo
     ) {
-        service.patchRentableProductInfoReservable(
+        service.patchRentalProductReservable(
             httpServletResponse,
             authorization!!,
-            rentableProductInfoUid,
+            rentalProductUid,
             inputVo
         )
     }
 
-    data class PatchRentableProductInfoReservableInputVo(
+    data class PatchRentalProductReservableInputVo(
         @Schema(
             description = "예약 가능 설정 (재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정)",
             required = true,
@@ -799,33 +593,33 @@ class RentalReservationAdminController(
         ]
     )
     @PatchMapping(
-        path = ["/rentable-product-info/{rentableProductInfoUid}/min-reservation-unit-count"],
+        path = ["/rental-product/{rentalProductUid}/min-reservation-unit-count"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.ALL_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun patchRentableProductInfoMinReservationUnitCount(
+    fun patchRentalProductMinReservationUnitCount(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
-        @Parameter(name = "rentableProductInfoUid", description = "rentableProductInfo 고유값", example = "1")
-        @PathVariable("rentableProductInfoUid")
-        rentableProductInfoUid: Long,
+        @Parameter(name = "rentalProductUid", description = "rentableProductInfo 고유값", example = "1")
+        @PathVariable("rentalProductUid")
+        rentalProductUid: Long,
         @RequestBody
-        inputVo: PatchRentableProductInfoMinReservationUnitCountInputVo
+        inputVo: PatchRentalProductMinReservationUnitCountInputVo
     ) {
-        service.patchRentableProductInfoMinReservationUnitCount(
+        service.patchRentalProductMinReservationUnitCount(
             httpServletResponse,
             authorization!!,
-            rentableProductInfoUid,
+            rentalProductUid,
             inputVo
         )
     }
 
-    data class PatchRentableProductInfoMinReservationUnitCountInputVo(
+    data class PatchRentalProductMinReservationUnitCountInputVo(
         @Schema(
             description = "단위 예약 시간을 대여일 기준에서 최소 몇번 추가 해야 하는지",
             required = true,
@@ -857,7 +651,7 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "1 : rentalProductUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : 최대 예약 횟수는 0보다 크며, 최소 예약 횟수보다 크거나 같아야 합니다.",
                         schema = Schema(type = "string")
                     )
@@ -876,33 +670,33 @@ class RentalReservationAdminController(
         ]
     )
     @PatchMapping(
-        path = ["/rentable-product-info/{rentableProductInfoUid}/max-reservation-unit-count"],
+        path = ["/rental-product/{rentalProductUid}/max-reservation-unit-count"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.ALL_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun patchRentableProductInfoMaxReservationUnitCount(
+    fun patchRentalProductMaxReservationUnitCount(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
-        @Parameter(name = "rentableProductInfoUid", description = "rentableProductInfo 고유값", example = "1")
-        @PathVariable("rentableProductInfoUid")
-        rentableProductInfoUid: Long,
+        @Parameter(name = "rentalProductUid", description = "rentableProductInfo 고유값", example = "1")
+        @PathVariable("rentalProductUid")
+        rentalProductUid: Long,
         @RequestBody
-        inputVo: PatchRentableProductInfoMaxReservationUnitCountInputVo
+        inputVo: PatchRentalProductMaxReservationUnitCountInputVo
     ) {
-        service.patchRentableProductInfoMaxReservationUnitCount(
+        service.patchRentalProductMaxReservationUnitCount(
             httpServletResponse,
             authorization!!,
-            rentableProductInfoUid,
+            rentalProductUid,
             inputVo
         )
     }
 
-    data class PatchRentableProductInfoMaxReservationUnitCountInputVo(
+    data class PatchRentalProductMaxReservationUnitCountInputVo(
         @Schema(
             description = "단위 예약 시간을 대여일 기준에서 최대 몇번 추가 해야 하는지",
             required = false,
@@ -916,8 +710,7 @@ class RentalReservationAdminController(
     // ----
     @Operation(
         summary = "대여 가능 상품 이미지 등록 <ADMIN>",
-        description = "대여 상품 이미지를 등록합니다.<br>" +
-                "이미지 관련 상품 정보 변경에는 update_version_seq 가 증가 하지 않습니다."
+        description = "대여 상품 이미지를 등록합니다."
     )
     @ApiResponses(
         value = [
@@ -934,7 +727,7 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                                "1 : rentalProductUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -952,37 +745,40 @@ class RentalReservationAdminController(
         ]
     )
     @PostMapping(
-        path = ["/rentable-product-image"],
+        path = ["/rental-product-image"],
         consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun postRentableProductImage(
+    fun postRentalProductImage(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
         @Parameter
-        inputVo: PostRentableProductImageInputVo
-    ): PostRentableProductImageOutputVo? {
-        return service.postRentableProductImage(httpServletResponse, authorization!!, inputVo)
+        inputVo: PostRentalProductImageInputVo
+    ): PostRentalProductImageOutputVo? {
+        return service.postRentalProductImage(httpServletResponse, authorization!!, inputVo)
     }
 
-    data class PostRentableProductImageInputVo(
-        @Schema(description = "rentableProductInfo 고유값", example = "1", required = true)
-        @JsonProperty("rentableProductInfoUid")
-        val rentableProductInfoUid: Long,
+    data class PostRentalProductImageInputVo(
+        @Schema(description = "rentalProduct 고유값", example = "1", required = true)
+        @JsonProperty("rentalProductUid")
+        val rentalProductUid: Long,
         @Schema(description = "고객에게 보일 상품 썸네일 이미지", required = true)
         @JsonProperty("thumbnailImage")
-        val thumbnailImage: MultipartFile
+        val thumbnailImage: MultipartFile,
+        @Schema(description = "이미지 가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)", required = true)
+        @JsonProperty("priority")
+        val priority: Int
     )
 
-    data class PostRentableProductImageOutputVo(
-        @Schema(description = "rentableProductImage 고유값", required = true, example = "1")
-        @JsonProperty("rentableProductImageUid")
-        val rentableProductImageUid: Long,
+    data class PostRentalProductImageOutputVo(
+        @Schema(description = "rentalProductImage 고유값", required = true, example = "1")
+        @JsonProperty("rentalProductImageUid")
+        val rentalProductImageUid: Long,
         @Schema(description = "생성된 이미지 다운로드 경로", required = true, example = "https://testimage.com/sample.jpg")
         @JsonProperty("productImageFullUrl")
         val productImageFullUrl: String
@@ -1022,9 +818,7 @@ class RentalReservationAdminController(
     // ----
     @Operation(
         summary = "대여 가능 상품 이미지 삭제 <ADMIN>",
-        description = "대여 상품 이미지를 삭제합니다.<br>" +
-                "상품 정보에 대표 이미지로 설정되어 있다면 대표 이미지 설정이 null 이 됩니다.<br>" +
-                "이미지 관련 상품 정보 변경에는 update_version_seq 가 증가 하지 않습니다."
+        description = "대여 상품 이미지를 삭제합니다."
     )
     @ApiResponses(
         value = [
@@ -1041,7 +835,7 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductImageUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                                "1 : rentalProductImageUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -1059,31 +853,31 @@ class RentalReservationAdminController(
         ]
     )
     @DeleteMapping(
-        path = ["/rentable-product-image/{rentableProductImageUid}"],
+        path = ["/rental-product-image/{rentalProductImageUid}"],
         consumes = [MediaType.ALL_VALUE],
         produces = [MediaType.ALL_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun deleteRentableProductImage(
+    fun deleteRentalProductImage(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
-        @Parameter(name = "rentableProductImageUid", description = "rentableProductImage 고유값", example = "1")
-        @PathVariable("rentableProductImageUid")
-        rentableProductImageUid: Long
+        @Parameter(name = "rentalProductImageUid", description = "rentalProductImage 고유값", example = "1")
+        @PathVariable("rentalProductImageUid")
+        rentalProductImageUid: Long
     ) {
-        service.deleteRentableProductImage(httpServletResponse, authorization!!, rentableProductImageUid)
+        service.deleteRentalProductImage(httpServletResponse, authorization!!, rentalProductImageUid)
     }
 
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 대표 상품 이미지 설정 수정 <ADMIN>",
-        description = "대여 가능 상품의 대표 상품 이미지 설정을 수정합니다.<br>" +
-                "이미지 관련 상품 정보 변경에는 update_version_seq 가 증가 하지 않습니다."
+        summary = "대여 가능 상품 이미지 가중치 수정 <ADMIN>",
+        description = "대여 가능 상품 이미지 가중치를 수정합니다.<br>" +
+                "update_version_seq 가 증가 하지 않습니다."
     )
     @ApiResponses(
         value = [
@@ -1100,8 +894,7 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : rentableProductImageUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                                "1 : rentalProductImageUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -1119,43 +912,43 @@ class RentalReservationAdminController(
         ]
     )
     @PatchMapping(
-        path = ["/rentable-product-info/{rentableProductInfoUid}/front-image"],
+        path = ["/rental-product-image/{rentalProductImageUid}/priority"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.ALL_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun patchRentableProductInfoFrontImage(
+    fun patchRentalProductImagePriority(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
-        @Parameter(name = "rentableProductInfoUid", description = "rentableProductInfo 고유값", example = "1")
-        @PathVariable("rentableProductInfoUid")
-        rentableProductInfoUid: Long,
+        @Parameter(name = "rentalProductImageUid", description = "rentalProductImage 고유값", example = "1")
+        @PathVariable("rentalProductImageUid")
+        rentalProductImageUid: Long,
         @RequestBody
-        inputVo: PatchRentableProductInfoFrontImageInputVo
+        inputVo: PatchRentalProductImagePriorityInputVo
     ) {
-        service.patchRentableProductInfoFrontImage(
+        service.patchRentalProductImagePriority(
             httpServletResponse,
             authorization!!,
-            rentableProductInfoUid,
+            rentalProductImageUid,
             inputVo
         )
     }
 
-    data class PatchRentableProductInfoFrontImageInputVo(
-        @Schema(description = "rentableProductImage 고유값 (null 이라면 대표 이미지를 설정하지 않음)", required = false, example = "1")
-        @JsonProperty("rentableProductImageUid")
-        val rentableProductImageUid: Long?
+    data class PatchRentalProductImagePriorityInputVo(
+        @Schema(description = "이미지 가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)", required = true)
+        @JsonProperty("priority")
+        val priority: Int
     )
 
 
     // ----
     @Operation(
-        summary = "예약 상품 재고 카테고리 정보 등록 <ADMIN>",
-        description = "예약 상품 재고의 카테고리 정보를 등록합니다."
+        summary = "예약 신청 승인 처리 <ADMIN>",
+        description = "예약 정보를 예약 승인 처리합니다."
     )
     @ApiResponses(
         value = [
@@ -1172,7 +965,11 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : parentRentableProductStockCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                                "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 예약 취소 상태입니다.<br>" +
+                                "3 : 예약 신청 거부 상태입니다.<br>" +
+                                "4 : 예약 승인 상태입니다.<br>" +
+                                "5 : 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일)",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -1190,882 +987,141 @@ class RentalReservationAdminController(
         ]
     )
     @PostMapping(
-        path = ["/rentable-product-stock-category"],
+        path = ["/rental-product-reservation/{rentalProductReservationUid}/approve"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun postRentableProductStockCategory(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @RequestBody
-        inputVo: PostRentableProductStockCategoryInputVo
-    ): PostRentableProductStockCategoryOutputVo? {
-        return service.postRentableProductStockCategory(
-            httpServletResponse,
-            authorization!!,
-            inputVo
-        )
-    }
-
-    data class PostRentableProductStockCategoryInputVo(
-        @Schema(description = "부모 카테고리 고유번호", required = false, example = "1")
-        @JsonProperty("parentRentableProductStockCategoryUid")
-        val parentRentableProductStockCategoryUid: Long?,
-        @Schema(description = "카테고리 이름", required = true, example = "유머")
-        @JsonProperty("categoryName")
-        val categoryName: String
-    )
-
-    data class PostRentableProductStockCategoryOutputVo(
-        @Schema(description = "rentableProductStockCategory 고유값", required = true, example = "1")
-        @JsonProperty("rentableProductStockCategoryUid")
-        val rentableProductStockCategoryUid: Long
-    )
-
-
-    // ----
-    @Operation(
-        summary = "예약 상품 재고 카테고리 정보 수정 <ADMIN>",
-        description = "예약 상품 재고의 카테고리 정보를 수정합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductStockCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "1 : parentRentableProductStockCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PutMapping(
-        path = ["/rentable-product-stock-category/{rentableProductStockCategoryUid}"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun putRentableProductStockCategory(
+    fun postReservationApprove(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
         @Parameter(
-            name = "rentableProductStockCategoryUid",
-            description = "rentableProductStockCategory 고유값",
+            name = "rentalProductReservationUid",
+            description = "rentalProductReservation 고유값",
             example = "1"
         )
-        @PathVariable("rentableProductStockCategoryUid")
-        rentableProductStockCategoryUid: Long,
+        @PathVariable("rentalProductReservationUid")
+        rentalProductReservationUid: Long,
         @RequestBody
-        inputVo: PutRentableProductStockCategoryInputVo
-    ) {
-        service.putRentableProductStockCategory(
+        inputVo: PostReservationApproveInputVo
+    ): PostReservationApproveOutputVo? {
+        return service.postReservationApprove(
             httpServletResponse,
             authorization!!,
-            rentableProductStockCategoryUid,
+            rentalProductReservationUid,
             inputVo
         )
     }
 
-    data class PutRentableProductStockCategoryInputVo(
-        @Schema(description = "부모 카테고리 고유번호", required = false, example = "1")
-        @JsonProperty("parentRentableProductStockCategoryUid")
-        val parentRentableProductStockCategoryUid: Long?,
-        @Schema(description = "카테고리 이름", required = true, example = "유머")
-        @JsonProperty("categoryName")
-        val categoryName: String
-    )
-
-
-    // ----
-    @Operation(
-        summary = "예약 상품 재고 카테고리 정보 삭제 <ADMIN>",
-        description = "예약 상품 재고의 카테고리 정보를 삭제합니다.<br>" +
-                "하위 카테고리들은 모두 자동 삭제되며, 예약 상품 재고 정보의 카테고리로 설정되어 있다면 null 로 재설정 됩니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductStockCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @DeleteMapping(
-        path = ["/rentable-product-stock-category/{rentableProductStockCategoryUid}"],
-        consumes = [MediaType.ALL_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun deleteRentableProductStockCategory(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(
-            name = "rentableProductStockCategoryUid",
-            description = "rentableProductStockCategory 고유값",
-            example = "1"
-        )
-        @PathVariable("rentableProductStockCategoryUid")
-        rentableProductStockCategoryUid: Long
-    ) {
-        service.deleteRentableProductStockCategory(
-            httpServletResponse,
-            authorization!!,
-            rentableProductStockCategoryUid
-        )
-    }
-
-
-    // ----
-    @Operation(
-        summary = "대여 가능 상품 재고 등록 <ADMIN>",
-        description = "대여 가능 상품에 속하는 상품 재고 정보를 등록합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : rentableProductStockCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PostMapping(
-        path = ["/rentable-product-stock-info"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun postRentableProductStockInfo(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @RequestBody
-        inputVo: PostRentableProductStockInfoInputVo
-    ): PostRentableProductStockInfoOutputVo? {
-        return service.postRentableProductStockInfo(
-            httpServletResponse,
-            authorization!!,
-            inputVo
-        )
-    }
-
-    data class PostRentableProductStockInfoInputVo(
-        @Schema(
-            description = "rentableProductInfo 고유값",
-            required = true,
-            example = "1"
-        )
-        @JsonProperty("rentableProductInfoUid")
-        val rentableProductInfoUid: Long,
-        @Schema(
-            description = "상품 재고 카테고리 고유값",
-            required = true,
-            example = "1"
-        )
-        @JsonProperty("rentableProductStockCategoryUid")
-        val rentableProductStockCategoryUid: Long?,
-        @Schema(
-            description = "대여 가능 상품 개별 설명",
-            required = true,
-            example = "상태 양호"
-        )
-        @JsonProperty("productDesc")
-        val productDesc: String,
-        @Schema(
-            description = "제품 대여(손님에게 제공)가 가능한 최초 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-            required = true,
-            example = "2024_05_02_T_15_14_49_552_KST"
-        )
-        @JsonProperty("firstRentableDatetime")
-        val firstRentableDatetime: String,
-        @Schema(
-            description = "제품 대여 마지막 일시 (yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, 이때가 대여 마지막 날, null 이라면 무기한)",
-            required = false,
-            example = "2024_05_02_T_15_14_49_552_KST"
-        )
-        @JsonProperty("lastRentableDatetime")
-        val lastRentableDatetime: String?,
-        @Schema(
-            description = "예약 가능 설정 (재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정)",
-            required = true,
-            example = "true"
-        )
-        @JsonProperty("nowReservable")
-        val nowReservable: Boolean
-    )
-
-    data class PostRentableProductStockInfoOutputVo(
-        @Schema(description = "rentableProductStockInfo 고유값", required = true, example = "1")
-        @JsonProperty("rentableProductStockInfoUid")
-        val rentableProductStockInfoUid: Long
-    )
-
-
-    // ----
-    @Operation(
-        summary = "대여 가능 상품 재고 삭제 <ADMIN>",
-        description = "대여 상품 재고를 삭제 처리 합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductStockInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @DeleteMapping(
-        path = ["/rentable-product-stock-info/{rentableProductStockInfoUid}"],
-        consumes = [MediaType.ALL_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun deleteRentableProductStockInfo(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(name = "rentableProductStockInfoUid", description = "rentableProductStockInfo 고유값", example = "1")
-        @PathVariable("rentableProductStockInfoUid")
-        rentableProductStockInfoUid: Long
-    ) {
-        service.deleteRentableProductStockInfo(httpServletResponse, authorization!!, rentableProductStockInfoUid)
-    }
-
-
-    // ----
-    @Operation(
-        summary = "대여 가능 상품 재고 수정 <ADMIN>",
-        description = "대여 가능 상품에 속하는 상품 재고 정보를 수정합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductStockInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "3 : rentableProductStockCategoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PutMapping(
-        path = ["/rentable-product-stock-info/{rentableProductStockInfoUid}"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun putRentableProductStockInfo(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(name = "rentableProductStockInfoUid", description = "rentableProductStockInfo 고유값", example = "1")
-        @PathVariable("rentableProductStockInfoUid")
-        rentableProductStockInfoUid: Long,
-        @RequestBody
-        inputVo: PutRentableProductStockInfoInputVo
-    ) {
-        service.putRentableProductStockInfo(
-            httpServletResponse,
-            authorization!!,
-            rentableProductStockInfoUid,
-            inputVo
-        )
-    }
-
-    data class PutRentableProductStockInfoInputVo(
-        @Schema(
-            description = "rentableProductInfo 고유값",
-            required = true,
-            example = "1"
-        )
-        @JsonProperty("rentableProductInfoUid")
-        val rentableProductInfoUid: Long,
-        @Schema(
-            description = "상품 재고 카테고리 고유값",
-            required = true,
-            example = "1"
-        )
-        @JsonProperty("rentableProductStockCategoryUid")
-        val rentableProductStockCategoryUid: Long?,
-        @Schema(
-            description = "대여 가능 상품 개별 설명",
-            required = true,
-            example = "상태 양호"
-        )
-        @JsonProperty("productDesc")
-        val productDesc: String,
-        @Schema(
-            description = "제품 대여(손님에게 제공)가 가능한 최초 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-            required = true,
-            example = "2024_05_02_T_15_14_49_552_KST"
-        )
-        @JsonProperty("firstRentableDatetime")
-        val firstRentableDatetime: String,
-        @Schema(
-            description = "제품 대여 마지막 일시 (yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, 이때가 대여 마지막 날)",
-            required = false,
-            example = "2024_05_02_T_15_14_49_552_KST"
-        )
-        @JsonProperty("lastRentableDatetime")
-        val lastRentableDatetime: String?,
-        @Schema(
-            description = "예약 가능 설정 (재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정)",
-            required = true,
-            example = "true"
-        )
-        @JsonProperty("nowReservable")
-        val nowReservable: Boolean
-    )
-
-
-    // ----
-    @Operation(
-        summary = "대여 가능 상품 재고 추가 예약 가능 설정 수정 <ADMIN>",
-        description = "대여 가능 상품 재고를 현 시간부로 예약 가능하게 할 것인지에 대한 스위치 플래그 수정"
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PatchMapping(
-        path = ["/rentable-product-stock-info/{rentableProductStockInfoUid}/reservable"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun patchRentableProductStockInfoReservable(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(name = "rentableProductStockInfoUid", description = "rentableProductStockInfo 고유값", example = "1")
-        @PathVariable("rentableProductStockInfoUid")
-        rentableProductStockInfoUid: Long,
-        @RequestBody
-        inputVo: PatchRentableProductStockInfoReservableInputVo
-    ) {
-        service.patchRentableProductStockInfoReservable(
-            httpServletResponse,
-            authorization!!,
-            rentableProductStockInfoUid,
-            inputVo
-        )
-    }
-
-    data class PatchRentableProductStockInfoReservableInputVo(
-        @Schema(
-            description = "예약 가능 설정 (재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정)",
-            required = true,
-            example = "true"
-        )
-        @JsonProperty("nowReservable")
-        val nowReservable: Boolean
-    )
-
-
-    // ----
-    @Operation(
-        summary = "대여 가능 상품 재고 이미지 등록 <ADMIN>",
-        description = "대여 상품 재고 이미지를 등록합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductStockInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PostMapping(
-        path = ["/rentable-product-stock-image"],
-        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun postRentableProductStockImage(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter
-        inputVo: PostRentableProductStockImageInputVo
-    ): PostRentableProductStockImageOutputVo? {
-        return service.postRentableProductStockImage(httpServletResponse, authorization!!, inputVo)
-    }
-
-    data class PostRentableProductStockImageInputVo(
-        @Schema(description = "rentableProductStockInfo 고유값", example = "1", required = true)
-        @JsonProperty("rentableProductInfoStockUid")
-        val rentableProductInfoStockUid: Long,
-        @Schema(description = "고객에게 보일 상품 썸네일 이미지", required = true)
-        @JsonProperty("thumbnailImage")
-        val thumbnailImage: MultipartFile
-    )
-
-    data class PostRentableProductStockImageOutputVo(
-        @Schema(description = "rentableProductStockImage 고유값", required = true, example = "1")
-        @JsonProperty("rentableProductStockImageUid")
-        val rentableProductStockImageUid: Long,
-        @Schema(description = "생성된 이미지 다운로드 경로", required = true, example = "https://testimage.com/sample.jpg")
-        @JsonProperty("productStockImageFullUrl")
-        val productStockImageFullUrl: String
-    )
-
-
-    // ----
-    @Operation(
-        summary = "대여 가능 상품 재고 이미지 파일 다운받기",
-        description = "대여 가능 상품 재고 이미지를 by_product_files 위치에 저장했을 때 파일을 가져오기 위한 API"
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            )
-        ]
-    )
-    @GetMapping(
-        path = ["/product-stock-image/{fileName}"],
-        consumes = [MediaType.ALL_VALUE],
-        produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE]
-    )
-    @ResponseBody
-    fun getProductStockImageFile(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(name = "fileName", description = "by_product_files 폴더 안의 파일명", example = "test.jpg")
-        @PathVariable("fileName")
-        fileName: String
-    ): ResponseEntity<Resource>? {
-        return service.getProductStockImageFile(httpServletResponse, fileName)
-    }
-
-
-    // ----
-    @Operation(
-        summary = "대여 가능 상품 재고 이미지 삭제 <ADMIN>",
-        description = "대여 상품 재고 이미지를 삭제합니다.<br>" +
-                "상품 정보에 대표 이미지로 설정되어 있다면 대표 이미지 설정이 null 이 됩니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductImageUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @DeleteMapping(
-        path = ["/rentable-product-stock-image/{rentableProductStockImageUid}"],
-        consumes = [MediaType.ALL_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun deleteRentableProductStockImage(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(name = "rentableProductStockImageUid", description = "rentableProductStockImage 고유값", example = "1")
-        @PathVariable("rentableProductStockImageUid")
-        rentableProductStockImageUid: Long
-    ) {
-        service.deleteRentableProductStockImage(httpServletResponse, authorization!!, rentableProductStockImageUid)
-    }
-
-
-    // ----
-    @Operation(
-        summary = "대여 가능 상품 대표 상품 재고 이미지 설정 수정 <ADMIN>",
-        description = "대여 가능 상품 재고의 대표 상품 이미지 설정을 수정합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductStockInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : rentableProductStockImageUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PatchMapping(
-        path = ["/rentable-product-stock-info/{rentableProductStockInfoUid}/front-image"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun patchRentableProductStockInfoFrontImage(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(name = "rentableProductStockInfoUid", description = "rentableProductStockInfo 고유값", example = "1")
-        @PathVariable("rentableProductStockInfoUid")
-        rentableProductStockInfoUid: Long,
-        @RequestBody
-        inputVo: PatchRentableProductStockInfoFrontImageInputVo
-    ) {
-        service.patchRentableProductStockInfoFrontImage(
-            httpServletResponse,
-            authorization!!,
-            rentableProductStockInfoUid,
-            inputVo
-        )
-    }
-
-    data class PatchRentableProductStockInfoFrontImageInputVo(
-        @Schema(
-            description = "rentableProductStockImage 고유값 (null 이라면 대표 이미지를 설정하지 않음)",
-            required = false,
-            example = "1"
-        )
-        @JsonProperty("rentableProductStockImageUid")
-        val rentableProductStockImageUid: Long?
-    )
-
-
-    // ----
-    @Operation(
-        summary = "대여 가능 상품 예약 정보의 예약 승인 처리 <ADMIN>",
-        description = "대여 가능 상품 예약 정보를 예약 승인 처리합니다.<br>" +
-                "상태 변경 철회 불가, 설명 수정은 가능<br>" +
-                "rentable_product_reservation_state_change_history 에 예약 승인 히스토리를 추가합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 예약 승인 기한을 넘겼습니다.<br>" +
-                                "3 : 예약 취소 승인 내역 있습니다.<br>" +
-                                "4 : 예약 신청 거부 내역 있습니다.<br>" +
-                                "5 : 예약 승인 내역 있습니다.<br>" +
-                                "6 : 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일)",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PostMapping(
-        path = ["/rentable-product-reservation-info/{rentableProductReservationInfoUid}/reservation-approve"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun postRentableProductReservationInfoReservationApprove(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(
-            name = "rentableProductReservationInfoUid",
-            description = "rentableProductReservationInfo 고유값",
-            example = "1"
-        )
-        @PathVariable("rentableProductReservationInfoUid")
-        rentableProductReservationInfoUid: Long,
-        @RequestBody
-        inputVo: PostRentableProductReservationInfoReservationApproveInputVo
-    ): PostRentableProductReservationInfoReservationApproveOutputVo? {
-        return service.postRentableProductReservationInfoReservationApprove(
-            httpServletResponse,
-            authorization!!,
-            rentableProductReservationInfoUid,
-            inputVo
-        )
-    }
-
-    data class PostRentableProductReservationInfoReservationApproveInputVo(
+    data class PostReservationApproveInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
         val stateChangeDesc: String
     )
 
-    data class PostRentableProductReservationInfoReservationApproveOutputVo(
-        @Schema(description = "reservationStateChangeHistory 고유값", required = true, example = "1")
-        @JsonProperty("reservationStateChangeHistoryUid")
-        val reservationStateChangeHistoryUid: Long
+    data class PostReservationApproveOutputVo(
+        @Schema(description = "reservationHistory 고유값", required = true, example = "1")
+        @JsonProperty("reservationHistoryUid")
+        val reservationHistoryUid: Long
     )
 
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 예약 정보의 예약 거부 처리 <ADMIN>",
+        summary = "예약 신청 승인 취소 <ADMIN>",
+        description = "예약 정보를 예약 승인츨 취소합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 예약 취소 상태입니다.<br>" +
+                                "3 : 예약 신청 거부 상태입니다.<br>" +
+                                "4 : 예약 승인 취소 상태입니다.<br>" +
+                                "5 : 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일)<br>" +
+                                "6 : 예약 승인/거부 기한이 지났습니다.<br>" +
+                                "7 : 예약 승인 내역이 없습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/rental-product-reservation/{rentalProductReservationUid}/approve-cancel"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun postReservationApproveCancel(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(
+            name = "rentalProductReservationUid",
+            description = "rentalProductReservation 고유값",
+            example = "1"
+        )
+        @PathVariable("rentalProductReservationUid")
+        rentalProductReservationUid: Long,
+        @RequestBody
+        inputVo: PostReservationApproveCancelInputVo
+    ): PostReservationApproveCancelOutputVo? {
+        return service.postReservationApproveCancel(
+            httpServletResponse,
+            authorization!!,
+            rentalProductReservationUid,
+            inputVo
+        )
+    }
+
+    data class PostReservationApproveCancelInputVo(
+        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
+        @JsonProperty("stateChangeDesc")
+        val stateChangeDesc: String
+    )
+
+    data class PostReservationApproveCancelOutputVo(
+        @Schema(description = "reservationHistory 고유값", required = true, example = "1")
+        @JsonProperty("reservationHistoryUid")
+        val reservationHistoryUid: Long
+    )
+
+
+    // ----
+    @Operation(
+        summary = "예약 신청 거부 처리 <ADMIN>",
         description = "대여 가능 상품 예약 정보를 예약 거부 처리합니다.<br>" +
-                "상태 변경 철회 불가, 설명 수정은 가능<br>" +
-                "rentable_product_reservation_state_change_history 에 예약 거부 히스토리를 추가합니다."
+                "상태 변경 철회 불가, 설명 수정은 가능"
     )
     @ApiResponses(
         value = [
@@ -2082,7 +1138,7 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : 예약 승인 기한을 넘겼습니다.<br>" +
                                 "3 : 예약 취소 승인 내역 있습니다.<br>" +
                                 "4 : 예약 신청 거부 내역 있습니다.<br>" +
@@ -2105,55 +1161,54 @@ class RentalReservationAdminController(
         ]
     )
     @PostMapping(
-        path = ["/rentable-product-reservation-info/{rentableProductReservationInfoUid}/reservation-deny"],
+        path = ["/rental-product-reservation/{rentalProductReservationUid}/reject"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun postRentableProductReservationInfoReservationDeny(
+    fun postReservationReject(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
         @Parameter(
-            name = "rentableProductReservationInfoUid",
+            name = "rentalProductReservationUid",
             description = "rentableProductReservationInfo 고유값",
             example = "1"
         )
-        @PathVariable("rentableProductReservationInfoUid")
-        rentableProductReservationInfoUid: Long,
+        @PathVariable("rentalProductReservationUid")
+        rentalProductReservationUid: Long,
         @RequestBody
-        inputVo: PostRentableProductReservationInfoReservationDenyInputVo
-    ): PostRentableProductReservationInfoReservationDenyOutputVo? {
-        return service.postRentableProductReservationInfoReservationDeny(
+        inputVo: PostReservationRejectInputVo
+    ): PostReservationRejectOutputVo? {
+        return service.postReservationReject(
             httpServletResponse,
             authorization!!,
-            rentableProductReservationInfoUid,
+            rentalProductReservationUid,
             inputVo
         )
     }
 
-    data class PostRentableProductReservationInfoReservationDenyInputVo(
+    data class PostReservationRejectInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
         val stateChangeDesc: String
     )
 
-    data class PostRentableProductReservationInfoReservationDenyOutputVo(
-        @Schema(description = "reservationStateChangeHistory 고유값", required = true, example = "1")
-        @JsonProperty("reservationStateChangeHistoryUid")
-        val reservationStateChangeHistoryUid: Long
+    data class PostReservationRejectOutputVo(
+        @Schema(description = "reservationHistory 고유값", required = true, example = "1")
+        @JsonProperty("reservationHistoryUid")
+        val reservationHistoryUid: Long
     )
 
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 예약 정보의 예약 취소 승인 처리 <ADMIN>",
+        summary = "예약 취소 승인 처리 <ADMIN>",
         description = "대여 가능 상품 예약 정보를 예약 취소 승인 처리합니다.<br>" +
-                "상태 변경 철회 불가, 설명 수정은 가능<br>" +
-                "rentable_product_reservation_state_change_history 에 예약 취소 승인 히스토리를 추가합니다."
+                "상태 변경 철회 불가, 설명 수정은 가능"
     )
     @ApiResponses(
         value = [
@@ -2170,7 +1225,7 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : 대여 시작 기한 초과하였습니다.<br>" +
                                 "3 : 예약 취소 승인 내역 있습니다.<br>" +
                                 "4 : 예약 신청 거부 내역 있습니다.<br>" +
@@ -2194,52 +1249,52 @@ class RentalReservationAdminController(
         ]
     )
     @PostMapping(
-        path = ["/rentable-product-reservation-info/{rentableProductReservationInfoUid}/reservation-cancel-approve"],
+        path = ["/rental-product-reservation/{rentalProductReservationUid}/cancel-approve"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun postRentableProductReservationInfoReservationCancelApprove(
+    fun postReservationCancelApprove(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
         @Parameter(
-            name = "rentableProductReservationInfoUid",
+            name = "rentalProductReservationUid",
             description = "rentableProductReservationInfo 고유값",
             example = "1"
         )
-        @PathVariable("rentableProductReservationInfoUid")
-        rentableProductReservationInfoUid: Long,
+        @PathVariable("rentalProductReservationUid")
+        rentalProductReservationUid: Long,
         @RequestBody
-        inputVo: PostRentableProductReservationInfoReservationCancelApproveInputVo
-    ): PostRentableProductReservationInfoReservationCancelApproveOutputVo? {
-        return service.postRentableProductReservationInfoReservationCancelApprove(
+        inputVo: PostReservationCancelApproveInputVo
+    ): PostReservationCancelApproveOutputVo? {
+        return service.postReservationCancelApprove(
             httpServletResponse,
             authorization!!,
-            rentableProductReservationInfoUid,
+            rentalProductReservationUid,
             inputVo
         )
     }
 
-    data class PostRentableProductReservationInfoReservationCancelApproveInputVo(
+    data class PostReservationCancelApproveInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
         val stateChangeDesc: String
     )
 
-    data class PostRentableProductReservationInfoReservationCancelApproveOutputVo(
-        @Schema(description = "reservationStateChangeHistory 고유값", required = true, example = "1")
-        @JsonProperty("reservationStateChangeHistoryUid")
-        val reservationStateChangeHistoryUid: Long
+    data class PostReservationCancelApproveOutputVo(
+        @Schema(description = "reservationHistory 고유값", required = true, example = "1")
+        @JsonProperty("reservationHistoryUid")
+        val reservationHistoryUid: Long
     )
 
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 예약 정보의 예약 취소 거부 처리 <ADMIN>",
+        summary = "예약 취소 거부 처리 <ADMIN>",
         description = "대여 가능 상품 예약 정보를 예약 취소 거부 처리합니다.<br>" +
                 "상태 변경 철회 불가, 설명 수정은 가능<br>" +
                 "rentable_product_reservation_state_change_history 에 예약 취소 거부 히스토리를 추가합니다."
@@ -2259,7 +1314,7 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : 대여 시작 시간을 초과하였습니다.<br>" +
                                 "3 : 예약 취소 승인 내역 있습니다.<br>" +
                                 "4 : 예약 신청 거부 내역 있습니다.<br>" +
@@ -2283,54 +1338,53 @@ class RentalReservationAdminController(
         ]
     )
     @PostMapping(
-        path = ["/rentable-product-reservation-info/{rentableProductReservationInfoUid}/reservation-cancel-deny"],
+        path = ["/rental-product-reservation/{rentalProductReservationUid}/cancel-reject"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun postRentableProductReservationInfoReservationCancelDeny(
+    fun postReservationCancelReject(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
         @Parameter(
-            name = "rentableProductReservationInfoUid",
+            name = "rentalProductReservationUid",
             description = "rentableProductReservationInfo 고유값",
             example = "1"
         )
-        @PathVariable("rentableProductReservationInfoUid")
-        rentableProductReservationInfoUid: Long,
+        @PathVariable("rentalProductReservationUid")
+        rentalProductReservationUid: Long,
         @RequestBody
-        inputVo: PostRentableProductReservationInfoReservationCancelDenyInputVo
-    ): PostRentableProductReservationInfoReservationCancelDenyOutputVo? {
-        return service.postRentableProductReservationInfoReservationCancelDeny(
+        inputVo: PostReservationCancelRejectInputVo
+    ): PostReservationCancelRejectOutputVo? {
+        return service.postReservationCancelReject(
             httpServletResponse,
             authorization!!,
-            rentableProductReservationInfoUid,
+            rentalProductReservationUid,
             inputVo
         )
     }
 
-    data class PostRentableProductReservationInfoReservationCancelDenyInputVo(
+    data class PostReservationCancelRejectInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
         val stateChangeDesc: String
     )
 
-    data class PostRentableProductReservationInfoReservationCancelDenyOutputVo(
-        @Schema(description = "reservationStateChangeHistory 고유값", required = true, example = "1")
-        @JsonProperty("reservationStateChangeHistoryUid")
-        val reservationStateChangeHistoryUid: Long
+    data class PostReservationCancelRejectOutputVo(
+        @Schema(description = "reservationHistory 고유값", required = true, example = "1")
+        @JsonProperty("reservationHistoryUid")
+        val reservationHistoryUid: Long
     )
 
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 예약 정보의 결제 확인 처리 <ADMIN>",
-        description = "대여 가능 상품 예약 정보를 결제 확인 처리합니다.<br>" +
-                "rentable_product_reservation_state_change_history 에 결제 확인 히스토리를 추가합니다."
+        summary = "결제 확인 처리 <ADMIN>",
+        description = "대여 가능 상품 예약 정보를 결제 확인 처리합니다."
     )
     @ApiResponses(
         value = [
@@ -2347,7 +1401,7 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : 결제 확인 내역이 존재합니다.<br>" +
                                 "3 : 결제 확인 가능 기한을 초과하였습니다.",
                         schema = Schema(type = "string")
@@ -2367,7 +1421,7 @@ class RentalReservationAdminController(
         ]
     )
     @PostMapping(
-        path = ["/rentable-product-reservation-info/{rentableProductReservationInfoUid}/payment-complete"],
+        path = ["/rental-product-reservation/{rentalProductReservationUid}/payment-complete"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
@@ -2380,19 +1434,19 @@ class RentalReservationAdminController(
         @RequestHeader("Authorization")
         authorization: String?,
         @Parameter(
-            name = "rentableProductReservationInfoUid",
+            name = "rentalProductReservationUid",
             description = "rentableProductReservationInfo 고유값",
             example = "1"
         )
-        @PathVariable("rentableProductReservationInfoUid")
-        rentableProductReservationInfoUid: Long,
+        @PathVariable("rentalProductReservationUid")
+        rentalProductReservationUid: Long,
         @RequestBody
         inputVo: PostRentableProductReservationInfoPaymentCompleteInputVo
     ): PostRentableProductReservationInfoPaymentCompleteOutputVo? {
         return service.postRentableProductReservationInfoPaymentComplete(
             httpServletResponse,
             authorization!!,
-            rentableProductReservationInfoUid,
+            rentalProductReservationUid,
             inputVo
         )
     }
@@ -2404,17 +1458,17 @@ class RentalReservationAdminController(
     )
 
     data class PostRentableProductReservationInfoPaymentCompleteOutputVo(
-        @Schema(description = "reservationStateChangeHistory 고유값", required = true, example = "1")
-        @JsonProperty("reservationStateChangeHistoryUid")
-        val reservationStateChangeHistoryUid: Long
+        @Schema(description = "reservationHistory 고유값", required = true, example = "1")
+        @JsonProperty("reservationHistoryUid")
+        val reservationHistoryUid: Long
     )
 
 
     // ----
     @Operation(
-        summary = "대여 가능 상품 예약 정보의 환불 완료 처리 <ADMIN>",
-        description = "대여 가능 상품 예약 정보를 환불 완료 처리합니다.<br>" +
-                "rentable_product_reservation_state_change_history 에 결제 확인 히스토리를 추가합니다."
+        summary = "상품 반납 확인 처리 <ADMIN>",
+        description = "개별 상품에 대해 반납 확인 처리를 합니다.<br>" +
+                "상품 준비시간 설정은 독립적이기에 영향을 받지 않습니다."
     )
     @ApiResponses(
         value = [
@@ -2431,11 +1485,11 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 결제 대기 상태입니다.<br>" +
-                                "3 : 결제 확인 내역이 없습니다.<br>" +
-                                "4 : 예약 취소 승인 내역이 없고 예약 신청 거부 내역이 없습니다.<br>" +
-                                "5 : 이미 환불되었습니다.",
+                                "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 예약 거부 상태<br>" +
+                                "3 : 조기 반납 신고 상태가 아니고(내역이 없거나 취소 상태), 상품 반납일도 안됨<br>" +
+                                "4 : 반납 확인 상태입니다.<br>" +
+                                "5 : 결제 확인 완료 아님 = 대여 진행 상태가 아님",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -2453,46 +1507,300 @@ class RentalReservationAdminController(
         ]
     )
     @PostMapping(
-        path = ["/rentable-product-reservation-info/{rentableProductReservationInfoUid}/refund-complete"],
+        path = ["/rental-product-reservation/{rentalProductReservationUid}/return-check"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
     @ResponseBody
-    fun postRentableProductReservationInfoRefundComplete(
+    fun postRentableProductStockReservationInfoReturnCheck(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @Parameter(hidden = true)
         @RequestHeader("Authorization")
         authorization: String?,
         @Parameter(
-            name = "rentableProductReservationInfoUid",
-            description = "rentableProductReservationInfo 고유값",
+            name = "rentalProductReservationUid",
+            description = "rentalProductReservation 고유값",
             example = "1"
         )
-        @PathVariable("rentableProductReservationInfoUid")
-        rentableProductReservationInfoUid: Long,
+        @PathVariable("rentalProductReservationUid")
+        rentalProductReservationUid: Long,
         @RequestBody
-        inputVo: PostRentableProductReservationInfoRefundCompleteInputVo
-    ): PostRentableProductReservationInfoRefundCompleteOutputVo? {
-        return service.postRentableProductReservationInfoRefundComplete(
+        inputVo: PostRentableProductStockReservationInfoReturnCheckInputVo
+    ): PostRentableProductStockReservationInfoReturnCheckOutputVo? {
+        return service.postRentableProductStockReservationInfoReturnCheck(
             httpServletResponse,
             authorization!!,
-            rentableProductReservationInfoUid,
+            rentalProductReservationUid,
             inputVo
         )
     }
 
-    data class PostRentableProductReservationInfoRefundCompleteInputVo(
+    data class PostRentableProductStockReservationInfoReturnCheckInputVo(
         @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
         @JsonProperty("stateChangeDesc")
         val stateChangeDesc: String
     )
 
-    data class PostRentableProductReservationInfoRefundCompleteOutputVo(
-        @Schema(description = "reservationStateChangeHistory 고유값", required = true, example = "1")
-        @JsonProperty("reservationStateChangeHistoryUid")
-        val reservationStateChangeHistoryUid: Long
+    data class PostRentableProductStockReservationInfoReturnCheckOutputVo(
+        @Schema(description = "reservationHistory 고유값", required = true, example = "1")
+        @JsonProperty("reservationHistoryUid")
+        val reservationHistoryUid: Long
+    )
+
+
+    // ----
+    @Operation(
+        summary = "상품 준비 시간 설정 <ADMIN>",
+        description = "개별 상품에 대해 준비 완료 일시를 설정 합니다.<br>" +
+                "readyDatetime 변수를 미래로 설정하는 식으로 미리 준비 설정을 할 수도 있습니다.<br>" +
+                "다른 모든 상태 정보에 앞서며, 연체 처리, 손망실 처리를 하면 이 설정이 지워집니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PatchMapping(
+        path = ["/rental-product-reservation/{rentalProductReservationUid}/ready"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun patchRentableProductStockReservationInfoReady(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(
+            name = "rentalProductReservationUid",
+            description = "rentalProductReservation 고유값",
+            example = "1"
+        )
+        @PathVariable("rentalProductReservationUid")
+        rentalProductReservationUid: Long,
+        @RequestBody
+        inputVo: PatchRentableProductStockReservationInfoReadyInputVo
+    ) {
+        service.patchRentableProductStockReservationInfoReady(
+            httpServletResponse,
+            authorization!!,
+            rentalProductReservationUid,
+            inputVo
+        )
+    }
+
+    data class PatchRentableProductStockReservationInfoReadyInputVo(
+        @Schema(
+            description = "상품 준비 일시(yyyy_MM_dd_'T'_HH_mm_ss_z, null 이라면 설정 해제)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_KST"
+        )
+        @JsonProperty("readyDatetime")
+        val readyDatetime: String?
+    )
+
+
+    // ----
+    @Operation(
+        summary = "상품 연체 상태 설정 처리 <ADMIN>",
+        description = "개별 상품에 대해 연체 상태로 변경 처리를 합니다.<br>" +
+                "연체 상태가 되어도 기존 상품 준비일은 변경 없습니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 예약 거부 상태<br>" +
+                                "3 : 상품 반납일이 도래하지 않았습니다.<br>" +
+                                "4 : 이미 연체 상태입니다.<br>" +
+                                "5 : 이미 반납 확인을 한 상태입니다.<br>" +
+                                "6 : 결제 확인 완료 아님 = 대여 진행 상태가 아님",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/rental-product-reservation/{rentalProductReservationUid}/overdue"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun postRentableProductStockReservationInfoOverdue(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(
+            name = "rentalProductReservationUid",
+            description = "rentalProductReservation 고유값",
+            example = "1"
+        )
+        @PathVariable("rentalProductReservationUid")
+        rentalProductReservationUid: Long,
+        @RequestBody
+        inputVo: PostRentableProductStockReservationInfoOverdueInputVo
+    ): PostRentableProductStockReservationInfoOverdueOutputVo? {
+        return service.postRentableProductStockReservationInfoOverdue(
+            httpServletResponse,
+            authorization!!,
+            rentalProductReservationUid,
+            inputVo
+        )
+    }
+
+    data class PostRentableProductStockReservationInfoOverdueInputVo(
+        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
+        @JsonProperty("stateChangeDesc")
+        val stateChangeDesc: String
+    )
+
+    data class PostRentableProductStockReservationInfoOverdueOutputVo(
+        @Schema(description = "reservationHistory 고유값", required = true, example = "1")
+        @JsonProperty("reservationHistoryUid")
+        val reservationHistoryUid: Long
+    )
+
+
+    // ----
+    @Operation(
+        summary = "상품 연체 상태 설정 취소 처리 <ADMIN>",
+        description = "개별 상품에 대해 연체 상태 변경 취소 처리를 합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 예약 거부 상태<br>" +
+
+                                "3 : 연체 상태 설정 내역이 없습니다.<br>" +
+                                "4 : 연제 상태 변경 취소 상태입니다.<br>" +
+                                "5 : 결제 확인 완료 아님 = 대여 진행 상태가 아님",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                content = [Content()],
+                description = "인가되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/rental-product-reservation/{rentalProductReservationUid}/overdue-cancel"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
+    @ResponseBody
+    fun postRentableProductStockReservationInfoOverdueCancel(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(
+            name = "rentalProductReservationUid",
+            description = "rentalProductReservation 고유값",
+            example = "1"
+        )
+        @PathVariable("rentalProductReservationUid")
+        rentalProductReservationUid: Long,
+        @RequestBody
+        inputVo: PostRentableProductStockReservationInfoOverdueCancelInputVo
+    ): PostRentableProductStockReservationInfoOverdueCancelOutputVo? {
+        return service.postRentableProductStockReservationInfoOverdueCancel(
+            httpServletResponse,
+            authorization!!,
+            rentalProductReservationUid,
+            inputVo
+        )
+    }
+
+    data class PostRentableProductStockReservationInfoOverdueCancelInputVo(
+        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
+        @JsonProperty("stateChangeDesc")
+        val stateChangeDesc: String
+    )
+
+    data class PostRentableProductStockReservationInfoOverdueCancelOutputVo(
+        @Schema(description = "reservationHistory 고유값", required = true, example = "1")
+        @JsonProperty("reservationHistoryUid")
+        val reservationHistoryUid: Long
     )
 
 
@@ -2517,7 +1825,7 @@ class RentalReservationAdminController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : reservationStateChangeHistoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                                "1 : reservationHistoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -2535,7 +1843,7 @@ class RentalReservationAdminController(
         ]
     )
     @PatchMapping(
-        path = ["/reservation-state-change-history/{reservationStateChangeHistoryUid}/state-change-desc"],
+        path = ["/reservation-history/{reservationHistoryUid}/history-desc"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.ALL_VALUE]
     )
@@ -2548,696 +1856,38 @@ class RentalReservationAdminController(
         @RequestHeader("Authorization")
         authorization: String?,
         @Parameter(
-            name = "reservationStateChangeHistoryUid",
-            description = "reservationStateChangeHistory 고유값",
+            name = "reservationHistoryUid",
+            description = "reservationHistory 고유값",
             example = "1"
         )
-        @PathVariable("reservationStateChangeHistoryUid")
-        reservationStateChangeHistoryUid: Long,
+        @PathVariable("reservationHistoryUid")
+        reservationHistoryUid: Long,
         @RequestBody
         inputVo: PatchReservationStateChangeHistoryStateChangeDescInputVo
     ) {
         service.patchReservationStateChangeHistoryStateChangeDesc(
             httpServletResponse,
             authorization!!,
-            reservationStateChangeHistoryUid,
+            reservationHistoryUid,
             inputVo
         )
     }
 
     data class PatchReservationStateChangeHistoryStateChangeDescInputVo(
-        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
-        @JsonProperty("stateChangeDesc")
-        val stateChangeDesc: String
+        @Schema(description = "히스토리 상세 설명", required = true, example = "이상무")
+        @JsonProperty("historyDesc")
+        val historyDesc: String
     )
 
+    // todo 결제 확인 취소
+    //     예약 연장 승인
+    //     환불 처리
+    //     손망실 설정 / 취소
 
-    // ----
-    @Operation(
-        summary = "개별 상품 반납 확인 <ADMIN>",
-        description = "개별 상품에 대해 반납 확인 처리를 합니다.<br>" +
-                "상품 준비시간 설정은 독립적이기에 취소되지 않습니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 조기 반납 신고 상태가 아니고(내역이 없거나 취소 상태), 상품 반납일도 안됨<br>" +
-                                "3 : 반납 확인 상태입니다.<br>" +
-                                "4 : 결제 확인 완료 아님 || 예약 거부 상태 = 대여 진행 상태가 아님",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PostMapping(
-        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/return-check"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun postRentableProductStockReservationInfoReturnCheck(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(
-            name = "rentableProductStockReservationInfoUid",
-            description = "rentableProductStockReservationInfo 고유값",
-            example = "1"
-        )
-        @PathVariable("rentableProductStockReservationInfoUid")
-        rentableProductStockReservationInfoUid: Long,
-        @RequestBody
-        inputVo: PostRentableProductStockReservationInfoReturnCheckInputVo
-    ): PostRentableProductStockReservationInfoReturnCheckOutputVo? {
-        return service.postRentableProductStockReservationInfoReturnCheck(
-            httpServletResponse,
-            authorization!!,
-            rentableProductStockReservationInfoUid,
-            inputVo
-        )
-    }
+    // todo : 예약 취소 신청
+    //    상품 조기 반납 신고
+    //    상품 조기 반납 취소
+    //    예약 연장 신청
 
-    data class PostRentableProductStockReservationInfoReturnCheckInputVo(
-        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
-        @JsonProperty("stateChangeDesc")
-        val stateChangeDesc: String
-    )
-
-    data class PostRentableProductStockReservationInfoReturnCheckOutputVo(
-        @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
-        @JsonProperty("stockReservationStateChangeHistoryUid")
-        val stockReservationStateChangeHistoryUid: Long
-    )
-
-
-    // ----
-    @Operation(
-        summary = "개별 상품 반납 확인 취소 <ADMIN>",
-        description = "개별 상품에 대해 반납 확인 취소 처리를 합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 상품의 조기 반납 신고 내역도 없고, 상품 반납일도 도래하지 않았습니다.<br>" +
-                                "3 : 이미 반납 확인 취소 처리되었습니다.<br>" +
-                                "4 : 결제 확인 완료 아님 || 예약 거부 상태 = 대여 진행 상태가 아님",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PostMapping(
-        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/return-check-cancel"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun postRentableProductStockReservationInfoReturnCheckCancel(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(
-            name = "rentableProductStockReservationInfoUid",
-            description = "rentableProductStockReservationInfo 고유값",
-            example = "1"
-        )
-        @PathVariable("rentableProductStockReservationInfoUid")
-        rentableProductStockReservationInfoUid: Long,
-        @RequestBody
-        inputVo: PostRentableProductStockReservationInfoReturnCheckCancelInputVo
-    ): PostRentableProductStockReservationInfoReturnCheckCancelOutputVo? {
-        return service.postRentableProductStockReservationInfoReturnCheckCancel(
-            httpServletResponse,
-            authorization!!,
-            rentableProductStockReservationInfoUid,
-            inputVo
-        )
-    }
-
-    data class PostRentableProductStockReservationInfoReturnCheckCancelInputVo(
-        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
-        @JsonProperty("stateChangeDesc")
-        val stateChangeDesc: String
-    )
-
-    data class PostRentableProductStockReservationInfoReturnCheckCancelOutputVo(
-        @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
-        @JsonProperty("stockReservationStateChangeHistoryUid")
-        val stockReservationStateChangeHistoryUid: Long
-    )
-
-
-    // ----
-    @Operation(
-        summary = "개별 상품 준비 완료 일시 설정 <ADMIN>",
-        description = "개별 상품에 대해 준비 완료 일시를 설정 합니다.<br>" +
-                "readyDatetime 변수를 미래로 설정하는 식으로 미리 준비 설정을 할 수도 있습니다.<br>" +
-                "다른 모든 상태 정보에 앞서며, 연체 처리, 손망실 처리를 하면 이 설정이 지워집니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 해당 상품이 다른 예약을 진행중입니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PatchMapping(
-        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/ready"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun patchRentableProductStockReservationInfoReady(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(
-            name = "rentableProductStockReservationInfoUid",
-            description = "rentableProductStockReservationInfo 고유값",
-            example = "1"
-        )
-        @PathVariable("rentableProductStockReservationInfoUid")
-        rentableProductStockReservationInfoUid: Long,
-        @RequestBody
-        inputVo: PatchRentableProductStockReservationInfoReadyInputVo
-    ) {
-        service.patchRentableProductStockReservationInfoReady(
-            httpServletResponse,
-            authorization!!,
-            rentableProductStockReservationInfoUid,
-            inputVo
-        )
-    }
-
-    data class PatchRentableProductStockReservationInfoReadyInputVo(
-        @Schema(
-            description = "상품 준비 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, null 이라면 설정 해제)",
-            required = true,
-            example = "2024_05_02_T_15_14_49_552_KST"
-        )
-        @JsonProperty("readyDatetime")
-        val readyDatetime: String?
-    )
-
-
-    // ----
-    @Operation(
-        summary = "개별 상품 연체 상태 변경 <ADMIN>",
-        description = "개별 상품에 대해 연체 상태로 변경 처리를 합니다.<br>" +
-                "연체 상태가 되어도 기존 상품 준비일은 변경 없습니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 상품 반납일이 도래하지 않았습니다.<br>" +
-                                "3 : 이미 연체 상태입니다.<br>" +
-                                "4 : 현재 손망실 상태입니다.<br>" +
-                                "5 : 이미 반납 확인을 한 상태입니다.<br>" +
-                                "6 : 결제 확인 완료 아님 || 예약 거부 상태 = 대여 진행 상태가 아님",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PostMapping(
-        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/overdue"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun postRentableProductStockReservationInfoOverdue(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(
-            name = "rentableProductStockReservationInfoUid",
-            description = "rentableProductStockReservationInfo 고유값",
-            example = "1"
-        )
-        @PathVariable("rentableProductStockReservationInfoUid")
-        rentableProductStockReservationInfoUid: Long,
-        @RequestBody
-        inputVo: PostRentableProductStockReservationInfoOverdueInputVo
-    ): PostRentableProductStockReservationInfoOverdueOutputVo? {
-        return service.postRentableProductStockReservationInfoOverdue(
-            httpServletResponse,
-            authorization!!,
-            rentableProductStockReservationInfoUid,
-            inputVo
-        )
-    }
-
-    data class PostRentableProductStockReservationInfoOverdueInputVo(
-        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
-        @JsonProperty("stateChangeDesc")
-        val stateChangeDesc: String
-    )
-
-    data class PostRentableProductStockReservationInfoOverdueOutputVo(
-        @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
-        @JsonProperty("stockReservationStateChangeHistoryUid")
-        val stockReservationStateChangeHistoryUid: Long
-    )
-
-
-    // ----
-    @Operation(
-        summary = "개별 상품 연체 상태 변경 취소 <ADMIN>",
-        description = "개별 상품에 대해 연체 상태 변경 취소 처리를 합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 연체 상태 설정 내역이 없습니다.<br>" +
-                                "3 : 연제 상태 변경 취소 상태입니다.<br>" +
-                                "4 : 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PostMapping(
-        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/overdue-cancel"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun postRentableProductStockReservationInfoOverdueCancel(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(
-            name = "rentableProductStockReservationInfoUid",
-            description = "rentableProductStockReservationInfo 고유값",
-            example = "1"
-        )
-        @PathVariable("rentableProductStockReservationInfoUid")
-        rentableProductStockReservationInfoUid: Long,
-        @RequestBody
-        inputVo: PostRentableProductStockReservationInfoOverdueCancelInputVo
-    ): PostRentableProductStockReservationInfoOverdueCancelOutputVo? {
-        return service.postRentableProductStockReservationInfoOverdueCancel(
-            httpServletResponse,
-            authorization!!,
-            rentableProductStockReservationInfoUid,
-            inputVo
-        )
-    }
-
-    data class PostRentableProductStockReservationInfoOverdueCancelInputVo(
-        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
-        @JsonProperty("stateChangeDesc")
-        val stateChangeDesc: String
-    )
-
-    data class PostRentableProductStockReservationInfoOverdueCancelOutputVo(
-        @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
-        @JsonProperty("stockReservationStateChangeHistoryUid")
-        val stockReservationStateChangeHistoryUid: Long
-    )
-
-
-    // ----
-    @Operation(
-        summary = "개별 상품 손망실 상태 변경 <ADMIN>",
-        description = "개별 상품에 대해 손망실 상태로 변경 처리를 합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 상품 대여일이 도래하지 않았습니다.<br>" +
-                                "3 : 현재 연체 상태입니다.<br>" +
-                                "4 : 이미 손망실 상태입니다.<br>" +
-                                "5 : 이미 반납 확인을 한 상태입니다.<br>" +
-                                "6 : 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PostMapping(
-        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/lost"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun postRentableProductStockReservationInfoLost(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(
-            name = "rentableProductStockReservationInfoUid",
-            description = "rentableProductStockReservationInfo 고유값",
-            example = "1"
-        )
-        @PathVariable("rentableProductStockReservationInfoUid")
-        rentableProductStockReservationInfoUid: Long,
-        @RequestBody
-        inputVo: PostRentableProductStockReservationInfoLostInputVo
-    ): PostRentableProductStockReservationInfoLostOutputVo? {
-        return service.postRentableProductStockReservationInfoLost(
-            httpServletResponse,
-            authorization!!,
-            rentableProductStockReservationInfoUid,
-            inputVo
-        )
-    }
-
-    data class PostRentableProductStockReservationInfoLostInputVo(
-        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
-        @JsonProperty("stateChangeDesc")
-        val stateChangeDesc: String
-    )
-
-    data class PostRentableProductStockReservationInfoLostOutputVo(
-        @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
-        @JsonProperty("stockReservationStateChangeHistoryUid")
-        val stockReservationStateChangeHistoryUid: Long
-    )
-
-
-    // ----
-    @Operation(
-        summary = "개별 상품 손망실 상태 변경 취소 <ADMIN>",
-        description = "개별 상품에 대해 손망실 상태 취소 처리를 합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : rentableProductStockReservationInfoUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-                                "2 : 손망실 상태 변경 내역이 없습니다.<br>" +
-                                "3 : 손망실 상태 변경 취소 상태입니다.<br>" +
-                                "4 : 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PostMapping(
-        path = ["/rentable-product-stock-reservation-info/{rentableProductStockReservationInfoUid}/lost-cancel"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun postRentableProductStockReservationInfoLostCancel(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(
-            name = "rentableProductStockReservationInfoUid",
-            description = "rentableProductStockReservationInfo 고유값",
-            example = "1"
-        )
-        @PathVariable("rentableProductStockReservationInfoUid")
-        rentableProductStockReservationInfoUid: Long,
-        @RequestBody
-        inputVo: PostRentableProductStockReservationInfoLostCancelInputVo
-    ): PostRentableProductStockReservationInfoLostCancelOutputVo? {
-        return service.postRentableProductStockReservationInfoLostCancel(
-            httpServletResponse,
-            authorization!!,
-            rentableProductStockReservationInfoUid,
-            inputVo
-        )
-    }
-
-    data class PostRentableProductStockReservationInfoLostCancelInputVo(
-        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
-        @JsonProperty("stateChangeDesc")
-        val stateChangeDesc: String
-    )
-
-    data class PostRentableProductStockReservationInfoLostCancelOutputVo(
-        @Schema(description = "stockReservationStateChangeHistory 고유값", required = true, example = "1")
-        @JsonProperty("stockReservationStateChangeHistoryUid")
-        val stockReservationStateChangeHistoryUid: Long
-    )
-
-
-    // ----
-    @Operation(
-        summary = "개별 상품 예약 상태 테이블의 상세 설명 수정 <ADMIN>",
-        description = "개별 상품 예약 상태 테이블의 상세 설명을 수정 처리합니다."
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "정상 동작"
-            ),
-            ApiResponse(
-                responseCode = "204",
-                content = [Content()],
-                description = "Response Body 가 없습니다.<br>" +
-                        "Response Headers 를 확인하세요.",
-                headers = [
-                    Header(
-                        name = "api-result-code",
-                        description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : stockReservationStateChangeHistoryUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-                        schema = Schema(type = "string")
-                    )
-                ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                content = [Content()],
-                description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
-            )
-        ]
-    )
-    @PatchMapping(
-        path = ["/stock-reservation-state-change-history/{stockReservationStateChangeHistoryUid}/state-change-desc"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.ALL_VALUE]
-    )
-    @PreAuthorize("isAuthenticated() and (hasRole('ROLE_ADMIN'))")
-    @ResponseBody
-    fun patchStockReservationStateChangeHistoryStateChangeDesc(
-        @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse,
-        @Parameter(hidden = true)
-        @RequestHeader("Authorization")
-        authorization: String?,
-        @Parameter(
-            name = "stockReservationStateChangeHistoryUid",
-            description = "stockReservationStateChangeHistory 고유값",
-            example = "1"
-        )
-        @PathVariable("stockReservationStateChangeHistoryUid")
-        stockReservationStateChangeHistoryUid: Long,
-        @RequestBody
-        inputVo: PatchStockReservationStateChangeHistoryStateChangeDescInputVo
-    ) {
-        service.patchStockReservationStateChangeHistoryStateChangeDesc(
-            httpServletResponse,
-            authorization!!,
-            stockReservationStateChangeHistoryUid,
-            inputVo
-        )
-    }
-
-    data class PatchStockReservationStateChangeHistoryStateChangeDescInputVo(
-        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
-        @JsonProperty("stateChangeDesc")
-        val stateChangeDesc: String
-    )
-
-
-    // todo : Admin 관련 필요 정보 조회 API 들 추가
+    // 정보 조회 API 는 화면 기획이 나오는 시점에 추가
 }

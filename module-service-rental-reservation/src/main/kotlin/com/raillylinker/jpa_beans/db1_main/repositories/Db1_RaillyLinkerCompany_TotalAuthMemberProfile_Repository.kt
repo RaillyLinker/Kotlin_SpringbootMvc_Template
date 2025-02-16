@@ -15,6 +15,11 @@ interface Db1_RaillyLinkerCompany_TotalAuthMemberProfile_Repository :
         rowDeleteDateStr: String
     ): List<Db1_RaillyLinkerCompany_TotalAuthMemberProfile>
 
+    fun findAllByTotalAuthMemberUidAndRowDeleteDateStrOrderByPriorityDescRowCreateDateDesc(
+        totalAuthMemberUid: Long,
+        rowDeleteDateStr: String
+    ): List<Db1_RaillyLinkerCompany_TotalAuthMemberProfile>
+
     fun findByUidAndTotalAuthMemberAndRowDeleteDateStr(
         uid: Long,
         totalAuthMember: Db1_RaillyLinkerCompany_TotalAuthMember,

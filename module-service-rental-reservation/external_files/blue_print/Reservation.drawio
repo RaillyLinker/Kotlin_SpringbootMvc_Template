@@ -929,6 +929,9 @@
         <mxCell id="GUmiHQQ4oi1xmi6ikBiI-103" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="GUmiHQQ4oi1xmi6ikBiI-71" target="GUmiHQQ4oi1xmi6ikBiI-101" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="mmrMTt_2vW5sL_ut6-nk-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="GUmiHQQ4oi1xmi6ikBiI-71" target="mmrMTt_2vW5sL_ut6-nk-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="GUmiHQQ4oi1xmi6ikBiI-71" value="예약 승인&lt;div&gt;상태&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#008a00;strokeColor=#005700;fontColor=#ffffff;" parent="1" vertex="1">
           <mxGeometry x="-321.78" y="561.56" width="79" height="40" as="geometry" />
         </mxCell>
@@ -1276,6 +1279,17 @@
         </mxCell>
         <mxCell id="7ol0z4mPK6ZrLWTJztl--36" value="시간&lt;div&gt;도표&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=14;strokeColor=default;" parent="1" vertex="1">
           <mxGeometry x="-801.15" y="1921" width="68.43" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="mmrMTt_2vW5sL_ut6-nk-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="mmrMTt_2vW5sL_ut6-nk-1" target="CRkLpjZog5i0egp7tEst-24">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-403" y="550" />
+              <mxPoint x="-561" y="550" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mmrMTt_2vW5sL_ut6-nk-1" value="예약 신청&lt;div&gt;승인 취소&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0050ef;strokeColor=#FFFFFF;fontColor=#ffffff;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="-422.42999999999995" y="480" width="79" height="40" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
