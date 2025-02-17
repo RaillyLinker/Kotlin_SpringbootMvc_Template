@@ -46,13 +46,23 @@ CREATE TABLE `rental_product_reservation` (
 	`address_detail`	VARCHAR(300)	NOT NULL	COMMENT '상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 상세'
 );
 
+CREATE TABLE `rental_product_reservation_image` (
+	`uid`	BIGINT	NOT NULL	COMMENT '행 고유키',
+	`row_create_date`	DATETIME(3)	NOT NULL	COMMENT '행 생성일',
+	`row_update_date`	DATETIME(3)	NOT NULL	COMMENT '행 수정일',
+	`row_delete_date_str`	VARCHAR(50)	NOT NULL	DEFAULT /	COMMENT '행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)',
+	`rental_product_reservation_uid`	BIGINT	NOT NULL	COMMENT '상품 예약 정보 행 고유키',
+	`image_full_url`	VARCHAR(200)	NOT NULL	COMMENT '프로필 이미지 Full URL',
+	`priority`	MEDIUMINT UNSIGNED	NOT NULL	COMMENT '가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)'
+);
+
 CREATE TABLE `rental_product_reservation_history` (
 	`uid`	BIGINT	NOT NULL	COMMENT '행 고유키',
 	`row_create_date`	DATETIME(3)	NOT NULL	COMMENT '행 생성일',
 	`row_update_date`	DATETIME(3)	NOT NULL	COMMENT '행 수정일',
 	`row_delete_date_str`	VARCHAR(50)	NOT NULL	DEFAULT /	COMMENT '행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)',
 	`rental_product_reservation_uid`	BIGINT	NOT NULL	COMMENT '상품 예약 정보 행 고유키',
-	`history_code`	TINYINT UNSIGNED	NOT NULL	COMMENT '히스토리 코드(0 : 예약 신청, 1 : 예약 취소 신청, 2 : 예약 취소 신청 승인, 3 : 예약 신청 거부, 4 : 예약 신청 승인, 5: 예약 신청 승인 취소, 6 :결제 확인, 7: 결제 확인 취소, 8 : 예약 취소 신청 거부, 9 : 상품 조기 반납 신고, 10 : 상품 조기 반납 취소, 11 : 상품 반납 확인, 12 : 상품 연체 상태, 13 : 상품 연체 상태 취소, 14 : 예약 시간 연장 신청, 15 : 예약 시간 연장 신청 거부, 16 : 예약 시간 연장 신청 승인)',
+	`history_code`	TINYINT UNSIGNED	NOT NULL	COMMENT '히스토리 코드(0 : 예약 신청, 1 : 예약 취소 신청, 2 : 예약 취소 신청 승인, 3 : 예약 신청 거부, 4 : 예약 신청 승인, 5: 예약 신청 승인 취소, 6 :결제 확인, 7: 결제 확인 취소, 8 : 예약 취소 신청 거부, 9 : 상품 조기 반납 신고, 10 : 상품 조기 반납 취소, 11 : 상품 반납 확인, 12 : 상품 연체 상태, 13 : 상품 연체 상태 취소, 14 : 예약 시간 연장 신청, 15 : 예약 시간 연장 신청 거부, 16 : 예약 시간 연장 신청 승인, 17 : 예약 취소 신청 취소)',
 	`history_desc`	VARCHAR(600)	NOT NULL	COMMENT '히스토리 상세'
 );
 
@@ -66,16 +76,6 @@ CREATE TABLE `rental_product_image` (
 	`priority`	MEDIUMINT UNSIGNED	NOT NULL	COMMENT '가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)'
 );
 
-CREATE TABLE `rental_product_reservation_image` (
-	`uid`	BIGINT	NOT NULL	COMMENT '행 고유키',
-	`row_create_date`	DATETIME(3)	NOT NULL	COMMENT '행 생성일',
-	`row_update_date`	DATETIME(3)	NOT NULL	COMMENT '행 수정일',
-	`row_delete_date_str`	VARCHAR(50)	NOT NULL	DEFAULT /	COMMENT '행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)',
-	`rental_product_reservation_uid`	BIGINT	NOT NULL	COMMENT '상품 예약 정보 행 고유키',
-	`image_full_url`	VARCHAR(200)	NOT NULL	COMMENT '프로필 이미지 Full URL',
-	`priority`	MEDIUMINT UNSIGNED	NOT NULL	COMMENT '가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)'
-);
-
 ALTER TABLE `rental_product` ADD CONSTRAINT `PK_RENTAL_PRODUCT` PRIMARY KEY (
 	`uid`
 );
@@ -84,15 +84,15 @@ ALTER TABLE `rental_product_reservation` ADD CONSTRAINT `PK_RENTAL_PRODUCT_RESER
 	`uid`
 );
 
+ALTER TABLE `rental_product_reservation_image` ADD CONSTRAINT `PK_RENTAL_PRODUCT_RESERVATION_IMAGE` PRIMARY KEY (
+	`uid`
+);
+
 ALTER TABLE `rental_product_reservation_history` ADD CONSTRAINT `PK_RENTAL_PRODUCT_RESERVATION_HISTORY` PRIMARY KEY (
 	`uid`
 );
 
 ALTER TABLE `rental_product_image` ADD CONSTRAINT `PK_RENTAL_PRODUCT_IMAGE` PRIMARY KEY (
-	`uid`
-);
-
-ALTER TABLE `rental_product_reservation_image` ADD CONSTRAINT `PK_RENTAL_PRODUCT_RESERVATION_IMAGE` PRIMARY KEY (
 	`uid`
 );
 

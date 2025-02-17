@@ -1055,15 +1055,27 @@ class RentalReservationAdminService(
         var notPaid = true
         var paymentNotChecked = true
         var noRequestCancel = true
-        var notRequestCancelDenyLatest = true
-        var notRequestCancelLatest = true
+//        var notRequestCancel = true
+        var notRequestCancelDeny = true
+        var notRequestCancelCancel = true
+        var notCancelChecked = true
         for (history in historyList) {
             when (history.historyCode.toInt()) {
+                17 -> {
+                    // 예약 취소 신청 취소
+                    if (notCancelChecked) {
+                        notCancelChecked = false
+                        // 예약 취소 거부 내역이 최신인지
+                        notRequestCancelCancel = false
+                    }
+                }
+
                 8 -> {
                     // 예약 취소 거부
-                    if (notRequestCancelLatest) {
+                    if (notCancelChecked) {
+                        notCancelChecked = false
                         // 예약 취소 거부 내역이 최신인지
-                        notRequestCancelDenyLatest = false
+                        notRequestCancelDeny = false
                     }
                 }
 
@@ -1077,9 +1089,11 @@ class RentalReservationAdminService(
                 1 -> {
                     // 예약 취소 신청
                     noRequestCancel = false
-                    if (notRequestCancelDenyLatest) {
-                        // 예약 취소 신청 내역이 최신인지
-                        notRequestCancelLatest = false
+
+                    if (notCancelChecked) {
+                        notCancelChecked = false
+//                        // 예약 취소 거부 내역이 최신인지
+//                        notRequestCancel = false
                     }
                 }
 
@@ -1121,10 +1135,17 @@ class RentalReservationAdminService(
             return null
         }
 
-        if (!notRequestCancelDenyLatest) {
+        if (!notRequestCancelDeny) {
             // 기존 예약 취소 신청에 대한 예약 취소 거부 상태입니다. -> return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "7")
+            return null
+        }
+
+        if (!notRequestCancelCancel) {
+            // 기존 예약 취소 신청에 대한 취소 상태입니다. -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "8")
             return null
         }
 
@@ -1199,15 +1220,27 @@ class RentalReservationAdminService(
         var notPaid = true
         var paymentNotChecked = true
         var noRequestCancel = true
-        var notRequestCancelDenyLatest = true
-        var notRequestCancelLatest = true
+//        var notRequestCancel = true
+        var notRequestCancelDeny = true
+        var notRequestCancelCancel = true
+        var notCancelChecked = true
         for (history in historyList) {
             when (history.historyCode.toInt()) {
+                17 -> {
+                    // 예약 취소 신청 취소
+                    if (notCancelChecked) {
+                        notCancelChecked = false
+                        // 예약 취소 거부 내역이 최신인지
+                        notRequestCancelCancel = false
+                    }
+                }
+
                 8 -> {
                     // 예약 취소 거부
-                    if (notRequestCancelLatest) {
+                    if (notCancelChecked) {
+                        notCancelChecked = false
                         // 예약 취소 거부 내역이 최신인지
-                        notRequestCancelDenyLatest = false
+                        notRequestCancelDeny = false
                     }
                 }
 
@@ -1221,9 +1254,11 @@ class RentalReservationAdminService(
                 1 -> {
                     // 예약 취소 신청
                     noRequestCancel = false
-                    if (notRequestCancelDenyLatest) {
-                        // 예약 취소 신청 내역이 최신인지
-                        notRequestCancelLatest = false
+
+                    if (notCancelChecked) {
+                        notCancelChecked = false
+//                        // 예약 취소 거부 내역이 최신인지
+//                        notRequestCancel = false
                     }
                 }
 
@@ -1265,10 +1300,17 @@ class RentalReservationAdminService(
             return null
         }
 
-        if (!notRequestCancelDenyLatest && notRequestCancelLatest) {
+        if (!notRequestCancelDeny) {
             // 기존 예약 취소 신청에 대한 예약 취소 거부 상태입니다. -> return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "7")
+            return null
+        }
+
+        if (!notRequestCancelCancel) {
+            // 기존 예약 취소 신청에 대한 취소 상태입니다. -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "8")
             return null
         }
 

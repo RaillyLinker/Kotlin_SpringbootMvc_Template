@@ -41,7 +41,8 @@ class Db1_RaillyLinkerCompany_RentalProductReservationHistory(
                 "13 : 상품 연체 상태 취소, " +
                 "14 : 예약 시간 연장 신청, " +
                 "15 : 예약 시간 연장 신청 거부, " +
-                "16 : 예약 시간 연장 신청 승인" +
+                "16 : 예약 시간 연장 신청 승인, " +
+                "17 : 예약 취소 신청 취소" +
                 ")"
     )
     var historyCode: Short,
