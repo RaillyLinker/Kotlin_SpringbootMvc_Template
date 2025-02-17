@@ -1465,6 +1465,9 @@ class RentalReservationAdminController(
     )
 
 
+    // todo 결제 확인 취소
+
+
     // ----
     @Operation(
         summary = "상품 반납 확인 처리 <ADMIN>",
@@ -1805,10 +1808,10 @@ class RentalReservationAdminController(
     )
 
 
-    // todo 결제 확인 취소
     // todo 예약 연장 승인
     // todo 환불 처리
-    // todo 손망실 설정 / 취소
+    // todo 손망실 설정
+    // todo 손망실 취소
 
 
     // ----
