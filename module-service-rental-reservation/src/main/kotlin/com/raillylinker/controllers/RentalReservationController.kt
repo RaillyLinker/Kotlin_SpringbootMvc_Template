@@ -143,91 +143,98 @@ class RentalReservationController(
     )
 
 
-//    // ----
-//    @Operation(
-//        summary = "예약 취소 신청 <>",
-//        description = "예약 취소 신청을 합니다.<br>" +
-//                "결제 확인 및 예약 신청 승인 처리가 전부 완료되기 전이라면 자동적으로 예약 취소 승인 처리가 됩니다."
-//    )
-//    @ApiResponses(
-//        value = [
-//            ApiResponse(
-//                responseCode = "200",
-//                description = "정상 동작"
-//            ),
-//            ApiResponse(
-//                responseCode = "204",
-//                content = [Content()],
-//                description = "Response Body 가 없습니다.<br>" +
-//                        "Response Headers 를 확인하세요.",
-//                headers = [
-//                    Header(
-//                        name = "api-result-code",
-//                        description = "(Response Code 반환 원인) - Required<br>" +
-//                                "1 : rentableProductReservationInfo 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-//                                "2 : 예약 취소 가능 기한 초과<br>" +
-//                                "3 : 예약 취소 승인 상태<br>" +
-//                                "4 : 예약 신청 거부 상태<br>" +
-//                                "5 : 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일)<br>" +
-//                                "6 : 예약 취소 신청 상태",
-//                        schema = Schema(type = "string")
-//                    )
-//                ]
-//            ),
-//            ApiResponse(
-//                responseCode = "401",
-//                content = [Content()],
-//                description = "인증되지 않은 접근입니다."
-//            )
-//        ]
-//    )
-//    @PostMapping(
-//        path = ["/cancel-product-reservation"],
-//        consumes = [MediaType.APPLICATION_JSON_VALUE],
-//        produces = [MediaType.APPLICATION_JSON_VALUE]
-//    )
-//    @PreAuthorize("isAuthenticated()")
-//    @ResponseBody
-//    fun postCancelProductReservation(
-//        @Parameter(hidden = true)
-//        httpServletResponse: HttpServletResponse,
-//        @Parameter(hidden = true)
-//        @RequestHeader("Authorization")
-//        authorization: String?,
-//        @RequestBody
-//        inputVo: PostCancelProductReservationInputVo
-//    ): PostCancelProductReservationOutputVo? {
-//        return service.postCancelProductReservation(
-//            httpServletResponse,
-//            authorization!!,
-//            inputVo
-//        )
-//    }
-//
-//    data class PostCancelProductReservationInputVo(
-//        @Schema(description = "rentalProductReservation 고유값", required = true, example = "1")
-//        @JsonProperty("rentalProductReservationUid")
-//        val rentalProductReservationUid: Long,
-//        @Schema(description = "예약 취소 사유", required = true, example = "개인 사유")
-//        @JsonProperty("cancelReason")
-//        val cancelReason: String
-//    )
-//
-//    data class PostCancelProductReservationOutputVo(
-//        @Schema(description = "rentableProductReservationStateChangeInfo 고유값", required = true, example = "1")
-//        @JsonProperty("stateChangeInfoUid")
-//        val stateChangeInfoUid: Long,
-//        @Schema(
-//            description = "예약 취소 즉시 승인시 rentableProductReservationStateChangeInfo 고유값",
-//            required = false,
-//            example = "1"
-//        )
-//        @JsonProperty("stateChangeInfoUidForApproved")
-//        val stateChangeInfoUidForApproved: Long?,
-//    )
+    // ----
+    @Operation(
+        summary = "예약 취소 신청 <>",
+        description = "예약 취소 신청을 합니다.<br>" +
+                "결제 확인 및 예약 신청 승인 처리가 전부 완료되기 전이라면 자동적으로 예약 취소 승인 처리가 됩니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 예약 취소 가능 기한 초과<br>" +
+                                "3 : 예약 취소 승인 상태<br>" +
+                                "4 : 예약 신청 거부 상태<br>" +
+                                "5 : 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일)<br>" +
+                                "6 : 예약 취소 신청 상태",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/rental-product-reservation/{rentalProductReservationUid}/cancel-request"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    fun postCancelProductReservation(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(
+            name = "rentalProductReservationUid",
+            description = "rentableProductReservationInfo 고유값",
+            example = "1"
+        )
+        @PathVariable("rentalProductReservationUid")
+        rentalProductReservationUid: Long,
+        @RequestBody
+        inputVo: PostCancelProductReservationInputVo
+    ): PostCancelProductReservationOutputVo? {
+        return service.postCancelProductReservation(
+            httpServletResponse,
+            authorization!!,
+            rentalProductReservationUid,
+            inputVo
+        )
+    }
+
+    data class PostCancelProductReservationInputVo(
+        @Schema(description = "예약 취소 사유", required = true, example = "개인 사유")
+        @JsonProperty("cancelReason")
+        val cancelReason: String
+    )
+
+    data class PostCancelProductReservationOutputVo(
+        @Schema(description = "reservationHistory 고유값", required = true, example = "1")
+        @JsonProperty("reservationHistoryUid")
+        val reservationHistoryUid: Long,
+        @Schema(
+            description = "예약 취소 즉시 승인시 reservationHistory 고유값(null 이라면 즉시 취소 승인이 아닙니다.)",
+            required = false,
+            example = "1"
+        )
+        @JsonProperty("reservationHistoryUidForApproved")
+        val reservationHistoryUidForApproved: Long?,
+    )
+
+
     // todo 예약 취소 신청 취소
-//
-//
+
+
 //    // ----
 //    @Operation(
 //        summary = "개별 상품 조기 반납 신고 <>",
