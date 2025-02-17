@@ -12,16 +12,16 @@
 	`first_reservable_datetime`	DATETIME	NOT NULL	COMMENT '상품 예약이 가능한 최초 일시(콘서트 티켓 예매와 같은 서비스를 가정, 예약 러시 처리가 필요)',
 	`first_rental_datetime`	DATETIME	NOT NULL	COMMENT '상품 대여가 가능한 최초 일시',
 	`last_rental_datetime`	DATETIME	NULL	COMMENT '상품 대여가 가능한 마지막 일시(null 이라면 제한 없음)',
-	`reservation_unit_minute`	BIGINT UNSIGNED	NOT NULL	COMMENT '예약 추가 할 수 있는 최소 시간 단위 (분)',
+	`reservation_unit_minute`	BIGINT	NOT NULL	COMMENT '예약 추가 할 수 있는 최소 시간 단위 (분)',
 	`minimum_reservation_unit_count`	INT UNSIGNED	NOT NULL	COMMENT '단위 예약 시간을 대여일 기준에서 최소 몇번 추가 해야 하는지',
 	`maximum_reservation_unit_count`	INT UNSIGNED	NULL	COMMENT '단위 예약 시간을 대여일 기준에서 최대 몇번 추가 가능한지 (Null 이라면 제한 없음)',
 	`reservation_unit_price`	DECIMAL(15, 2)	NOT NULL	COMMENT '단위 예약 시간에 대한 가격 (예약 시간 / 단위 예약 시간 * 예약 단가 = 예약 최종가)',
 	`reservation_unit_price_currency_code`	CHAR(3)	NOT NULL	COMMENT '단위 예약 시간에 대한 가격 통화 코드(IOS 4217, ex : KRW, USD, EUR...)',
 	`now_reservable`	BIT(1)	NOT NULL	COMMENT '재고, 상품 상태와 상관 없이 현 시점 예약 가능한지에 대한 관리자의 설정',
-	`customer_payment_deadline_minute`	BIGINT UNSIGNED	NOT NULL	COMMENT '고객에게 이때까지 결제를 해야 한다고 통보하는 기한 설정값(예약일로부터 +N 분)',
-	`payment_check_deadline_minute`	BIGINT UNSIGNED	NOT NULL	COMMENT '관리자의 결제 확인 기한 설정값(고객 결제 기한 설정값으로 부터 +N 분)',
-	`approval_deadline_minute`	BIGINT UNSIGNED	NOT NULL	COMMENT '관리자의 예약 승인 기한 설정값(결제 확인 기한 설정값으로부터 +N분)',
-	`cancel_deadline_minute`	BIGINT UNSIGNED	NOT NULL	COMMENT '고객이 예약 취소 가능한 기한 설정값(대여 시작일로부터 -N분이며, 그 결과가 관리자 승인 기한보다 커야함)',
+	`customer_payment_deadline_minute`	BIGINT	NOT NULL	COMMENT '고객에게 이때까지 결제를 해야 한다고 통보하는 기한 설정값(예약일로부터 +N 분)',
+	`payment_check_deadline_minute`	BIGINT	NOT NULL	COMMENT '관리자의 결제 확인 기한 설정값(고객 결제 기한 설정값으로 부터 +N 분)',
+	`approval_deadline_minute`	BIGINT	NOT NULL	COMMENT '관리자의 예약 승인 기한 설정값(결제 확인 기한 설정값으로부터 +N분)',
+	`cancel_deadline_minute`	BIGINT	NOT NULL	COMMENT '고객이 예약 취소 가능한 기한 설정값(대여 시작일로부터 -N분이며, 그 결과가 관리자 승인 기한보다 커야함)',
 	`product_desc`	VARCHAR(2000)	NOT NULL	COMMENT '상품 설명(예를 들어 손망실의 경우 now_reservable 이 false 이며, 이곳에 손망실 이유가 기재됩니다.)'
 );
 
@@ -53,7 +53,7 @@ CREATE TABLE `rental_product_reservation_history` (
 	`row_update_date`	DATETIME(3)	NOT NULL	COMMENT '행 수정일',
 	`row_delete_date_str`	VARCHAR(50)	NOT NULL	DEFAULT /	COMMENT '행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)',
 	`rental_product_reservation_uid`	BIGINT	NOT NULL	COMMENT '상품 예약 정보 행 고유키',
-	`history_code`	TINYINT UNSIGNED	NOT NULL	COMMENT '히스토리 코드(0 : 예약 신청, 1 : 예약 취소 신청, 2 : 예약 취소 신청 승인, 3 : 예약 신청 거부, 4 : 예약 신청 승인, 5 :결제 확인, 6: 결제 확인 취소, 7 : 예약 취소 신청 거부, 8 : 상품 조기 반납 신고, 9 : 상품 조기 반납 취소, 10 : 상품 반납 확인, 11 : 상품 연체 상태, 12 : 상품 연체 상태 취소, 13 : 예약 시간 연장 신청, 14 : 예약 시간 연장 신청 거부, 15 : 예약 시간 연장 신청 승인)',
+	`history_code`	TINYINT UNSIGNED	NOT NULL	COMMENT '히스토리 코드(0 : 예약 신청, 1 : 예약 취소 신청, 2 : 예약 취소 신청 승인, 3 : 예약 신청 거부, 4 : 예약 신청 승인, 5: 예약 신청 승인 취소, 6 :결제 확인, 7: 결제 확인 취소, 8 : 예약 취소 신청 거부, 9 : 상품 조기 반납 신고, 10 : 상품 조기 반납 취소, 11 : 상품 반납 확인, 12 : 상품 연체 상태, 13 : 상품 연체 상태 취소, 14 : 예약 시간 연장 신청, 15 : 예약 시간 연장 신청 거부, 16 : 예약 시간 연장 신청 승인)',
 	`history_desc`	VARCHAR(600)	NOT NULL	COMMENT '히스토리 상세'
 );
 
@@ -63,6 +63,16 @@ CREATE TABLE `rental_product_image` (
 	`row_update_date`	DATETIME(3)	NOT NULL	COMMENT '행 수정일',
 	`row_delete_date_str`	VARCHAR(50)	NOT NULL	DEFAULT /	COMMENT '행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)',
 	`rental_product_uid`	BIGINT	NOT NULL	COMMENT '예약 상품 정보 행 고유키',
+	`image_full_url`	VARCHAR(200)	NOT NULL	COMMENT '프로필 이미지 Full URL',
+	`priority`	MEDIUMINT UNSIGNED	NOT NULL	COMMENT '가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)'
+);
+
+CREATE TABLE `rental_product_reservation_image` (
+	`uid`	BIGINT	NOT NULL	COMMENT '행 고유키',
+	`row_create_date`	DATETIME(3)	NOT NULL	COMMENT '행 생성일',
+	`row_update_date`	DATETIME(3)	NOT NULL	COMMENT '행 수정일',
+	`row_delete_date_str`	VARCHAR(50)	NOT NULL	DEFAULT /	COMMENT '행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)',
+	`rental_product_reservation_uid`	BIGINT	NOT NULL	COMMENT '상품 예약 정보 행 고유키',
 	`image_full_url`	VARCHAR(200)	NOT NULL	COMMENT '프로필 이미지 Full URL',
 	`priority`	MEDIUMINT UNSIGNED	NOT NULL	COMMENT '가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)'
 );
@@ -80,6 +90,10 @@ ALTER TABLE `rental_product_reservation_history` ADD CONSTRAINT `PK_RENTAL_PRODU
 );
 
 ALTER TABLE `rental_product_image` ADD CONSTRAINT `PK_RENTAL_PRODUCT_IMAGE` PRIMARY KEY (
+	`uid`
+);
+
+ALTER TABLE `rental_product_reservation_image` ADD CONSTRAINT `PK_RENTAL_PRODUCT_RESERVATION_IMAGE` PRIMARY KEY (
 	`uid`
 );
 
