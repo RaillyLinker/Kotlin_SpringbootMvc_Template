@@ -225,6 +225,7 @@ class RentalReservationController(
 //        @JsonProperty("stateChangeInfoUidForApproved")
 //        val stateChangeInfoUidForApproved: Long?,
 //    )
+    // todo 예약 취소 신청 취소
 //
 //
 //    // ----
