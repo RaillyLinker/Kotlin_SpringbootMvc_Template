@@ -722,102 +722,95 @@ class RentalReservationService(
     }
 
 
-//    // ----
-//    // (개별 상품 조기 반납 신고 취소 <ADMIN>)
-//    // 관리자의 상품 반납 확인과 고객의 조기 반납 신고 간의 공유락 처리
-//    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
-//    fun postRentableProductStockReservationInfoEarlyReturnCancel(
-//        httpServletResponse: HttpServletResponse,
-//        authorization: String,
-//        rentableProductStockReservationInfoUid: Long,
-//        inputVo: RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnCancelInputVo
-//    ): RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnCancelOutputVo? {
-//        val memberUid = jwtTokenUtil.getMemberUid(
-//            authorization.split(" ")[1].trim(),
-//            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-//            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-//        )
-//
-//        val rentableProductStockReservationInfo =
-//            db1RaillyLinkerCompanyRentableProductStockReservationInfoRepository.findByUidAndRowDeleteDateStr(
-//                rentableProductStockReservationInfoUid,
-//                "/"
-//            )
-//
-//        if (rentableProductStockReservationInfo == null) {
-//            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-//            httpServletResponse.setHeader("api-result-code", "1")
-//            return null
-//        }
-//
-//        if (rentableProductStockReservationInfo.rentableProductReservationInfo.totalAuthMember.uid != memberUid) {
-//            // 고객이 진행중인 예약이 아님
-//            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-//            httpServletResponse.setHeader("api-result-code", "1")
-//            return null
-//        }
-//
-//        // 관리자의 상품 반납 확인과 고객의 조기 반납 신고 간의 공유락 처리
-//        return redis1LockRentableProductStockEarlyReturn.tryLockRepeat<RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnCancelOutputVo?>(
-//            "$rentableProductStockReservationInfoUid",
-//            7000L,
-//            {
-//                // 상태 확인
-//                val historyList =
-//                    db1RaillyLinkerCompanyRentableProductStockReservationStateChangeHistoryRepository.findAllByRentableProductStockReservationInfoAndRowDeleteDateStrOrderByRowCreateDateDesc(
-//                        rentableProductStockReservationInfo,
-//                        "/"
-//                    )
-//
-//                var noEarlyReturn = true
-//                var noEarlyReturnCancel = true
-//                for (history in historyList) {
-//                    when (history.stateCode.toInt()) {
-//                        7 -> {
-//                            // 조기 반납 취소
-//                            if (noEarlyReturn) {
-//                                noEarlyReturnCancel = false
-//                            }
-//                        }
-//
-//                        0 -> {
-//                            // 조기 반납 상태
-//                            if (noEarlyReturnCancel) {
-//                                noEarlyReturn = false
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                if (noEarlyReturn && noEarlyReturnCancel) {
-//                    // 조기 반납 상태 변경 내역이 없습니다.
-//                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-//                    httpServletResponse.setHeader("api-result-code", "2")
-//                    return@tryLockRepeat null
-//                }
-//
-//                if (!noEarlyReturnCancel) {
-//                    // 조기 반납 상태 변경 취소 상태입니다.
-//                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-//                    httpServletResponse.setHeader("api-result-code", "3")
-//                    return@tryLockRepeat null
-//                }
-//
-//                // 개별 상품 조기 반납 취소 내역 추가
-//                val historyEntity =
-//                    db1RaillyLinkerCompanyRentableProductStockReservationStateChangeHistoryRepository.save(
-//                        Db1_RaillyLinkerCompany_RentableProductStockReservationStateChangeHistory(
-//                            rentableProductStockReservationInfo,
-//                            7,
-//                            inputVo.stateChangeDesc
-//                        )
-//                    )
-//
-//                httpServletResponse.status = HttpStatus.OK.value()
-//                return@tryLockRepeat RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnCancelOutputVo(
-//                    historyEntity.uid!!
-//                )
-//            }
-//        )
-//    }
+    // ----
+    // (개별 상품 조기 반납 신고 취소 <ADMIN>)
+    // 관리자의 상품 반납 확인과 고객의 조기 반납 신고 간의 공유락 처리
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun postRentableProductStockReservationInfoEarlyReturnCancel(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentalProductReservationUid: Long,
+        inputVo: RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnCancelInputVo
+    ): RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnCancelOutputVo? {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        val rentableProductStockReservationInfo =
+            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findByUidAndRowDeleteDateStr(
+                rentalProductReservationUid,
+                "/"
+            )
+
+        if (rentableProductStockReservationInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        if (rentableProductStockReservationInfo.totalAuthMember.uid != memberUid) {
+            // 고객이 진행중인 예약이 아님
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        // 상태 확인
+        val historyList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentalProductReservationAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductStockReservationInfo,
+                "/"
+            )
+
+        var noEarlyReturn = true
+        var noEarlyReturnCancel = true
+        for (history in historyList) {
+            when (history.historyCode.toInt()) {
+                10 -> {
+                    // 조기 반납 취소
+                    if (noEarlyReturn) {
+                        noEarlyReturnCancel = false
+                    }
+                }
+
+                9 -> {
+                    // 조기 반납 상태
+                    if (noEarlyReturnCancel) {
+                        noEarlyReturn = false
+                    }
+                }
+            }
+        }
+
+        if (noEarlyReturn && noEarlyReturnCancel) {
+            // 조기 반납 상태 변경 내역이 없습니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
+        if (!noEarlyReturnCancel) {
+            // 조기 반납 상태 변경 취소 상태입니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return null
+        }
+
+        // 개별 상품 조기 반납 취소 내역 추가
+        val newReservationStateChangeHistory =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
+                Db1_RaillyLinkerCompany_RentalProductReservationHistory(
+                    rentableProductStockReservationInfo,
+                    10,
+                    inputVo.stateChangeDesc
+                )
+            )
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnCancelOutputVo(
+            newReservationStateChangeHistory.uid!!
+        )
+    }
 }
