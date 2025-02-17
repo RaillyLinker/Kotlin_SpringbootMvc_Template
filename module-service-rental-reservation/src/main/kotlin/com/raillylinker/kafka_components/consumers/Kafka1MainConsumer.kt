@@ -17,7 +17,8 @@ import java.time.format.DateTimeFormatter
 @Component
 class Kafka1MainConsumer(
     private val db1RaillyLinkerCompanyRentalProductReservationRepository: Db1_RaillyLinkerCompany_RentalProductReservation_Repository,
-    private val db1RaillyLinkerCompanyRentalProductReservationHistoryRepository: Db1_RaillyLinkerCompany_RentalProductReservationHistory_Repository
+    private val db1RaillyLinkerCompanyRentalProductReservationHistoryRepository: Db1_RaillyLinkerCompany_RentalProductReservationHistory_Repository,
+    private val db1RaillyLinkerCompanyRentalProductReservationImageRepository: Db1_RaillyLinkerCompany_RentalProductReservationImage_Repository
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -72,12 +73,24 @@ class Kafka1MainConsumer(
                 )
             }
 
+            val reservationImageList = reservationInfo.rentalProductReservationImageList
+            for (reservationImage in reservationImageList) {
+                reservationImage.rowDeleteDateStr =
+                    LocalDateTime.now().atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                db1RaillyLinkerCompanyRentalProductReservationImageRepository.save(
+                    reservationImage
+                )
+            }
+
             reservationInfo.rowDeleteDateStr =
                 LocalDateTime.now().atZone(ZoneId.systemDefault())
                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
             db1RaillyLinkerCompanyRentalProductReservationRepository.save(
                 reservationInfo
             )
+
+            // todo 삭제한 이미지 파일 실제 삭제 처리 (상품 이미지에서 해당 이미지를 사용하지 않은 이미지 파일만 삭제하도록 처리)
         }
     }
 

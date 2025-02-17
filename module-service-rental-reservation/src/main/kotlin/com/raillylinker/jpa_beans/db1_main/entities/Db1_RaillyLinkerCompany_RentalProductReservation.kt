@@ -112,4 +112,13 @@ class Db1_RaillyLinkerCompany_RentalProductReservation(
     )
     var rentalProductReservationHistoryList: MutableList<Db1_RaillyLinkerCompany_RentalProductReservationHistory> =
         mutableListOf()
+
+    // 상품 정보 삭제시 이미지 정보도 삭제
+    @OneToMany(
+        mappedBy = "rentalProductReservation",
+        fetch = FetchType.LAZY,
+        cascade = [CascadeType.ALL]
+    )
+    var rentalProductReservationImageList: MutableList<Db1_RaillyLinkerCompany_RentalProductReservationImage> =
+        mutableListOf()
 }

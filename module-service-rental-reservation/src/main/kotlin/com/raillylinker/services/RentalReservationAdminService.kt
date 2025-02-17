@@ -628,7 +628,7 @@ class RentalReservationAdminService(
         rentableProduct.versionSeq += 1
         db1RaillyLinkerCompanyRentalProductRepository.save(rentableProduct)
 
-        // 필요하다면 이미지 삭제 처리
+        // 필요하다면 이미지 삭제 처리 (상품 예약 정보 이미지에서 백업으로 사용중이라면 실제 파일 삭제는 하지 않도록 처리)
 
         httpServletResponse.status = HttpStatus.OK.value()
     }
