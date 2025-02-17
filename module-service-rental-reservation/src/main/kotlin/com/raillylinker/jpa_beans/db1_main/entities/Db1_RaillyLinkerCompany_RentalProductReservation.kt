@@ -64,10 +64,6 @@ class Db1_RaillyLinkerCompany_RentalProductReservation(
     @Comment("고객에게 보일 상품 소개")
     var productIntro: String,
 
-    @Column(name = "image_full_url", nullable = false, columnDefinition = "VARCHAR(200)")
-    @Comment("프로필 이미지 Full URL (가장 가중치가 높은 대표 이미지 1개)")
-    var imageFullUrl: String,
-
     @Column(name = "address_country", nullable = false, columnDefinition = "VARCHAR(60)")
     @Comment("상품이 위치한 주소 (대여 가능 위치의 기준으로 사용됨) - 국가")
     var addressCountry: String,

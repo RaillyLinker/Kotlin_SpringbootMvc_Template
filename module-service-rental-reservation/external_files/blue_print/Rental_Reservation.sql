@@ -41,7 +41,6 @@ CREATE TABLE `rental_product_reservation` (
 	`product_ready_datetime`	DATETIME	NULL	COMMENT '상품이 대여 반납 이후 준비가 완료된 시간(미리 설정도 가능, 히스토리 테이블 내역보다 우선됩니다.)',
 	`product_name`	VARCHAR(90)	NOT NULL	COMMENT '고객에게 보일 상품명(아래 부터는 예약 당시의 정보로, 영수증의 기능을 위한 정보 복제 컬럼)',
 	`product_intro`	VARCHAR(6000)	NOT NULL	COMMENT '고객에게 보일 상품 소개',
-	`image_full_url`	VARCHAR(200)	NULL	COMMENT '프로필 이미지 Full URL (가장 가중치가 높은 대표 이미지 1개)',
 	`address_country`	VARCHAR(60)	NOT NULL	COMMENT '상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 국가',
 	`address_main`	VARCHAR(300)	NOT NULL	COMMENT '상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 국가와 상세 주소를 제외',
 	`address_detail`	VARCHAR(300)	NOT NULL	COMMENT '상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 상세'

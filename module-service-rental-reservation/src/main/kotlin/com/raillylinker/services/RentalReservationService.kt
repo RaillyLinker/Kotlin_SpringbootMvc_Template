@@ -35,6 +35,7 @@ class RentalReservationService(
     private val db1RaillyLinkerCompanyTotalAuthMemberEmailRepository: Db1_RaillyLinkerCompany_TotalAuthMemberEmail_Repository,
     private val db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository: Db1_RaillyLinkerCompany_TotalAuthMemberPhone_Repository,
     private val db1RaillyLinkerCompanyTotalAuthMemberProfileRepository: Db1_RaillyLinkerCompany_TotalAuthMemberProfile_Repository,
+    private val db1RaillyLinkerCompanyRentalProductReservationImageRepository: Db1_RaillyLinkerCompany_RentalProductReservationImage_Repository,
 
     private val redis1LockRentalProductInfo: Redis1_Lock_RentalProductInfo
 ) {
@@ -104,7 +105,7 @@ class RentalReservationService(
         }
 
         // Redis 공유 락 처리 (예약과 관련된 정보 수정시에는 모두 공유락을 적용해야 합니다.)
-        return redis1LockRentalProductInfo.tryLockRepeat<RentalReservationController.PostProductReservationOutputVo?>(
+        return redis1LockRentalProductInfo.tryLockRepeat(
             "${inputVo.rentalProductUid}",
             7000L,
             {
@@ -167,7 +168,7 @@ class RentalReservationService(
                     rentalStartDatetime.plusMinutes(rentableProductInfo.reservationUnitMinute * inputVo.rentalUnitCount)
 
                 if (!(inputRentalEndDatetime.isEqual(rentalEndDatetime))) {
-                    // todo 테스트
+                    // 고객이 보낸 대여 시간이 일치하지 않습니다. -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                     httpServletResponse.setHeader("api-result-code", "7")
                     return@tryLockRepeat null
@@ -215,7 +216,6 @@ class RentalReservationService(
                             null,
                             rentableProductInfo.productName,
                             rentableProductInfo.productIntro,
-                            "null", // todo
                             rentableProductInfo.addressCountry,
                             rentableProductInfo.addressMain,
                             rentableProductInfo.addressDetail
@@ -249,6 +249,17 @@ class RentalReservationService(
                         "예약 신청"
                     )
                 )
+
+                // 이미지 테이블 백업 저장
+                for (productImage in rentableProductInfo.rentalProductImageList) {
+                    db1RaillyLinkerCompanyRentalProductReservationImageRepository.save(
+                        Db1_RaillyLinkerCompany_RentalProductReservationImage(
+                            newReservationInfo,
+                            productImage.imageFullUrl,
+                            productImage.priority
+                        )
+                    )
+                }
 
                 httpServletResponse.status = HttpStatus.OK.value()
                 return@tryLockRepeat RentalReservationController.PostProductReservationOutputVo(
