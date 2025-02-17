@@ -1805,6 +1805,12 @@ class RentalReservationAdminController(
     )
 
 
+    // todo 결제 확인 취소
+    // todo 예약 연장 승인
+    // todo 환불 처리
+    // todo 손망실 설정 / 취소
+
+
     // ----
     @Operation(
         summary = "대여 가능 상품 예약 상태 테이블의 상세 설명 수정 <ADMIN>",
@@ -1880,16 +1886,12 @@ class RentalReservationAdminController(
         val historyDesc: String
     )
 
-    // todo 결제 확인 취소
-    //     예약 연장 승인
-    //     환불 처리
-    //     손망실 설정 / 취소
 
-    // todo : 예약 취소 신청
-    //    상품 조기 반납 신고
-    //    상품 조기 반납 취소
-    //    예약 연장 신청
-    //    예약 연장 신청 취소
+    // todo 예약 취소 신청
+    // todo 상품 조기 반납 신고
+    // todo 상품 조기 반납 취소
+    // todo 예약 연장 신청
+    // todo 예약 연장 신청 취소
 
     // 정보 조회 API 는 화면 기획이 나오는 시점에 추가
 }

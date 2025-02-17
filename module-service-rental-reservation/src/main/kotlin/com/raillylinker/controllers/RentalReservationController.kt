@@ -143,6 +143,9 @@ class RentalReservationController(
     )
 
 
+    // todo : 사용자 결제
+
+
     // ----
     @Operation(
         summary = "예약 취소 신청 <>",
@@ -403,9 +406,9 @@ class RentalReservationController(
 //        val stockReservationStateChangeHistoryUid: Long
 //    )
 
-    // todo : 사용자 결제
-    //    예약 연장 신청
-    //    예약 연장 신청 취소
+    
+    // todo 예약 연장 신청
+    // todo 예약 연장 신청 취소
 
     // 정보 조회 API 는 화면 기획이 나오는 시점에 추가
 }
