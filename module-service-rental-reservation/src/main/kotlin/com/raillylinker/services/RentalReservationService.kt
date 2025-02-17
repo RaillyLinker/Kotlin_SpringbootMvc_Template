@@ -20,6 +20,8 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
+// todo .historyCode 의 상태 확인 로직 재검증, 상품 반납일 기준을 product_ready_datetime 만으로 하는 것이 옳은지
+
 @Service
 class RentalReservationService(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
@@ -335,26 +337,26 @@ class RentalReservationService(
         var notCancelChecked = true
         for (history in historyList) {
             when (history.historyCode.toInt()) {
-                2 -> {
+                6 -> {
                     // 예약 취소 승인 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                     httpServletResponse.setHeader("api-result-code", "3")
                     return null
                 }
 
-                3 -> {
+                1 -> {
                     // 예약 신청 거부 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                     httpServletResponse.setHeader("api-result-code", "4")
                     return null
                 }
 
-                4 -> {
+                2 -> {
                     // 관리자 예약 신청 승인 상태
                     notApproved = false
                 }
 
-                6 -> {
+                8 -> {
                     // 결제 확인
                     if (paymentNotChecked) {
                         notPaid = false
@@ -362,14 +364,14 @@ class RentalReservationService(
                     }
                 }
 
-                7 -> {
+                9 -> {
                     // 결제 확인 취소
                     if (paymentNotChecked) {
                         paymentNotChecked = false
                     }
                 }
 
-                17 -> {
+                5 -> {
                     // 예약 취소 신청 취소
                     if (notCancelChecked) {
                         notCancelChecked = false
@@ -378,7 +380,7 @@ class RentalReservationService(
                     }
                 }
 
-                8 -> {
+                7 -> {
                     // 예약 취소 거부
                     if (notCancelChecked) {
                         notCancelChecked = false
@@ -387,7 +389,7 @@ class RentalReservationService(
                     }
                 }
 
-                1 -> {
+                4 -> {
                     // 예약 취소 신청
                     if (notCancelChecked) {
                         notCancelChecked = false
@@ -495,21 +497,21 @@ class RentalReservationService(
         var notCancelChecked = true
         for (history in historyList) {
             when (history.historyCode.toInt()) {
-                2 -> {
+                6 -> {
                     // 예약 취소 승인 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                     httpServletResponse.setHeader("api-result-code", "2")
                     return null
                 }
 
-                3 -> {
+                1 -> {
                     // 예약 신청 거부 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                     httpServletResponse.setHeader("api-result-code", "3")
                     return null
                 }
 
-                6 -> {
+                8 -> {
                     // 결제 확인
                     if (paymentNotChecked) {
                         notPaid = false
@@ -517,14 +519,14 @@ class RentalReservationService(
                     }
                 }
 
-                7 -> {
+                9 -> {
                     // 결제 확인 취소
                     if (paymentNotChecked) {
                         paymentNotChecked = false
                     }
                 }
 
-                17 -> {
+                5 -> {
                     // 예약 취소 신청 취소
                     if (notCancelChecked) {
                         notCancelChecked = false
@@ -533,7 +535,7 @@ class RentalReservationService(
                     }
                 }
 
-                8 -> {
+                7 -> {
                     // 예약 취소 거부
                     if (notCancelChecked) {
                         notCancelChecked = false
@@ -542,7 +544,7 @@ class RentalReservationService(
                     }
                 }
 
-                1 -> {
+                4 -> {
                     // 예약 취소 신청
                     if (notCancelChecked) {
                         notCancelChecked = false
@@ -584,7 +586,7 @@ class RentalReservationService(
 
 
     // ----
-    // (개별 상품 조기 반납 신고 <ADMIN>)
+    // (개별 상품 조기 반납 신고 <>)
     // 관리자의 상품 반납 확인과 고객의 조기 반납 신고 간의 공유락 처리
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductStockReservationInfoEarlyReturn(
@@ -645,14 +647,14 @@ class RentalReservationService(
         var noEarlyReturnCancel = true
         for (history in reservationHistoryList) {
             when (history.historyCode.toInt()) {
-                3 -> {
+                1 -> {
                     // 예약 신청 거부 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                     httpServletResponse.setHeader("api-result-code", "2")
                     return null
                 }
 
-                6 -> {
+                8 -> {
                     // 결제 확인
                     if (paymentNotChecked) {
                         notPaid = false
@@ -660,28 +662,28 @@ class RentalReservationService(
                     }
                 }
 
-                7 -> {
+                9 -> {
                     // 결제 확인 취소
                     if (paymentNotChecked) {
                         paymentNotChecked = false
                     }
                 }
 
-                11 -> {
+                12 -> {
                     // 반납 확인
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                     httpServletResponse.setHeader("api-result-code", "5")
                     return null
                 }
 
-                10 -> {
+                11 -> {
                     // 조기 반납 취소
                     if (noEarlyReturn) {
                         noEarlyReturnCancel = false
                     }
                 }
 
-                9 -> {
+                10 -> {
                     // 조기 반납 상태
                     if (noEarlyReturnCancel) {
                         noEarlyReturn = false
@@ -723,7 +725,7 @@ class RentalReservationService(
 
 
     // ----
-    // (개별 상품 조기 반납 신고 취소 <ADMIN>)
+    // (개별 상품 조기 반납 신고 취소 <>)
     // 관리자의 상품 반납 확인과 고객의 조기 반납 신고 간의 공유락 처리
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postRentableProductStockReservationInfoEarlyReturnCancel(
@@ -768,14 +770,14 @@ class RentalReservationService(
         var noEarlyReturnCancel = true
         for (history in historyList) {
             when (history.historyCode.toInt()) {
-                10 -> {
+                11 -> {
                     // 조기 반납 취소
                     if (noEarlyReturn) {
                         noEarlyReturnCancel = false
                     }
                 }
 
-                9 -> {
+                10 -> {
                     // 조기 반납 상태
                     if (noEarlyReturnCancel) {
                         noEarlyReturn = false
@@ -810,6 +812,189 @@ class RentalReservationService(
 
         httpServletResponse.status = HttpStatus.OK.value()
         return RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnCancelOutputVo(
+            newReservationStateChangeHistory.uid!!
+        )
+    }
+
+
+    // ----
+    // (예약 연장 신청 <>)
+    // 관리자의 상품 반납 확인과 고객의 조기 반납 신고 간의 공유락 처리
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun postRentableProductStockReservationInfoRentalExtend(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentalProductReservationUid: Long,
+        inputVo: RentalReservationController.PostRentableProductStockReservationInfoRentalExtendInputVo
+    ): RentalReservationController.PostRentableProductStockReservationInfoRentalExtendOutputVo? {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        val rentableProductStockReservationInfo =
+            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findByUidAndRowDeleteDateStr(
+                rentalProductReservationUid,
+                "/"
+            )
+
+        if (rentableProductStockReservationInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        if (rentableProductStockReservationInfo.totalAuthMember.uid != memberUid) {
+            // 고객이 진행중인 예약이 아님
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        val nowDatetime = LocalDateTime.now()
+        if (nowDatetime.isBefore(rentableProductStockReservationInfo.rentalStartDatetime)) {
+            // 상품 대여 시작을 넘지 않음
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return null
+        }
+
+        val inputRentalEndDatetime = ZonedDateTime.parse(
+            inputVo.rentalEndDatetime,
+            DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_z")
+        ).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+
+        if (rentableProductStockReservationInfo.rentalEndDatetime.isAfter(inputRentalEndDatetime)) {
+            // rentalEndDatetime 가 기존 시간보다 작음
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "7")
+            return null
+        }
+
+        val reservationHistoryList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentalProductReservationAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductStockReservationInfo,
+                "/"
+            )
+
+        var notPaid = true
+        var paymentNotChecked = true
+        var noEarlyReturn = true
+        var noEarlyReturnCancel = true
+
+        var notRequestExtend = true
+//        var notRequestExtendDeny = true
+//        var notRequestExtendCancel = true
+        var notCancelChecked = true
+        for (history in reservationHistoryList) {
+            when (history.historyCode.toInt()) {
+                16 -> {
+                    // 예약 연장 신청 취소
+                    if (notCancelChecked) {
+                        notCancelChecked = false
+                        // 예약 연장 취소 내역이 최신인지
+//                        notRequestExtendCancel = false
+                    }
+                }
+
+                17 -> {
+                    // 예약 연장 거부
+                    if (notCancelChecked) {
+                        notCancelChecked = false
+                        // 예약 연장 거부 내역이 최신인지
+//                        notRequestExtendDeny = false
+                    }
+                }
+
+                15 -> {
+                    // 예약 연장 신청
+                    if (notCancelChecked) {
+                        notCancelChecked = false
+                        // 예약 연장 신청 내역이 최신인지
+                        notRequestExtend = false
+                    }
+                }
+
+                1 -> {
+                    // 예약 신청 거부 내역 있음 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "2")
+                    return null
+                }
+
+                8 -> {
+                    // 결제 확인
+                    if (paymentNotChecked) {
+                        notPaid = false
+                        paymentNotChecked = false
+                    }
+                }
+
+                9 -> {
+                    // 결제 확인 취소
+                    if (paymentNotChecked) {
+                        paymentNotChecked = false
+                    }
+                }
+
+                12 -> {
+                    // 반납 확인
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "4")
+                    return null
+                }
+
+                11 -> {
+                    // 조기 반납 취소
+                    if (noEarlyReturn) {
+                        noEarlyReturnCancel = false
+                    }
+                }
+
+                10 -> {
+                    // 조기 반납 상태
+                    if (noEarlyReturnCancel) {
+                        noEarlyReturn = false
+                    }
+                }
+            }
+        }
+
+        if (notPaid && nowDatetime.isAfter(rentableProductStockReservationInfo.paymentCheckDeadlineDatetime)) {
+            // 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일) -> return
+            // 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
+        if (!noEarlyReturn) {
+            // 조기 반납 상태입니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "5")
+            return null
+        }
+
+        if (!notRequestExtend) {
+            // 예약 연장 신청 상태입니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "6")
+            return null
+        }
+
+        // 개별 상품 조기반납 신고 내역 추가
+        val newReservationStateChangeHistory =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
+                Db1_RaillyLinkerCompany_RentalProductReservationHistory(
+                    rentableProductStockReservationInfo,
+                    14,
+                    inputVo.rentalEndDatetime + "/" + inputVo.stateChangeDesc
+                )
+            )
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationController.PostRentableProductStockReservationInfoRentalExtendOutputVo(
             newReservationStateChangeHistory.uid!!
         )
     }

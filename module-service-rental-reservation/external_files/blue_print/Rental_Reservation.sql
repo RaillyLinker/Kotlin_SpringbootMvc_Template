@@ -62,8 +62,8 @@ CREATE TABLE `rental_product_reservation_history` (
 	`row_update_date`	DATETIME(3)	NOT NULL	COMMENT '행 수정일',
 	`row_delete_date_str`	VARCHAR(50)	NOT NULL	DEFAULT /	COMMENT '행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)',
 	`rental_product_reservation_uid`	BIGINT	NOT NULL	COMMENT '상품 예약 정보 행 고유키',
-	`history_code`	TINYINT UNSIGNED	NOT NULL	COMMENT '히스토리 코드(0 : 예약 신청, 1 : 예약 취소 신청, 2 : 예약 취소 신청 승인, 3 : 예약 신청 거부, 4 : 예약 신청 승인, 5: 예약 신청 승인 취소, 6 :결제 확인, 7: 결제 확인 취소, 8 : 예약 취소 신청 거부, 9 : 상품 조기 반납 신고, 10 : 상품 조기 반납 취소, 11 : 상품 반납 확인, 12 : 상품 연체 상태, 13 : 상품 연체 상태 취소, 14 : 예약 시간 연장 신청, 15 : 예약 시간 연장 신청 거부, 16 : 예약 시간 연장 신청 승인, 17 : 예약 취소 신청 취소)',
-	`history_desc`	VARCHAR(600)	NOT NULL	COMMENT '히스토리 상세'
+	`history_code`	TINYINT UNSIGNED	NOT NULL	COMMENT '히스토리 코드(0 : 예약 신청, 1 : 예약 신청 거부, 2 : 예약 신청 승인, 3 : 예약 신청 승인 취소, 4 : 예약 취소 신청, 5 : 예약 취소 신청 철회, 6 : 예약 취소 신청 승인, 7 : 예약 취소 신청 거부, 8 :결제 확인, 9 : 결제 확인 취소, 10 : 상품 조기 반납 신고, 11 : 상품 조기 반납 취소, 12 : 상품 반납 확인, 13 : 상품 연체 상태, 14 : 상품 연체 상태 취소, 15 : 예약 시간 연장 신청, 16 : 예약 시간 연장 신청 철회, 17 : 예약 시간 연장 신청 거부, 18 : 예약 시간 연장 신청 승인)',
+	`history_desc`	VARCHAR(600)	NOT NULL	COMMENT '히스토리 상세(예약 연장 신청 히스토리라면 yyyy_MM_dd_T_HH_mm_ss_z 형태의 연장 시간으로 시작해서 / 를 입력 후 뒤에 추가 설명이 붙습니다.)'
 );
 
 CREATE TABLE `rental_product_image` (

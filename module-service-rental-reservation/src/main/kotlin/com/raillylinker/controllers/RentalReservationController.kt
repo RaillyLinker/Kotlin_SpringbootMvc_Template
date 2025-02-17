@@ -340,11 +340,6 @@ class RentalReservationController(
                 responseCode = "401",
                 content = [Content()],
                 description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
             )
         ]
     )
@@ -423,11 +418,6 @@ class RentalReservationController(
                 responseCode = "401",
                 content = [Content()],
                 description = "인증되지 않은 접근입니다."
-            ),
-            ApiResponse(
-                responseCode = "403",
-                content = [Content()],
-                description = "인가되지 않은 접근입니다."
             )
         ]
     )
@@ -475,7 +465,95 @@ class RentalReservationController(
     )
 
 
-    // todo 예약 연장 신청
+    // ----
+    @Operation(
+        summary = "예약 연장 신청 <>",
+        description = "예약 연장 신청을 합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님<br>" +
+                                "3 : 상품 대여일이 도래하지 않았습니다.<br>" +
+                                "4 : 상품 반납을 확인하였습니다.<br>" +
+                                "5 : 상품 조기 반납 신고 된 상태입니다.<br>" +
+                                "6 : 예약 연장 신청 상태입니다.<br>" +
+                                "7 : rentalEndDatetime 가 기존 시간보다 작습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/rental-product-reservation/{rentalProductReservationUid}/rental-extend"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    fun postRentableProductStockReservationInfoRentalExtend(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(
+            name = "rentalProductReservationUid",
+            description = "rentalProductReservation 고유값",
+            example = "1"
+        )
+        @PathVariable("rentalProductReservationUid")
+        rentalProductReservationUid: Long,
+        @RequestBody
+        inputVo: PostRentableProductStockReservationInfoRentalExtendInputVo
+    ): PostRentableProductStockReservationInfoRentalExtendOutputVo? {
+        return service.postRentableProductStockReservationInfoRentalExtend(
+            httpServletResponse,
+            authorization!!,
+            rentalProductReservationUid,
+            inputVo
+        )
+    }
+
+    data class PostRentableProductStockReservationInfoRentalExtendInputVo(
+        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
+        @JsonProperty("stateChangeDesc")
+        val stateChangeDesc: String,
+        @Schema(
+            description = "연장하려는 대여 마지막 일시(yyyy_MM_dd_'T'_HH_mm_ss_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_KST"
+        )
+        @JsonProperty("rentalEndDatetime")
+        val rentalEndDatetime: String
+    )
+
+    data class PostRentableProductStockReservationInfoRentalExtendOutputVo(
+        @Schema(description = "reservationHistory 고유값", required = true, example = "1")
+        @JsonProperty("reservationHistoryUid")
+        val reservationHistoryUid: Long
+    )
+
+
     // todo 예약 연장 신청 취소
 
     // 정보 조회 API 는 화면 기획이 나오는 시점에 추가

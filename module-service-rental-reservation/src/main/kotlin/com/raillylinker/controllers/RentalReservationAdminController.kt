@@ -1809,6 +1809,7 @@ class RentalReservationAdminController(
 
 
     // todo 예약 연장 승인
+    // todo 예약 연장 거부
     // todo 환불 처리
     // todo 손망실 설정
     // todo 손망실 취소
