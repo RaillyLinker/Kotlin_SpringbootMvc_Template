@@ -19,7 +19,6 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.math.BigDecimal
-import java.math.BigInteger
 
 
 @Tag(name = "/rental-reservation-admin APIs", description = "대여 예약 서비스 관리자 API 컨트롤러")
@@ -1885,7 +1884,6 @@ class RentalReservationAdminController(
     //     손망실 설정 / 취소
 
     // todo : 예약 취소 신청
-    //    예약 취소 신청 취소
     //    상품 조기 반납 신고
     //    상품 조기 반납 취소
     //    예약 연장 신청

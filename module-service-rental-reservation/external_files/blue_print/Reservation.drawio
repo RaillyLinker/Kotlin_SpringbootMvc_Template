@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.0.9 Chrome/128.0.6613.186 Electron/32.2.5 Safari/537.36" version="26.0.9">
   <diagram name="페이지-1" id="gPcE3TySeQDTiM629QRJ">
-    <mxGraphModel dx="2261" dy="836" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2243" dy="818" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -592,9 +592,6 @@
         <mxCell id="CRkLpjZog5i0egp7tEst-18" value="예약 승인&lt;div&gt;거절&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=#0050ef;strokeColor=#001DBC;fontColor=#ffffff;" parent="1" vertex="1">
           <mxGeometry x="-573.6800000000001" y="2078.01" width="61" height="30.98" as="geometry" />
         </mxCell>
-        <mxCell id="CRkLpjZog5i0egp7tEst-21" value="중복 취소&lt;div&gt;신청 불가능&amp;nbsp;&lt;div&gt;취소 거부 시&lt;/div&gt;&lt;div&gt;재 취소 가능&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="58.00000000000006" y="696" width="79.69" height="66.5" as="geometry" />
-        </mxCell>
         <mxCell id="CRkLpjZog5i0egp7tEst-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="CRkLpjZog5i0egp7tEst-24" target="CRkLpjZog5i0egp7tEst-27" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
@@ -929,7 +926,7 @@
         <mxCell id="GUmiHQQ4oi1xmi6ikBiI-103" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="GUmiHQQ4oi1xmi6ikBiI-71" target="GUmiHQQ4oi1xmi6ikBiI-101" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="mmrMTt_2vW5sL_ut6-nk-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="GUmiHQQ4oi1xmi6ikBiI-71" target="mmrMTt_2vW5sL_ut6-nk-1">
+        <mxCell id="mmrMTt_2vW5sL_ut6-nk-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" parent="1" source="GUmiHQQ4oi1xmi6ikBiI-71" target="mmrMTt_2vW5sL_ut6-nk-1" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="GUmiHQQ4oi1xmi6ikBiI-71" value="예약 승인&lt;div&gt;상태&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#008a00;strokeColor=#005700;fontColor=#ffffff;" parent="1" vertex="1">
@@ -984,6 +981,9 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="GUmiHQQ4oi1xmi6ikBiI-113" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="GUmiHQQ4oi1xmi6ikBiI-104" target="GUmiHQQ4oi1xmi6ikBiI-112" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-SLzRii5CSWxme9_-HoP-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="GUmiHQQ4oi1xmi6ikBiI-104" target="-SLzRii5CSWxme9_-HoP-2">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="GUmiHQQ4oi1xmi6ikBiI-104" value="&lt;div&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;예약 취소&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;신청&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d80073;strokeColor=light-dark(#A50040,#007FFF);strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=#00FFFF;" parent="1" vertex="1">
@@ -1211,6 +1211,9 @@
         <mxCell id="7ol0z4mPK6ZrLWTJztl--24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="7ol0z4mPK6ZrLWTJztl--2" target="7ol0z4mPK6ZrLWTJztl--18" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="-SLzRii5CSWxme9_-HoP-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="7ol0z4mPK6ZrLWTJztl--2" target="-SLzRii5CSWxme9_-HoP-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="7ol0z4mPK6ZrLWTJztl--2" value="예약 연장&lt;div&gt;신청&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d80073;strokeColor=light-dark(#A50040,#007FFF);strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=#00FFFF;" parent="1" vertex="1">
           <mxGeometry x="-637.4200000000001" y="1119" width="79" height="40" as="geometry" />
         </mxCell>
@@ -1280,7 +1283,7 @@
         <mxCell id="7ol0z4mPK6ZrLWTJztl--36" value="시간&lt;div&gt;도표&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=14;strokeColor=default;" parent="1" vertex="1">
           <mxGeometry x="-801.15" y="1921" width="68.43" height="45" as="geometry" />
         </mxCell>
-        <mxCell id="mmrMTt_2vW5sL_ut6-nk-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="mmrMTt_2vW5sL_ut6-nk-1" target="CRkLpjZog5i0egp7tEst-24">
+        <mxCell id="mmrMTt_2vW5sL_ut6-nk-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" parent="1" source="mmrMTt_2vW5sL_ut6-nk-1" target="CRkLpjZog5i0egp7tEst-24" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="-403" y="550" />
@@ -1288,8 +1291,27 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="mmrMTt_2vW5sL_ut6-nk-1" value="예약 신청&lt;div&gt;승인 취소&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0050ef;strokeColor=#FFFFFF;fontColor=#ffffff;strokeWidth=2;" vertex="1" parent="1">
+        <mxCell id="mmrMTt_2vW5sL_ut6-nk-1" value="예약 신청&lt;div&gt;승인 취소&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0050ef;strokeColor=#FFFFFF;fontColor=#ffffff;strokeWidth=2;" parent="1" vertex="1">
           <mxGeometry x="-422.42999999999995" y="480" width="79" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="-SLzRii5CSWxme9_-HoP-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="-SLzRii5CSWxme9_-HoP-2" target="GUmiHQQ4oi1xmi6ikBiI-101">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="182" y="741" />
+              <mxPoint x="182" y="610" />
+              <mxPoint x="60" y="610" />
+              <mxPoint x="60" y="592" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="-SLzRii5CSWxme9_-HoP-2" value="&lt;div&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;font&gt;예약 취소&amp;nbsp;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;font&gt;신청 취소&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d80073;strokeColor=light-dark(#A50040, #ffffff);strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="81.57000000000005" y="721" width="80.43" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="-SLzRii5CSWxme9_-HoP-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="-SLzRii5CSWxme9_-HoP-5" target="7ol0z4mPK6ZrLWTJztl--1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-SLzRii5CSWxme9_-HoP-5" value="예약 연장&lt;div&gt;신청 취소&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d80073;strokeColor=light-dark(#A50040,#007FFF);strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=#00FFFF;" vertex="1" parent="1">
+          <mxGeometry x="-638.0600000000001" y="1040" width="79" height="40" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
