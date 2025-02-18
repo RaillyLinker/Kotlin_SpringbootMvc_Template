@@ -39,11 +39,15 @@ CREATE TABLE `rental_product_reservation` (
 	`approval_deadline_datetime`	DATETIME	NOT NULL	COMMENT '관리자 승인 기한 (이 시점이 지났고, reservation_approval_datetime 가 충족되지 않았다면 취소로 간주)',
 	`cancel_deadline_datetime`	DATETIME	NOT NULL	COMMENT '예약 취소 가능 기한',
 	`product_ready_datetime`	DATETIME	NULL	COMMENT '상품이 대여 반납 이후 준비가 완료된 시간(미리 설정도 가능, 히스토리 테이블 내역보다 우선됩니다.)',
-	`product_name`	VARCHAR(90)	NOT NULL	COMMENT '고객에게 보일 상품명(아래 부터는 예약 당시의 정보로, 영수증의 기능을 위한 정보 복제 컬럼)',
+	`version_seq`	BIGINT	NOT NULL	COMMENT '예약 상품 정보 버전 시퀀스(아래 부터는 예약 당시의 정보로, 영수증의 기능을 위한 정보 복제 컬럼)',
+	`product_name`	VARCHAR(90)	NOT NULL	COMMENT '고객에게 보일 상품명',
 	`product_intro`	VARCHAR(6000)	NOT NULL	COMMENT '고객에게 보일 상품 소개',
 	`address_country`	VARCHAR(60)	NOT NULL	COMMENT '상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 국가',
 	`address_main`	VARCHAR(300)	NOT NULL	COMMENT '상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 국가와 상세 주소를 제외',
-	`address_detail`	VARCHAR(300)	NOT NULL	COMMENT '상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 상세'
+	`address_detail`	VARCHAR(300)	NOT NULL	COMMENT '상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 상세',
+	`reservation_unit_minute`	BIGINT	NOT NULL	COMMENT '예약 추가 할 수 있는 최소 시간 단위 (분)',
+	`reservation_unit_price`	DECIMAL(15, 2)	NOT NULL	COMMENT '단위 예약 시간에 대한 가격 (예약 시간 / 단위 예약 시간 * 예약 단가 = 예약 최종가)',
+	`reservation_unit_price_currency_code`	CHAR(3)	NOT NULL	COMMENT '단위 예약 시간에 대한 가격 통화 코드(IOS 4217, ex : KRW, USD, EUR...)'
 );
 
 CREATE TABLE `rental_product_reservation_image` (
