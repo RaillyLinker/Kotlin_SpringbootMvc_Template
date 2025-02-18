@@ -1744,7 +1744,6 @@ class RentalReservationAdminController(
                         description = "(Response Code 반환 원인) - Required<br>" +
                                 "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : 예약 거부 상태<br>" +
-
                                 "3 : 연체 상태 설정 내역이 없습니다.<br>" +
                                 "4 : 연제 상태 변경 취소 상태입니다.<br>" +
                                 "5 : 결제 확인 완료 아님 = 대여 진행 상태가 아님",

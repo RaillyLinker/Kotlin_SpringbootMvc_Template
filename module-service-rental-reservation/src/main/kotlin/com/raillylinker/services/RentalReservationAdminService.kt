@@ -32,7 +32,6 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-// todo .historyCode 의 상태 확인 로직 재검증, 상품 반납일 기준을 product_ready_datetime 만으로 하는 것이 옳은지
 
 @Service
 class RentalReservationAdminService(
@@ -708,15 +707,11 @@ class RentalReservationAdminService(
 
         var notPaid = true
         var paymentNotChecked = true
+
+        var notApproved = true
+        var approveNotChecked = true
         for (history in historyList) {
             when (history.historyCode.toInt()) {
-                6 -> {
-                    // 예약 취소 승인 내역 있음 -> return
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "2")
-                    return null
-                }
-
                 1 -> {
                     // 예약 신청 거부 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
@@ -725,9 +720,24 @@ class RentalReservationAdminService(
                 }
 
                 2 -> {
-                    // 예약 승인 내역 있음 -> return
+                    // 승인
+                    if (approveNotChecked) {
+                        notApproved = false
+                        approveNotChecked = false
+                    }
+                }
+
+                3 -> {
+                    // 승인 취소
+                    if (approveNotChecked) {
+                        approveNotChecked = false
+                    }
+                }
+
+                6 -> {
+                    // 예약 취소 승인 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "4")
+                    httpServletResponse.setHeader("api-result-code", "2")
                     return null
                 }
 
@@ -746,6 +756,13 @@ class RentalReservationAdminService(
                     }
                 }
             }
+        }
+
+        if (!notApproved) {
+            // 예약 승인 내역 있음 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
+            return null
         }
 
         if (notPaid && nowDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
@@ -815,18 +832,14 @@ class RentalReservationAdminService(
                 "/"
             )
 
-        var notApproved = true
         var notPaid = true
         var paymentNotChecked = true
+
+        var notApproved = true
+        var notApproveCancel = true
+        var approveNotChecked = true
         for (history in historyList) {
             when (history.historyCode.toInt()) {
-                6 -> {
-                    // 예약 취소 승인 내역 있음 -> return
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "2")
-                    return null
-                }
-
                 1 -> {
                     // 예약 신청 거부 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
@@ -835,15 +848,25 @@ class RentalReservationAdminService(
                 }
 
                 2 -> {
-                    // 예약 승인 내역 있음
-                    notApproved = false
+                    // 승인
+                    if (approveNotChecked) {
+                        approveNotChecked = false
+                        notApproved = false
+                    }
                 }
 
-                // todo
-                4 -> {
-                    // 예약 승인 취소 내역 있음 -> return
+                3 -> {
+                    // 승인 취소
+                    if (approveNotChecked) {
+                        approveNotChecked = false
+                        notApproveCancel = false
+                    }
+                }
+
+                6 -> {
+                    // 예약 취소 승인 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "4")
+                    httpServletResponse.setHeader("api-result-code", "2")
                     return null
                 }
 
@@ -868,6 +891,13 @@ class RentalReservationAdminService(
             // 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일) -> return
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "5")
+            return null
+        }
+
+        if (!notApproveCancel) {
+            // 예약 승인 취소 내역 있음 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
             return null
         }
 
@@ -940,15 +970,12 @@ class RentalReservationAdminService(
 
         var notPaid = true
         var paymentNotChecked = true
+
+        var notApproved = true
+//        var notApproveCancel = true
+        var approveNotChecked = true
         for (history in historyList) {
             when (history.historyCode.toInt()) {
-                6 -> {
-                    // 예약 취소 승인 내역 있음 -> return
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "3")
-                    return null
-                }
-
                 1 -> {
                     // 예약 신청 거부 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
@@ -957,9 +984,25 @@ class RentalReservationAdminService(
                 }
 
                 2 -> {
-                    // 예약 승인 내역 있음 -> return
+                    // 승인
+                    if (approveNotChecked) {
+                        approveNotChecked = false
+                        notApproved = false
+                    }
+                }
+
+                3 -> {
+                    // 승인 취소
+                    if (approveNotChecked) {
+                        approveNotChecked = false
+//                        notApproveCancel = false
+                    }
+                }
+
+                6 -> {
+                    // 예약 취소 승인 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "5")
+                    httpServletResponse.setHeader("api-result-code", "3")
                     return null
                 }
 
@@ -978,6 +1021,13 @@ class RentalReservationAdminService(
                     }
                 }
             }
+        }
+
+        if (!notApproved) {
+            // 예약 승인 내역 있음 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "5")
+            return null
         }
 
         if (notPaid && nowDatetime.isAfter(rentableProductReservationInfo.paymentCheckDeadlineDatetime)) {
@@ -1064,28 +1114,10 @@ class RentalReservationAdminService(
         var notCancelChecked = true
         for (history in historyList) {
             when (history.historyCode.toInt()) {
-                5 -> {
-                    // 예약 취소 신청 취소
-                    if (notCancelChecked) {
-                        notCancelChecked = false
-                        // 예약 취소 거부 내역이 최신인지
-                        notRequestCancelCancel = false
-                    }
-                }
-
-                7 -> {
-                    // 예약 취소 거부
-                    if (notCancelChecked) {
-                        notCancelChecked = false
-                        // 예약 취소 거부 내역이 최신인지
-                        notRequestCancelDeny = false
-                    }
-                }
-
-                6 -> {
-                    // 예약 취소 승인 내역 있음 -> return
+                1 -> {
+                    // 예약 신청 거부 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "3")
+                    httpServletResponse.setHeader("api-result-code", "4")
                     return null
                 }
 
@@ -1100,11 +1132,29 @@ class RentalReservationAdminService(
                     }
                 }
 
-                1 -> {
-                    // 예약 신청 거부 내역 있음 -> return
+                5 -> {
+                    // 예약 취소 신청 취소
+                    if (notCancelChecked) {
+                        notCancelChecked = false
+                        // 예약 취소 거부 내역이 최신인지
+                        notRequestCancelCancel = false
+                    }
+                }
+
+                6 -> {
+                    // 예약 취소 승인 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "4")
+                    httpServletResponse.setHeader("api-result-code", "3")
                     return null
+                }
+
+                7 -> {
+                    // 예약 취소 거부
+                    if (notCancelChecked) {
+                        notCancelChecked = false
+                        // 예약 취소 거부 내역이 최신인지
+                        notRequestCancelDeny = false
+                    }
                 }
 
                 8 -> {
@@ -1229,22 +1279,11 @@ class RentalReservationAdminService(
         var notCancelChecked = true
         for (history in historyList) {
             when (history.historyCode.toInt()) {
-                5 -> {
-                    // 예약 취소 신청 취소
-                    if (notCancelChecked) {
-                        notCancelChecked = false
-                        // 예약 취소 거부 내역이 최신인지
-                        notRequestCancelCancel = false
-                    }
-                }
-
-                7 -> {
-                    // 예약 취소 거부
-                    if (notCancelChecked) {
-                        notCancelChecked = false
-                        // 예약 취소 거부 내역이 최신인지
-                        notRequestCancelDeny = false
-                    }
+                1 -> {
+                    // 예약 신청 거부 내역 있음 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "4")
+                    return null
                 }
 
                 4 -> {
@@ -1258,6 +1297,15 @@ class RentalReservationAdminService(
                     }
                 }
 
+                5 -> {
+                    // 예약 취소 신청 취소
+                    if (notCancelChecked) {
+                        notCancelChecked = false
+                        // 예약 취소 거부 내역이 최신인지
+                        notRequestCancelCancel = false
+                    }
+                }
+
                 6 -> {
                     // 예약 취소 승인 내역 있음 -> return
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
@@ -1265,11 +1313,13 @@ class RentalReservationAdminService(
                     return null
                 }
 
-                1 -> {
-                    // 예약 신청 거부 내역 있음 -> return
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "4")
-                    return null
+                7 -> {
+                    // 예약 취소 거부
+                    if (notCancelChecked) {
+                        notCancelChecked = false
+                        // 예약 취소 거부 내역이 최신인지
+                        notRequestCancelDeny = false
+                    }
                 }
 
                 8 -> {
@@ -1376,15 +1426,33 @@ class RentalReservationAdminService(
                 rentableProductReservationInfo,
                 "/"
             )
+
+        var notPaid = true
+        var paymentNotChecked = true
         for (history in historyList) {
             when (history.historyCode.toInt()) {
                 8 -> {
-                    // 결제 확인 내역 있음 -> return
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "2")
-                    return null
+                    // 결제 확인
+                    if (paymentNotChecked) {
+                        notPaid = false
+                        paymentNotChecked = false
+                    }
+                }
+
+                9 -> {
+                    // 결제 확인 취소
+                    if (paymentNotChecked) {
+                        paymentNotChecked = false
+                    }
                 }
             }
+        }
+
+        if (!notPaid) {
+            // 결제 확인 내역 있음 -> return
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
         }
 
         // 예약 히스토리에 정보 기입
@@ -1465,6 +1533,13 @@ class RentalReservationAdminService(
                     }
                 }
 
+                10 -> {
+                    // 사용자 조기 반납 신고
+                    if (noEarlyReturnCancel) {
+                        noEarlyReturn = false
+                    }
+                }
+
                 11 -> {
                     // 사용자 조기 반납 신고 취소
                     if (noEarlyReturn) {
@@ -1477,13 +1552,6 @@ class RentalReservationAdminService(
                     httpServletResponse.status = HttpStatus.NO_CONTENT.value()
                     httpServletResponse.setHeader("api-result-code", "4")
                     return null
-                }
-
-                10 -> {
-                    // 사용자 조기 반납 신고
-                    if (noEarlyReturnCancel) {
-                        noEarlyReturn = false
-                    }
                 }
             }
         }
@@ -1629,11 +1697,11 @@ class RentalReservationAdminService(
                     }
                 }
 
-                14 -> {
-                    // 연체 설정 취소
-                    if (noOverdue) {
-                        noOverdueCancel = false
-                    }
+                12 -> {
+                    // 반납 확인 상태
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "5")
+                    return null
                 }
 
                 13 -> {
@@ -1643,11 +1711,11 @@ class RentalReservationAdminService(
                     }
                 }
 
-                12 -> {
-                    // 반납 확인 상태
-                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-                    httpServletResponse.setHeader("api-result-code", "5")
-                    return null
+                14 -> {
+                    // 연체 설정 취소
+                    if (noOverdue) {
+                        noOverdueCancel = false
+                    }
                 }
             }
         }
@@ -1753,17 +1821,17 @@ class RentalReservationAdminService(
                     }
                 }
 
-                14 -> {
-                    // 연체 설정 취소
-                    if (noOverdue) {
-                        noOverdueCancel = false
-                    }
-                }
-
                 13 -> {
                     // 연체 상태
                     if (noOverdueCancel) {
                         noOverdue = false
+                    }
+                }
+
+                14 -> {
+                    // 연체 설정 취소
+                    if (noOverdue) {
+                        noOverdueCancel = false
                     }
                 }
             }
