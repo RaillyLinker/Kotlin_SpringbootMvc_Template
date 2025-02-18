@@ -5,6 +5,7 @@ import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.Comment
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 // Fk 관계 중 OneToOne 은 논리적 삭제를 적용할시 사용이 불가능합니다.
@@ -55,6 +56,10 @@ class Db1_RaillyLinkerCompany_RentalProductReservation(
     @Comment("상품이 대여 반납 이후 준비가 완료된 시간(미리 설정도 가능, 히스토리 테이블 내역보다 우선됩니다.)")
     var productReadyDatetime: LocalDateTime?,
 
+    @Column(name = "version_seq", nullable = false, columnDefinition = "BIGINT")
+    @Comment("예약 상품 정보 버전 시퀀스")
+    var versionSeq: Long,
+
     // 아래는 예약 당시 영수증으로서의 기능을 하는 컬럼
     @Column(name = "product_name", nullable = false, columnDefinition = "VARCHAR(90)")
     @Comment("고객에게 보일 상품명")
@@ -74,7 +79,19 @@ class Db1_RaillyLinkerCompany_RentalProductReservation(
 
     @Column(name = "address_detail", nullable = false, columnDefinition = "VARCHAR(300)")
     @Comment("상품이 위치한 주소(대여 가능 위치의 기준으로 사용됨) - 상세")
-    var addressDetail: String
+    var addressDetail: String,
+
+    @Column(name = "reservation_unit_minute", nullable = false, columnDefinition = "BIGINT")
+    @Comment("예약 추가 할 수 있는 최소 시간 단위 (분)")
+    var reservationUnitMinute: Long,
+
+    @Column(name = "reservation_unit_price", nullable = false, columnDefinition = "DECIMAL(15, 2)")
+    @Comment("단위 예약 시간에 대한 가격 (예약 시간 / 단위 예약 시간 * 예약 단가 = 예약 최종가)")
+    var reservationUnitPrice: BigDecimal,
+
+    @Column(name = "reservation_unit_price_currency_code", nullable = false, columnDefinition = "CHAR(3)")
+    @Comment("단위 예약 시간에 대한 가격 통화 코드(IOS 4217, ex : KRW, USD, EUR...)")
+    var reservationUnitPriceCurrencyCode: String
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -216,11 +216,15 @@ class RentalReservationService(
                             nowDatetime, // 관리자 승인 기한 임시 입력
                             nowDatetime, // 예약 취소 가능 기한 임시 입력
                             null,
+                            rentableProductInfo.versionSeq,
                             rentableProductInfo.productName,
                             rentableProductInfo.productIntro,
                             rentableProductInfo.addressCountry,
                             rentableProductInfo.addressMain,
-                            rentableProductInfo.addressDetail
+                            rentableProductInfo.addressDetail,
+                            rentableProductInfo.reservationUnitMinute,
+                            rentableProductInfo.reservationUnitPrice,
+                            rentableProductInfo.reservationUnitPriceCurrencyCode
                         )
                     )
 
