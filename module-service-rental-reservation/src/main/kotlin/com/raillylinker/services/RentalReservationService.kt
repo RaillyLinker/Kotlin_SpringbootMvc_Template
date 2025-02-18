@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -250,6 +251,17 @@ class RentalReservationService(
                         "예약 신청"
                     )
                 )
+
+                if (rentableProductInfo.reservationUnitPrice == BigDecimal(0L)) {
+                    // 예약 상품이 무료일 경우
+                    db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
+                        Db1_RaillyLinkerCompany_RentalProductReservationHistory(
+                            newReservationInfo,
+                            8,
+                            "무료 상품 결제 확인 처리"
+                        )
+                    )
+                }
 
                 // 이미지 테이블 백업 저장
                 for (productImage in rentableProductInfo.rentalProductImageList) {
