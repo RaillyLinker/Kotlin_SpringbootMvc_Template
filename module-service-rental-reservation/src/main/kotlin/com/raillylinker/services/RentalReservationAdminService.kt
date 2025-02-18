@@ -777,7 +777,7 @@ class RentalReservationAdminService(
             db1RaillyLinkerCompanyRentalProductReservationHistoryRepository.save(
                 Db1_RaillyLinkerCompany_RentalProductReservationHistory(
                     rentableProductReservationInfo,
-                    4,
+                    2,
                     inputVo.stateChangeDesc
                 )
             )
@@ -913,7 +913,7 @@ class RentalReservationAdminService(
             db1RaillyLinkerCompanyRentalProductReservationHistoryRepository.save(
                 Db1_RaillyLinkerCompany_RentalProductReservationHistory(
                     rentableProductReservationInfo,
-                    5,
+                    3,
                     inputVo.stateChangeDesc
                 )
             )
@@ -1042,7 +1042,7 @@ class RentalReservationAdminService(
             db1RaillyLinkerCompanyRentalProductReservationHistoryRepository.save(
                 Db1_RaillyLinkerCompany_RentalProductReservationHistory(
                     rentableProductReservationInfo,
-                    3,
+                    1,
                     inputVo.stateChangeDesc
                 )
             )
@@ -1207,7 +1207,7 @@ class RentalReservationAdminService(
             db1RaillyLinkerCompanyRentalProductReservationHistoryRepository.save(
                 Db1_RaillyLinkerCompany_RentalProductReservationHistory(
                     rentableProductReservationInfo,
-                    2,
+                    6,
                     inputVo.stateChangeDesc
                 )
             )
@@ -1372,7 +1372,7 @@ class RentalReservationAdminService(
             db1RaillyLinkerCompanyRentalProductReservationHistoryRepository.save(
                 Db1_RaillyLinkerCompany_RentalProductReservationHistory(
                     rentableProductReservationInfo,
-                    8,
+                    7,
                     inputVo.stateChangeDesc
                 )
             )
@@ -1460,7 +1460,7 @@ class RentalReservationAdminService(
             db1RaillyLinkerCompanyRentalProductReservationHistoryRepository.save(
                 Db1_RaillyLinkerCompany_RentalProductReservationHistory(
                     rentableProductReservationInfo,
-                    6,
+                    8,
                     inputVo.stateChangeDesc
                 )
             )
@@ -1580,7 +1580,7 @@ class RentalReservationAdminService(
             db1RaillyLinkerCompanyRentalProductReservationHistoryRepository.save(
                 Db1_RaillyLinkerCompany_RentalProductReservationHistory(
                     rentableProductReservationInfo,
-                    11,
+                    12,
                     inputVo.stateChangeDesc
                 )
             )
@@ -1748,7 +1748,7 @@ class RentalReservationAdminService(
             db1RaillyLinkerCompanyRentalProductReservationHistoryRepository.save(
                 Db1_RaillyLinkerCompany_RentalProductReservationHistory(
                     rentableProductReservationInfo,
-                    12,
+                    13,
                     inputVo.stateChangeDesc
                 )
             )
@@ -1862,7 +1862,7 @@ class RentalReservationAdminService(
             db1RaillyLinkerCompanyRentalProductReservationHistoryRepository.save(
                 Db1_RaillyLinkerCompany_RentalProductReservationHistory(
                     rentableProductReservationInfo,
-                    13,
+                    14,
                     inputVo.stateChangeDesc
                 )
             )

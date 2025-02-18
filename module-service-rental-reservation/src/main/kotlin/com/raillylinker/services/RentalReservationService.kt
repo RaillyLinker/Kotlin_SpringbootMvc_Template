@@ -431,7 +431,7 @@ class RentalReservationService(
         val reservationCancelEntity = db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
             Db1_RaillyLinkerCompany_RentalProductReservationHistory(
                 reservationEntity,
-                1,
+                4,
                 inputVo.cancelReason
             )
         )
@@ -446,7 +446,7 @@ class RentalReservationService(
                 db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
                     Db1_RaillyLinkerCompany_RentalProductReservationHistory(
                         reservationEntity,
-                        2,
+                        6,
                         "자동 취소 승인 처리"
                     )
                 ).uid
@@ -586,7 +586,7 @@ class RentalReservationService(
         val reservationCancelEntity = db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
             Db1_RaillyLinkerCompany_RentalProductReservationHistory(
                 reservationEntity,
-                17,
+                5,
                 "사용자 예약 취소 신청 철회"
             )
         )
@@ -725,7 +725,7 @@ class RentalReservationService(
             db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
                 Db1_RaillyLinkerCompany_RentalProductReservationHistory(
                     rentableProductStockReservationInfo,
-                    9,
+                    10,
                     inputVo.stateChangeDesc
                 )
             )
@@ -818,7 +818,7 @@ class RentalReservationService(
             db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
                 Db1_RaillyLinkerCompany_RentalProductReservationHistory(
                     rentableProductStockReservationInfo,
-                    10,
+                    11,
                     inputVo.stateChangeDesc
                 )
             )
@@ -996,18 +996,173 @@ class RentalReservationService(
             return null
         }
 
-        // 개별 상품 조기반납 신고 내역 추가
         val newReservationStateChangeHistory =
             db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
                 Db1_RaillyLinkerCompany_RentalProductReservationHistory(
                     rentableProductStockReservationInfo,
-                    14,
+                    15,
                     inputVo.rentalEndDatetime + "/" + inputVo.stateChangeDesc
                 )
             )
 
         httpServletResponse.status = HttpStatus.OK.value()
         return RentalReservationController.PostRentableProductStockReservationInfoRentalExtendOutputVo(
+            newReservationStateChangeHistory.uid!!
+        )
+    }
+
+
+    // ----
+    // (예약 연장 신청 취소 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun postRentableProductStockReservationInfoRentalExtendCancel(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        rentalProductReservationUid: Long,
+        inputVo: RentalReservationController.PostRentableProductStockReservationInfoRentalExtendCancelInputVo
+    ): RentalReservationController.PostRentableProductStockReservationInfoRentalExtendCancelOutputVo? {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
+            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+        )
+
+        val rentableProductStockReservationInfo =
+            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findByUidAndRowDeleteDateStr(
+                rentalProductReservationUid,
+                "/"
+            )
+
+        if (rentableProductStockReservationInfo == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        if (rentableProductStockReservationInfo.totalAuthMember.uid != memberUid) {
+            // 고객이 진행중인 예약이 아님
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        val nowDatetime = LocalDateTime.now()
+        if (nowDatetime.isBefore(rentableProductStockReservationInfo.rentalStartDatetime)) {
+            // 상품 대여 시작을 넘지 않음
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return null
+        }
+
+        val reservationHistoryList =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.findAllByRentalProductReservationAndRowDeleteDateStrOrderByRowCreateDateDesc(
+                rentableProductStockReservationInfo,
+                "/"
+            )
+
+        var notPaid = true
+        var paymentNotChecked = true
+        var noEarlyReturn = true
+        var noEarlyReturnCancel = true
+
+        var notRequestExtend = true
+//        var notRequestExtendDeny = true
+//        var notRequestExtendCancel = true
+        var notCancelChecked = true
+        for (history in reservationHistoryList) {
+            when (history.historyCode.toInt()) {
+                1 -> {
+                    // 예약 신청 거부 내역 있음 -> return
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "2")
+                    return null
+                }
+
+                8 -> {
+                    // 결제 확인
+                    if (paymentNotChecked) {
+                        notPaid = false
+                        paymentNotChecked = false
+                    }
+                }
+
+                9 -> {
+                    // 결제 확인 취소
+                    if (paymentNotChecked) {
+                        paymentNotChecked = false
+                    }
+                }
+
+                10 -> {
+                    // 조기 반납 상태
+                    if (noEarlyReturnCancel) {
+                        noEarlyReturn = false
+                    }
+                }
+
+                11 -> {
+                    // 조기 반납 취소
+                    if (noEarlyReturn) {
+                        noEarlyReturnCancel = false
+                    }
+                }
+
+                15 -> {
+                    // 예약 연장 신청
+                    if (notCancelChecked) {
+                        notCancelChecked = false
+                        // 예약 연장 신청 내역이 최신인지
+                        notRequestExtend = false
+                    }
+                }
+
+                16 -> {
+                    // 예약 연장 신청 취소
+                    if (notCancelChecked) {
+                        notCancelChecked = false
+                        // 예약 연장 취소 내역이 최신인지
+//                        notRequestExtendCancel = false
+                    }
+                }
+
+                17 -> {
+                    // 예약 연장 거부
+                    if (notCancelChecked) {
+                        notCancelChecked = false
+                        // 예약 연장 거부 내역이 최신인지
+//                        notRequestExtendDeny = false
+                    }
+                }
+            }
+        }
+
+        if (notPaid && nowDatetime.isAfter(rentableProductStockReservationInfo.paymentCheckDeadlineDatetime)) {
+            // 미결제 상태 & 결제 기한 초과 상태(= 취소와 동일) -> return
+            // 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
+        if (notRequestExtend) {
+            // 예약 연장 신청 상태가 아닙니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
+            return null
+        }
+
+        // 개별 상품 조기반납 신고 내역 추가
+        val newReservationStateChangeHistory =
+            db1RaillyLinkerCompanyRentableProductReservationStateChangeHistoryRepository.save(
+                Db1_RaillyLinkerCompany_RentalProductReservationHistory(
+                    rentableProductStockReservationInfo,
+                    16,
+                    inputVo.stateChangeDesc
+                )
+            )
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return RentalReservationController.PostRentableProductStockReservationInfoRentalExtendCancelOutputVo(
             newReservationStateChangeHistory.uid!!
         )
     }

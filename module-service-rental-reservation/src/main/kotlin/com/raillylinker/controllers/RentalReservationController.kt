@@ -554,7 +554,83 @@ class RentalReservationController(
     )
 
 
-    // todo 예약 연장 신청 취소
+    // ----
+    @Operation(
+        summary = "예약 연장 신청 취소 <>",
+        description = "예약 연장 신청을 취소 합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님<br>" +
+                                "3 : 상품 대여일이 도래하지 않았습니다.<br>" +
+                                "4 : 예약 연장 신청 상태가 아닙니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/rental-product-reservation/{rentalProductReservationUid}/rental-extend-cancel"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    fun postRentableProductStockReservationInfoRentalExtendCancel(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @Parameter(
+            name = "rentalProductReservationUid",
+            description = "rentalProductReservation 고유값",
+            example = "1"
+        )
+        @PathVariable("rentalProductReservationUid")
+        rentalProductReservationUid: Long,
+        @RequestBody
+        inputVo: PostRentableProductStockReservationInfoRentalExtendCancelInputVo
+    ): PostRentableProductStockReservationInfoRentalExtendCancelOutputVo? {
+        return service.postRentableProductStockReservationInfoRentalExtendCancel(
+            httpServletResponse,
+            authorization!!,
+            rentalProductReservationUid,
+            inputVo
+        )
+    }
+
+    data class PostRentableProductStockReservationInfoRentalExtendCancelInputVo(
+        @Schema(description = "상태 변경 상세 설명", required = true, example = "이상무")
+        @JsonProperty("stateChangeDesc")
+        val stateChangeDesc: String
+    )
+
+    data class PostRentableProductStockReservationInfoRentalExtendCancelOutputVo(
+        @Schema(description = "reservationHistory 고유값", required = true, example = "1")
+        @JsonProperty("reservationHistoryUid")
+        val reservationHistoryUid: Long
+    )
 
     // 정보 조회 API 는 화면 기획이 나오는 시점에 추가
 }
