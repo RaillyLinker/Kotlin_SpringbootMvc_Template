@@ -1465,7 +1465,7 @@ class RentalReservationAdminController(
     )
 
 
-    // todo 결제 확인 취소
+    // todo 결제 확인 취소(가격 0이거나 이외 상태면 취소 불가)
 
 
     // ----
@@ -1809,7 +1809,6 @@ class RentalReservationAdminController(
 
     // todo 예약 연장 승인
     // todo 예약 연장 거부
-    // todo 환불 처리
     // todo 손망실 설정
     // todo 손망실 취소
 
