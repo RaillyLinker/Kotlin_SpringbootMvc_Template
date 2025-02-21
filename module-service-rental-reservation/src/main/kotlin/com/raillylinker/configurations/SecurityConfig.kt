@@ -123,14 +123,7 @@ class SecurityConfig {
         expireTokenRedis: Redis1_Map_TotalAuthForceExpireAuthorizationSet,
         jwtTokenUtil: JwtTokenUtil
     ): SecurityFilterChain {
-        // !!!시큐리티 필터 추가시 수정!!!
-        // 본 시큐리티 필터가 관리할 주소 체계
-        val securityUrlList = listOf(
-            "/rental-reservation/**",
-            "/rental-reservation-admin/**"
-        ) // 위 모든 경로에 적용
-
-        val securityMatcher = http.securityMatcher(*securityUrlList.toTypedArray())
+        val securityMatcher = http.securityMatcher(*AuthTokenFilterTotalAuth.securityUrlList.toTypedArray())
 
         securityMatcher.headers { headersCustomizer ->
             // iframe 허용 설정
@@ -164,7 +157,6 @@ class SecurityConfig {
         securityMatcher.addFilterBefore(
             // !!!시큐리티 필터 추가시 수정!!!
             AuthTokenFilterTotalAuth(
-                securityUrlList,
                 expireTokenRedis,
                 jwtTokenUtil
             ),
@@ -210,7 +202,6 @@ class SecurityConfig {
 
     // 인증 토큰 검증 필터 - API 요청마다 검증 실행
     class AuthTokenFilterTotalAuth(
-        private val filterPatternList: List<String>,
         private val expireTokenRedis: Redis1_Map_TotalAuthForceExpireAuthorizationSet,
         private val jwtTokenUtil: JwtTokenUtil
     ) : OncePerRequestFilter() {
@@ -234,6 +225,12 @@ class SecurityConfig {
 
             // 계정 설정 - JWT 발행자
             const val AUTH_JWT_ISSUER: String = "com.raillylinker.my-service"
+
+            // 본 시큐리티 필터가 관리할 주소 체계
+            val securityUrlList = listOf(
+                "/rental-reservation/**",
+                "/rental-reservation-admin/**"
+            ) // 위 모든 경로에 적용
         }
 
         // ---------------------------------------------------------------------------------------------
@@ -246,7 +243,7 @@ class SecurityConfig {
             // 패턴에 매치되는지 확인
             var patternMatch = false
 
-            for (filterPattern in filterPatternList) {
+            for (filterPattern in securityUrlList) {
                 if (AntPathRequestMatcher(filterPattern).matches(request)) {
                     patternMatch = true
                     break
