@@ -1,16 +1,11 @@
 package com.raillylinker.services
 
+import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.jpa_beans.db1_main.entities.*
 import com.raillylinker.jpa_beans.db1_main.repositories.*
 import com.raillylinker.redis_map_components.redis1_main.Redis1_Map_TotalAuthForceExpireAuthorizationSet
 import com.raillylinker.retrofit2_classes.RepositoryNetworkRetrofit2
-import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_ACCESS_TOKEN_EXPIRATION_TIME_SEC
-import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR
-import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_ISSUER
-import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_REFRESH_TOKEN_EXPIRATION_TIME_SEC
-import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_SECRET_KEY_STRING
 import com.raillylinker.controllers.AuthController
 import com.raillylinker.jpa_beans.db1_main.repositories_dsl.Db1_RaillyLinkerCompany_TotalAuthMemberLockHistory_RepositoryDsl
 import com.raillylinker.kafka_components.producers.Kafka1MainProducer
@@ -42,6 +37,7 @@ import java.util.*
 class AuthService(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
+    private val authTokenFilterTotalAuth: AuthTokenFilterTotalAuth,
 
     private val passwordEncoder: PasswordEncoder,
     private val emailSender: EmailSender,
@@ -116,8 +112,8 @@ class AuthService(
     fun loggedInAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
 
         httpServletResponse.status = HttpStatus.OK.value()
@@ -130,8 +126,8 @@ class AuthService(
     fun adminAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
 
         httpServletResponse.status = HttpStatus.OK.value()
@@ -144,8 +140,8 @@ class AuthService(
     fun developerAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
 
         httpServletResponse.status = HttpStatus.OK.value()
@@ -339,11 +335,11 @@ class AuthService(
         // 멤버 고유번호로 엑세스 토큰 생성
         val jwtAccessToken = jwtTokenUtil.generateAccessToken(
             memberData.uid!!,
-            AUTH_JWT_ACCESS_TOKEN_EXPIRATION_TIME_SEC,
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY,
-            AUTH_JWT_ISSUER,
-            AUTH_JWT_SECRET_KEY_STRING,
+            authTokenFilterTotalAuth.authJwtAccessTokenExpirationTimeSec,
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey,
+            authTokenFilterTotalAuth.authJwtIssuer,
+            authTokenFilterTotalAuth.authJwtSecretKeyString,
             roleList
         )
 
@@ -352,11 +348,11 @@ class AuthService(
         // 액세스 토큰의 리프레시 토큰 생성 및 DB 저장 = 액세스 토큰에 대한 리프레시 토큰은 1개 혹은 0개
         val jwtRefreshToken = jwtTokenUtil.generateRefreshToken(
             memberData.uid!!,
-            AUTH_JWT_REFRESH_TOKEN_EXPIRATION_TIME_SEC,
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY,
-            AUTH_JWT_ISSUER,
-            AUTH_JWT_SECRET_KEY_STRING
+            authTokenFilterTotalAuth.authJwtRefreshTokenExpirationTimeSec,
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey,
+            authTokenFilterTotalAuth.authJwtIssuer,
+            authTokenFilterTotalAuth.authJwtSecretKeyString
         )
 
         val refreshTokenExpireWhen = jwtTokenUtil.getExpirationDateTime(jwtRefreshToken)
@@ -647,11 +643,11 @@ class AuthService(
         // 멤버 고유번호로 엑세스 토큰 생성
         val jwtAccessToken = jwtTokenUtil.generateAccessToken(
             snsOauth2.totalAuthMember.uid!!,
-            AUTH_JWT_ACCESS_TOKEN_EXPIRATION_TIME_SEC,
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY,
-            AUTH_JWT_ISSUER,
-            AUTH_JWT_SECRET_KEY_STRING,
+            authTokenFilterTotalAuth.authJwtAccessTokenExpirationTimeSec,
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey,
+            authTokenFilterTotalAuth.authJwtIssuer,
+            authTokenFilterTotalAuth.authJwtSecretKeyString,
             roleList
         )
 
@@ -660,11 +656,11 @@ class AuthService(
         // 액세스 토큰의 리프레시 토큰 생성 및 DB 저장 = 액세스 토큰에 대한 리프레시 토큰은 1개 혹은 0개
         val jwtRefreshToken = jwtTokenUtil.generateRefreshToken(
             snsOauth2.totalAuthMember.uid!!,
-            AUTH_JWT_REFRESH_TOKEN_EXPIRATION_TIME_SEC,
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY,
-            AUTH_JWT_ISSUER,
-            AUTH_JWT_SECRET_KEY_STRING
+            authTokenFilterTotalAuth.authJwtRefreshTokenExpirationTimeSec,
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey,
+            authTokenFilterTotalAuth.authJwtIssuer,
+            authTokenFilterTotalAuth.authJwtSecretKeyString
         )
 
         val refreshTokenExpireWhen = jwtTokenUtil.getExpirationDateTime(jwtRefreshToken)
@@ -794,11 +790,11 @@ class AuthService(
         // 멤버 고유번호로 엑세스 토큰 생성
         val jwtAccessToken = jwtTokenUtil.generateAccessToken(
             snsOauth2.totalAuthMember.uid!!,
-            AUTH_JWT_ACCESS_TOKEN_EXPIRATION_TIME_SEC,
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY,
-            AUTH_JWT_ISSUER,
-            AUTH_JWT_SECRET_KEY_STRING,
+            authTokenFilterTotalAuth.authJwtAccessTokenExpirationTimeSec,
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey,
+            authTokenFilterTotalAuth.authJwtIssuer,
+            authTokenFilterTotalAuth.authJwtSecretKeyString,
             roleList
         )
 
@@ -807,11 +803,11 @@ class AuthService(
         // 액세스 토큰의 리프레시 토큰 생성 및 DB 저장 = 액세스 토큰에 대한 리프레시 토큰은 1개 혹은 0개
         val jwtRefreshToken = jwtTokenUtil.generateRefreshToken(
             snsOauth2.totalAuthMember.uid!!,
-            AUTH_JWT_REFRESH_TOKEN_EXPIRATION_TIME_SEC,
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY,
-            AUTH_JWT_ISSUER,
-            AUTH_JWT_SECRET_KEY_STRING
+            authTokenFilterTotalAuth.authJwtRefreshTokenExpirationTimeSec,
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey,
+            authTokenFilterTotalAuth.authJwtIssuer,
+            authTokenFilterTotalAuth.authJwtSecretKeyString
         )
 
         val refreshTokenExpireWhen = jwtTokenUtil.getExpirationDateTime(jwtRefreshToken)
@@ -945,15 +941,15 @@ class AuthService(
                     accessTokenType1.lowercase() != "jwt" || // 토큰 타입이 JWT 가 아님
                     jwtTokenUtil.getTokenUsage(
                         accessToken,
-                        AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-                        AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+                        authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+                        authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
                     ).lowercase() != "access" || // 토큰 용도가 다름
                     // 남은 시간이 최대 만료시간을 초과 (서버 기준이 변경되었을 때, 남은 시간이 더 많은 토큰을 견제하기 위한 처리)
-                    jwtTokenUtil.getRemainSeconds(accessToken) > AUTH_JWT_ACCESS_TOKEN_EXPIRATION_TIME_SEC ||
-                    jwtTokenUtil.getIssuer(accessToken) != AUTH_JWT_ISSUER || // 발행인 불일치
+                    jwtTokenUtil.getRemainSeconds(accessToken) > authTokenFilterTotalAuth.authJwtAccessTokenExpirationTimeSec ||
+                    jwtTokenUtil.getIssuer(accessToken) != authTokenFilterTotalAuth.authJwtIssuer || // 발행인 불일치
                     !jwtTokenUtil.validateSignature(
                         accessToken,
-                        AUTH_JWT_SECRET_KEY_STRING
+                        authTokenFilterTotalAuth.authJwtSecretKeyString
                     ) // 시크릿 검증이 무효 = 위변조 된 토큰
                 ) {
                     // 올바르지 않은 Authorization Token
@@ -967,8 +963,8 @@ class AuthService(
                 // 유저 탈퇴 여부 확인
                 val accessTokenMemberUid = jwtTokenUtil.getMemberUid(
                     accessToken,
-                    AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-                    AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+                    authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+                    authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
                 )
                 val memberData = db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(
                     accessTokenMemberUid,
@@ -1070,20 +1066,20 @@ class AuthService(
                             refreshTokenType.lowercase() != "jwt" || // 토큰 타입이 JWT 가 아닐 때
                             jwtTokenUtil.getTokenUsage(
                                 jwtRefreshToken,
-                                AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-                                AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+                                authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+                                authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
                             ).lowercase() != "refresh" || // 토큰 타입이 Refresh 토큰이 아닐 때
                             // 남은 시간이 최대 만료시간을 초과 (서버 기준이 변경되었을 때, 남은 시간이 더 많은 토큰을 견제하기 위한 처리)
-                            jwtTokenUtil.getRemainSeconds(jwtRefreshToken) > AUTH_JWT_REFRESH_TOKEN_EXPIRATION_TIME_SEC ||
-                            jwtTokenUtil.getIssuer(jwtRefreshToken) != AUTH_JWT_ISSUER || // 발행인이 다를 때
+                            jwtTokenUtil.getRemainSeconds(jwtRefreshToken) > authTokenFilterTotalAuth.authJwtRefreshTokenExpirationTimeSec ||
+                            jwtTokenUtil.getIssuer(jwtRefreshToken) != authTokenFilterTotalAuth.authJwtIssuer || // 발행인이 다를 때
                             !jwtTokenUtil.validateSignature(
                                 jwtRefreshToken,
-                                AUTH_JWT_SECRET_KEY_STRING
+                                authTokenFilterTotalAuth.authJwtSecretKeyString
                             ) || // 시크릿 검증이 유효하지 않을 때 = 위변조된 토큰
                             jwtTokenUtil.getMemberUid(
                                 jwtRefreshToken,
-                                AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-                                AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+                                authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+                                authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
                             ) != accessTokenMemberUid // 리프레시 토큰의 멤버 고유번호와 액세스 토큰 멤버 고유번호가 다를시
                         ) {
                             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
@@ -1147,11 +1143,11 @@ class AuthService(
                         // 새 토큰 생성 및 로그인 처리
                         val newJwtAccessToken = jwtTokenUtil.generateAccessToken(
                             accessTokenMemberUid,
-                            AUTH_JWT_ACCESS_TOKEN_EXPIRATION_TIME_SEC,
-                            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-                            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY,
-                            AUTH_JWT_ISSUER,
-                            AUTH_JWT_SECRET_KEY_STRING,
+                            authTokenFilterTotalAuth.authJwtAccessTokenExpirationTimeSec,
+                            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+                            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey,
+                            authTokenFilterTotalAuth.authJwtIssuer,
+                            authTokenFilterTotalAuth.authJwtSecretKeyString,
                             roleList
                         )
 
@@ -1159,11 +1155,11 @@ class AuthService(
 
                         val newRefreshToken = jwtTokenUtil.generateRefreshToken(
                             accessTokenMemberUid,
-                            AUTH_JWT_REFRESH_TOKEN_EXPIRATION_TIME_SEC,
-                            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-                            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY,
-                            AUTH_JWT_ISSUER,
-                            AUTH_JWT_SECRET_KEY_STRING
+                            authTokenFilterTotalAuth.authJwtRefreshTokenExpirationTimeSec,
+                            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+                            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey,
+                            authTokenFilterTotalAuth.authJwtIssuer,
+                            authTokenFilterTotalAuth.authJwtSecretKeyString
                         )
 
                         val refreshTokenExpireWhen = jwtTokenUtil.getExpirationDateTime(newRefreshToken)
@@ -1223,8 +1219,8 @@ class AuthService(
     fun deleteAllJwtOfAMember(authorization: String, httpServletResponse: HttpServletResponse) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -1280,8 +1276,8 @@ class AuthService(
     ): AuthController.GetMemberInfoOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -1398,8 +1394,8 @@ class AuthService(
     fun updateId(httpServletResponse: HttpServletResponse, authorization: String, id: String) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -2402,8 +2398,8 @@ class AuthService(
     ) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -2961,8 +2957,8 @@ class AuthService(
     ): AuthController.GetMyEmailListOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -2999,8 +2995,8 @@ class AuthService(
     ): AuthController.GetMyPhoneNumberListOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -3037,8 +3033,8 @@ class AuthService(
     ): AuthController.GetMyOauth2ListOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -3076,8 +3072,8 @@ class AuthService(
     ): AuthController.SendEmailVerificationForAddNewEmailOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -3143,8 +3139,8 @@ class AuthService(
     ) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val emailVerification =
             db1RaillyLinkerCompanyTotalAuthAddEmailVerificationRepository.findByUidAndRowDeleteDateStr(
@@ -3197,8 +3193,8 @@ class AuthService(
     ): AuthController.AddNewEmailOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -3294,8 +3290,8 @@ class AuthService(
     ) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -3372,8 +3368,8 @@ class AuthService(
     ) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -3424,8 +3420,8 @@ class AuthService(
     ): AuthController.SendPhoneVerificationForAddNewPhoneNumberOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -3498,8 +3494,8 @@ class AuthService(
     ) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
 
         val phoneNumberVerification =
@@ -3551,8 +3547,8 @@ class AuthService(
     ): AuthController.AddNewPhoneNumberOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -3650,8 +3646,8 @@ class AuthService(
     ) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -3728,8 +3724,8 @@ class AuthService(
     ) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -3780,8 +3776,8 @@ class AuthService(
     ) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -3891,8 +3887,8 @@ class AuthService(
     ) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -3960,8 +3956,8 @@ class AuthService(
     ) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -4036,8 +4032,8 @@ class AuthService(
     ) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -4178,8 +4174,8 @@ class AuthService(
     ): AuthController.GetMyProfileListOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -4219,8 +4215,8 @@ class AuthService(
     ) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -4261,8 +4257,8 @@ class AuthService(
     ) {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -4313,8 +4309,8 @@ class AuthService(
     ): AuthController.AddNewProfileOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!

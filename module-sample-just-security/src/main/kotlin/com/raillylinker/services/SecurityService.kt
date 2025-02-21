@@ -1,7 +1,6 @@
 package com.raillylinker.services
 
-import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR
+import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_TotalAuthMember_Repository
 import com.raillylinker.util_components.JwtTokenUtil
@@ -17,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 class SecurityService(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
+    private val authTokenFilterTotalAuth: AuthTokenFilterTotalAuth,
 
     private val jwtTokenUtil: JwtTokenUtil,
     private val db1RaillyLinkerCompanyTotalAuthMemberRepository: Db1_RaillyLinkerCompany_TotalAuthMember_Repository
@@ -61,8 +61,8 @@ class SecurityService(
     fun loggedInAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
 
         // 멤버 데이터 조회
@@ -81,8 +81,8 @@ class SecurityService(
     fun adminAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
 
         // 멤버 데이터 조회
@@ -101,8 +101,8 @@ class SecurityService(
     fun developerAccessTest(httpServletResponse: HttpServletResponse, authorization: String): String? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
 
         // 멤버 데이터 조회

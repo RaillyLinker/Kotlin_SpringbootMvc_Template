@@ -1,7 +1,6 @@
 package com.raillylinker.services
 
-import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
-import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR
+import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.controllers.RentalReservationController
 import com.raillylinker.jpa_beans.db1_main.entities.*
@@ -26,6 +25,7 @@ import java.time.format.DateTimeFormatter
 class RentalReservationService(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
+    private val authTokenFilterTotalAuth: AuthTokenFilterTotalAuth,
 
     private val jwtTokenUtil: JwtTokenUtil,
 
@@ -86,8 +86,8 @@ class RentalReservationService(
 
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
         val memberData =
             db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
@@ -302,8 +302,8 @@ class RentalReservationService(
     ): RentalReservationController.PostCancelProductReservationOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
 
         val reservationEntity: Db1_RaillyLinkerCompany_RentalProductReservation? =
@@ -486,8 +486,8 @@ class RentalReservationService(
     ): RentalReservationController.PostCancelProductReservationCancelOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
 
         val reservationEntity: Db1_RaillyLinkerCompany_RentalProductReservation? =
@@ -626,8 +626,8 @@ class RentalReservationService(
     ): RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
 
         val rentableProductStockReservationInfo =
@@ -765,8 +765,8 @@ class RentalReservationService(
     ): RentalReservationController.PostRentableProductStockReservationInfoEarlyReturnCancelOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
 
         val rentableProductStockReservationInfo =
@@ -858,8 +858,8 @@ class RentalReservationService(
     ): RentalReservationController.PostRentableProductStockReservationInfoRentalExtendOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
 
         val rentableProductStockReservationInfo =
@@ -1039,8 +1039,8 @@ class RentalReservationService(
     ): RentalReservationController.PostRentableProductStockReservationInfoRentalExtendCancelOutputVo? {
         val memberUid = jwtTokenUtil.getMemberUid(
             authorization.split(" ")[1].trim(),
-            AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-            AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
 
         val rentableProductStockReservationInfo =

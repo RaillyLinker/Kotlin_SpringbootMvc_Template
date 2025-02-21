@@ -23,6 +23,7 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import org.springframework.stereotype.Component
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
@@ -121,10 +122,9 @@ class SecurityConfig {
     @Order(1)
     fun securityFilterChainToken(
         http: HttpSecurity,
-        expireTokenRedis: Redis1_Map_TotalAuthForceExpireAuthorizationSet,
-        jwtTokenUtil: JwtTokenUtil
+        authTokenFilterTotalAuth: AuthTokenFilterTotalAuth
     ): SecurityFilterChain {
-        val securityMatcher = http.securityMatcher(*AuthTokenFilterTotalAuth.securityUrlList.toTypedArray())
+        val securityMatcher = http.securityMatcher(*authTokenFilterTotalAuth.securityUrlList.toTypedArray())
 
         securityMatcher.headers { headersCustomizer ->
             // iframe 허용 설정
@@ -156,11 +156,7 @@ class SecurityConfig {
         // (Token 인증 검증 필터 연결)
         // API 요청마다 헤더로 들어오는 인증 토큰 유효성을 검증
         securityMatcher.addFilterBefore(
-            // !!!시큐리티 필터 추가시 수정!!!
-            AuthTokenFilterTotalAuth(
-                expireTokenRedis,
-                jwtTokenUtil
-            ),
+            authTokenFilterTotalAuth,
             UsernamePasswordAuthenticationFilter::class.java
         )
 
@@ -202,36 +198,35 @@ class SecurityConfig {
     }
 
     // 인증 토큰 검증 필터 - API 요청마다 검증 실행
+    @Component
     class AuthTokenFilterTotalAuth(
         private val expireTokenRedis: Redis1_Map_TotalAuthForceExpireAuthorizationSet,
         private val jwtTokenUtil: JwtTokenUtil
     ) : OncePerRequestFilter() {
         // <멤버 변수 공간>
-        companion object {
-            // !!!아래 인증 관련 설정 정보 변수들의 값을 수정하기!!!
-            // 계정 설정 - JWT 비밀키
-            const val AUTH_JWT_SECRET_KEY_STRING: String = "123456789abcdefghijklmnopqrstuvw"
+        // !!!아래 인증 관련 설정 정보 변수들의 값을 수정하기!!!
+        // 계정 설정 - JWT 비밀키
+        val authJwtSecretKeyString: String = "123456789abcdefghijklmnopqrstuvw"
 
-            // 계정 설정 - JWT AccessToken 유효기간(초)
-            const val AUTH_JWT_ACCESS_TOKEN_EXPIRATION_TIME_SEC: Long = 60L * 30L // 30분
+        // 계정 설정 - JWT AccessToken 유효기간(초)
+        val authJwtAccessTokenExpirationTimeSec: Long = 60L * 30L // 30분
 
-            // 계정 설정 - JWT RefreshToken 유효기간(초)
-            const val AUTH_JWT_REFRESH_TOKEN_EXPIRATION_TIME_SEC: Long = 60L * 60L * 24L * 7L // 7일
+        // 계정 설정 - JWT RefreshToken 유효기간(초)
+        val authJwtRefreshTokenExpirationTimeSec: Long = 60L * 60L * 24L * 7L // 7일
 
-            // 계정 설정 - JWT 본문 암호화 AES256 IV 16자
-            const val AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR: String = "odkejduc726dj48d"
+        // 계정 설정 - JWT 본문 암호화 AES256 IV 16자
+        val authJwtClaimsAes256InitializationVector: String = "odkejduc726dj48d"
 
-            // 계정 설정 - JWT 본문 암호화 AES256 암호키 32자
-            const val AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY: String = "8fu3jd0ciiu3384hfucy36dye9sjv7b3"
+        // 계정 설정 - JWT 본문 암호화 AES256 암호키 32자
+        val authJwtClaimsAes256EncryptionKey: String = "8fu3jd0ciiu3384hfucy36dye9sjv7b3"
 
-            // 계정 설정 - JWT 발행자
-            const val AUTH_JWT_ISSUER: String = "com.raillylinker.my-service"
+        // 계정 설정 - JWT 발행자
+        val authJwtIssuer: String = "com.raillylinker.my-service"
 
-            // 본 시큐리티 필터가 관리할 주소 체계
-            val securityUrlList = listOf(
-                "/security/**"
-            ) // 위 모든 경로에 적용
-        }
+        // 본 시큐리티 필터가 관리할 주소 체계
+        val securityUrlList = listOf(
+            "/security/**"
+        ) // 위 모든 경로에 적용
 
         // ---------------------------------------------------------------------------------------------
         // <공개 메소드 공간>
@@ -258,23 +253,47 @@ class SecurityConfig {
                 return
             }
 
-            // (리퀘스트에서 가져온 AccessToken 검증)
-            // 헤더의 Authorization 의 값 가져오기
-            // 정상적인 토큰값은 "Bearer {Token String}" 형식으로 온다고 가정.
-            val authorization = request.getHeader("Authorization") // ex : "Bearer aqwer1234"
-            if (authorization == null) {
-                // Authorization 에 토큰을 넣지 않은 경우 = 인증 / 인가를 받을 의도가 없음
+            // 인증 결과 == 유저 권한 리스트
+            val authResult = checkRequestAuthorization(request)
+
+            // 인증 결과가 null 입니다.
+            if (authResult == null) {
                 // 다음 필터 실행
                 filterChain.doFilter(request, response)
                 return
             }
 
+            // (검증된 멤버 정보와 권한 정보를 Security Context 에 입력)
+            // authentication 정보가 context 에 존재하는지 여부로 로그인 여부를 확인
+            SecurityContextHolder.getContext().authentication =
+                UsernamePasswordAuthenticationToken(
+                    null, // 세션을 유지하지 않으니 굳이 입력할 필요가 없음
+                    null, // 세션을 유지하지 않으니 굳이 입력할 필요가 없음
+                    authResult // 멤버 권한 리스트만 입력해주어 권한 확인에 사용
+                ).apply {
+                    this.details =
+                        WebAuthenticationDetailsSource().buildDetails(request)
+                }
+
+            filterChain.doFilter(request, response)
+            return
+        }
+
+        // (request 의 인증/인가 정보 처리)
+        // HttpServletRequest 에서 인증/인가 정보를 추출해 검증합니다.
+        // 정상 인증시 권한 리스트가 반환되며, 인증 실패시 null 이 반환됩니다.
+        fun checkRequestAuthorization(request: HttpServletRequest): ArrayList<GrantedAuthority>? {
+            // (리퀘스트에서 가져온 AccessToken 검증)
+            // 헤더의 Authorization 의 값 가져오기
+            // 정상적인 토큰값은 "Bearer {Token String}" 형식으로 온다고 가정.
+            val authorization = request.getHeader("Authorization")
+                ?: // Authorization 에 토큰을 넣지 않은 경우 = 인증 / 인가를 받을 의도가 없음
+                return null // ex : "Bearer aqwer1234"
+
             // 타입과 토큰을 분리
             val authorizationSplit = authorization.split(" ") // ex : ["Bearer", "qwer1234"]
             if (authorizationSplit.size < 2) {
-                // 다음 필터 실행
-                filterChain.doFilter(request, response)
-                return
+                return null
             }
 
             // 타입으로 추정되는 문장이 존재할 때
@@ -291,16 +310,12 @@ class SecurityConfig {
             } != null
 
             if (forceExpired) {
-                // 다음 필터 실행
-                filterChain.doFilter(request, response)
-                return
+                return null
             }
 
             // 토큰 검증
             if (accessToken == "") {
-                // 다음 필터 실행
-                filterChain.doFilter(request, response)
-                return
+                return null
             }
 
             when (tokenType.lowercase()) { // 타입 검증
@@ -316,62 +331,43 @@ class SecurityConfig {
                         accessTokenType.lowercase() != "jwt" || // 토큰 타입이 JWT 가 아님
                         jwtTokenUtil.getTokenUsage(
                             accessToken,
-                            AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-                            AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+                            authJwtClaimsAes256InitializationVector,
+                            authJwtClaimsAes256EncryptionKey
                         ).lowercase() != "access" || // 토큰 용도가 다름
                         // 남은 시간이 최대 만료시간을 초과 (서버 기준이 변경되었을 때, 남은 시간이 더 많은 토큰을 견제하기 위한 처리)
-                        jwtTokenUtil.getRemainSeconds(accessToken) > AuthTokenFilterTotalAuth.Companion.AUTH_JWT_ACCESS_TOKEN_EXPIRATION_TIME_SEC ||
-                        jwtTokenUtil.getIssuer(accessToken) != AuthTokenFilterTotalAuth.Companion.AUTH_JWT_ISSUER || // 발행인 불일치
+                        jwtTokenUtil.getRemainSeconds(accessToken) > authJwtAccessTokenExpirationTimeSec ||
+                        jwtTokenUtil.getIssuer(accessToken) != authJwtIssuer || // 발행인 불일치
                         !jwtTokenUtil.validateSignature(
                             accessToken,
-                            AuthTokenFilterTotalAuth.Companion.AUTH_JWT_SECRET_KEY_STRING
+                            authJwtSecretKeyString
                         ) // 시크릿 검증이 무효 = 위변조 된 토큰
                     ) {
-                        // 다음 필터 실행
-                        filterChain.doFilter(request, response)
-                        return
+                        return null
                     }
 
                     // 토큰 만료 검증
                     val jwtRemainSeconds = jwtTokenUtil.getRemainSeconds(accessToken)
                     if (jwtRemainSeconds <= 0L) {
-                        // 다음 필터 실행
-                        filterChain.doFilter(request, response)
-                        return
+                        return null
                     }
 
                     // 회원 권한
                     val authorities: ArrayList<GrantedAuthority> = ArrayList()
                     for (memberRole in jwtTokenUtil.getRoleList(
                         accessToken,
-                        AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_INITIALIZATION_VECTOR,
-                        AuthTokenFilterTotalAuth.Companion.AUTH_JWT_CLAIMS_AES256_ENCRYPTION_KEY
+                        authJwtClaimsAes256InitializationVector,
+                        authJwtClaimsAes256EncryptionKey
                     )) {
                         authorities.add(
                             SimpleGrantedAuthority(memberRole)
                         )
                     }
 
-                    // (검증된 멤버 정보와 권한 정보를 Security Context 에 입력)
-                    // authentication 정보가 context 에 존재하는지 여부로 로그인 여부를 확인
-                    SecurityContextHolder.getContext().authentication =
-                        UsernamePasswordAuthenticationToken(
-                            null, // 세션을 유지하지 않으니 굳이 입력할 필요가 없음
-                            null, // 세션을 유지하지 않으니 굳이 입력할 필요가 없음
-                            authorities // 멤버 권한 리스트만 입력해주어 권한 확인에 사용
-                        ).apply {
-                            this.details =
-                                WebAuthenticationDetailsSource().buildDetails(request)
-                        }
-
-                    filterChain.doFilter(request, response)
-                    return
+                    return authorities
                 }
 
                 else -> {
-                    // 다음 필터 실행
-                    filterChain.doFilter(request, response)
-                    return
+                    return null
                 }
             }
         }
