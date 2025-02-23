@@ -18,9 +18,10 @@ import java.time.LocalDateTime
 )
 @Comment("결제 요청 정보 테이블")
 class Db1_RaillyLinkerCompany_PaymentRequest(
-    @Column(name = "payment_code", nullable = false, columnDefinition = "VARCHAR(100)")
-    @Comment("결제 코드입니다. 외부 모듈에서 결제를 의뢰할 때에 구분을 위해 입력하는 정보로, {유저 고유값(비로그인시 0)}_{모듈 고유값}_{그 외 고유값} 으로 이루어집니다. 환불 요청시의 비밀번호 역할도 겸하므로, 모듈 내 고유값에 유저 고유값과 랜덤값을 섞는 것이 좋습니다.")
-    var paymentCode: String,
+    @ManyToOne
+    @JoinColumn(name = "member_uid", nullable = true)
+    @Comment("멤버 고유번호(railly_linker_company.total_auth_member.uid)")
+    var totalAuthMember: Db1_RaillyLinkerCompany_TotalAuthMember?,
 
     @Column(name = "payment_detail_type", nullable = false, columnDefinition = "TINYINT UNSIGNED")
     @Comment("결제 타입. 결제 상세 테이블의 종류를 의미합니다. (1 : 수동 계좌이체, 2 : 토스 페이)")

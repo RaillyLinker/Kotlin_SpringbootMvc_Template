@@ -82,37 +82,29 @@ class PaymentService(
     ): PaymentController.PostBankTransferRequestOutputVo? {
         val notLoggedIn = authTokenFilterTotalAuth.checkRequestAuthorization(httpServletRequest) == null
 
-        val memberUidForPaymentCode =
+        val memberEntity =
             if (notLoggedIn) {
-                0
+                null
             } else {
-                jwtTokenUtil.getMemberUid(
+                val memberUid = jwtTokenUtil.getMemberUid(
                     authorization!!.split(" ")[1].trim(),
                     authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
                     authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
                 )
-            }.toString()
-
-        val paymentCodeSplit = inputVo.paymentCode.split("_")
-
-        if (paymentCodeSplit.size < 3 || paymentCodeSplit.first() != memberUidForPaymentCode) {
-            // paymentCode 가 올바르지 않음(_ 로 분리한 길이가 맞지 않거나 멤버 고유값이 일치하지 않는 경우)
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return null
-        }
+                db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+            }
 
         if (inputVo.currencyCode.length != 3) {
             // 통화 코드값의 길이는 3이어야 합니다.
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "2")
+            httpServletResponse.setHeader("api-result-code", "1")
             return null
         }
 
         val paymentRequest =
             db1RaillyLinkerCompanyPaymentRequestRepository.save(
                 Db1_RaillyLinkerCompany_PaymentRequest(
-                    inputVo.paymentCode,
+                    memberEntity,
                     1,
                     inputVo.paymentAmount,
                     inputVo.currencyCode.uppercase(),
@@ -148,10 +140,8 @@ class PaymentService(
         val paymentRequest =
             db1RaillyLinkerCompanyPaymentRequestRepository.findByUidAndRowDeleteDateStr(paymentRequestUid, "/")
 
-        if (paymentRequest == null ||
-            paymentRequest.paymentCode != inputVo.paymentCode
-        ) {
-            // 정보가 없거나 코드가 다릅니다.
+        if (paymentRequest == null) {
+            // 정보가 없습니다.
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
             return null
@@ -223,10 +213,8 @@ class PaymentService(
         val paymentRequest =
             db1RaillyLinkerCompanyPaymentRequestRepository.findByUidAndRowDeleteDateStr(paymentRequestUid, "/")
 
-        if (paymentRequest == null ||
-            paymentRequest.paymentCode != inputVo.paymentCode
-        ) {
-            // 정보가 없거나 코드가 다릅니다.
+        if (paymentRequest == null) {
+            // 정보가 없습니다.
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
             return null
@@ -311,25 +299,17 @@ class PaymentService(
     ): PaymentController.PostPgTossPaymentsRequestOutputVo? {
         val notLoggedIn = authTokenFilterTotalAuth.checkRequestAuthorization(httpServletRequest) == null
 
-        val memberUidForPaymentCode =
+        val memberEntity =
             if (notLoggedIn) {
-                0
+                null
             } else {
-                jwtTokenUtil.getMemberUid(
+                val memberUid = jwtTokenUtil.getMemberUid(
                     authorization!!.split(" ")[1].trim(),
                     authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
                     authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
                 )
-            }.toString()
-
-        val paymentCodeSplit = inputVo.paymentCode.split("_")
-
-        if (paymentCodeSplit.size < 3 || paymentCodeSplit.first() != memberUidForPaymentCode) {
-            // paymentCode 가 올바르지 않음(_ 로 분리한 길이가 맞지 않거나 멤버 고유값이 일치하지 않는 경우)
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
-            return null
-        }
+                db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+            }
 
         val requestPaymentResponse =
             networkRetrofit2.tossPaymentsRequestApi.postV1PaymentsConfirm(
@@ -348,7 +328,7 @@ class PaymentService(
             val paymentRequest =
                 db1RaillyLinkerCompanyPaymentRequestRepository.save(
                     Db1_RaillyLinkerCompany_PaymentRequest(
-                        inputVo.paymentCode,
+                        memberEntity,
                         2,
                         BigDecimal.valueOf(inputVo.paymentAmount),
                         "KRW",
@@ -378,7 +358,7 @@ class PaymentService(
 
             // Toss Payments API 호출 실패
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "2")
+            httpServletResponse.setHeader("api-result-code", "1")
             return null
         }
     }
@@ -395,10 +375,8 @@ class PaymentService(
         val paymentRequest =
             db1RaillyLinkerCompanyPaymentRequestRepository.findByUidAndRowDeleteDateStr(paymentRequestUid, "/")
 
-        if (paymentRequest == null ||
-            paymentRequest.paymentCode != inputVo.paymentCode
-        ) {
-            // 정보가 없거나 코드가 다릅니다.
+        if (paymentRequest == null) {
+            // 정보가 없습니다.
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
             return null
@@ -527,10 +505,8 @@ class PaymentService(
         val paymentRequest =
             db1RaillyLinkerCompanyPaymentRequestRepository.findByUidAndRowDeleteDateStr(paymentRequestUid, "/")
 
-        if (paymentRequest == null ||
-            paymentRequest.paymentCode != inputVo.paymentCode
-        ) {
-            // 정보가 없거나 코드가 다릅니다.
+        if (paymentRequest == null) {
+            // 정보가 없습니다.
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
             return null

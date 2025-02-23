@@ -49,8 +49,7 @@ class PaymentController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : paymentCode 가 올바르지 않습니다.<br>" +
-                                "2 : 통화 코드값의 길이는 3이어야 합니다.",
+                                "1 : 통화 코드값의 길이는 3이어야 합니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -83,15 +82,6 @@ class PaymentController(
     }
 
     data class PostBankTransferRequestInputVo(
-        @Schema(
-            description = "결제 코드입니다.<br>" +
-                    "외부 모듈에서 결제를 의뢰할 때에 구분을 위해 입력하는 정보로, {유저 고유값(비로그인시 0)}_{모듈 고유값}_{그 외 고유값} 으로 이루어집니다.<br>" +
-                    "환불 요청시의 비밀번호 역할도 겸하므로, 모듈 내 고유값에 유저 고유값과 랜덤값을 섞는 것이 좋습니다.",
-            required = true,
-            example = "module1_uid1"
-        )
-        @JsonProperty("paymentCode")
-        val paymentCode: String,
         @Schema(description = "결제 금액", required = true, example = "1000")
         @JsonProperty("paymentAmount")
         val paymentAmount: BigDecimal,
@@ -143,7 +133,7 @@ class PaymentController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : 정보가 없거나 코드가 다릅니다.<br>" +
+                                "1 : 정보가 없습니다.<br>" +
                                 "2 : 완료되지 않은 결제입니다.<br>" +
                                 "3 : 실패한 결제입니다.<br>" +
                                 "4 : 환불 내역이 존재합니다.",
@@ -176,13 +166,6 @@ class PaymentController(
     }
 
     data class PostRequestBankTransferRefundAllInputVo(
-        @Schema(
-            description = "결제 요청에 사용한 결제 코드",
-            required = true,
-            example = "module1_uid1"
-        )
-        @JsonProperty("paymentCode")
-        val paymentCode: String,
         @Schema(description = "환불 이유", required = true, example = "상품 하자")
         @JsonProperty("refundReason")
         val refundReason: String,
@@ -236,7 +219,7 @@ class PaymentController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : 정보가 없거나 코드가 다릅니다.<br>" +
+                                "1 : 정보가 없습니다.<br>" +
                                 "2 : 완료되지 않은 결제입니다.<br>" +
                                 "3 : 실패한 결제입니다.<br>" +
                                 "4 : 전액 환불 내역이 존재합니다.<br>" +
@@ -270,13 +253,6 @@ class PaymentController(
     }
 
     data class PostRequestBankTransferRefundPartInputVo(
-        @Schema(
-            description = "결제 요청에 사용한 결제 코드",
-            required = true,
-            example = "module1_uid1"
-        )
-        @JsonProperty("paymentCode")
-        val paymentCode: String,
         @Schema(description = "환불 금액(통화 코드는 결제 금액과 같다고 간주합니다.)", required = true, example = "10000")
         @JsonProperty("refundAmount")
         val refundAmount: BigDecimal,
@@ -333,8 +309,7 @@ class PaymentController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : paymentCode 가 올바르지 않습니다.<br>" +
-                                "2 : Toss Payments API 호출 실패",
+                                "1 : Toss Payments API 호출 실패",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -367,15 +342,6 @@ class PaymentController(
     }
 
     data class PostPgTossPaymentsRequestInputVo(
-        @Schema(
-            description = "결제 코드입니다.<br>" +
-                    "외부 모듈에서 결제를 의뢰할 때에 구분을 위해 입력하는 정보로, {유저 고유값(비로그인시 0)}_{모듈 고유값}_{그 외 고유값} 으로 이루어집니다.<br>" +
-                    "환불 요청시의 비밀번호 역할도 겸하므로, 모듈 내 고유값에 유저 고유값과 랜덤값을 섞는 것이 좋습니다.",
-            required = true,
-            example = "module1_uid1"
-        )
-        @JsonProperty("paymentCode")
-        val paymentCode: String,
         @Schema(description = "결제 금액(통화 코드는 KRW 로 간주합니다.)", required = true, example = "1000")
         @JsonProperty("paymentAmount")
         val paymentAmount: Long,
@@ -417,7 +383,7 @@ class PaymentController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : 정보가 없거나 코드가 다릅니다.<br>" +
+                                "1 : 정보가 없습니다.<br>" +
                                 "2 : 완료되지 않은 결제입니다.<br>" +
                                 "3 : 실패한 결제입니다.<br>" +
                                 "4 : 환불 내역이 존재합니다.<br>" +
@@ -452,13 +418,6 @@ class PaymentController(
     }
 
     data class PostRequestPgTossPaymentsRefundAllInputVo(
-        @Schema(
-            description = "결제 요청에 사용한 결제 코드",
-            required = true,
-            example = "module1_uid1"
-        )
-        @JsonProperty("paymentCode")
-        val paymentCode: String,
         @Schema(description = "환불 이유", required = true, example = "상품 하자")
         @JsonProperty("refundReason")
         val refundReason: String,
@@ -521,7 +480,7 @@ class PaymentController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : 정보가 없거나 코드가 다릅니다.<br>" +
+                                "1 : 정보가 없습니다.<br>" +
                                 "2 : 완료되지 않은 결제입니다.<br>" +
                                 "3 : 실패한 결제입니다.<br>" +
                                 "4 : 전액 환불 내역이 존재합니다.<br>" +
@@ -557,13 +516,6 @@ class PaymentController(
     }
 
     data class PostRequestPgTossPaymentsRefundPartInputVo(
-        @Schema(
-            description = "결제 요청에 사용한 결제 코드",
-            required = true,
-            example = "module1_uid1"
-        )
-        @JsonProperty("paymentCode")
-        val paymentCode: String,
         @Schema(description = "결제 금액(통화 코드는 KRW 로 간주합니다.)", required = true, example = "1000")
         @JsonProperty("prefundAmount")
         val refundAmount: Long,

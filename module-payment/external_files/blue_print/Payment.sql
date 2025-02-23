@@ -40,7 +40,7 @@ CREATE TABLE `payment_request` (
 	`row_create_date`	DATETIME(3)	NOT NULL	COMMENT '행 생성일',
 	`row_update_date`	DATETIME(3)	NOT NULL	COMMENT '행 수정일',
 	`row_delete_date_str`	VARCHAR(50)	NOT NULL	DEFAULT /	COMMENT '행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)',
-	`payment_code`	VARCHAR(100)	NOT NULL	COMMENT '결제 코드입니다. 외부 모듈에서 결제를 의뢰할 때에 구분을 위해 입력하는 정보로, {모듈 고유값}_{모듈 내 고유값} 으로 이루어집니다.',
+	`member_uid`	BIGINT	NULL	COMMENT '멤버 테이블 고유번호(비회원의 경우 null)',
 	`payment_detail_type`	TINYINT UNSIGNED	NOT NULL	COMMENT '결제 타입. 결제 상세 테이블의 종류를 의미합니다. (1 : 수동 계좌이체, 2 : 토스 페이)',
 	`payment_amount`	DECIMAL(15, 2)	NOT NULL	COMMENT '결제 금액',
 	`payment_currency_code`	CHAR(3)	NOT NULL	COMMENT '결제 금액 통화 코드(IOS 4217, ex : KRW, USD, EUR...)',
