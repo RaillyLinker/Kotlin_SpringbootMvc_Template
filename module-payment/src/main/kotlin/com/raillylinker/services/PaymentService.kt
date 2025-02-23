@@ -1,5 +1,6 @@
 package com.raillylinker.services
 
+import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.controllers.PaymentController
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_PaymentRefundRequest
@@ -11,6 +12,7 @@ import com.raillylinker.kafka_components.producers.Kafka1MainProducer
 import com.raillylinker.retrofit2_classes.RepositoryNetworkRetrofit2
 import com.raillylinker.retrofit2_classes.request_apis.TossPaymentsRequestApi
 import com.raillylinker.util_components.JwtTokenUtil
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -24,6 +26,7 @@ import java.math.BigDecimal
 class PaymentService(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
+    private val authTokenFilterTotalAuth: AuthTokenFilterTotalAuth,
 
     private val jwtTokenUtil: JwtTokenUtil,
     private val db1RaillyLinkerCompanyTotalAuthMemberRepository: Db1_RaillyLinkerCompany_TotalAuthMember_Repository,
@@ -72,13 +75,37 @@ class PaymentService(
     // (수동 결제 요청)
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postBankTransferRequest(
+        httpServletRequest: HttpServletRequest,
         httpServletResponse: HttpServletResponse,
+        authorization: String?,
         inputVo: PaymentController.PostBankTransferRequestInputVo
     ): PaymentController.PostBankTransferRequestOutputVo? {
+        val notLoggedIn = authTokenFilterTotalAuth.checkRequestAuthorization(httpServletRequest) == null
+
+        val memberUidForPaymentCode =
+            if (notLoggedIn) {
+                0
+            } else {
+                jwtTokenUtil.getMemberUid(
+                    authorization!!.split(" ")[1].trim(),
+                    authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+                    authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
+                )
+            }.toString()
+
+        val paymentCodeSplit = inputVo.paymentCode.split("_")
+
+        if (paymentCodeSplit.size < 3 || paymentCodeSplit.first() != memberUidForPaymentCode) {
+            // paymentCode 가 올바르지 않음(_ 로 분리한 길이가 맞지 않거나 멤버 고유값이 일치하지 않는 경우)
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
         if (inputVo.currencyCode.length != 3) {
             // 통화 코드값의 길이는 3이어야 합니다.
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
+            httpServletResponse.setHeader("api-result-code", "2")
             return null
         }
 
@@ -277,9 +304,33 @@ class PaymentService(
     // (PG 결제 요청(Toss Payments))
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     fun postPgTossPaymentsRequest(
+        httpServletRequest: HttpServletRequest,
         httpServletResponse: HttpServletResponse,
+        authorization: String?,
         inputVo: PaymentController.PostPgTossPaymentsRequestInputVo
     ): PaymentController.PostPgTossPaymentsRequestOutputVo? {
+        val notLoggedIn = authTokenFilterTotalAuth.checkRequestAuthorization(httpServletRequest) == null
+
+        val memberUidForPaymentCode =
+            if (notLoggedIn) {
+                0
+            } else {
+                jwtTokenUtil.getMemberUid(
+                    authorization!!.split(" ")[1].trim(),
+                    authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+                    authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
+                )
+            }.toString()
+
+        val paymentCodeSplit = inputVo.paymentCode.split("_")
+
+        if (paymentCodeSplit.size < 3 || paymentCodeSplit.first() != memberUidForPaymentCode) {
+            // paymentCode 가 올바르지 않음(_ 로 분리한 길이가 맞지 않거나 멤버 고유값이 일치하지 않는 경우)
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
         val requestPaymentResponse =
             networkRetrofit2.tossPaymentsRequestApi.postV1PaymentsConfirm(
                 tossPaymentsAuthorization,
@@ -327,7 +378,7 @@ class PaymentService(
 
             // Toss Payments API 호출 실패
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "1")
+            httpServletResponse.setHeader("api-result-code", "2")
             return null
         }
     }

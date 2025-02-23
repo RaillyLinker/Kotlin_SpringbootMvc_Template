@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
@@ -30,7 +31,7 @@ class PaymentController(
     // ---------------------------------------------------------------------------------------------
     // <매핑 함수 공간>
     @Operation(
-        summary = "수동 결제 요청",
+        summary = "수동 결제 요청 <>?",
         description = "수동 결제 요청 API"
     )
     @ApiResponses(
@@ -48,7 +49,8 @@ class PaymentController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : 통화 코드값의 길이는 3이어야 합니다.",
+                                "1 : paymentCode 가 올바르지 않습니다.<br>" +
+                                "2 : 통화 코드값의 길이는 3이어야 합니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -63,12 +65,19 @@ class PaymentController(
     @ResponseBody
     fun postBankTransferRequest(
         @Parameter(hidden = true)
+        httpServletRequest: HttpServletRequest,
+        @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
         @RequestBody
         inputVo: PostBankTransferRequestInputVo
     ): PostBankTransferRequestOutputVo? {
         return service.postBankTransferRequest(
+            httpServletRequest,
             httpServletResponse,
+            authorization,
             inputVo
         )
     }
@@ -76,7 +85,7 @@ class PaymentController(
     data class PostBankTransferRequestInputVo(
         @Schema(
             description = "결제 코드입니다.<br>" +
-                    "외부 모듈에서 결제를 의뢰할 때에 구분을 위해 입력하는 정보로, {모듈 고유값}_{모듈 내 고유값} 으로 이루어집니다.<br>" +
+                    "외부 모듈에서 결제를 의뢰할 때에 구분을 위해 입력하는 정보로, {유저 고유값(비로그인시 0)}_{모듈 고유값}_{그 외 고유값} 으로 이루어집니다.<br>" +
                     "환불 요청시의 비밀번호 역할도 겸하므로, 모듈 내 고유값에 유저 고유값과 랜덤값을 섞는 것이 좋습니다.",
             required = true,
             example = "module1_uid1"
@@ -306,7 +315,7 @@ class PaymentController(
 
     // ----
     @Operation(
-        summary = "PG 결제 요청(Toss Payments)",
+        summary = "PG 결제 요청(Toss Payments) <>?",
         description = "PG 결제 요청(Toss Payments) API"
     )
     @ApiResponses(
@@ -324,7 +333,8 @@ class PaymentController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : Toss Payments API 호출 실패",
+                                "1 : paymentCode 가 올바르지 않습니다.<br>" +
+                                "2 : Toss Payments API 호출 실패",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -339,12 +349,19 @@ class PaymentController(
     @ResponseBody
     fun postPgTossPaymentsRequest(
         @Parameter(hidden = true)
+        httpServletRequest: HttpServletRequest,
+        @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
         @RequestBody
         inputVo: PostPgTossPaymentsRequestInputVo
     ): PostPgTossPaymentsRequestOutputVo? {
         return service.postPgTossPaymentsRequest(
+            httpServletRequest,
             httpServletResponse,
+            authorization,
             inputVo
         )
     }
@@ -352,7 +369,7 @@ class PaymentController(
     data class PostPgTossPaymentsRequestInputVo(
         @Schema(
             description = "결제 코드입니다.<br>" +
-                    "외부 모듈에서 결제를 의뢰할 때에 구분을 위해 입력하는 정보로, {모듈 고유값}_{모듈 내 고유값} 으로 이루어집니다.<br>" +
+                    "외부 모듈에서 결제를 의뢰할 때에 구분을 위해 입력하는 정보로, {유저 고유값(비로그인시 0)}_{모듈 고유값}_{그 외 고유값} 으로 이루어집니다.<br>" +
                     "환불 요청시의 비밀번호 역할도 겸하므로, 모듈 내 고유값에 유저 고유값과 랜덤값을 섞는 것이 좋습니다.",
             required = true,
             example = "module1_uid1"
