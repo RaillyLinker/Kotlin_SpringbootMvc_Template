@@ -80,6 +80,16 @@ CREATE TABLE `rental_product_image` (
 	`priority`	MEDIUMINT UNSIGNED	NOT NULL	COMMENT '가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)'
 );
 
+CREATE TABLE `rental_product_reservation_payment` (
+	`uid`	BIGINT	NOT NULL	COMMENT '행 고유키',
+	`row_create_date`	DATETIME(3)	NOT NULL	COMMENT '행 생성일',
+	`row_update_date`	DATETIME(3)	NOT NULL	COMMENT '행 수정일',
+	`row_delete_date_str`	VARCHAR(50)	NOT NULL	DEFAULT /	COMMENT '행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)',
+	`rental_product_reservation_uid`	BIGINT	NOT NULL	COMMENT '상품 예약 정보 행 고유키',
+	`payment_uid`	BIGINT	NULL	COMMENT '결제 모듈 테이블 행 고유키',
+	`real_pay_amount`	DECIMAL(15, 2)	NOT NULL	COMMENT '실제 결제 금액(할인 등을 적용한 이후, 통화 코드는 예약 정보의 가격 정보와 동일)'
+);
+
 ALTER TABLE `rental_product` ADD CONSTRAINT `PK_RENTAL_PRODUCT` PRIMARY KEY (
 	`uid`
 );
@@ -97,6 +107,10 @@ ALTER TABLE `rental_product_reservation_history` ADD CONSTRAINT `PK_RENTAL_PRODU
 );
 
 ALTER TABLE `rental_product_image` ADD CONSTRAINT `PK_RENTAL_PRODUCT_IMAGE` PRIMARY KEY (
+	`uid`
+);
+
+ALTER TABLE `rental_product_reservation_payment` ADD CONSTRAINT `PK_RENTAL_PRODUCT_RESERVATION_PAYMENT` PRIMARY KEY (
 	`uid`
 );
 
