@@ -37,15 +37,15 @@ class Db1_RaillyLinkerCompany_PaymentRefundRequest(
     var refundEndDatetime: LocalDateTime?,
 
     @Column(name = "refund_bank_name", nullable = true, columnDefinition = "VARCHAR(60)")
-    @Comment("환불 요청 이유")
+    @Comment("환불 은행명")
     var refundBankName: String?,
 
     @Column(name = "refund_bank_account", nullable = true, columnDefinition = "VARCHAR(60)")
-    @Comment("환불 요청 이유")
+    @Comment("환불 은행 계좌번호")
     var refundBankAccount: String?,
 
     @Column(name = "refund_holder_name", nullable = true, columnDefinition = "VARCHAR(60)")
-    @Comment("환불 요청 이유")
+    @Comment("환불 받을 대상의 이름")
     var refundHolderName: String?
 ) {
     @Id
