@@ -28,6 +28,10 @@ class Db1_RaillyLinkerCompany_RentalProductReservation(
     @Comment("예약자 멤버 행 고유키")
     var totalAuthMember: Db1_RaillyLinkerCompany_TotalAuthMember,
 
+    @Column(name = "real_paid_amount", nullable = false, columnDefinition = "DECIMAL(15, 2)")
+    @Comment("실제 결제 금액(할인 등을 적용한 이후, 통화 코드는 예약 정보의 가격 정보와 동일)")
+    var realPaidAmount: BigDecimal,
+
     @Column(name = "rental_start_datetime", nullable = false, columnDefinition = "DATETIME")
     @Comment("대여가 시작되는 일시")
     var rentalStartDatetime: LocalDateTime,

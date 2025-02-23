@@ -1,4 +1,13 @@
-﻿CREATE TABLE `rental_product` (
+﻿CREATE TABLE `rental_product_reservation_payment` (
+	`uid`	BIGINT	NOT NULL	COMMENT '행 고유키',
+	`row_create_date`	DATETIME(3)	NOT NULL	COMMENT '행 생성일',
+	`row_update_date`	DATETIME(3)	NOT NULL	COMMENT '행 수정일',
+	`row_delete_date_str`	VARCHAR(50)	NOT NULL	DEFAULT /	COMMENT '행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)',
+	`rental_product_reservation_uid`	BIGINT	NOT NULL	COMMENT '상품 예약 정보 행 고유키',
+	`payment_uid`	BIGINT	NULL	COMMENT '결제 모듈 테이블 행 고유키'
+);
+
+CREATE TABLE `rental_product` (
 	`uid`	BIGINT	NOT NULL	COMMENT '행 고유키',
 	`row_create_date`	DATETIME(3)	NOT NULL	COMMENT '행 생성일',
 	`row_update_date`	DATETIME(3)	NOT NULL	COMMENT '행 수정일',
@@ -33,6 +42,7 @@ CREATE TABLE `rental_product_reservation` (
 	`rental_product_uid`	BIGINT	NULL	COMMENT '예약 상품 정보 행 고유키',
 	`customer_member_uid`	BIGINT	NOT NULL	COMMENT '예약자 멤버 행 고유키',
 	`rental_start_datetime`	DATETIME	NOT NULL	COMMENT '대여가 시작되는 일시',
+	`real_pay_amount`	DECIMAL(15, 2)	NOT NULL	COMMENT '실제 결제 해야 하는 금액(할인 등을 적용한 이후, 통화 코드는 예약 정보의 가격 정보와 동일)',
 	`rental_end_datetime`	DATETIME	NOT NULL	COMMENT '대여가 끝나는 일시 (회수 시간은 포함되지 않는 순수 서비스 이용 시간)',
 	`customer_payment_deadline_datetime`	DATETIME	NOT NULL	COMMENT '고객에게 이때까지 결제를 해야 한다고 통보한 기한',
 	`payment_check_deadline_datetime`	DATETIME	NOT NULL	COMMENT '예약 결재 확인 기한 (결재 기한 초과 처리.)',
@@ -80,14 +90,8 @@ CREATE TABLE `rental_product_image` (
 	`priority`	MEDIUMINT UNSIGNED	NOT NULL	COMMENT '가중치(높을수록 전면에 표시되며, 동일 가중치의 경우 최신 정보가 우선됩니다.)'
 );
 
-CREATE TABLE `rental_product_reservation_payment` (
-	`uid`	BIGINT	NOT NULL	COMMENT '행 고유키',
-	`row_create_date`	DATETIME(3)	NOT NULL	COMMENT '행 생성일',
-	`row_update_date`	DATETIME(3)	NOT NULL	COMMENT '행 수정일',
-	`row_delete_date_str`	VARCHAR(50)	NOT NULL	DEFAULT /	COMMENT '행 삭제일(yyyy_MM_dd_T_HH_mm_ss_SSS_z, 삭제되지 않았다면 /)',
-	`rental_product_reservation_uid`	BIGINT	NOT NULL	COMMENT '상품 예약 정보 행 고유키',
-	`payment_uid`	BIGINT	NULL	COMMENT '결제 모듈 테이블 행 고유키',
-	`real_pay_amount`	DECIMAL(15, 2)	NOT NULL	COMMENT '실제 결제 금액(할인 등을 적용한 이후, 통화 코드는 예약 정보의 가격 정보와 동일)'
+ALTER TABLE `rental_product_reservation_payment` ADD CONSTRAINT `PK_RENTAL_PRODUCT_RESERVATION_PAYMENT` PRIMARY KEY (
+	`uid`
 );
 
 ALTER TABLE `rental_product` ADD CONSTRAINT `PK_RENTAL_PRODUCT` PRIMARY KEY (
@@ -107,10 +111,6 @@ ALTER TABLE `rental_product_reservation_history` ADD CONSTRAINT `PK_RENTAL_PRODU
 );
 
 ALTER TABLE `rental_product_image` ADD CONSTRAINT `PK_RENTAL_PRODUCT_IMAGE` PRIMARY KEY (
-	`uid`
-);
-
-ALTER TABLE `rental_product_reservation_payment` ADD CONSTRAINT `PK_RENTAL_PRODUCT_RESERVATION_PAYMENT` PRIMARY KEY (
 	`uid`
 );
 

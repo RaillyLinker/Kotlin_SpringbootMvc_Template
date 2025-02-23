@@ -209,6 +209,7 @@ class RentalReservationService(
                         Db1_RaillyLinkerCompany_RentalProductReservation(
                             rentableProductInfo,
                             memberData,
+                            rentableProductInfo.reservationUnitPrice, // todo 할인 등의 처리
                             rentalStartDatetime,
                             rentalEndDatetime,
                             nowDatetime, // 고객에게 이때까지 결제를 해야 한다고 통보한 기한 임시 입력
