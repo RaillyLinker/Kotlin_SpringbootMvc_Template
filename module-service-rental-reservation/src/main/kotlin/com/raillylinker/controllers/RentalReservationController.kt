@@ -27,6 +27,7 @@ class RentalReservationController(
 
     // ---------------------------------------------------------------------------------------------
     // <매핑 함수 공간>
+    // 결제 금액 할인 등의 정보에 대한 처리는 이곳의 이 시점에 실행하여 예약 정보의 결제 금액에 적용하면 됩니다.
     @Operation(
         summary = "상품 예약 신청하기 <>",
         description = "상품에 대한 예약 신청을 합니다."
@@ -143,7 +144,77 @@ class RentalReservationController(
     )
 
 
-    // todo : 사용자 결제(결제 모듈에 요청 후 결제 고유번호를 받아서 그것으로 확인하기)
+    @Operation(
+        summary = "사용자 결제 처리 <>",
+        description = "예약 신청 정보에 대하여 사용자 결제 처리를 합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : paymentRequestUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "3 : 이미 결제 처리되었습니다.<br>" +
+                                "4 : 결제 요구 금액과 결제 완료된 금액이 다릅니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                content = [Content()],
+                description = "인증되지 않은 접근입니다."
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/product-reservation-payment"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    fun postProductReservationPayment(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?,
+        @RequestBody
+        inputVo: PostProductReservationPaymentInputVo
+    ): PostProductReservationPaymentOutputVo? {
+        return service.postProductReservationPayment(
+            httpServletResponse,
+            authorization!!,
+            inputVo
+        )
+    }
+
+    data class PostProductReservationPaymentInputVo(
+        @Schema(description = "rentalProductReservation 고유값", required = true, example = "1")
+        @JsonProperty("rentalProductReservationUid")
+        val rentalProductReservationUid: Long,
+        @Schema(description = "paymentRequest 고유값(무료 결제일 경우)", required = false, example = "1")
+        @JsonProperty("paymentRequestUid")
+        val paymentRequestUid: Long?
+    )
+
+    data class PostProductReservationPaymentOutputVo(
+        @Schema(description = "rentalProductReservationPayment 고유값", required = true, example = "1")
+        @JsonProperty("rentalProductReservationPaymentUid")
+        val rentalProductReservationPaymentUid: Long
+    )
 
 
     // ----

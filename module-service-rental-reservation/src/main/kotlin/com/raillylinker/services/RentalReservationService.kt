@@ -38,6 +38,8 @@ class RentalReservationService(
     private val db1RaillyLinkerCompanyTotalAuthMemberPhoneRepository: Db1_RaillyLinkerCompany_TotalAuthMemberPhone_Repository,
     private val db1RaillyLinkerCompanyTotalAuthMemberProfileRepository: Db1_RaillyLinkerCompany_TotalAuthMemberProfile_Repository,
     private val db1RaillyLinkerCompanyRentalProductReservationImageRepository: Db1_RaillyLinkerCompany_RentalProductReservationImage_Repository,
+    private val db1RaillyLinkerCompanyRentalProductReservationPaymentRepository: Db1_RaillyLinkerCompany_RentalProductReservationPayment_Repository,
+    private val db1RaillyLinkerCompanyPaymentRequestRepository: Db1_RaillyLinkerCompany_PaymentRequest_Repository,
 
     private val redis1LockRentalProductInfo: Redis1_Lock_RentalProductInfo
 ) {
@@ -209,7 +211,7 @@ class RentalReservationService(
                         Db1_RaillyLinkerCompany_RentalProductReservation(
                             rentableProductInfo,
                             memberData,
-                            rentableProductInfo.reservationUnitPrice, // todo 할인 등의 처리
+                            rentableProductInfo.reservationUnitPrice, // 할인 등의 처리로 결제 필요 금액을 정할 수 있습니다.
                             rentalStartDatetime,
                             rentalEndDatetime,
                             nowDatetime, // 고객에게 이때까지 결제를 해야 한다고 통보한 기한 임시 입력
@@ -288,6 +290,116 @@ class RentalReservationService(
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_z"))
                 )
             }
+        )
+    }
+
+
+    // ----
+    // (결제 완료 처리 <>)
+    @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
+    fun postProductReservationPayment(
+        httpServletResponse: HttpServletResponse,
+        authorization: String,
+        inputVo: RentalReservationController.PostProductReservationPaymentInputVo
+    ): RentalReservationController.PostProductReservationPaymentOutputVo? {
+        val memberUid = jwtTokenUtil.getMemberUid(
+            authorization.split(" ")[1].trim(),
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
+        )
+
+        val reservationEntity: Db1_RaillyLinkerCompany_RentalProductReservation? =
+            db1RaillyLinkerCompanyRentableProductReservationInfoRepository.findByUidAndRowDeleteDateStr(
+                inputVo.rentalProductReservationUid,
+                "/"
+            )
+
+        if (reservationEntity == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        if (reservationEntity.totalAuthMember.uid != memberUid) {
+            // 고객이 진행중인 예약이 아님
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        val reservationPayments =
+            db1RaillyLinkerCompanyRentalProductReservationPaymentRepository.findAllByRentalProductReservationAndRowDeleteDateStr(
+                reservationEntity,
+                "/"
+            )
+
+        if (reservationPayments.isNotEmpty()) {
+            // 이미 결제되어 있음(productPayment 가 1대 1 관계로 존재하면 있는 것으로 간주)
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "3")
+            return null
+        }
+
+        if (reservationEntity.realPaidAmount == BigDecimal(0L) && inputVo.paymentRequestUid == null) {
+            // 결제 필요 없음
+
+            // 결제 처리
+            val reservationPayment =
+                db1RaillyLinkerCompanyRentalProductReservationPaymentRepository.save(
+                    Db1_RaillyLinkerCompany_RentalProductReservationPayment(
+                        reservationEntity,
+                        null
+                    )
+                )
+
+            return RentalReservationController.PostProductReservationPaymentOutputVo(
+                reservationPayment.uid!!
+            )
+        }
+
+        if (inputVo.paymentRequestUid == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
+            return null
+        }
+
+        val paymentRequest =
+            db1RaillyLinkerCompanyPaymentRequestRepository.findByUidAndRowDeleteDateStr(
+                inputVo.paymentRequestUid,
+                "/"
+            )
+
+        if (paymentRequest == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
+        if (paymentRequest.totalAuthMember == null || paymentRequest.totalAuthMember!!.uid != memberUid) {
+            // 고객이 진행중인 예약이 아님
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
+        if (paymentRequest.paymentAmount == reservationEntity.realPaidAmount) {
+            // 결제 금액이 다릅니다.
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "4")
+            return null
+        }
+
+        // 결제 처리
+        val reservationPayment =
+            db1RaillyLinkerCompanyRentalProductReservationPaymentRepository.save(
+                Db1_RaillyLinkerCompany_RentalProductReservationPayment(
+                    reservationEntity,
+                    paymentRequest
+                )
+            )
+
+        return RentalReservationController.PostProductReservationPaymentOutputVo(
+            reservationPayment.uid!!
         )
     }
 
