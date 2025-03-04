@@ -2715,8 +2715,6 @@ class RentalReservationAdminService(
 
         var notPaid = true
         var paymentNotChecked = true
-        var noEarlyReturn = true
-        var noEarlyReturnCancel = true
 
         var notRequestExtend = true
 //        var notRequestExtendDeny = true
@@ -2746,18 +2744,11 @@ class RentalReservationAdminService(
                     }
                 }
 
-                10 -> {
-                    // 조기 반납 상태
-                    if (noEarlyReturnCancel) {
-                        noEarlyReturn = false
-                    }
-                }
-
-                11 -> {
-                    // 조기 반납 취소
-                    if (noEarlyReturn) {
-                        noEarlyReturnCancel = false
-                    }
+                12 -> {
+                    // 상품 반납 확인
+                    httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+                    httpServletResponse.setHeader("api-result-code", "5")
+                    return null
                 }
 
                 15 -> {
@@ -2780,6 +2771,15 @@ class RentalReservationAdminService(
 
                 17 -> {
                     // 예약 연장 거부
+                    if (notCancelChecked) {
+                        notCancelChecked = false
+                        // 예약 연장 거부 내역이 최신인지
+//                        notRequestExtendDeny = false
+                    }
+                }
+
+                18 -> {
+                    // 예약 연장 승인
                     if (notCancelChecked) {
                         notCancelChecked = false
                         // 예약 연장 거부 내역이 최신인지
