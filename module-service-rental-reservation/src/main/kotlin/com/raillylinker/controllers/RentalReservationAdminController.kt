@@ -2401,7 +2401,8 @@ class RentalReservationAdminController(
                                 "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : 결제 확인 완료 아님 || 예약 신청 거부 = 대여 진행 상태가 아님<br>" +
                                 "3 : 상품 대여일이 도래하지 않았습니다.<br>" +
-                                "4 : 예약 연장 신청 상태가 아닙니다.",
+                                "4 : 예약 연장 신청 상태가 아닙니다.<br>" +
+                                "5 : 이미 반납 확인된 상태입니다.",
                         schema = Schema(type = "string")
                     )
                 ]
