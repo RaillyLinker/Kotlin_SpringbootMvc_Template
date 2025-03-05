@@ -1,0 +1,43 @@
+- compose 파일에 적혀있는 volumes 설정의 경로를 자신이 원하는 위치로 변경해주세요.
+
+- 도커 컨테이너 실행 명령어 (커맨드창에서 본 디렉토리 경로로 이동하여 입력하세요.)
+>> docker-compose -f mysql-cluster-compose.yml up -d
+
+- Mysql 클러스터는 기본적으로 mysql 을 여러개 띄우고, 아래의 명령어와 같이 진행하여 클러스터 설정을 하는 처리가 달라졌을 뿐입니다.
+
+- mysql1 exec 명령어창에서 mysql1 클러스터 설정 생성 및 설정 추가
+
+>> mysqlsh -uclusteradmin -p'todo1234!'
+>> dba.checkInstanceConfiguration("clusteradmin@host.docker.internal:33061")
+>> {clusteradmin 비밀번호 입력}
+>> y
+>> dba.configureInstance("clusteradmin@host.docker.internal:33061")
+>> {all y and waiting restart}
+
+- 다시 mysql1 exec 명령어창에서 mysql2 클러스터 설정 추가
+>> mysqlsh -uclusteradmin -p'todo1234!'
+>> dba.configureInstance("clusteradmin@host.docker.internal:33062")
+>> {clusteradmin 비밀번호 입력}
+>> {all y and waiting restart}
+
+- mysql1 exec 명령어창 mysql1 을 main 으로 dbcluster 클러스터 생성
+>> var cluster = dba.createCluster("dbcluster")
+>> cluster.status()
+
+- mysql1 exec 명령어창 mysql2 를 클러스터 서브(Read Only)로 등록
+>> cluster.addInstance("clusteradmin@host.docker.internal:33062")
+>> c
+>> cluster.status()
+
+- 설정이 끝났으므로 mysqlsh 종료
+>> Ctrl + d
+
+- mysql1 exec 명령어창에서 mysql 로 접속
+>> mysql -u clusteradmin -p'todo1234!'
+
+- mysql1 에서 데이터베이스 조작 후 mysql2 에 반영이 되는지 확인하기
+>> CREATE DATABASE developer;
+>> use developer;
+>> CREATE TABLE dev(name VARCHAR(20) NOT NULL, SLNO INT NOT NULL,
+>> PRIMARY KEY(SLNO));
+>> INSERT INTO dev VALUE("dev1",1);
