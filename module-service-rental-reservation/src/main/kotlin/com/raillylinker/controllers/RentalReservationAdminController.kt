@@ -211,7 +211,14 @@ class RentalReservationAdminController(
             example = "30"
         )
         @JsonProperty("cancelDeadlineMinute")
-        val cancelDeadlineMinute: Long
+        val cancelDeadlineMinute: Long,
+        @Schema(
+            description = "상품 상태 설명(예를 들어 손망실의 경우 now_reservable 이 false 이며, 이곳에 손망실 이유가 기재됩니다.)",
+            required = true,
+            example = "이상무"
+        )
+        @JsonProperty("productStateDesc")
+        val productStateDesc: String
     ) {
         enum class CurrencyCodeEnum {
             KRW, USD
@@ -410,7 +417,14 @@ class RentalReservationAdminController(
             example = "30"
         )
         @JsonProperty("cancelDeadlineMinute")
-        val cancelDeadlineMinute: Long
+        val cancelDeadlineMinute: Long,
+        @Schema(
+            description = "상품 상태 설명(예를 들어 손망실의 경우 now_reservable 이 false 이며, 이곳에 손망실 이유가 기재됩니다.)",
+            required = true,
+            example = "이상무"
+        )
+        @JsonProperty("productStateDesc")
+        val productStateDesc: String
     ) {
         enum class CurrencyCodeEnum {
             KRW, USD
@@ -2046,10 +2060,6 @@ class RentalReservationAdminController(
         @JsonProperty("reservationHistoryUid")
         val reservationHistoryUid: Long
     )
-
-
-    // todo 손망실 설정
-    // todo 손망실 취소
 
 
     // ----

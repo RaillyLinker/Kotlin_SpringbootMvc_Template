@@ -160,7 +160,7 @@ class RentalReservationAdminService(
                 inputVo.paymentCheckDeadlineMinute,
                 inputVo.approvalDeadlineMinute,
                 inputVo.cancelDeadlineMinute,
-                ""
+                inputVo.productStateDesc
             )
         )
 
@@ -271,6 +271,7 @@ class RentalReservationAdminService(
                 rentableProduct.paymentCheckDeadlineMinute = inputVo.paymentCheckDeadlineMinute
                 rentableProduct.approvalDeadlineMinute = inputVo.approvalDeadlineMinute
                 rentableProduct.cancelDeadlineMinute = inputVo.cancelDeadlineMinute
+                rentableProduct.productStateDesc = inputVo.productStateDesc
                 rentableProduct.versionSeq += 1
 
                 db1RaillyLinkerCompanyRentalProductRepository.save(rentableProduct)
