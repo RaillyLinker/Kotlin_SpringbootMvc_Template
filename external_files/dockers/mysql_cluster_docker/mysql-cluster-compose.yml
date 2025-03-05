@@ -1,7 +1,7 @@
 services:
   mysql1:
     container_name: mysql1
-    image: mysql/mysql-server:8.0
+    image: mysql:latest
     restart: always
     ports:
       - 33061:3306
@@ -19,7 +19,7 @@ services:
   
   mysql2:
     container_name: mysql2
-    image: mysql/mysql-server:8.0
+    image: mysql:late
     restart: always
     ports:
       - 33062:3306
