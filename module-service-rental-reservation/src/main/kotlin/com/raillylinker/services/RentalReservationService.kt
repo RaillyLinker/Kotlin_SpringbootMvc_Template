@@ -363,17 +363,6 @@ class RentalReservationService(
             return null
         }
 
-        if (db1RaillyLinkerCompanyRentalProductReservationPaymentRepository.findAllByPaymentUidAndRowDeleteDateStr(
-                inputVo.paymentRequestUid,
-                "/"
-            ).isNotEmpty()
-        ) {
-            // payment Uid 가 이미 거래에 사용된 상황일 때
-            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
-            httpServletResponse.setHeader("api-result-code", "5")
-            return null
-        }
-
         val paymentRequest =
             db1RaillyLinkerCompanyPaymentRequestRepository.findByUidAndRowDeleteDateStr(
                 inputVo.paymentRequestUid,
@@ -383,6 +372,17 @@ class RentalReservationService(
         if (paymentRequest == null) {
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
+        if (db1RaillyLinkerCompanyRentalProductReservationPaymentRepository.findAllByPaymentRequestAndRowDeleteDateStr(
+                paymentRequest,
+                "/"
+            ).isNotEmpty()
+        ) {
+            // payment Uid 가 이미 거래에 사용된 상황일 때
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "5")
             return null
         }
 

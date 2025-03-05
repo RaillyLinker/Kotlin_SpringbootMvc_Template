@@ -1,5 +1,6 @@
 package com.raillylinker.jpa_beans.db1_main.repositories
 
+import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_PaymentRequest
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentalProductReservation
 import com.raillylinker.jpa_beans.db1_main.entities.Db1_RaillyLinkerCompany_RentalProductReservationPayment
 import org.springframework.data.jpa.repository.JpaRepository
@@ -18,8 +19,8 @@ interface Db1_RaillyLinkerCompany_RentalProductReservationPayment_Repository :
         rowDeleteDateStr: String
     ): List<Db1_RaillyLinkerCompany_RentalProductReservationPayment>
 
-    fun findAllByPaymentUidAndRowDeleteDateStr(
-        paymentUid: Long,
+    fun findAllByPaymentRequestAndRowDeleteDateStr(
+        paymentRequest: Db1_RaillyLinkerCompany_PaymentRequest,
         rowDeleteDateStr: String
     ): List<Db1_RaillyLinkerCompany_RentalProductReservationPayment>
 }
