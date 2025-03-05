@@ -166,7 +166,8 @@ class RentalReservationController(
                                 "1 : rentalProductReservationUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "2 : paymentRequestUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
                                 "3 : 이미 결제 처리되었습니다.<br>" +
-                                "4 : 결제 요구 금액과 결제 완료된 금액이 다릅니다.",
+                                "4 : 결제 요구 금액과 결제 완료된 금액이 다릅니다.<br>" +
+                                "5 : 이미 사용된 paymentRequestUid 입니다.",
                         schema = Schema(type = "string")
                     )
                 ]

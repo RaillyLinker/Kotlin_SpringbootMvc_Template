@@ -17,4 +17,9 @@ interface Db1_RaillyLinkerCompany_RentalProductReservationPayment_Repository :
         rentalProductReservation: Db1_RaillyLinkerCompany_RentalProductReservation,
         rowDeleteDateStr: String
     ): List<Db1_RaillyLinkerCompany_RentalProductReservationPayment>
+
+    fun findAllByPaymentUidAndRowDeleteDateStr(
+        paymentUid: Long,
+        rowDeleteDateStr: String
+    ): List<Db1_RaillyLinkerCompany_RentalProductReservationPayment>
 }
