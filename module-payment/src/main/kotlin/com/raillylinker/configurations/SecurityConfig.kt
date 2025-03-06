@@ -291,6 +291,10 @@ class SecurityConfig {
                 ?: // Authorization 에 토큰을 넣지 않은 경우 = 인증 / 인가를 받을 의도가 없음
                 return null // ex : "Bearer aqwer1234"
 
+            return checkRequestAuthorization(authorization)
+        }
+
+        fun checkRequestAuthorization(authorization: String): ArrayList<GrantedAuthority>? {
             // 타입과 토큰을 분리
             val authorizationSplit = authorization.split(" ") // ex : ["Bearer", "qwer1234"]
             if (authorizationSplit.size < 2) {
