@@ -35,7 +35,7 @@ class WebSocketStompConfig : WebSocketMessageBrokerConfigurer {
              stompClient.send("/app/test", {}, JSON.stringify({'chat': "sample Text"}));
              이처럼 요청 가능
          */
-        registry.setApplicationDestinationPrefixes("/app")
+        registry.setApplicationDestinationPrefixes("")
 
         /*
              구독 주소
