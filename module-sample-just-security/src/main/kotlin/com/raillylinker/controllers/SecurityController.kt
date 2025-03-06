@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
@@ -165,5 +166,37 @@ class SecurityController(
         authorization: String?
     ): String? {
         return service.developerAccessTest(httpServletResponse, authorization!!)
+    }
+
+
+    // ----
+    @Operation(
+        summary = "로그인 / 비로그인 진입 테스트 <>?",
+        description = "로그인 / 비로그인 되어 있을 때의 처리가 달라집니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @GetMapping(
+        path = ["/for-optional-logged-in"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.TEXT_PLAIN_VALUE]
+    )
+    @ResponseBody
+    fun optionalLoggedInAccessTest(
+        @Parameter(hidden = true)
+        httpServletRequest: HttpServletRequest,
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(hidden = true)
+        @RequestHeader("Authorization")
+        authorization: String?
+    ): String? {
+        return service.optionalLoggedInAccessTest(httpServletRequest, httpServletResponse, authorization)
     }
 }

@@ -4,6 +4,7 @@ import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth
 import com.raillylinker.configurations.jpa_configs.Db1MainConfig
 import com.raillylinker.jpa_beans.db1_main.repositories.Db1_RaillyLinkerCompany_TotalAuthMember_Repository
 import com.raillylinker.util_components.JwtTokenUtil
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -112,5 +113,33 @@ class SecurityService(
 
         httpServletResponse.status = HttpStatus.OK.value()
         return "Member No.$memberUid : Test Success"
+    }
+
+
+    // ----
+    // (로그인 / 비로그인 진입 테스트 <>?)
+    fun optionalLoggedInAccessTest(
+        httpServletRequest: HttpServletRequest,
+        httpServletResponse: HttpServletResponse,
+        authorization: String?
+    ): String? {
+        val notLoggedIn = authTokenFilterTotalAuth.checkRequestAuthorization(httpServletRequest) == null
+
+        val memberEntity =
+            if (notLoggedIn) {
+                null
+            } else {
+                val memberUid = jwtTokenUtil.getMemberUid(
+                    authorization!!.split(" ")[1].trim(),
+                    authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+                    authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
+                )
+                db1RaillyLinkerCompanyTotalAuthMemberRepository.findByUidAndRowDeleteDateStr(memberUid, "/")!!
+            }
+
+        classLogger.info("Member Id : ${memberEntity?.accountId}")
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return "Member No.${memberEntity?.uid} : Test Success"
     }
 }
