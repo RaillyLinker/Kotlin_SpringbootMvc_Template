@@ -1,8 +1,6 @@
 
-- redis 클러스터 도커
-    클러스터 설정 코드
-
 - springboot webflux 템플릿
+    RDBMS, Redis, SpringSecurity, Webclient, Kafka, Mongodb, Quartz, Batch, Scheduler
 
 - 확장성 있는 소켓 모듈
 
