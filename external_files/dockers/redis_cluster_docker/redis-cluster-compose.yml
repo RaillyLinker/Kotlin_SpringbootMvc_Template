@@ -1,0 +1,78 @@
+services:
+  redis-master-1:
+    container_name: redis-master-1
+    image: redis
+    network_mode: "host"
+    command: redis-server /etc/redis.conf
+    volumes:
+      - C:/Users/raill/Downloads/tmp/redis_cluster/redis_master_1/data:/data
+      - ./conf/redis-master-1.conf:/etc/redis.conf
+    restart: always
+    ports:
+      - 7001:7001
+      - 17001:17001
+
+  redis-master-2:
+    container_name: redis-master-2
+    image: redis
+    network_mode: "host"
+    command: redis-server /etc/redis.conf
+    volumes:
+      - C:/Users/raill/Downloads/tmp/redis_cluster/redis_master_2/data:/data
+      - ./conf/redis-master-2.conf:/etc/redis.conf
+    restart: always
+    ports:
+      - 7002:7002
+      - 17002:17002
+
+  redis-master-3:
+    container_name: redis-master-3
+    image: redis
+    network_mode: "host"
+    command: redis-server /etc/redis.conf
+    volumes:
+      - C:/Users/raill/Downloads/tmp/redis_cluster/redis_master_3/data:/data
+      - ./conf/redis-master-3.conf:/etc/redis.conf
+    restart: always
+    ports:
+      - 7003:7003
+      - 17003:17003
+
+  redis-slave-1:
+    container_name: redis-slave-1
+    image: redis
+    network_mode: "host"
+    command: redis-server /etc/redis.conf
+    volumes:
+      - C:/Users/raill/Downloads/tmp/redis_cluster/redis_slave_1/data:/data
+      - ./conf/redis-slave-1.conf:/etc/redis.conf
+    restart: always
+    ports:
+      - 7101:7101
+      - 17101:17101
+
+  redis-slave-2:
+    container_name: redis-slave-2
+    image: redis
+    network_mode: "host"
+    command: redis-server /etc/redis.conf
+    volumes:
+      - C:/Users/raill/Downloads/tmp/redis_cluster/redis_slave_2/data:/data
+      - ./conf/redis-slave-2.conf:/etc/redis.conf
+    restart: always
+    ports:
+      - 7102:7102
+      - 17102:17102
+
+  redis-slave-3:
+    container_name: redis-slave-3
+    image: redis
+    network_mode: "host"
+    command: redis-server /etc/redis.conf
+    volumes:
+      - C:/Users/raill/Downloads/tmp/redis_cluster/redis_slave_3/data:/data
+      - ./conf/redis-slave-3.conf:/etc/redis.conf
+    restart: always
+    ports:
+      - 7103:7103
+      - 17103:17103
