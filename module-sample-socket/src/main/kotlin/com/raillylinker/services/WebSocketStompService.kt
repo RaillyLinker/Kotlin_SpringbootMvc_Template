@@ -25,13 +25,13 @@ class WebSocketStompService(
         // /topic 을 구독하는 모든 유저에게 메시지를 전달하였습니다.
         simpMessagingTemplate.convertAndSend(
             "/topic",
-            WebSocketStompController.SendToTopicTestOutputVo("$inputVo : SimpMessagingTemplate Test")
+            WebSocketStompController.SendToTopicTestOutputVo("from simpMessagingTemplate {inputVo.chat : ${inputVo.chat}}")
         )
 
         Thread.sleep(1000)
 
         // 이렇게 @SendTo 함수 결과값으로 메세지를 전달할 수도 있습니다.
         // 앞서 @SendTo 에 설정한 /topic 을 구독하는 모든 유저에게 마시지를 전달하였습니다.
-        return WebSocketStompController.SendToTopicTestOutputVo("$inputVo : @SendTo Test")
+        return WebSocketStompController.SendToTopicTestOutputVo("from @SendTo Response {inputVo.chat : ${inputVo.chat}}")
     }
 }
