@@ -30,7 +30,7 @@ class RootService(
 
         mv.addObject(
             "viewModel",
-            GetRootHomePageViewModel(
+            GetHome(
                 activeProfile,
                 swaggerEnabled
             )
@@ -39,7 +39,7 @@ class RootService(
         return mv
     }
 
-    data class GetRootHomePageViewModel(
+    data class GetHome(
         val env: String,
         val showApiDocumentBtn: Boolean
     )
