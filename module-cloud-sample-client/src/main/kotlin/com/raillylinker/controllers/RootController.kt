@@ -25,8 +25,8 @@ class RootController(
     // ---------------------------------------------------------------------------------------------
     // <매핑 함수 공간>
     @Operation(
-        summary = "루트 홈페이지",
-        description = "루트 홈페이지를 반환합니다."
+        summary = "루트 경로",
+        description = "루트 경로 정보를 반환합니다."
     )
     @ApiResponses(
         value = [
