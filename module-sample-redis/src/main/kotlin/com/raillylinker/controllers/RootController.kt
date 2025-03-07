@@ -39,10 +39,10 @@ class RootController(
         consumes = [MediaType.ALL_VALUE],
         produces = [MediaType.TEXT_HTML_VALUE]
     )
-    fun getRootHomePage(
+    fun getRootInfo(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse
     ): ModelAndView? {
-        return service.getRootHomePage(httpServletResponse)
+        return service.getRootInfo(httpServletResponse)
     }
 }
