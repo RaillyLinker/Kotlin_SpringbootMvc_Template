@@ -9,6 +9,15 @@ rootProject.name = "kotlin_springboot_mvc_template"
 // Spring Cloud 게이트웨이 (8080)
 include("module-cloud-gateway")
 
+// Spring Admin Server (9090)
+include("module-spring-admin")
+
+// Spring Admin Client1 (9191)
+include("module-spring-admin-client1")
+
+// Spring Admin Client2 (9192)
+include("module-spring-admin-client2")
+
 // Springboot 프로젝트 모듈 템플릿 (10000)
 include("module-template")
 
@@ -36,23 +45,17 @@ include("module-file-storage")
 // 결제 서버 (11002)
 include("module-payment")
 
+// 테스트 샘플 (12000)
+include("module-sample-etc")
+
 // 스케쥴러 테스트 샘플 (12003)
 include("module-sample-scheduler")
 
 // 소켓 테스트 샘플 (12004)
 include("module-sample-socket")
 
-// Spring Admin Server (9090)
-include("module-spring-admin")
-
 // Kafka 테스트 Server (12005)
 include("module-sample-kafka")
-
-// Spring Admin Client1 (9191)
-include("module-spring-admin-client1")
-
-// Spring Admin Client2 (9192)
-include("module-spring-admin-client2")
 
 // API 테스트 샘플 (12006)
 include("module-sample-api")
@@ -65,9 +68,6 @@ include("module-sample-redis")
 
 // Mongodb 테스트 샘플 (12009)
 include("module-sample-mongodb")
-
-// 테스트 샘플 (12000)
-include("module-sample-etc")
 
 // JPA 테스트 샘플 (12010)
 include("module-sample-jpa")

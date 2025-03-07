@@ -30,12 +30,17 @@ class WebSocketStompConfig : WebSocketMessageBrokerConfigurer {
 
     override fun configureMessageBroker(registry: MessageBrokerRegistry) {
         /*
-             WebSocketStompController 의 MessageMapping 연결 주소
-             @MessageMapping("/test") 라고 되어있다면,
+             WebSocketStompController 의 MessageMapping 연결 주소 prefix
+             이 설정이 /app 이고, @MessageMapping("/test") 라고 되어있다면,
              stompClient.send("/app/test", {}, JSON.stringify({'chat': "sample Text"}));
-             이처럼 요청 가능
+             이처럼 요청 가능.
+
+             클라이언트 -> 서버 방향의 메시지입니다.
+
+             /app 으로 설정하는 이유는, REST API 와의 구분을 위하여,
+             REST API 는 /api 로 시작되고, STOMP 는 /app 으로 시작하게 하는 것입니다.
          */
-        registry.setApplicationDestinationPrefixes("")
+        registry.setApplicationDestinationPrefixes("/app")
 
         /*
              구독 주소
@@ -46,8 +51,13 @@ class WebSocketStompConfig : WebSocketMessageBrokerConfigurer {
              @SendTo("/topic") 로 설정 된 메세지 함수 실행 혹은
              simpMessagingTemplate.convertAndSend("/topic", TopicVo("waiting..."))
              이렇게 메세지 전달시 그 메세지를 받을 수 있습니다.
+
+             서버 -> 클라이언트 방향의 메시지입니다.
+
+             /topic 은 전체 공지사항, 채팅방 공지사항, 브로드 캐스팅 데이터를 의미하며, 여러 사용자가 동시에 같은 데이터를 받을 때를 의미합니다.
+             /queue 는 1:1 개인 메시지, 개인 공지사항, 작업 큐 등 한번에 하나의 이벤트를 전달할 때를 의미합니다.
          */
-        registry.enableSimpleBroker("/topic")
+        registry.enableSimpleBroker("/topic", "/queue")
     }
 
     override fun configureClientInboundChannel(registration: ChannelRegistration) {
@@ -64,6 +74,14 @@ class WebSocketStompConfig : WebSocketMessageBrokerConfigurer {
                 if (StompCommand.CONNECT == accessor.command) {
                     // 클라이언트 연결시
                     println("CONNECT")
+
+                    val token: String? = accessor.getFirstNativeHeader("Authorization")
+                    println(token)
+
+//                    if (token.isNullOrBlank()) {
+//                        throw IllegalArgumentException("Authorization header is missing")
+//                    }
+
                 } else if (StompCommand.SUBSCRIBE == accessor.command) {
                     // 구독시
                     val destination = accessor.destination
