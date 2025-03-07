@@ -43,7 +43,7 @@
         }
 
         function sendMessage() {
-            stompClient.send("/send-to-topic-test", {}, JSON.stringify({ 'chat': $("#message").val() }));
+            stompClient.send("/app/send-to-topic-test", {}, JSON.stringify({ 'chat': $("#message").val() }));
         }
 
         function showMessage(message) {
