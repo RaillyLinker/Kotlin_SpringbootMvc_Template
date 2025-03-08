@@ -1,8 +1,9 @@
 
+- 확장성 있는 고급 소켓 모듈 + 포트폴리오 작성
+    Chatting + auth + channel
+
 - springboot webflux 템플릿
     RDBMS, Redis, SpringSecurity, Webclient, Kafka, Mongodb, Quartz, Batch, Scheduler
-
-- 확장성 있는 소켓 모듈
 
 - 템플릿의 sse wrapper 다시 보기(구독 후 아무것도 없이 타임아웃 이후 신호를 보내면 에러)
     확장성 고려
@@ -18,7 +19,6 @@
 
 - 포트폴리오 프로젝트 추가
     shopping (payment, point, sse)
-    Chatting + auth + channel
     영상 채팅방 시스템
     배달 서비스
     Webflux 게시판

@@ -81,6 +81,9 @@ include("module-sample-quartz")
 // 시큐리티 필터 적용 테스트 샘플 (12013)
 include("module-sample-just-security")
 
+// 고급 소켓 샘플 (12014)
+include("module-sample-socket-ex")
+
 // 게시판 서비스 (13000)
 include("module-service-board")
 
