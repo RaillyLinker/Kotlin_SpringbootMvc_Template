@@ -91,7 +91,6 @@ class WebSocketStompConfig(
 
                     StompCommand.SEND -> {
                         webSocketStompConfigService.sendFromPreSend(message, channel, accessor)
-                        throw RuntimeException()
                     }
 
                     StompCommand.UNSUBSCRIBE -> {
