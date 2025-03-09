@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.messaging.MessageChannel
 import org.springframework.stereotype.Service
 import org.springframework.messaging.Message
+import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 
 @Service
@@ -37,16 +38,9 @@ class WebSocketStompConfigService(
         // 최초 소켓 연결시 로그인이 되어 있지 않으면 거부
         // 이후 토큰 만료시에는 에러 메시지를 발송하여 클라이언트 측에서 처리하도록 함.
         // 이렇게 하면 연결 불가의 원인이 인증/인가가 안 된 이유로 좁혀지므로 클라이언트 처리가 단순해집니다.
-        if (authorization.isNullOrBlank()) {
-            // Authorization 헤더 전달 안함
+        if (authorization.isNullOrBlank() || authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null) {
+            // Authorization 인증 실패
             throw IllegalArgumentException("Authorization header is missing")
-        }
-
-        val notLoggedIn = authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null
-
-        if (notLoggedIn) {
-            // 인증 실패
-            throw IllegalArgumentException("Token Not LoggedIn")
         }
 
         return message
