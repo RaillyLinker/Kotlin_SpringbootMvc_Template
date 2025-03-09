@@ -1,9 +1,11 @@
 package com.raillylinker.services
 
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth
+import com.raillylinker.controllers.WebSocketStompController
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Lazy
 import org.springframework.messaging.MessageChannel
 import org.springframework.stereotype.Service
 import org.springframework.messaging.Message
@@ -14,7 +16,8 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 class WebSocketStompConfigService(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
-    private val authTokenFilterTotalAuth: AuthTokenFilterTotalAuth
+    private val authTokenFilterTotalAuth: AuthTokenFilterTotalAuth,
+    @Lazy private val simpMessagingTemplate: SimpMessagingTemplate
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -29,7 +32,7 @@ class WebSocketStompConfigService(
         channel: MessageChannel,
         accessor: StompHeaderAccessor
     ): Message<*>? {
-        // 반환값 null 반환시 메시지 전달이 되지 않고, Exception 발생시엔 DISCONNECT 가 됩니다.
+        // 반환값 null 반환시 메시지 전달이 되지 않고, Exception 발생시엔 DISCONNECT 가 됩니다. (CONNECT 도 되지 않습니다.)
 
 //        val sessionId = accessor.sessionId
 //        val destination = accessor.destination
@@ -55,13 +58,26 @@ class WebSocketStompConfigService(
         channel: MessageChannel,
         accessor: StompHeaderAccessor
     ): Message<*>? {
-        // 반환값 null 반환시 메시지 전달이 되지 않고, Exception 발생시엔 DISCONNECT 가 됩니다.
+        // 반환값 null 반환시 메시지 전달이 되지 않고, Exception 발생시엔 DISCONNECT 가 됩니다. (SUBSCRIBE 도 되지 않습니다.)
 
         val sessionId = accessor.sessionId
         val destination = accessor.destination
         val authorization: String? = accessor.getFirstNativeHeader("Authorization")
 
-        // todo 구독 요청 유저가 해당 토픽 구독한지 판단하기
+        if (authorization.isNullOrBlank() || authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null) {
+            // Authorization 인증 실패
+            if(sessionId == null){
+                return null
+            }
+//            simpMessagingTemplate.convertAndSendToUser(sessionId, "/send-to-topic-test", errorMessage)
+            simpMessagingTemplate.convertAndSend(
+                "/topic",
+                WebSocketStompController.SendToTopicTestOutputVo("Subscription denied: Unauthorized user.")
+            )
+            return null
+        }
+
+        // todo 구독 요청 유저가 해당 토픽 구독한지 판단하기(에러/시스템 정보를 전달할 queue 채널 구독 실패시엔 에러 발생, 나머지는 에러 채널로 메시지 보내기)
 
         return message
     }
@@ -80,6 +96,19 @@ class WebSocketStompConfigService(
         val sessionId = accessor.sessionId
         val destination = accessor.destination
         val authorization: String? = accessor.getFirstNativeHeader("Authorization")
+
+        if (authorization.isNullOrBlank() || authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null) {
+            // Authorization 인증 실패
+            if(sessionId == null){
+                return null
+            }
+//            simpMessagingTemplate.convertAndSendToUser(sessionId, "/send-to-topic-test", errorMessage)
+            simpMessagingTemplate.convertAndSend(
+                "/topic",
+                WebSocketStompController.SendToTopicTestOutputVo("Subscription denied: Unauthorized user.")
+            )
+            return null
+        }
 
         return message
     }

@@ -25,12 +25,15 @@
         function connectSocket() {
             var socket = new SockJS('http://localhost:12014/stomp');
             stompClient = Stomp.over(socket);
-            stompClient.connect({}, function (frame) {
+            stompClient.connect(
+                {Authorization : "Bearer aa"},
+                function (frame) {
                 setConnectionStatus(true);
                 console.log('Connected: ' + frame);
                 stompClient.subscribe('/topic', function (greeting) {
                     showMessage(JSON.parse(greeting.body).content);
-                });
+                },
+                {Authorization : "Bearer aa"});
             });
         }
 
