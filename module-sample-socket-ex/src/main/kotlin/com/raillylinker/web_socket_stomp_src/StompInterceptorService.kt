@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service
 import org.springframework.messaging.Message
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
-import java.security.Principal
 
 @Service
 class StompInterceptorService(
@@ -61,24 +60,9 @@ class StompInterceptorService(
             authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
             authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
         )
-        accessor.user = StompPrincipal(memberUid.toString(), roleList)
+        accessor.user = StompPrincipalVo(memberUid.toString(), roleList)
 
         return message
-    }
-
-    class StompPrincipal(
-        private var name: String,
-        private var roleList: List<String>
-    ) : Principal {
-        override fun getName(): String = name
-        fun setName(name: String) {
-            this.name = name
-        }
-
-        fun getRoleList(): List<String> = roleList
-        fun setRoleList(roleList: List<String>) {
-            this.roleList = roleList
-        }
     }
 
 
