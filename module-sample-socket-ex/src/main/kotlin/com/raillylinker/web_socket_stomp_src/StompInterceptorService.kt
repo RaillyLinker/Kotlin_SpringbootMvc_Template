@@ -34,73 +34,77 @@ class StompInterceptorService(
         channel: MessageChannel,
         accessor: StompHeaderAccessor
     ): Message<*>? {
-        // 반환값 null 반환시 메시지 전달이 되지 않고, Exception 발생시엔 DISCONNECT 가 됩니다. (CONNECT 도 되지 않습니다.)
+        // 반환값 null 반환 혹은 Exception 발생시 메시지 전달이 되지 않고 CONNECT 도 되지 않습니다.
 
-//        val sessionId = accessor.sessionId
-//        val destination = accessor.destination
+        // 소켓 세션 아이디 (CONNECT 에 발행된 후 DISCONNECT 전까지 변화 없음)
+        val sessionId = accessor.sessionId
+        // Authorization 헤더
         val authorization: String? = accessor.getFirstNativeHeader("Authorization")
 
-        // 최초 소켓 연결시 로그인이 되어 있지 않으면 거부
-        // 이후 토큰 만료시에는 에러 메시지를 발송하여 클라이언트 측에서 처리하도록 함.
-        // 이렇게 하면 연결 불가의 원인이 인증/인가가 안 된 이유로 좁혀지므로 클라이언트 처리가 단순해집니다.
-        if (authorization.isNullOrBlank() || authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null) {
-            // Authorization 인증 실패
-            throw IllegalArgumentException("Authorization header is missing")
+        val stompPrincipalVo: StompPrincipalVo
+        if (authorization.isNullOrBlank() ||
+            authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null
+        ) {
+            // 인증 실패
+            stompPrincipalVo = StompPrincipalVo("nusr_$sessionId", arrayListOf())
+        } else {
+            // 인증 성공
+            val token = authorization.split(" ")[1].trim()
+            val memberUid = jwtTokenUtil.getMemberUid(
+                token,
+                authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+                authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
+            )
+            val roleList = jwtTokenUtil.getRoleList(
+                token,
+                authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+                authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
+            )
+            stompPrincipalVo = StompPrincipalVo("usr_$memberUid", roleList)
         }
 
         // 소켓 세션에 유저 정보 등록
-        val token = authorization.split(" ")[1].trim()
-        val memberUid = jwtTokenUtil.getMemberUid(
-            token,
-            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
-            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
-        )
-        val roleList = jwtTokenUtil.getRoleList(
-            token,
-            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
-            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
-        )
-        accessor.user = StompPrincipalVo(memberUid.toString(), roleList)
+        accessor.user = stompPrincipalVo
 
         return message
     }
 
+    // todo userName 으로 accessor.user 가 서로 공유되는지 확인하기
+    // todo 아래 수정하기
+
 
     ////
     // (WebSocketStompConfig 의 configureClientInboundChannel 의 preSend 함수 SUBSCRIBE 처리)
-    // 특정 채널(토픽)을 구독
+    // 특정 채널 구독
     fun subscribeFromPreSend(
         message: Message<*>,
         channel: MessageChannel,
         accessor: StompHeaderAccessor
     ): Message<*>? {
-        // 반환값 null 반환시 메시지 전달이 되지 않고, Exception 발생시엔 DISCONNECT 가 됩니다. (SUBSCRIBE 도 되지 않습니다.)
+        // 반환값 null 반환시 메시지 전달이 되지 않고 SUBSCRIBE 되지 않습니다.
+        // Exception 발생시엔 DISCONNECT 가 됩니다.
 
+        // 소켓 세션 아이디 (CONNECT 에 발행된 후 DISCONNECT 전까지 변화 없음)
         val sessionId = accessor.sessionId
-        val destination = accessor.destination // 구독 경로 (ex : /topic)
+        // 구독 경로 (ex : /topic)
+        val destination = accessor.destination ?: return null
+        // Authorization 헤더
         val authorization: String? = accessor.getFirstNativeHeader("Authorization")
 
-        if (authorization.isNullOrBlank() || authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null) {
-            // Authorization 인증 실패
-            if (sessionId == null) {
-                return null
-            }
-//            simpMessagingTemplate.convertAndSendToUser(sessionId, "/send-to-topic-test", errorMessage)
-            simpMessagingTemplate.convertAndSend(
-                "/topic",
-                WebSocketStompController.SendToTopicTestOutputVo("Subscription denied: Unauthorized user.")
-            )
-            return null
+        // 경로에 따른 구독 허용 여부 판단
+        if (destination == "topic") {
+            return message
         }
 
-        // todo 구독 요청 유저가 해당 토픽 구독한지 판단하기(에러/시스템 정보를 전달할 queue 채널 구독 실패시엔 에러 발생, 나머지는 에러 채널로 메시지 보내기)
+        // todo 개별 메시지 전송 queue 테스트, 주소 체계 결정, 구독 허용 처리
 
-        return message
+        // 위에서 허용한 경로 외의 모든 구독 요청을 거절
+        return null
     }
 
 
     ////
-    // (WebSocketStompConfig 의 configureClientInboundChannel 의 preSend 함수 UNSUBSCRIBE 처리)
+    // (WebSocketStompConfig 의 configureClientInboundChannel 의 preSend 함수 SEND 처리)
     // 특정 대상(Destination)으로 메시지를 보낼 때
     fun sendFromPreSend(
         message: Message<*>,
@@ -109,8 +113,11 @@ class StompInterceptorService(
     ): Message<out Any>? {
         // 반환값 null 반환시 메시지 전달이 되지 않고, Exception 발생시엔 DISCONNECT 가 됩니다.
 
+        // 소켓 세션 아이디 (CONNECT 에 발행된 후 DISCONNECT 전까지 변화 없음)
         val sessionId = accessor.sessionId
+        // 메시지 발행 경로 (ex : /app/send-to-topic-test)
         val destination = accessor.destination
+        // Authorization 헤더
         val authorization: String? = accessor.getFirstNativeHeader("Authorization")
 
         if (authorization.isNullOrBlank() || authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null) {
@@ -140,8 +147,9 @@ class StompInterceptorService(
     ): Message<*>? {
         // 반환값 null 반환시 메시지 전달이 되지 않고, Exception 발생시엔 DISCONNECT 가 됩니다.
 
+        // 소켓 세션 아이디 (CONNECT 에 발행된 후 DISCONNECT 전까지 변화 없음)
         val sessionId = accessor.sessionId
-        val destination = accessor.destination
+        // Authorization 헤더
         val authorization: String? = accessor.getFirstNativeHeader("Authorization")
 
         return message
@@ -158,8 +166,9 @@ class StompInterceptorService(
     ): Message<*>? {
         // 반환값 null 반환시 메시지 전달이 되지 않고, Exception 발생시엔 DISCONNECT 가 됩니다.
 
+        // 소켓 세션 아이디 (CONNECT 에 발행된 후 DISCONNECT 전까지 변화 없음)
         val sessionId = accessor.sessionId
-        val destination = accessor.destination
+        // Authorization 헤더
         val authorization: String? = accessor.getFirstNativeHeader("Authorization")
 
         return message

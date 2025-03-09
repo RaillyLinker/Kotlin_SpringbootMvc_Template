@@ -26,14 +26,14 @@
             var socket = new SockJS('http://localhost:12014/stomp');
             stompClient = Stomp.over(socket);
             stompClient.connect(
-                {Authorization : "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtdSI6Im1BRFJ3eGhsUHUrWGhKSlVnT1U5NVE9PSIsInJsIjoiWlVDTVBDM1FjcGZBaCtHTjNlaHdrZz09IiwidHUiOiIzT052MEVtaTJBT3lLUjVCUGFQTVpnPT0iLCJpc3MiOiJjb20ucmFpbGx5bGlua2VyLm15LXNlcnZpY2UiLCJpYXQiOjE3NDE1MjUxNTksImV4cCI6MTc0MTUyNjk1OSwiY2QiOiIyMDI1LTAzLTA5XzIxOjU5OjE5LjYxMTU2OSJ9.LLeZlQU1Xq-31Fd5oVyhO8l9EGsAqHRLdSlNYTsJow8"},
+                {Authorization : "Bearer aa"},
                 function (frame) {
                 setConnectionStatus(true);
                 console.log('Connected: ' + frame);
                 stompClient.subscribe('/topic', function (greeting) {
                     showMessage(JSON.parse(greeting.body).content);
                 },
-                {Authorization : "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJtdSI6Im1BRFJ3eGhsUHUrWGhKSlVnT1U5NVE9PSIsInJsIjoiWlVDTVBDM1FjcGZBaCtHTjNlaHdrZz09IiwidHUiOiIzT052MEVtaTJBT3lLUjVCUGFQTVpnPT0iLCJpc3MiOiJjb20ucmFpbGx5bGlua2VyLm15LXNlcnZpY2UiLCJpYXQiOjE3NDE1MjUxNTksImV4cCI6MTc0MTUyNjk1OSwiY2QiOiIyMDI1LTAzLTA5XzIxOjU5OjE5LjYxMTU2OSJ9.LLeZlQU1Xq-31Fd5oVyhO8l9EGsAqHRLdSlNYTsJow8"});
+                {Authorization : "Bearer aa"});
             });
         }
 
