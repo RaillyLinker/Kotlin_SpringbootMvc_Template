@@ -1,4 +1,4 @@
-package com.raillylinker.services
+package com.raillylinker.web_socket_stomp_src
 
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth
 import com.raillylinker.controllers.WebSocketStompController
@@ -13,7 +13,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 
 @Service
-class WebSocketStompConfigService(
+class StompInterceptorService(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
     private val authTokenFilterTotalAuth: AuthTokenFilterTotalAuth,
@@ -61,7 +61,7 @@ class WebSocketStompConfigService(
         // 반환값 null 반환시 메시지 전달이 되지 않고, Exception 발생시엔 DISCONNECT 가 됩니다. (SUBSCRIBE 도 되지 않습니다.)
 
         val sessionId = accessor.sessionId
-        val destination = accessor.destination
+        val destination = accessor.destination // 구독 경로 (ex : /topic)
         val authorization: String? = accessor.getFirstNativeHeader("Authorization")
 
         if (authorization.isNullOrBlank() || authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null) {
