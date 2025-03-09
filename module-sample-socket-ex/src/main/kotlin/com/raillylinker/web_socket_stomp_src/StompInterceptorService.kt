@@ -2,6 +2,7 @@ package com.raillylinker.web_socket_stomp_src
 
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth
 import com.raillylinker.controllers.WebSocketStompController
+import com.raillylinker.util_components.JwtTokenUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -11,13 +12,15 @@ import org.springframework.stereotype.Service
 import org.springframework.messaging.Message
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
+import java.security.Principal
 
 @Service
 class StompInterceptorService(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
     private val authTokenFilterTotalAuth: AuthTokenFilterTotalAuth,
-    @Lazy private val simpMessagingTemplate: SimpMessagingTemplate
+    @Lazy private val simpMessagingTemplate: SimpMessagingTemplate,
+    private val jwtTokenUtil: JwtTokenUtil
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -46,7 +49,36 @@ class StompInterceptorService(
             throw IllegalArgumentException("Authorization header is missing")
         }
 
+        // 소켓 세션에 유저 정보 등록
+        val token = authorization.split(" ")[1].trim()
+        val memberUid = jwtTokenUtil.getMemberUid(
+            token,
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
+        )
+        val roleList = jwtTokenUtil.getRoleList(
+            token,
+            authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+            authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
+        )
+        accessor.user = StompPrincipal(memberUid.toString(), roleList)
+
         return message
+    }
+
+    class StompPrincipal(
+        private var name: String,
+        private var roleList: List<String>
+    ) : Principal {
+        override fun getName(): String = name
+        fun setName(name: String) {
+            this.name = name
+        }
+
+        fun getRoleList(): List<String> = roleList
+        fun setRoleList(roleList: List<String>) {
+            this.roleList = roleList
+        }
     }
 
 
@@ -66,7 +98,7 @@ class StompInterceptorService(
 
         if (authorization.isNullOrBlank() || authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null) {
             // Authorization 인증 실패
-            if(sessionId == null){
+            if (sessionId == null) {
                 return null
             }
 //            simpMessagingTemplate.convertAndSendToUser(sessionId, "/send-to-topic-test", errorMessage)
@@ -99,13 +131,13 @@ class StompInterceptorService(
 
         if (authorization.isNullOrBlank() || authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null) {
             // Authorization 인증 실패
-            if(sessionId == null){
+            if (sessionId == null) {
                 return null
             }
 //            simpMessagingTemplate.convertAndSendToUser(sessionId, "/send-to-topic-test", errorMessage)
             simpMessagingTemplate.convertAndSend(
                 "/topic",
-                WebSocketStompController.SendToTopicTestOutputVo("Subscription denied: Unauthorized user.")
+                WebSocketStompController.SendToTopicTestOutputVo("Subscription denied: Unauthorized user. ${accessor.user?.name}")
             )
             return null
         }

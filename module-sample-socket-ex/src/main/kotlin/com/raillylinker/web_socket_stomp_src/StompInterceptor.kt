@@ -5,12 +5,13 @@ import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.simp.stomp.StompCommand
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import org.springframework.messaging.support.ChannelInterceptor
+import org.springframework.messaging.support.MessageHeaderAccessor
 import org.springframework.stereotype.Component
 
 @Component
 class StompInterceptor(
     private val stompInterceptorService: StompInterceptorService
-): ChannelInterceptor {
+) : ChannelInterceptor {
     /*
         [ChannelInterceptor 콜백 실행 순서]
         메시지가 발생되면 preSend -> postSend -> afterSendCompletion 순으로 실행됩니다.
@@ -28,10 +29,10 @@ class StompInterceptor(
         message: Message<*>,
         channel: MessageChannel
     ): Message<*>? {
-        val accessor: StompHeaderAccessor = StompHeaderAccessor.wrap(message)
+        val accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java)
 
         // 각 이벤트 콜백 처리를 서비스로 이관
-        return when (accessor.command) {
+        return when (accessor?.command) {
             StompCommand.CONNECT, StompCommand.STOMP -> {
                 stompInterceptorService.connectFromPreSend(message, channel, accessor)
             }
