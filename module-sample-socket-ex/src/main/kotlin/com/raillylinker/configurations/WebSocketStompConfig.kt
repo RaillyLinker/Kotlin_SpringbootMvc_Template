@@ -60,41 +60,82 @@ class WebSocketStompConfig(
 
     override fun configureClientInboundChannel(registration: ChannelRegistration) {
         registration.interceptors(object : ChannelInterceptor {
-            override fun preSend(message: Message<*>, channel: MessageChannel): Message<*>? {
+            /*
+                [ChannelInterceptor 콜백 실행 순서]
+                메시지가 발생되면 preSend -> postSend -> afterSendCompletion 순으로 실행됩니다.
+                인터셉터 내에서 Exception 이 발생되면 preSend 의 DISCONNECT -> postSend -> afterSendCompletion 순서로 연결이 제거되며,
+                DISCONNECT 에서 Exception 이 발생되면 더이상 진행되지 않습니다.
+             */
+
+            /*
+                (메시지가 전송되기 전에 실행됨)
+                Message 가 실제로 채널로 전송되기 전에 호출됩니다.
+                필요한 경우 Message 를 수정할 수 있습니다.
+                이 메서드가 null 을 반환하면 실제 전송 호출이 발생하지 않습니다.
+             */
+            override fun preSend(
+                message: Message<*>,
+                channel: MessageChannel
+            ): Message<*>? {
                 val accessor: StompHeaderAccessor = StompHeaderAccessor.wrap(message)
 
                 // 각 이벤트 콜백 처리를 서비스로 이관
                 return when (accessor.command) {
                     StompCommand.CONNECT, StompCommand.STOMP -> {
-                        webSocketStompConfigService.stompConnect(message, channel, accessor)
+                        webSocketStompConfigService.connectFromPreSend(message, channel, accessor)
                     }
 
                     StompCommand.SUBSCRIBE -> {
-                        webSocketStompConfigService.stompSubscribe(message, channel, accessor)
+                        webSocketStompConfigService.subscribeFromPreSend(message, channel, accessor)
                     }
 
                     StompCommand.SEND -> {
-                        webSocketStompConfigService.stompSend(message, channel, accessor)
+                        webSocketStompConfigService.sendFromPreSend(message, channel, accessor)
+                        throw RuntimeException()
                     }
 
                     StompCommand.UNSUBSCRIBE -> {
-                        webSocketStompConfigService.stompUnSubscribe(message, channel, accessor)
+                        webSocketStompConfigService.unSubscribeFromPreSend(message, channel, accessor)
                     }
 
                     StompCommand.DISCONNECT -> {
-                        webSocketStompConfigService.stompDisconnect(message, channel, accessor)
+                        webSocketStompConfigService.disconnectFromPreSend(message, channel, accessor)
                     }
 
                     else -> {
-                        null
+                        message
                     }
                 }
+            }
+
+            /*
+                (메시지가 전송된 후 실행됨)
+                send 호출 직후에 호출됩니다.
+                sent 파라미터로 메시지 전송 성공 여부를 알 수 있습니다.
+                preSend 함수가 null 을 반환한 경우 호출되지 않습니다.
+             */
+            override fun postSend(message: Message<*>, channel: MessageChannel, sent: Boolean) {
+                super.postSend(message, channel, sent)
+            }
+
+            /*
+                (메시지 전송이 완료된 후 실행됨)
+                예외가 발생했는지 여부에 관계없이 전송이 완료된 후 호출됩니다.
+                preSend 함수가 null 을 반환한 경우 호출되지 않습니다.
+             */
+            override fun afterSendCompletion(
+                message: Message<*>,
+                channel: MessageChannel,
+                sent: Boolean,
+                ex: Exception?
+            ) {
+                super.afterSendCompletion(message, channel, sent, ex)
             }
         })
     }
 
     override fun configureWebSocketTransport(registry: WebSocketTransportRegistration) {
-        // WebSocket으로 전송되는 메시지의 최대 크기를 설정
+        // WebSocket 으로 전송되는 메시지의 최대 크기를 설정
         registry.setMessageSizeLimit(160 * 64 * 1024)
         // 메시지 전송에 대한 시간 제한을 설정
         registry.setSendTimeLimit(100 * 10000)
