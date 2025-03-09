@@ -14,7 +14,7 @@ object StompConst {
          stompClient.send("/app/test", {}, JSON.stringify({'chat': "sample Text"}));
          이처럼 요청 합니다.
      */
-    const val APPLICATION_DESTINATION_PREFIXES = ""
+    const val APPLICATION_DESTINATION_PREFIXES = "/app"
 
     /*
          구독 주소 prefix
