@@ -30,10 +30,13 @@
                 function (frame) {
                 setConnectionStatus(true);
                 console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic', function (greeting) {
+                stompClient.subscribe('/topic/test-channel', function (greeting) {
                     showMessage(JSON.parse(greeting.body).content);
-                },
-                {Authorization : "Bearer aa"});
+                }, {Authorization : "Bearer aa"});
+
+                stompClient.subscribe('/user/queue/test-channel', function (greeting) {
+                    showMessage(JSON.parse(greeting.body).content);
+                }, {Authorization : "Bearer aa"});
             });
         }
 

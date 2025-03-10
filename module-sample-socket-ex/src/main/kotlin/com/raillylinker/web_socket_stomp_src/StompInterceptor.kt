@@ -65,21 +65,21 @@ class StompInterceptor(
         sent 파라미터로 메시지 전송 성공 여부를 알 수 있습니다.
         preSend 함수가 null 을 반환한 경우 호출되지 않습니다.
      */
-    override fun postSend(message: Message<*>, channel: MessageChannel, sent: Boolean) {
-        super.postSend(message, channel, sent)
-    }
+//    override fun postSend(message: Message<*>, channel: MessageChannel, sent: Boolean) {
+//        super.postSend(message, channel, sent)
+//    }
 
     /*
         (메시지 전송이 완료된 후 실행됨)
         예외가 발생했는지 여부에 관계없이 전송이 완료된 후 호출됩니다.
         preSend 함수가 null 을 반환한 경우 호출되지 않습니다.
      */
-    override fun afterSendCompletion(
-        message: Message<*>,
-        channel: MessageChannel,
-        sent: Boolean,
-        ex: Exception?
-    ) {
-        super.afterSendCompletion(message, channel, sent, ex)
-    }
+//    override fun afterSendCompletion(
+//        message: Message<*>,
+//        channel: MessageChannel,
+//        sent: Boolean,
+//        ex: Exception?
+//    ) {
+//        super.afterSendCompletion(message, channel, sent, ex)
+//    }
 }

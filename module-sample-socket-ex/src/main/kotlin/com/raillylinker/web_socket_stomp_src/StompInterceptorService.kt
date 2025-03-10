@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service
 import org.springframework.messaging.Message
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
+import java.security.Principal
 
 @Service
 class StompInterceptorService(
@@ -37,34 +38,33 @@ class StompInterceptorService(
         // 반환값 null 반환 혹은 Exception 발생시 메시지 전달이 되지 않고 CONNECT 도 되지 않습니다.
 
         // 소켓 세션 아이디 (CONNECT 에 발행된 후 DISCONNECT 전까지 변화 없음)
-        val sessionId = accessor.sessionId
+        val sessionId = accessor.sessionId!!
         // Authorization 헤더
         val authorization: String? = accessor.getFirstNativeHeader("Authorization")
 
-        val stompPrincipalVo: StompPrincipalVo
-        if (authorization.isNullOrBlank() ||
-            authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null
-        ) {
-            // 인증 실패
-            stompPrincipalVo = StompPrincipalVo("nusr_$sessionId", arrayListOf())
-        } else {
-            // 인증 성공
-            val token = authorization.split(" ")[1].trim()
-            val memberUid = jwtTokenUtil.getMemberUid(
-                token,
-                authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
-                authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
-            )
-            val roleList = jwtTokenUtil.getRoleList(
-                token,
-                authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
-                authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
-            )
-            stompPrincipalVo = StompPrincipalVo("usr_$memberUid", roleList)
-        }
+//        if (authorization.isNullOrBlank() ||
+//            authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null
+//        ) {
+//            // 인증 실패
+//        } else {
+//            // 인증 성공
+//            val token = authorization.split(" ")[1].trim()
+//            val memberUid = jwtTokenUtil.getMemberUid(
+//                token,
+//                authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+//                authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
+//            )
+//            val roleList = jwtTokenUtil.getRoleList(
+//                token,
+//                authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+//                authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
+//            )
+//        }
 
         // 소켓 세션에 유저 정보 등록
-        accessor.user = stompPrincipalVo
+        accessor.user = StompPrincipalVo(sessionId)
+
+        userName = sessionId
 
         return message
     }
@@ -92,7 +92,7 @@ class StompInterceptorService(
         val authorization: String? = accessor.getFirstNativeHeader("Authorization")
 
         // 경로에 따른 구독 허용 여부 판단
-        if (destination == "topic") {
+        if (destination.startsWith("/")) {
             return message
         }
 
@@ -125,9 +125,9 @@ class StompInterceptorService(
             if (sessionId == null) {
                 return null
             }
-//            simpMessagingTemplate.convertAndSendToUser(sessionId, "/send-to-topic-test", errorMessage)
-            simpMessagingTemplate.convertAndSend(
-                "/topic",
+            simpMessagingTemplate.convertAndSendToUser(
+                userName,
+                "/queue/test-channel",
                 WebSocketStompController.SendToTopicTestOutputVo("Subscription denied: Unauthorized user. ${accessor.user?.name}")
             )
             return null
@@ -135,6 +135,8 @@ class StompInterceptorService(
 
         return message
     }
+
+    var userName = ""
 
 
     ////
@@ -172,5 +174,12 @@ class StompInterceptorService(
         val authorization: String? = accessor.getFirstNativeHeader("Authorization")
 
         return message
+    }
+
+    class StompPrincipalVo(
+        // sessionId
+        private var name: String
+    ) : Principal {
+        override fun getName(): String = name
     }
 }
