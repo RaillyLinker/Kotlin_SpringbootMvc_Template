@@ -2,6 +2,7 @@ package com.raillylinker.abstract_classes
 
 import com.google.gson.Gson
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.core.script.RedisScript
 import java.util.concurrent.TimeUnit
 
 // [RedisMap 의 Abstract 클래스]
@@ -33,6 +34,64 @@ abstract class BasicRedisMap<ValueVo>(
         if (expireTimeMs != null) {
             // Redis Key 에 대한 만료시간 설정
             redisTemplateObj.expire(innerKey, expireTimeMs, TimeUnit.MILLISECONDS)
+        }
+    }
+
+    // <공개 메소드 공간>
+    // (RedisMap 에 Key-Value 저장 - 정상 저장시 true, 동일 key 존재시 false 반환)
+    fun saveKeyValueNoFix(
+        key: String,
+        value: ValueVo,
+        expireTimeMs: Long?
+    ): Boolean {
+        // 입력 키 검증
+        validateKey(key)
+
+        // Redis Storage 에 실제로 저장 되는 키 (map 이름과 키를 합친 String)
+        val innerKey = "$mapName:${key}" // 실제 저장되는 키 = 그룹명:키
+
+        val scriptResult = if (expireTimeMs == null || expireTimeMs < 0) {
+            // 만료시간 무한
+            redisTemplateObj.execute(
+                RedisScript.of(
+                    """
+                        if redis.call('setnx', KEYS[1], ARGV[1]) == 1 then
+                            return 1
+                        else
+                            return 0
+                        end
+                    """.trimIndent(),
+                    Long::class.java
+                ),
+                listOf(innerKey),
+                gson.toJson(value)
+            )
+        } else {
+            // 만료시간 유한
+            redisTemplateObj.execute(
+                RedisScript.of(
+                    """
+                        if redis.call('setnx', KEYS[1], ARGV[1]) == 1 then
+                            redis.call('pexpire', KEYS[1], ARGV[2])
+                            return 1
+                        else
+                            return 0
+                        end
+                    """.trimIndent(),
+                    Long::class.java
+                ),
+                listOf(innerKey),
+                gson.toJson(value),
+                expireTimeMs.toString()
+            )
+        }
+
+        return if (scriptResult == 1L) {
+            // 데이터 입력
+            true
+        } else {
+            // 데이터 입력 실패
+            false
         }
     }
 
