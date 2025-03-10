@@ -51,10 +51,10 @@ class WebSocketStompConfig(
 
         /*
              유저 개별 주소 prefix
-             stompClient.subscribe('/user/queue/test-channel', function (topic) {
+             stompClient.subscribe('/session/queue/test-channel', function (topic) {
                  // 구독 콜백 : 구독된 채널에 메세지가 날아오면 여기서 받음
              });
-             위와 같이 /user/queue/test-channel 이라는 것을 구독하면,
+             위와 같이 /session/queue/test-channel 이라는 것을 구독하면,
              simpMessagingTemplate.convertAndSendToUser(
                 userName, // socket session 의 user principal 이 반환하는 userName
                 "/queue/test-channel",
@@ -62,7 +62,7 @@ class WebSocketStompConfig(
              )
              이렇게 메세지 전달시 그 메세지를 받을 수 있습니다.
          */
-        registry.setUserDestinationPrefix("/user")
+        registry.setUserDestinationPrefix("/session")
     }
 
     override fun configureClientInboundChannel(registration: ChannelRegistration) {

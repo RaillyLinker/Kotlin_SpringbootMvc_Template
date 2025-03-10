@@ -34,7 +34,7 @@
                     showMessage(JSON.parse(greeting.body).content);
                 }, {Authorization : "Bearer aa"});
 
-                stompClient.subscribe('/user/queue/test-channel', function (greeting) {
+                stompClient.subscribe('/session/queue/test-channel', function (greeting) {
                     showMessage(JSON.parse(greeting.body).content);
                 }, {Authorization : "Bearer aa"});
             });
