@@ -279,4 +279,27 @@ class MongoDbTestService(
 
         throw RuntimeException("No Transaction Exception Test!")
     }
+
+
+    // ----
+    // (트랜젝션 비동작 테스트(try-catch))
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME) // ReplicaSet 환경이 아니면 에러가 납니다.
+    fun tryCatchNonTransactionTest(httpServletResponse: HttpServletResponse) {
+        // @CustomTransactional 이 붙어있고, Exception 이 발생해도, 함수 내에서 try catch 로 처리하여 함수 외부로는 전파되지 않기에,
+        // 트랜젝션 롤백이 발생하지 않습니다.
+        try {
+            mdb1TestDataRepository.save(
+                Mdb1_TestData(
+                    "test",
+                    (0..99999999).random(),
+                    LocalDateTime.now(),
+                    null
+                )
+            )
+
+            throw RuntimeException("Transaction Rollback Test!")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }
