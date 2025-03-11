@@ -195,7 +195,14 @@ class Mdb1_TestData_Repository_Template(
             FindPageAllFromTemplateTestDataByNotDeletedWithRandomNumDistanceOutputVo::class.java
         ).mappedResults
 
-        val totalElements = countFromTemplateTestDataByNotDeleted()?.count ?: 0
+        val totalElements = mongoTemplate.aggregate(
+            Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("rowDeleteDateStr").`is`("/")),
+                Aggregation.count().`as`("count") // 문서 개수 카운트
+            ),
+            Mdb1_TestData::class.java,
+            CountFromTemplateTestDataByNotDeletedOutputVo::class.java
+        ).uniqueMappedResult?.count ?: 0
 
         return org.springframework.data.domain.PageImpl(results, pageable, totalElements)
     }
