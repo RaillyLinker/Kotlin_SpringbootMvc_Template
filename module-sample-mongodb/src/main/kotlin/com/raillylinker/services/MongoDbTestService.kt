@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -242,6 +244,47 @@ class MongoDbTestService(
 
         httpServletResponse.status = HttpStatus.OK.value()
         return MongoDbTestController.SelectRowsOrderByRowCreateDateSampleOutputVo(
+            testEntityVoList
+        )
+    }
+
+
+    // ----
+    // (DB Rows 조회 테스트 (페이징))
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME, readOnly = true) // ReplicaSet 환경이 아니면 에러가 납니다.
+    fun selectRowsPageSample(
+        httpServletResponse: HttpServletResponse,
+        page: Int,
+        pageElementsCount: Int
+    ): MongoDbTestController.SelectRowsPageSampleOutputVo? {
+        val pageable: Pageable = PageRequest.of(page - 1, pageElementsCount)
+        val entityList = mdb1TestDataRepository.findAllByRowDeleteDateStrOrderByRowCreateDate(
+            "/",
+            pageable
+        )
+
+        val testEntityVoList =
+            ArrayList<MongoDbTestController.SelectRowsPageSampleOutputVo.TestEntityVo>()
+        for (entity in entityList) {
+            testEntityVoList.add(
+                MongoDbTestController.SelectRowsPageSampleOutputVo.TestEntityVo(
+                    entity.uid!!,
+                    entity.content,
+                    entity.randomNum,
+                    entity.testDatetime.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    entity.nullableValue,
+                    entity.rowCreateDate!!.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    entity.rowUpdateDate!!.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                )
+            )
+        }
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return MongoDbTestController.SelectRowsPageSampleOutputVo(
+            entityList.totalElements,
             testEntityVoList
         )
     }
