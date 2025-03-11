@@ -133,4 +133,25 @@ class Mdb1_TestData_Repository_Template(
         val rowUpdateDate: LocalDateTime,
         val rowDeleteDateStr: String
     )
+
+
+    ////
+    fun countFromTemplateTestDataByNotDeleted(): CountFromTemplateTestDataByNotDeletedOutputVo? {
+        val criteria = Criteria.where("rowDeleteDateStr").`is`("/") // 삭제되지 않은 데이터 필터링
+
+        val aggregation = Aggregation.newAggregation(
+            Aggregation.match(criteria),
+            Aggregation.count().`as`("count") // 문서 개수 카운트
+        )
+
+        val result = mongoTemplate.aggregate(
+            aggregation,
+            Mdb1_TestData::class.java,
+            CountFromTemplateTestDataByNotDeletedOutputVo::class.java
+        ).uniqueMappedResult
+
+        return result
+    }
+
+    data class CountFromTemplateTestDataByNotDeletedOutputVo(val count: Long)
 }
