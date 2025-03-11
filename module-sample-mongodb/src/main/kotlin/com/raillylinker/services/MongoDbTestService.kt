@@ -4,6 +4,7 @@ import com.raillylinker.controllers.MongoDbTestController
 import com.raillylinker.configurations.mongodb_configs.Mdb1MainConfig
 import com.raillylinker.mongodb_beans.mdb1_main.documents.Mdb1_TestData
 import com.raillylinker.mongodb_beans.mdb1_main.repositories.Mdb1_TestData_Repository
+import com.raillylinker.mongodb_beans.mdb1_main.repositories_template.Mdb1_TestData_Repository_Template
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -20,7 +21,8 @@ import java.time.format.DateTimeFormatter
 class MongoDbTestService(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
-    private val mdb1TestDataRepository: Mdb1_TestData_Repository
+    private val mdb1TestDataRepository: Mdb1_TestData_Repository,
+    private val mdb1TestDataRepositoryTemplate: Mdb1_TestData_Repository_Template
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -159,6 +161,44 @@ class MongoDbTestService(
         return MongoDbTestController.SelectRowsSampleOutputVo(
             entityVoList,
             logicalDeleteVoList
+        )
+    }
+
+
+    // ----
+    // (DB 테이블의 random_num 컬럼 근사치 기준으로 정렬한 리스트 조회 API)
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME, readOnly = true) // ReplicaSet 환경이 아니면 에러가 납니다.
+    fun selectRowsOrderByRandomNumSample(
+        httpServletResponse: HttpServletResponse,
+        num: Int
+    ): MongoDbTestController.SelectRowsOrderByRandomNumSampleOutputVo? {
+        val foundEntityList =
+            mdb1TestDataRepositoryTemplate.findAllFromTemplateTestDataByNotDeletedWithRandomNumDistance(num)
+
+        val testEntityVoList =
+            ArrayList<MongoDbTestController.SelectRowsOrderByRandomNumSampleOutputVo.TestEntityVo>()
+
+        for (entity in foundEntityList) {
+            testEntityVoList.add(
+                MongoDbTestController.SelectRowsOrderByRandomNumSampleOutputVo.TestEntityVo(
+                    entity.uid,
+                    entity.content,
+                    entity.randomNum,
+                    entity.testDatetime.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    entity.nullableValue,
+                    entity.rowCreateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    entity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    entity.distance
+                )
+            )
+        }
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return MongoDbTestController.SelectRowsOrderByRandomNumSampleOutputVo(
+            testEntityVoList
         )
     }
 
