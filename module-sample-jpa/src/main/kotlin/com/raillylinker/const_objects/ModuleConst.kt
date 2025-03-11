@@ -8,4 +8,7 @@ object ModuleConst {
     // (DatabaseConfig)
     // !!!모듈 패키지명 작성!!!
     const val PACKAGE_NAME = "com.raillylinker"
+
+    // 서버 고유값(Main 에서 서버가 실행될 때 생성됩니다. ${yyyy_MM_dd_'T'_HH_mm_ss_SSS_z}/${Random UUID})
+    var SERVER_UUID: String? = null
 }
