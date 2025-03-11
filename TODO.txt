@@ -1,6 +1,5 @@
 
-- Springboot mvc template
-    Socket ex 구현 완료
+- Socket ex 구현 완료
     (로그인 처리, redis 확장 처리, SimpMessage 가 아닌 메시지 큐 적용)
 
 - springboot webflux 템플릿

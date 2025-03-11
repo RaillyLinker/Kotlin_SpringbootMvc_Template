@@ -1,9 +1,9 @@
 package com.raillylinker.sys_components
 
-import com.raillylinker.controllers.WebSocketStompController
+import com.raillylinker.const_objects.ModuleConst
+import com.raillylinker.web_socket_stomp_src.StompVos
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.context.annotation.Lazy
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.scheduling.annotation.Scheduled
@@ -22,17 +22,22 @@ class ApplicationScheduler(
 ) {
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
 
+    companion object {
+        // Socket Stomp 서버 HeartBeat 간격 (ms)
+        const val STOMP_HEARTBEAT_MILLIS = 1000L
+    }
+
     // [사용 예시]
     // (fixedDelay)
     // 해당 메서드가 끝나는 시간 기준으로 milliseconds 후의 간격으로 실행
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = STOMP_HEARTBEAT_MILLIS)
     // @Scheduled(fixedDelayString = "${fixedDelay.in.milliseconds}") // 문자열 milliseconds 사용 시
-    fun scheduleFixedDelayTask() {
-        // todo 하트비트 추가(하트비트 Object 에는 하트비트를 보낸 서버의 고유값과 하트비트 주기를 같이 반환)
-        // Socket Stomp HeartBeat
+    fun stompHeartBeatTask() {
+        // Socket Stomp 서버 HeartBeat
+        // todo : kafka 로 전체 서버에 메시지 전달
         simpMessagingTemplate.convertAndSend(
-            "/topic/test-channel",
-            WebSocketStompController.SendToTopicTestOutputVo("hb")
+            "/topic/server-heartbeat",
+            StompVos.StompServerHeartbeatVo(ModuleConst.SERVER_UUID!!, STOMP_HEARTBEAT_MILLIS)
         )
     }
 
