@@ -291,6 +291,49 @@ class MongoDbTestService(
 
 
     // ----
+    // (DB Rows 조회 테스트 (네이티브 쿼리 페이징))
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME, readOnly = true) // ReplicaSet 환경이 아니면 에러가 납니다.
+    fun selectRowsNativeQueryPageSample(
+        httpServletResponse: HttpServletResponse,
+        page: Int,
+        pageElementsCount: Int,
+        num: Int
+    ): MongoDbTestController.SelectRowsNativeQueryPageSampleOutputVo? {
+        val pageable: Pageable = PageRequest.of(page - 1, pageElementsCount)
+        val voList = mdb1TestDataRepositoryTemplate.findPageAllFromTemplateTestDataByNotDeletedWithRandomNumDistance(
+            num,
+            pageable
+        )
+
+        val testEntityVoList =
+            ArrayList<MongoDbTestController.SelectRowsNativeQueryPageSampleOutputVo.TestEntityVo>()
+        for (vo in voList) {
+            testEntityVoList.add(
+                MongoDbTestController.SelectRowsNativeQueryPageSampleOutputVo.TestEntityVo(
+                    vo.uid,
+                    vo.content,
+                    vo.randomNum,
+                    vo.testDatetime.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    vo.nullableValue,
+                    vo.rowCreateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    vo.rowUpdateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    vo.distance
+                )
+            )
+        }
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return MongoDbTestController.SelectRowsNativeQueryPageSampleOutputVo(
+            voList.totalElements,
+            testEntityVoList
+        )
+    }
+
+
+    // ----
     // (DB Row 수정 테스트)
     @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME) // ReplicaSet 환경이 아니면 에러가 납니다.
     fun updateRowSample(
