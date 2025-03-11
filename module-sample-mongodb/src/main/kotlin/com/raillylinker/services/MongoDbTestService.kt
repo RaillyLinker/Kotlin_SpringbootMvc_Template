@@ -2,8 +2,8 @@ package com.raillylinker.services
 
 import com.raillylinker.controllers.MongoDbTestController
 import com.raillylinker.configurations.mongodb_configs.Mdb1MainConfig
-import com.raillylinker.mongodb_beans.mdb1_main.documents.Mdb1_Test
-import com.raillylinker.mongodb_beans.mdb1_main.repositories.Mdb1_Test_Repository
+import com.raillylinker.mongodb_beans.mdb1_main.documents.Mdb1_TestData
+import com.raillylinker.mongodb_beans.mdb1_main.repositories.Mdb1_TestData_Repository
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -11,14 +11,16 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 @Service
 class MongoDbTestService(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
-    private val mdb1TestRepository: Mdb1_Test_Repository
+    private val mdb1TestDataRepository: Mdb1_TestData_Repository
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -28,30 +30,34 @@ class MongoDbTestService(
     // <공개 메소드 공간>
     // (DB document 입력 테스트 API)
     @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME)
-    fun insertDocumentTest(
+    fun insertDataSample(
         httpServletResponse: HttpServletResponse,
-        inputVo: MongoDbTestController.InsertDocumentTestInputVo
-    ): MongoDbTestController.InsertDocumentTestOutputVo? {
-        val resultCollection = mdb1TestRepository.save(
-            Mdb1_Test(
+        inputVo: MongoDbTestController.InsertDataSampleInputVo
+    ): MongoDbTestController.InsertDataSampleOutputVo? {
+        val resultCollection = mdb1TestDataRepository.save(
+            Mdb1_TestData(
                 inputVo.content,
                 (0..99999999).random(),
-                inputVo.nullableValue,
-                true
+                ZonedDateTime.parse(inputVo.dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                    .withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime(),
+                inputVo.nullableValue
             )
         )
 
         httpServletResponse.setHeader("api-result-code", "")
         httpServletResponse.status = HttpStatus.OK.value()
-        return MongoDbTestController.InsertDocumentTestOutputVo(
+        return MongoDbTestController.InsertDataSampleOutputVo(
             resultCollection.uid!!.toString(),
             resultCollection.content,
-            resultCollection.nullableValue,
             resultCollection.randomNum,
+            resultCollection.testDatetime.atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+            resultCollection.nullableValue,
             resultCollection.rowCreateDate!!.atZone(ZoneId.systemDefault())
                 .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
             resultCollection.rowUpdateDate!!.atZone(ZoneId.systemDefault())
-                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+            resultCollection.rowDeleteDateStr
         )
     }
 
@@ -59,10 +65,19 @@ class MongoDbTestService(
     // ----
     // (DB Rows 삭제 테스트 API)
     @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME) // ReplicaSet 환경이 아니면 에러가 납니다.
-    fun deleteAllDocumentTest(httpServletResponse: HttpServletResponse) {
-        mdb1TestRepository.deleteAll()
+    fun deleteRowsSample(httpServletResponse: HttpServletResponse, deleteLogically: Boolean) {
+        if (deleteLogically) {
+            val entityList = mdb1TestDataRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/")
+            for (entity in entityList) {
+                entity.rowDeleteDateStr =
+                    LocalDateTime.now().atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                mdb1TestDataRepository.save(entity)
+            }
+        } else {
+            mdb1TestDataRepository.deleteAll()
+        }
 
-        httpServletResponse.setHeader("api-result-code", "")
         httpServletResponse.status = HttpStatus.OK.value()
     }
 
@@ -70,18 +85,24 @@ class MongoDbTestService(
     // ----
     // (DB Row 삭제 테스트)
     @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME) // ReplicaSet 환경이 아니면 에러가 납니다.
-    fun deleteDocumentTest(httpServletResponse: HttpServletResponse, id: String) {
-        val testDocument = mdb1TestRepository.findById(id)
+    fun deleteRowSample(httpServletResponse: HttpServletResponse, id: String, deleteLogically: Boolean) {
+        val entity = mdb1TestDataRepository.findByUidAndRowDeleteDateStr(id, "/")
 
-        if (testDocument.isEmpty) {
+        if (entity == null) {
             httpServletResponse.status = HttpStatus.NO_CONTENT.value()
             httpServletResponse.setHeader("api-result-code", "1")
             return
         }
 
-        mdb1TestRepository.deleteById(id)
+        if (deleteLogically) {
+            entity.rowDeleteDateStr =
+                LocalDateTime.now().atZone(ZoneId.systemDefault())
+                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+            mdb1TestDataRepository.save(entity)
+        } else {
+            mdb1TestDataRepository.deleteById(id)
+        }
 
-        httpServletResponse.setHeader("api-result-code", "")
         httpServletResponse.status = HttpStatus.OK.value()
     }
 
@@ -89,31 +110,55 @@ class MongoDbTestService(
     // ----
     // (DB Rows 조회 테스트)
     @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME, readOnly = true) // ReplicaSet 환경이 아니면 에러가 납니다.
-    fun selectAllDocumentsTest(httpServletResponse: HttpServletResponse): MongoDbTestController.SelectAllDocumentsTestOutputVo? {
-        val testCollectionList = mdb1TestRepository.findAll()
-
-        val resultVoList: ArrayList<MongoDbTestController.SelectAllDocumentsTestOutputVo.TestEntityVo> =
-            arrayListOf()
-
-        for (testCollection in testCollectionList) {
-            resultVoList.add(
-                MongoDbTestController.SelectAllDocumentsTestOutputVo.TestEntityVo(
-                    testCollection.uid!!.toString(),
-                    testCollection.content,
-                    testCollection.nullableValue,
-                    testCollection.randomNum,
-                    testCollection.rowCreateDate!!.atZone(ZoneId.systemDefault())
+    fun selectRowsSample(httpServletResponse: HttpServletResponse): MongoDbTestController.SelectRowsSampleOutputVo? {
+        val resultEntityList =
+            mdb1TestDataRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/")
+        val entityVoList =
+            ArrayList<MongoDbTestController.SelectRowsSampleOutputVo.TestEntityVo>()
+        for (resultEntity in resultEntityList) {
+            entityVoList.add(
+                MongoDbTestController.SelectRowsSampleOutputVo.TestEntityVo(
+                    resultEntity.uid!!,
+                    resultEntity.content,
+                    resultEntity.randomNum,
+                    resultEntity.testDatetime.atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
-                    testCollection.rowUpdateDate!!.atZone(ZoneId.systemDefault())
-                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                    resultEntity.nullableValue,
+                    resultEntity.rowCreateDate!!.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    resultEntity.rowUpdateDate!!.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    resultEntity.rowDeleteDateStr
                 )
             )
         }
 
-        httpServletResponse.setHeader("api-result-code", "")
+        val logicalDeleteEntityVoList =
+            mdb1TestDataRepository.findAllByRowDeleteDateStrNotOrderByRowCreateDate("/")
+        val logicalDeleteVoList =
+            ArrayList<MongoDbTestController.SelectRowsSampleOutputVo.TestEntityVo>()
+        for (resultEntity in logicalDeleteEntityVoList) {
+            logicalDeleteVoList.add(
+                MongoDbTestController.SelectRowsSampleOutputVo.TestEntityVo(
+                    resultEntity.uid!!,
+                    resultEntity.content,
+                    resultEntity.randomNum,
+                    resultEntity.testDatetime.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    resultEntity.nullableValue,
+                    resultEntity.rowCreateDate!!.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    resultEntity.rowUpdateDate!!.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    resultEntity.rowDeleteDateStr
+                )
+            )
+        }
+
         httpServletResponse.status = HttpStatus.OK.value()
-        return MongoDbTestController.SelectAllDocumentsTestOutputVo(
-            resultVoList
+        return MongoDbTestController.SelectRowsSampleOutputVo(
+            entityVoList,
+            logicalDeleteVoList
         )
     }
 
@@ -124,19 +169,16 @@ class MongoDbTestService(
     fun transactionRollbackTest(
         httpServletResponse: HttpServletResponse
     ) {
-        mdb1TestRepository.save(
-            Mdb1_Test(
+        mdb1TestDataRepository.save(
+            Mdb1_TestData(
                 "test",
                 (0..99999999).random(),
-                null,
-                true
+                LocalDateTime.now(),
+                null
             )
         )
 
         throw RuntimeException("Transaction Rollback Test!")
-
-        httpServletResponse.setHeader("api-result-code", "")
-        httpServletResponse.status = HttpStatus.OK.value()
     }
 
 
@@ -145,18 +187,15 @@ class MongoDbTestService(
     fun noTransactionRollbackTest(
         httpServletResponse: HttpServletResponse
     ) {
-        mdb1TestRepository.save(
-            Mdb1_Test(
+        mdb1TestDataRepository.save(
+            Mdb1_TestData(
                 "test",
                 (0..99999999).random(),
-                null,
-                true
+                LocalDateTime.now(),
+                null
             )
         )
 
         throw RuntimeException("No Transaction Exception Test!")
-
-        httpServletResponse.setHeader("api-result-code", "")
-        httpServletResponse.status = HttpStatus.OK.value()
     }
 }

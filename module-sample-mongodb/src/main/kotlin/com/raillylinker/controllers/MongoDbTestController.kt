@@ -35,8 +35,8 @@ class MongoDbTestController(
     // ---------------------------------------------------------------------------------------------
     // <매핑 함수 공간>
     @Operation(
-        summary = "DB document 입력 테스트 API",
-        description = "테스트 테이블에 document 를 입력합니다."
+        summary = "DB Row 입력 테스트 API",
+        description = "테스트 테이블에 Row 를 입력합니다."
     )
     @ApiResponses(
         value = [
@@ -47,42 +47,60 @@ class MongoDbTestController(
         ]
     )
     @PostMapping(
-        path = ["/test-document"],
+        path = ["/row"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @ResponseBody
-    fun insertDocumentTest(
+    fun insertDataSample(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
         @RequestBody
-        inputVo: InsertDocumentTestInputVo
-    ): InsertDocumentTestOutputVo? {
-        return service.insertDocumentTest(httpServletResponse, inputVo)
+        inputVo: InsertDataSampleInputVo
+    ): InsertDataSampleOutputVo? {
+        return service.insertDataSample(httpServletResponse, inputVo)
     }
 
-    data class InsertDocumentTestInputVo(
+    data class InsertDataSampleInputVo(
         @Schema(description = "글 본문", required = true, example = "테스트 텍스트입니다.")
         @JsonProperty("content")
         val content: String,
-        @Schema(description = "Nullable 값", required = false, example = "Not Null")
+        @Schema(
+            description = "원하는 날짜(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("dateString")
+        val dateString: String,
+        @Schema(
+            description = "테스트용 nullable 데이터",
+            required = false,
+            example = "test"
+        )
         @JsonProperty("nullableValue")
         val nullableValue: String?
     )
 
-    data class InsertDocumentTestOutputVo(
+    data class InsertDataSampleOutputVo(
         @Schema(description = "글 고유번호", required = true, example = "1234")
         @JsonProperty("uid")
         val uid: String,
         @Schema(description = "글 본문", required = true, example = "테스트 텍스트입니다.")
         @JsonProperty("content")
         val content: String,
-        @Schema(description = "Nullable 값", required = false, example = "Not Null")
-        @JsonProperty("nullableValue")
-        val nullableValue: String?,
         @Schema(description = "자동 생성 숫자", required = true, example = "21345")
         @JsonProperty("randomNum")
         val randomNum: Int,
+        @Schema(
+            description = "테스트용 일시 데이터(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("testDatetime")
+        val testDatetime: String,
+        @Schema(description = "테스트용 nullable 데이터", required = false, example = "test")
+        @JsonProperty("nullableValue")
+        val nullableValue: String?,
         @Schema(
             description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
             required = true,
@@ -96,7 +114,10 @@ class MongoDbTestController(
             example = "2024_05_02_T_15_14_49_552_KST"
         )
         @JsonProperty("updateDate")
-        val updateDate: String
+        val updateDate: String,
+        @Schema(description = "글 삭제일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, Null 이면 /)", required = true, example = "/")
+        @JsonProperty("deleteDate")
+        val deleteDate: String
     )
 
 
@@ -114,16 +135,19 @@ class MongoDbTestController(
         ]
     )
     @DeleteMapping(
-        path = ["/test-document"],
+        path = ["/rows"],
         consumes = [MediaType.ALL_VALUE],
         produces = [MediaType.ALL_VALUE]
     )
     @ResponseBody
-    fun deleteAllDocumentTest(
+    fun deleteRowsSample(
         @Parameter(hidden = true)
-        httpServletResponse: HttpServletResponse
+        httpServletResponse: HttpServletResponse,
+        @Parameter(name = "deleteLogically", description = "논리적 삭제 여부", example = "true")
+        @RequestParam("deleteLogically")
+        deleteLogically: Boolean
     ) {
-        service.deleteAllDocumentTest(httpServletResponse)
+        service.deleteRowsSample(httpServletResponse, deleteLogically)
     }
 
 
@@ -147,7 +171,7 @@ class MongoDbTestController(
                     Header(
                         name = "api-result-code",
                         description = "(Response Code 반환 원인) - Required<br>" +
-                                "1 : id 에 해당하는 데이터가 데이터베이스에 존재하지 않습니다.",
+                                "1 : index 에 해당하는 데이터가 데이터베이스에 존재하지 않습니다.",
                         schema = Schema(type = "string")
                     )
                 ]
@@ -155,19 +179,22 @@ class MongoDbTestController(
         ]
     )
     @DeleteMapping(
-        path = ["/test-document/{id}"],
+        path = ["/row/{id}"],
         consumes = [MediaType.ALL_VALUE],
         produces = [MediaType.ALL_VALUE]
     )
     @ResponseBody
-    fun deleteDocumentTest(
+    fun deleteRowSample(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse,
-        @Parameter(name = "id", description = "글 Id", example = "1")
+        @Parameter(name = "id", description = "글 아이디", example = "1")
         @PathVariable("id")
-        id: String
+        id: String,
+        @Parameter(name = "deleteLogically", description = "논리적 삭제 여부", example = "true")
+        @RequestParam("deleteLogically")
+        deleteLogically: Boolean
     ) {
-        service.deleteDocumentTest(httpServletResponse, id)
+        service.deleteRowSample(httpServletResponse, id, deleteLogically)
     }
 
 
@@ -185,22 +212,26 @@ class MongoDbTestController(
         ]
     )
     @GetMapping(
-        path = ["/test-document"],
+        path = ["/rows"],
         consumes = [MediaType.ALL_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @ResponseBody
-    fun selectAllDocumentsTest(
+    fun selectRowsSample(
         @Parameter(hidden = true)
         httpServletResponse: HttpServletResponse
-    ): SelectAllDocumentsTestOutputVo? {
-        return service.selectAllDocumentsTest(httpServletResponse)
+    ): SelectRowsSampleOutputVo? {
+        return service.selectRowsSample(httpServletResponse)
     }
 
-    data class SelectAllDocumentsTestOutputVo(
+    data class SelectRowsSampleOutputVo(
         @Schema(description = "아이템 리스트", required = true)
         @JsonProperty("testEntityVoList")
-        val testEntityVoList: List<TestEntityVo>
+        val testEntityVoList: List<TestEntityVo>,
+
+        @Schema(description = "논리적으로 제거된 아이템 리스트", required = true)
+        @JsonProperty("logicalDeleteEntityVoList")
+        val logicalDeleteEntityVoList: List<TestEntityVo>
     ) {
         @Schema(description = "아이템")
         data class TestEntityVo(
@@ -210,12 +241,19 @@ class MongoDbTestController(
             @Schema(description = "글 본문", required = true, example = "테스트 텍스트입니다.")
             @JsonProperty("content")
             val content: String,
-            @Schema(description = "Nullable 값", required = false, example = "Not Null")
-            @JsonProperty("nullableValue")
-            val nullableValue: String?,
             @Schema(description = "자동 생성 숫자", required = true, example = "21345")
             @JsonProperty("randomNum")
             val randomNum: Int,
+            @Schema(
+                description = "테스트용 일시 데이터(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+                required = true,
+                example = "2024_05_02_T_15_14_49_552_KST"
+            )
+            @JsonProperty("testDatetime")
+            val testDatetime: String,
+            @Schema(description = "테스트용 nullable 데이터", required = false, example = "test")
+            @JsonProperty("nullableValue")
+            val nullableValue: String?,
             @Schema(
                 description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
                 required = true,
@@ -229,7 +267,10 @@ class MongoDbTestController(
                 example = "2024_05_02_T_15_14_49_552_KST"
             )
             @JsonProperty("updateDate")
-            val updateDate: String
+            val updateDate: String,
+            @Schema(description = "글 삭제일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, Null 이면 /)", required = true, example = "/")
+            @JsonProperty("deleteDate")
+            val deleteDate: String
         )
     }
 
