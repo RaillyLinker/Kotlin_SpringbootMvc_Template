@@ -78,7 +78,12 @@ class StompInterceptorService(
         return message
     }
 
-    // todo userName 으로 accessor.user 가 서로 공유되는지 확인하기
+    /*
+        todo
+            1. 서버별 소켓 세션 정보 저장
+            2. kafka 로는 모든 위치에 요청 전달(kafka 로 받아서 세션 정보 리스트로 메시지 전달)
+            3. 서버 고유값으로 경로 최적화
+     */
     // todo 아래 수정하기
 
 
