@@ -1,5 +1,6 @@
 package com.raillylinker.configurations.kafka_configs
 
+import com.raillylinker.const_objects.ModuleConst
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -51,6 +52,9 @@ class Kafka1MainConfig {
         config["sasl.mechanism"] = "PLAIN"
         config["sasl.jaas.config"] =
             "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"$userName\" password=\"$password\";"
+
+        // 서버별로 고유한 `groupId` 설정
+        config[ConsumerConfig.GROUP_ID_CONFIG] = ModuleConst.SERVER_UUID
 
         val factory = ConcurrentKafkaListenerContainerFactory<String, Any>()
         factory.consumerFactory = DefaultKafkaConsumerFactory(config)
