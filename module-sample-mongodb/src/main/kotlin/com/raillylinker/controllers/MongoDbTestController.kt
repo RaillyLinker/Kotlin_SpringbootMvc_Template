@@ -593,161 +593,113 @@ class MongoDbTestController(
 //            val distance: Int
 //        )
 //    }
-//
-//
-    // todo
-//    // ----
-//    @Operation(
-//        summary = "DB Row 수정 테스트",
-//        description = "테스트 테이블의 Row 하나를 수정합니다."
-//    )
-//    @ApiResponses(
-//        value = [
-//            ApiResponse(
-//                responseCode = "200",
-//                description = "정상 동작"
-//            ),
-//            ApiResponse(
-//                responseCode = "204",
-//                content = [Content()],
-//                description = "Response Body 가 없습니다.<br>" +
-//                        "Response Headers 를 확인하세요.",
-//                headers = [
-//                    Header(
-//                        name = "api-result-code",
-//                        description = "(Response Code 반환 원인) - Required<br>" +
-//                                "1 : testTableUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-//                        schema = Schema(type = "string")
-//                    )
-//                ]
-//            )
-//        ]
-//    )
-//    @PatchMapping(
-//        path = ["/row/{testTableUid}"],
-//        consumes = [MediaType.APPLICATION_JSON_VALUE],
-//        produces = [MediaType.APPLICATION_JSON_VALUE]
-//    )
-//    @ResponseBody
-//    fun updateRowSample(
-//        @Parameter(hidden = true)
-//        httpServletResponse: HttpServletResponse,
-//        @Parameter(name = "testTableUid", description = "test 테이블의 uid", example = "1")
-//        @PathVariable("testTableUid")
-//        testTableUid: Long,
-//        @RequestBody
-//        inputVo: UpdateRowSampleInputVo
-//    ): UpdateRowSampleOutputVo? {
-//        return service.updateRowSample(httpServletResponse, testTableUid, inputVo)
-//    }
-//
-//    data class UpdateRowSampleInputVo(
-//        @Schema(description = "글 본문", required = true, example = "테스트 텍스트 수정글입니다.")
-//        @JsonProperty("content")
-//        val content: String,
-//        @Schema(
-//            description = "원하는 날짜(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//            required = true,
-//            example = "2024_05_02_T_15_14_49_552_KST"
-//        )
-//        @JsonProperty("dateString")
-//        val dateString: String
-//    )
-//
-//    data class UpdateRowSampleOutputVo(
-//        @Schema(description = "글 고유번호", required = true, example = "1234")
-//        @JsonProperty("uid")
-//        val uid: Long,
-//        @Schema(description = "글 본문", required = true, example = "테스트 텍스트입니다.")
-//        @JsonProperty("content")
-//        val content: String,
-//        @Schema(description = "자동 생성 숫자", required = true, example = "21345")
-//        @JsonProperty("randomNum")
-//        val randomNum: Int,
-//        @Schema(
-//            description = "테스트용 일시 데이터(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//            required = true,
-//            example = "2024_05_02_T_15_14_49_552_KST"
-//        )
-//        @JsonProperty("testDatetime")
-//        val testDatetime: String,
-//        @Schema(
-//            description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//            required = true,
-//            example = "2024_05_02_T_15_14_49_552_KST"
-//        )
-//        @JsonProperty("createDate")
-//        val createDate: String,
-//        @Schema(
-//            description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//            required = true,
-//            example = "2024_05_02_T_15_14_49_552_KST"
-//        )
-//        @JsonProperty("updateDate")
-//        val updateDate: String
-//    )
-//
-//
-    // todo
-//    // ----
-//    @Operation(
-//        summary = "DB Row 수정 테스트 (네이티브 쿼리)",
-//        description = "테스트 테이블의 Row 하나를 네이티브 쿼리로 수정합니다."
-//    )
-//    @ApiResponses(
-//        value = [
-//            ApiResponse(
-//                responseCode = "200",
-//                description = "정상 동작"
-//            ),
-//            ApiResponse(
-//                responseCode = "204",
-//                content = [Content()],
-//                description = "Response Body 가 없습니다.<br>" +
-//                        "Response Headers 를 확인하세요.",
-//                headers = [
-//                    Header(
-//                        name = "api-result-code",
-//                        description = "(Response Code 반환 원인) - Required<br>" +
-//                                "1 : testTableUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
-//                        schema = Schema(type = "string")
-//                    )
-//                ]
-//            )
-//        ]
-//    )
-//    @PatchMapping(
-//        path = ["/row/{testTableUid}/native-query"],
-//        consumes = [MediaType.APPLICATION_JSON_VALUE],
-//        produces = [MediaType.APPLICATION_JSON_VALUE]
-//    )
-//    @ResponseBody
-//    fun updateRowNativeQuerySample(
-//        @Parameter(hidden = true)
-//        httpServletResponse: HttpServletResponse,
-//        @Parameter(name = "testTableUid", description = "test 테이블의 uid", example = "1")
-//        @PathVariable("testTableUid")
-//        testTableUid: Long,
-//        @RequestBody
-//        inputVo: UpdateRowNativeQuerySampleInputVo
-//    ) {
-//        return service.updateRowNativeQuerySample(httpServletResponse, testTableUid, inputVo)
-//    }
-//
-//    data class UpdateRowNativeQuerySampleInputVo(
-//        @Schema(description = "글 본문", required = true, example = "테스트 텍스트 수정글입니다.")
-//        @JsonProperty("content")
-//        val content: String,
-//        @Schema(
-//            description = "원하는 날짜(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//            required = true,
-//            example = "2024_05_02_T_15_14_49_552_KST"
-//        )
-//        @JsonProperty("dateString")
-//        val dateString: String
-//    )
-//
-//
+
+
+    // ----
+    @Operation(
+        summary = "DB Row 수정 테스트",
+        description = "테스트 테이블의 Row 하나를 수정합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : testTableUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            )
+        ]
+    )
+    @PatchMapping(
+        path = ["/row/{testTableUid}"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun updateRowSample(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(name = "testTableUid", description = "test 테이블의 uid", example = "1")
+        @PathVariable("testTableUid")
+        testTableUid: String,
+        @RequestBody
+        inputVo: UpdateRowSampleInputVo
+    ): UpdateRowSampleOutputVo? {
+        return service.updateRowSample(httpServletResponse, testTableUid, inputVo)
+    }
+
+    data class UpdateRowSampleInputVo(
+        @Schema(description = "글 본문", required = true, example = "테스트 텍스트입니다.")
+        @JsonProperty("content")
+        val content: String,
+        @Schema(
+            description = "원하는 날짜(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("dateString")
+        val dateString: String,
+        @Schema(
+            description = "테스트용 nullable 데이터",
+            required = false,
+            example = "test"
+        )
+        @JsonProperty("nullableValue")
+        val nullableValue: String?
+    )
+
+    data class UpdateRowSampleOutputVo(
+        @Schema(description = "글 고유번호", required = true, example = "1234")
+        @JsonProperty("uid")
+        val uid: String,
+        @Schema(description = "글 본문", required = true, example = "테스트 텍스트입니다.")
+        @JsonProperty("content")
+        val content: String,
+        @Schema(description = "자동 생성 숫자", required = true, example = "21345")
+        @JsonProperty("randomNum")
+        val randomNum: Int,
+        @Schema(
+            description = "테스트용 일시 데이터(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("testDatetime")
+        val testDatetime: String,
+        @Schema(description = "테스트용 nullable 데이터", required = false, example = "test")
+        @JsonProperty("nullableValue")
+        val nullableValue: String?,
+        @Schema(
+            description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("createDate")
+        val createDate: String,
+        @Schema(
+            description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("updateDate")
+        val updateDate: String,
+        @Schema(description = "글 삭제일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, Null 이면 /)", required = true, example = "/")
+        @JsonProperty("deleteDate")
+        val deleteDate: String
+    )
+
+
     // todo
 //    // ----
 //    @Operation(

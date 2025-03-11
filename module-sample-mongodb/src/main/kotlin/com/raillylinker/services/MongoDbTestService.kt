@@ -248,6 +248,47 @@ class MongoDbTestService(
 
 
     // ----
+    // (DB Row 수정 테스트)
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME) // ReplicaSet 환경이 아니면 에러가 납니다.
+    fun updateRowSample(
+        httpServletResponse: HttpServletResponse,
+        testTableUid: String,
+        inputVo: MongoDbTestController.UpdateRowSampleInputVo
+    ): MongoDbTestController.UpdateRowSampleOutputVo? {
+        val oldEntity = mdb1TestDataRepository.findByUidAndRowDeleteDateStr(testTableUid, "/")
+
+        if (oldEntity == null || oldEntity.rowDeleteDateStr != "/") {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        oldEntity.content = inputVo.content
+        oldEntity.testDatetime =
+            ZonedDateTime.parse(inputVo.dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                .withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+        oldEntity.nullableValue = inputVo.nullableValue
+
+        val result = mdb1TestDataRepository.save(oldEntity)
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return MongoDbTestController.UpdateRowSampleOutputVo(
+            result.uid!!.toString(),
+            result.content,
+            result.randomNum,
+            result.testDatetime.atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+            result.nullableValue,
+            result.rowCreateDate!!.atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+            result.rowUpdateDate!!.atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+            result.rowDeleteDateStr
+        )
+    }
+
+
+    // ----
     // (트랜젝션 동작 테스트)
     @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME) // ReplicaSet 환경이 아니면 에러가 납니다.
     fun transactionRollbackTest(
