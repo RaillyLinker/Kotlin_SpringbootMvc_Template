@@ -11,7 +11,7 @@
     -->
 
     <!--로그 파일 저장 위치-->
-    <property name="LOGS_PATH" value="./by_product_files/sample_socket_ex/logs"/>
+    <property name="LOGS_PATH" value="./by_product_files/sample_socket_stomp_ex/logs"/>
 
 
     <!--local 프로필 환경-->

@@ -1,14 +1,14 @@
-# (실행 환경 prod 설정)
-# : 배포 환경 엄중한 환경 설정
+# (실행 환경 local 설정)
+# : 로컬 환경 개발자를 위한 환경 설정 = 서버 개발자가 마음껏 사용 가능 (그냥 IDE 를 실행하면 적용)
 
 spring:
   application:
     # Eureka 에 등록될 서비스 이름 (복제 서버는 같은 이름으로 설정하여 로드밸런싱)
-    name: SAMPLE-SOCKET-EX-PROD
+    name: SAMPLE-SOCKET-STOMP-EX-LOCAL
 
   config:
     activate: # 프로필명 설정
-      on-profile: prod
+      on-profile: local
 
   servlet:
     multipart:
@@ -18,7 +18,7 @@ spring:
 
 springdoc:
   swagger-ui:
-    enabled: false # Swagger 문서 공개 여부
+    enabled: true # Swagger 문서 공개 여부
 
 # JPA DataSource 설정
 datasource-jpa:
