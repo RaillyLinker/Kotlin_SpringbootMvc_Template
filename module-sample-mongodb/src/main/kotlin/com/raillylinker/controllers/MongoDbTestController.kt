@@ -1136,258 +1136,254 @@ class MongoDbTestController(
 //        @JsonProperty("updateDate")
 //        val updateDate: String
 //    )
-//
-//
-    // todo
-//    // ----
-//    @Operation(
-//        summary = "유니크 테스트 테이블 Row 입력 API",
-//        description = "유니크 테스트 테이블에 Row 를 입력합니다.<br>" +
-//                "논리적 삭제를 적용한 본 테이블에서 유니크 값은, 유니크 값 컬럼과 행 삭제일 데이터와의 혼합입니다."
-//    )
-//    @ApiResponses(
-//        value = [
-//            ApiResponse(
-//                responseCode = "200",
-//                description = "정상 동작"
-//            )
-//        ]
-//    )
-//    @PostMapping(
-//        path = ["/unique-test-table"],
-//        consumes = [MediaType.APPLICATION_JSON_VALUE],
-//        produces = [MediaType.APPLICATION_JSON_VALUE]
-//    )
-//    @ResponseBody
-//    fun insertUniqueTestTableRowSample(
-//        @Parameter(hidden = true)
-//        httpServletResponse: HttpServletResponse,
-//        @RequestBody
-//        inputVo: InsertUniqueTestTableRowSampleInputVo
-//    ): InsertUniqueTestTableRowSampleOutputVo? {
-//        return service.insertUniqueTestTableRowSample(httpServletResponse, inputVo)
-//    }
-//
-//    data class InsertUniqueTestTableRowSampleInputVo(
-//        @Schema(description = "유니크 값", required = true, example = "1")
-//        @JsonProperty("uniqueValue")
-//        val uniqueValue: Int
-//    )
-//
-//    data class InsertUniqueTestTableRowSampleOutputVo(
-//        @Schema(description = "글 고유번호", required = true, example = "1234")
-//        @JsonProperty("uid")
-//        val uid: Long,
-//        @Schema(description = "유니크 값", required = true, example = "1")
-//        @JsonProperty("uniqueValue")
-//        val uniqueValue: Int,
-//        @Schema(
-//            description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//            required = true,
-//            example = "2024_05_02_T_15_14_49_552_KST"
-//        )
-//        @JsonProperty("createDate")
-//        val createDate: String,
-//        @Schema(
-//            description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//            required = true,
-//            example = "2024_05_02_T_15_14_49_552_KST"
-//        )
-//        @JsonProperty("updateDate")
-//        val updateDate: String,
-//        @Schema(description = "글 삭제일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, Null 이면 /)", required = true, example = "/")
-//        @JsonProperty("deleteDate")
-//        val deleteDate: String
-//    )
-//
-//
-    // todo
-//    // ----
-//    @Operation(
-//        summary = "유니크 테스트 테이블 Rows 조회 테스트",
-//        description = "유니크 테스트 테이블의 모든 Rows 를 반환합니다."
-//    )
-//    @ApiResponses(
-//        value = [
-//            ApiResponse(
-//                responseCode = "200",
-//                description = "정상 동작"
-//            )
-//        ]
-//    )
-//    @GetMapping(
-//        path = ["/unique-test-table/all"],
-//        consumes = [MediaType.ALL_VALUE],
-//        produces = [MediaType.APPLICATION_JSON_VALUE]
-//    )
-//    @ResponseBody
-//    fun selectUniqueTestTableRowsSample(
-//        @Parameter(hidden = true)
-//        httpServletResponse: HttpServletResponse
-//    ): SelectUniqueTestTableRowsSampleOutputVo? {
-//        return service.selectUniqueTestTableRowsSample(httpServletResponse)
-//    }
-//
-//    data class SelectUniqueTestTableRowsSampleOutputVo(
-//        @Schema(description = "아이템 리스트", required = true)
-//        @JsonProperty("testEntityVoList")
-//        val testEntityVoList: List<TestEntityVo>,
-//
-//        @Schema(description = "논리적으로 제거된 아이템 리스트", required = true)
-//        @JsonProperty("logicalDeleteEntityVoList")
-//        val logicalDeleteEntityVoList: List<TestEntityVo>
-//    ) {
-//        @Schema(description = "아이템")
-//        data class TestEntityVo(
-//            @Schema(description = "글 고유번호", required = true, example = "1234")
-//            @JsonProperty("uid")
-//            val uid: Long,
-//            @Schema(description = "유니크 값", required = true, example = "1")
-//            @JsonProperty("uniqueValue")
-//            val uniqueValue: Int,
-//            @Schema(
-//                description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//                required = true,
-//                example = "2024_05_02_T_15_14_49_552_KST"
-//            )
-//            @JsonProperty("createDate")
-//            val createDate: String,
-//            @Schema(
-//                description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//                required = true,
-//                example = "2024_05_02_T_15_14_49_552_KST"
-//            )
-//            @JsonProperty("updateDate")
-//            val updateDate: String,
-//            @Schema(description = "글 삭제일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, Null 이면 /)", required = true, example = "/")
-//            @JsonProperty("deleteDate")
-//            val deleteDate: String
-//        )
-//    }
-//
-//
-    // todo
-//    // ----
-//    @Operation(
-//        summary = "유니크 테스트 테이블 Row 수정 테스트",
-//        description = "유니크 테스트 테이블의 Row 하나를 수정합니다."
-//    )
-//    @ApiResponses(
-//        value = [
-//            ApiResponse(
-//                responseCode = "200",
-//                description = "정상 동작"
-//            ),
-//            ApiResponse(
-//                responseCode = "204",
-//                content = [Content()],
-//                description = "Response Body 가 없습니다.<br>" +
-//                        "Response Headers 를 확인하세요.",
-//                headers = [
-//                    Header(
-//                        name = "api-result-code",
-//                        description = "(Response Code 반환 원인) - Required<br>" +
-//                                "1 : uniqueTestTableUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
-//                                "2 : uniqueValue 와 일치하는 정보가 이미 데이터베이스에 존재합니다.",
-//                        schema = Schema(type = "string")
-//                    )
-//                ]
-//            )
-//        ]
-//    )
-//    @PatchMapping(
-//        path = ["/unique-test-table/{uniqueTestTableUid}"],
-//        consumes = [MediaType.APPLICATION_JSON_VALUE],
-//        produces = [MediaType.APPLICATION_JSON_VALUE]
-//    )
-//    @ResponseBody
-//    fun updateUniqueTestTableRowSample(
-//        @Parameter(hidden = true)
-//        httpServletResponse: HttpServletResponse,
-//        @Parameter(name = "uniqueTestTableUid", description = "unique test 테이블의 uid", example = "1")
-//        @PathVariable("uniqueTestTableUid")
-//        uniqueTestTableUid: Long,
-//        @RequestBody
-//        inputVo: UpdateUniqueTestTableRowSampleInputVo
-//    ): UpdateUniqueTestTableRowSampleOutputVo? {
-//        return service.updateUniqueTestTableRowSample(httpServletResponse, uniqueTestTableUid, inputVo)
-//    }
-//
-//    data class UpdateUniqueTestTableRowSampleInputVo(
-//        @Schema(description = "유니크 값", required = true, example = "1")
-//        @JsonProperty("uniqueValue")
-//        val uniqueValue: Int
-//    )
-//
-//    data class UpdateUniqueTestTableRowSampleOutputVo(
-//        @Schema(description = "글 고유번호", required = true, example = "1234")
-//        @JsonProperty("uid")
-//        val uid: Long,
-//        @Schema(description = "유니크 값", required = true, example = "1")
-//        @JsonProperty("uniqueValue")
-//        val uniqueValue: Int,
-//        @Schema(
-//            description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//            required = true,
-//            example = "2024_05_02_T_15_14_49_552_KST"
-//        )
-//        @JsonProperty("createDate")
-//        val createDate: String,
-//        @Schema(
-//            description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//            required = true,
-//            example = "2024_05_02_T_15_14_49_552_KST"
-//        )
-//        @JsonProperty("updateDate")
-//        val updateDate: String
-//    )
-//
-//
-    // todo
-//    // ----
-//    @Operation(
-//        summary = "유니크 테스트 테이블 Row 삭제 테스트",
-//        description = "유니크 테스트 테이블의 Row 하나를 삭제합니다."
-//    )
-//    @ApiResponses(
-//        value = [
-//            ApiResponse(
-//                responseCode = "200",
-//                description = "정상 동작"
-//            ),
-//            ApiResponse(
-//                responseCode = "204",
-//                content = [Content()],
-//                description = "Response Body 가 없습니다.<br>" +
-//                        "Response Headers 를 확인하세요.",
-//                headers = [
-//                    Header(
-//                        name = "api-result-code",
-//                        description = "(Response Code 반환 원인) - Required<br>" +
-//                                "1 : index 에 해당하는 데이터가 데이터베이스에 존재하지 않습니다.",
-//                        schema = Schema(type = "string")
-//                    )
-//                ]
-//            )
-//        ]
-//    )
-//    @DeleteMapping(
-//        path = ["/unique-test-table/{index}"],
-//        consumes = [MediaType.ALL_VALUE],
-//        produces = [MediaType.ALL_VALUE]
-//    )
-//    @ResponseBody
-//    fun deleteUniqueTestTableRowSample(
-//        @Parameter(hidden = true)
-//        httpServletResponse: HttpServletResponse,
-//        @Parameter(name = "index", description = "글 인덱스", example = "1")
-//        @PathVariable("index")
-//        index: Long
-//    ) {
-//        service.deleteUniqueTestTableRowSample(httpServletResponse, index)
-//    }
-//
-//
+
+
+    // ----
+    @Operation(
+        summary = "유니크 테스트 테이블 Row 입력 API",
+        description = "유니크 테스트 테이블에 Row 를 입력합니다.<br>" +
+                "논리적 삭제를 적용한 본 테이블에서 유니크 값은, 유니크 값 컬럼과 행 삭제일 데이터와의 혼합입니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @PostMapping(
+        path = ["/unique-test-table"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun insertUniqueTestTableRowSample(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @RequestBody
+        inputVo: InsertUniqueTestTableRowSampleInputVo
+    ): InsertUniqueTestTableRowSampleOutputVo? {
+        return service.insertUniqueTestTableRowSample(httpServletResponse, inputVo)
+    }
+
+    data class InsertUniqueTestTableRowSampleInputVo(
+        @Schema(description = "유니크 값", required = true, example = "1")
+        @JsonProperty("uniqueValue")
+        val uniqueValue: Int
+    )
+
+    data class InsertUniqueTestTableRowSampleOutputVo(
+        @Schema(description = "글 고유번호", required = true, example = "1234")
+        @JsonProperty("uid")
+        val uid: String,
+        @Schema(description = "유니크 값", required = true, example = "1")
+        @JsonProperty("uniqueValue")
+        val uniqueValue: Int,
+        @Schema(
+            description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("createDate")
+        val createDate: String,
+        @Schema(
+            description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("updateDate")
+        val updateDate: String,
+        @Schema(description = "글 삭제일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, Null 이면 /)", required = true, example = "/")
+        @JsonProperty("deleteDate")
+        val deleteDate: String
+    )
+
+
+    // ----
+    @Operation(
+        summary = "유니크 테스트 테이블 Rows 조회 테스트",
+        description = "유니크 테스트 테이블의 모든 Rows 를 반환합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @GetMapping(
+        path = ["/unique-test-table/all"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun selectUniqueTestTableRowsSample(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse
+    ): SelectUniqueTestTableRowsSampleOutputVo? {
+        return service.selectUniqueTestTableRowsSample(httpServletResponse)
+    }
+
+    data class SelectUniqueTestTableRowsSampleOutputVo(
+        @Schema(description = "아이템 리스트", required = true)
+        @JsonProperty("testEntityVoList")
+        val testEntityVoList: List<TestEntityVo>,
+
+        @Schema(description = "논리적으로 제거된 아이템 리스트", required = true)
+        @JsonProperty("logicalDeleteEntityVoList")
+        val logicalDeleteEntityVoList: List<TestEntityVo>
+    ) {
+        @Schema(description = "아이템")
+        data class TestEntityVo(
+            @Schema(description = "글 고유번호", required = true, example = "1234")
+            @JsonProperty("uid")
+            val uid: String,
+            @Schema(description = "유니크 값", required = true, example = "1")
+            @JsonProperty("uniqueValue")
+            val uniqueValue: Int,
+            @Schema(
+                description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+                required = true,
+                example = "2024_05_02_T_15_14_49_552_KST"
+            )
+            @JsonProperty("createDate")
+            val createDate: String,
+            @Schema(
+                description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+                required = true,
+                example = "2024_05_02_T_15_14_49_552_KST"
+            )
+            @JsonProperty("updateDate")
+            val updateDate: String,
+            @Schema(description = "글 삭제일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z, Null 이면 /)", required = true, example = "/")
+            @JsonProperty("deleteDate")
+            val deleteDate: String
+        )
+    }
+
+
+    // ----
+    @Operation(
+        summary = "유니크 테스트 테이블 Row 수정 테스트",
+        description = "유니크 테스트 테이블의 Row 하나를 수정합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : uniqueTestTableUid 에 해당하는 정보가 데이터베이스에 존재하지 않습니다.<br>" +
+                                "2 : uniqueValue 와 일치하는 정보가 이미 데이터베이스에 존재합니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            )
+        ]
+    )
+    @PatchMapping(
+        path = ["/unique-test-table/{uniqueTestTableUid}"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun updateUniqueTestTableRowSample(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(name = "uniqueTestTableUid", description = "unique test 테이블의 uid", example = "1")
+        @PathVariable("uniqueTestTableUid")
+        uniqueTestTableUid: String,
+        @RequestBody
+        inputVo: UpdateUniqueTestTableRowSampleInputVo
+    ): UpdateUniqueTestTableRowSampleOutputVo? {
+        return service.updateUniqueTestTableRowSample(httpServletResponse, uniqueTestTableUid, inputVo)
+    }
+
+    data class UpdateUniqueTestTableRowSampleInputVo(
+        @Schema(description = "유니크 값", required = true, example = "1")
+        @JsonProperty("uniqueValue")
+        val uniqueValue: Int
+    )
+
+    data class UpdateUniqueTestTableRowSampleOutputVo(
+        @Schema(description = "글 고유번호", required = true, example = "1234")
+        @JsonProperty("uid")
+        val uid: String,
+        @Schema(description = "유니크 값", required = true, example = "1")
+        @JsonProperty("uniqueValue")
+        val uniqueValue: Int,
+        @Schema(
+            description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("createDate")
+        val createDate: String,
+        @Schema(
+            description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            required = true,
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @JsonProperty("updateDate")
+        val updateDate: String
+    )
+
+
+    // ----
+    @Operation(
+        summary = "유니크 테스트 테이블 Row 삭제 테스트",
+        description = "유니크 테스트 테이블의 Row 하나를 삭제합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            ),
+            ApiResponse(
+                responseCode = "204",
+                content = [Content()],
+                description = "Response Body 가 없습니다.<br>" +
+                        "Response Headers 를 확인하세요.",
+                headers = [
+                    Header(
+                        name = "api-result-code",
+                        description = "(Response Code 반환 원인) - Required<br>" +
+                                "1 : index 에 해당하는 데이터가 데이터베이스에 존재하지 않습니다.",
+                        schema = Schema(type = "string")
+                    )
+                ]
+            )
+        ]
+    )
+    @DeleteMapping(
+        path = ["/unique-test-table/{id}"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.ALL_VALUE]
+    )
+    @ResponseBody
+    fun deleteUniqueTestTableRowSample(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(name = "id", description = "글 고유값", example = "1")
+        @PathVariable("id")
+        id: String
+    ) {
+        service.deleteUniqueTestTableRowSample(httpServletResponse, id)
+    }
+
+
     // todo
 //    // ----
 //    @Operation(

@@ -5,9 +5,12 @@ import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.mongodb.MongoDatabaseFactory
 import org.springframework.data.mongodb.MongoTransactionManager
+import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory
+import org.springframework.data.mongodb.core.convert.MappingMongoConverter
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
@@ -18,7 +21,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
     mongoTemplateRef = Mdb1MainConfig.MONGO_DB_DIRECTORY_NAME
 )
 @EnableTransactionManagement
-class Mdb1MainConfig {
+class Mdb1MainConfig : AbstractMongoClientConfiguration() {
     companion object {
         // !!!application.yml 의 datasource-mongodb 안에 작성된 이름 할당하기!!!
         const val MONGO_DB_CONFIG_NAME: String = "mdb1-main"
@@ -53,5 +56,17 @@ class Mdb1MainConfig {
     @Bean(TRANSACTION_NAME)
     fun customTransactionManager(): MongoTransactionManager {
         return MongoTransactionManager(mongoClientFactory)
+    }
+
+    override fun getDatabaseName(): String {
+        return MONGO_DB_CONFIG_NAME
+    }
+
+    override fun autoIndexCreation(): Boolean {
+        return true
+    }
+
+    override fun mongoDbFactory(): MongoDatabaseFactory {
+        return mongoClientFactory
     }
 }

@@ -2,7 +2,9 @@ package com.raillylinker.services
 
 import com.raillylinker.controllers.MongoDbTestController
 import com.raillylinker.configurations.mongodb_configs.Mdb1MainConfig
+import com.raillylinker.mongodb_beans.mdb1_main.documents.Mdb1_LogicalDeleteUniqueData
 import com.raillylinker.mongodb_beans.mdb1_main.documents.Mdb1_TestData
+import com.raillylinker.mongodb_beans.mdb1_main.repositories.Mdb1_LogicalDeleteUniqueData_Repository
 import com.raillylinker.mongodb_beans.mdb1_main.repositories.Mdb1_TestData_Repository
 import com.raillylinker.mongodb_beans.mdb1_main.repositories_template.Mdb1_TestData_Repository_Template
 import jakarta.servlet.http.HttpServletResponse
@@ -22,7 +24,8 @@ class MongoDbTestService(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
     private val mdb1TestDataRepository: Mdb1_TestData_Repository,
-    private val mdb1TestDataRepositoryTemplate: Mdb1_TestData_Repository_Template
+    private val mdb1TestDataRepositoryTemplate: Mdb1_TestData_Repository_Template,
+    private val mbdMdb1LogicalDeleteUniqueDataRepository: Mdb1_LogicalDeleteUniqueData_Repository
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -301,5 +304,146 @@ class MongoDbTestService(
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+
+    // ----
+    // (유니크 테스트 테이블 Row 입력 API)
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME) // ReplicaSet 환경이 아니면 에러가 납니다.
+    fun insertUniqueTestTableRowSample(
+        httpServletResponse: HttpServletResponse,
+        inputVo: MongoDbTestController.InsertUniqueTestTableRowSampleInputVo
+    ): MongoDbTestController.InsertUniqueTestTableRowSampleOutputVo? {
+        val result = mbdMdb1LogicalDeleteUniqueDataRepository.save(
+            Mdb1_LogicalDeleteUniqueData(
+                inputVo.uniqueValue
+            )
+        )
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return MongoDbTestController.InsertUniqueTestTableRowSampleOutputVo(
+            result.uid!!,
+            result.uniqueValue,
+            result.rowCreateDate!!.atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+            result.rowUpdateDate!!.atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+            result.rowDeleteDateStr
+        )
+    }
+
+
+    // ----
+    // (유니크 테스트 테이블 Rows 조회 테스트)
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME, readOnly = true) // ReplicaSet 환경이 아니면 에러가 납니다.
+    fun selectUniqueTestTableRowsSample(httpServletResponse: HttpServletResponse): MongoDbTestController.SelectUniqueTestTableRowsSampleOutputVo? {
+        val resultEntityList =
+            mbdMdb1LogicalDeleteUniqueDataRepository.findAllByRowDeleteDateStrOrderByRowCreateDate("/")
+        val entityVoList =
+            ArrayList<MongoDbTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo>()
+        for (resultEntity in resultEntityList) {
+            entityVoList.add(
+                MongoDbTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo(
+                    resultEntity.uid!!,
+                    resultEntity.uniqueValue,
+                    resultEntity.rowCreateDate!!.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    resultEntity.rowUpdateDate!!.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    resultEntity.rowDeleteDateStr
+                )
+            )
+        }
+
+        val logicalDeleteEntityVoList =
+            mbdMdb1LogicalDeleteUniqueDataRepository.findAllByRowDeleteDateStrNotOrderByRowCreateDate("/")
+        val logicalDeleteVoList =
+            ArrayList<MongoDbTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo>()
+        for (resultEntity in logicalDeleteEntityVoList) {
+            logicalDeleteVoList.add(
+                MongoDbTestController.SelectUniqueTestTableRowsSampleOutputVo.TestEntityVo(
+                    resultEntity.uid!!,
+                    resultEntity.uniqueValue,
+                    resultEntity.rowCreateDate!!.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    resultEntity.rowUpdateDate!!.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    resultEntity.rowDeleteDateStr
+                )
+            )
+        }
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return MongoDbTestController.SelectUniqueTestTableRowsSampleOutputVo(
+            entityVoList,
+            logicalDeleteVoList
+        )
+    }
+
+
+    // ----
+    // (유니크 테스트 테이블 Row 수정 테스트)
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME) // ReplicaSet 환경이 아니면 에러가 납니다.
+    fun updateUniqueTestTableRowSample(
+        httpServletResponse: HttpServletResponse,
+        testTableUid: String,
+        inputVo: MongoDbTestController.UpdateUniqueTestTableRowSampleInputVo
+    ): MongoDbTestController.UpdateUniqueTestTableRowSampleOutputVo? {
+        val oldEntity =
+            mbdMdb1LogicalDeleteUniqueDataRepository.findByUidAndRowDeleteDateStr(testTableUid, "/")
+
+        if (oldEntity == null || oldEntity.rowDeleteDateStr != "/") {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        val uniqueValueEntity =
+            mbdMdb1LogicalDeleteUniqueDataRepository.findByUniqueValueAndRowDeleteDateStr(
+                inputVo.uniqueValue,
+                "/"
+            )
+
+        if (uniqueValueEntity != null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "2")
+            return null
+        }
+
+
+        oldEntity.uniqueValue = inputVo.uniqueValue
+
+        val result = mbdMdb1LogicalDeleteUniqueDataRepository.save(oldEntity)
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return MongoDbTestController.UpdateUniqueTestTableRowSampleOutputVo(
+            result.uid!!,
+            result.uniqueValue,
+            result.rowCreateDate!!.atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+            result.rowUpdateDate!!.atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+        )
+    }
+
+
+    // ----
+    // (유니크 테스트 테이블 Row 삭제 테스트)
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME) // ReplicaSet 환경이 아니면 에러가 납니다.
+    fun deleteUniqueTestTableRowSample(httpServletResponse: HttpServletResponse, id: String) {
+        val entity = mbdMdb1LogicalDeleteUniqueDataRepository.findByUidAndRowDeleteDateStr(id, "/")
+
+        if (entity == null) {
+            httpServletResponse.status = HttpStatus.NO_CONTENT.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return
+        }
+
+        entity.rowDeleteDateStr =
+            LocalDateTime.now().atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+        mbdMdb1LogicalDeleteUniqueDataRepository.save(entity)
+
+        httpServletResponse.status = HttpStatus.OK.value()
     }
 }
