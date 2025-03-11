@@ -1,6 +1,12 @@
 
-- 확장성 있는 고급 소켓 모듈 + 포트폴리오 작성
-    Chatting + auth + channel
+- MongoDB 예시 완료
+
+- Springboot mvc template
+    Socket ex 구현 완료
+    (로그인 처리, redis 확장 처리, SimpMessage 가 아닌 메시지 큐 적용)
+
+- 채팅 포트폴리오 작성
+    Chatting + auth + channel + MongoDB + Kafka
 
 - springboot webflux 템플릿
     RDBMS, Redis, SpringSecurity, Webclient, Kafka, Mongodb, Quartz, Batch, Scheduler
@@ -22,6 +28,7 @@
     영상 채팅방 시스템
     배달 서비스
     Webflux 게시판
+    WebRtc P2P
 
 - 머신러닝
     블로그형 ai 프롬프트 학습기
