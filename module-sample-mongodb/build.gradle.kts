@@ -56,9 +56,6 @@ dependencies {
 
     // (MongoDB)
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.3.5")
-
-    // (AOP)
-    implementation("org.springframework.boot:spring-boot-starter-aop:3.3.5")
 }
 
 tasks.withType<Test> {
