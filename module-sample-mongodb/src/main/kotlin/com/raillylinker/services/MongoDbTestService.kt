@@ -392,6 +392,17 @@ class MongoDbTestService(
 
 
     // ----
+    // (DB Rows 조회 테스트 (카운팅))
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME, readOnly = true) // ReplicaSet 환경이 아니면 에러가 납니다.
+    fun selectRowsCountSample(httpServletResponse: HttpServletResponse): MongoDbTestController.SelectRowsCountSampleOutputVo? {
+        val count = mdb1TestDataRepository.countByRowDeleteDateStr("/")
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return MongoDbTestController.SelectRowsCountSampleOutputVo(count)
+    }
+
+
+    // ----
     // (DB Row 조회 테스트 (네이티브))
     @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME, readOnly = true) // ReplicaSet 환경이 아니면 에러가 납니다.
     fun selectRowByNativeQuerySample(

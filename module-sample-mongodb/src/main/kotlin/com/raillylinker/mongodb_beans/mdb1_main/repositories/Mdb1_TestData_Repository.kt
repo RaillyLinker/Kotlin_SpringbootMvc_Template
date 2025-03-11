@@ -8,6 +8,10 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface Mdb1_TestData_Repository : MongoRepository<Mdb1_TestData, String> {
+    fun countByRowDeleteDateStr(
+        rowDeleteDateStr: String
+    ): Long
+
     fun findAllByRowDeleteDateStrOrderByRowCreateDate(
         rowDeleteDateStr: String,
         pageable: Pageable

@@ -868,38 +868,37 @@ class MongoDbTestController(
     }
 
 
-    // todo
-//    // ----
-//    @Operation(
-//        summary = "DB Rows 조회 테스트 (카운팅)",
-//        description = "테스트 테이블의 Rows 를 카운팅하여 반환합니다."
-//    )
-//    @ApiResponses(
-//        value = [
-//            ApiResponse(
-//                responseCode = "200",
-//                description = "정상 동작"
-//            )
-//        ]
-//    )
-//    @GetMapping(
-//        path = ["/rows/counting"],
-//        consumes = [MediaType.ALL_VALUE],
-//        produces = [MediaType.APPLICATION_JSON_VALUE]
-//    )
-//    @ResponseBody
-//    fun selectRowsCountSample(
-//        @Parameter(hidden = true)
-//        httpServletResponse: HttpServletResponse
-//    ): SelectRowsCountSampleOutputVo? {
-//        return service.selectRowsCountSample(httpServletResponse)
-//    }
-//
-//    data class SelectRowsCountSampleOutputVo(
-//        @Schema(description = "아이템 전체 개수", required = true, example = "100")
-//        @JsonProperty("totalElements")
-//        val totalElements: Long
-//    )
+    // ----
+    @Operation(
+        summary = "DB Rows 조회 테스트 (카운팅)",
+        description = "테스트 테이블의 Rows 를 카운팅하여 반환합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @GetMapping(
+        path = ["/rows/counting"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun selectRowsCountSample(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse
+    ): SelectRowsCountSampleOutputVo? {
+        return service.selectRowsCountSample(httpServletResponse)
+    }
+
+    data class SelectRowsCountSampleOutputVo(
+        @Schema(description = "아이템 전체 개수", required = true, example = "100")
+        @JsonProperty("totalElements")
+        val totalElements: Long
+    )
 
 
     // todo
