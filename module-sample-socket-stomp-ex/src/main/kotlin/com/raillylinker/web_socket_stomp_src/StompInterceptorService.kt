@@ -13,6 +13,10 @@ import org.springframework.messaging.Message
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import java.security.Principal
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 @Service
 class StompInterceptorService(
@@ -62,9 +66,14 @@ class StompInterceptorService(
 //        }
 
         // 소켓 세션에 유저 정보 등록
-        accessor.user = StompPrincipalVo(sessionId)
+        accessor.user = StompPrincipalVo(
+            sessionId + "/${
+                LocalDateTime.now().atZone(ZoneId.systemDefault())
+                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+            }/${UUID.randomUUID()}"
+        )
 
-        userName = sessionId
+        userName = accessor.user!!.name
 
         return message
     }
@@ -176,8 +185,10 @@ class StompInterceptorService(
         return message
     }
 
+
+    // (Stomp Principal VO)
     class StompPrincipalVo(
-        // sessionId
+        // ${sessionId}/${yyyy_MM_dd_'T'_HH_mm_ss_SSS_z}/${Random UUID}
         private var name: String
     ) : Principal {
         override fun getName(): String = name
