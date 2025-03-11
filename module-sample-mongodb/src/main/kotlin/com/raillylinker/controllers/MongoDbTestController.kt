@@ -353,6 +353,86 @@ class MongoDbTestController(
 
     // ----
     @Operation(
+        summary = "DB 테이블의 row_create_date 컬럼 근사치 기준으로 정렬한 리스트 조회 API",
+        description = "테이블의 row 중 row_create_date 컬럼과 dateString 파라미터의 값의 근사치로 정렬한 리스트 반환"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @GetMapping(
+        path = ["/rows/order-by-create-date-nearest"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun selectRowsOrderByRowCreateDateSample(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(
+            name = "dateString",
+            description = "원하는 날짜(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+            example = "2024_05_02_T_15_14_49_552_KST"
+        )
+        @RequestParam("dateString")
+        dateString: String
+    ): SelectRowsOrderByRowCreateDateSampleOutputVo? {
+        return service.selectRowsOrderByRowCreateDateSample(httpServletResponse, dateString)
+    }
+
+    data class SelectRowsOrderByRowCreateDateSampleOutputVo(
+        @Schema(description = "아이템 리스트", required = true)
+        @JsonProperty("testEntityVoList")
+        val testEntityVoList: List<TestEntityVo>
+    ) {
+        @Schema(description = "아이템")
+        data class TestEntityVo(
+            @Schema(description = "글 고유번호", required = true, example = "1234")
+            @JsonProperty("uid")
+            val uid: String,
+            @Schema(description = "글 본문", required = true, example = "테스트 텍스트입니다.")
+            @JsonProperty("content")
+            val content: String,
+            @Schema(description = "자동 생성 숫자", required = true, example = "21345")
+            @JsonProperty("randomNum")
+            val randomNum: Int,
+            @Schema(
+                description = "테스트용 일시 데이터(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+                required = true,
+                example = "2024_05_02_T_15_14_49_552_KST"
+            )
+            @JsonProperty("testDatetime")
+            val testDatetime: String,
+            @Schema(description = "테스트용 nullable 데이터", required = false, example = "test")
+            @JsonProperty("nullableValue")
+            val nullableValue: String?,
+            @Schema(
+                description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+                required = true,
+                example = "2024_05_02_T_15_14_49_552_KST"
+            )
+            @JsonProperty("createDate")
+            val createDate: String,
+            @Schema(
+                description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+                required = true,
+                example = "2024_05_02_T_15_14_49_552_KST"
+            )
+            @JsonProperty("updateDate")
+            val updateDate: String,
+            @Schema(description = "기준과의 절대차이(마이크로 초)", required = true, example = "34")
+            @JsonProperty("timeDiffMicroSec")
+            val timeDiffMicroSec: Long
+        )
+    }
+
+
+    // ----
+    @Operation(
         summary = "트랜젝션 동작 테스트",
         description = "정보 입력 후 Exception 이 발생했을 때 롤백되어 데이터가 저장되지 않는지를 테스트하는 API"
     )

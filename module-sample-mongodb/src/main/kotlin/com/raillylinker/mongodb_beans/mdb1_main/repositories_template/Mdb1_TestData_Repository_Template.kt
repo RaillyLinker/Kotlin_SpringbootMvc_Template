@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.aggregation.*
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @Repository
 class Mdb1_TestData_Repository_Template(
@@ -50,5 +51,48 @@ class Mdb1_TestData_Repository_Template(
         val rowUpdateDate: LocalDateTime,
         val rowDeleteDateStr: String,
         val distance: Int // 차이값 추가
+    )
+
+
+    ////
+    fun findAllFromTemplateTestDataByNotDeletedWithRowCreateDateDistance(date: LocalDateTime): List<FindAllFromTemplateTestDataByNotDeletedWithRowCreateDateDistanceOutputVo> {
+        val aggregation = Aggregation.newAggregation(
+            Aggregation.match(Criteria.where("rowDeleteDateStr").`is`("/")), // 삭제되지 않은 데이터 필터링
+            Aggregation.project(
+                "content",
+                "randomNum",
+                "testDatetime",
+                "nullableValue",
+                "uid",
+                "rowCreateDate",
+                "rowUpdateDate",
+                "rowDeleteDateStr"
+            )
+                .and(
+                    DateOperators.dateValue(
+                        ArithmeticOperators.Subtract.valueOf("rowCreateDate")
+                            .subtract(date.toInstant(ZoneOffset.UTC).toEpochMilli())
+                    ).millisecond()
+                ).`as`("timeDiffMicroSec"), // rowCreateDate와 입력된 date 간 차이 계산
+            Aggregation.sort(Sort.by(Sort.Order.asc("timeDiffMicroSec"))) // 차이값을 기준으로 오름차순 정렬
+        )
+
+        return mongoTemplate.aggregate(
+            aggregation,
+            Mdb1_TestData::class.java,
+            FindAllFromTemplateTestDataByNotDeletedWithRowCreateDateDistanceOutputVo::class.java
+        ).mappedResults
+    }
+
+    data class FindAllFromTemplateTestDataByNotDeletedWithRowCreateDateDistanceOutputVo(
+        val content: String,
+        val randomNum: Int,
+        val testDatetime: LocalDateTime,
+        val nullableValue: String?,
+        val uid: String,
+        val rowCreateDate: LocalDateTime,
+        val rowUpdateDate: LocalDateTime,
+        val rowDeleteDateStr: String,
+        val timeDiffMicroSec: Long // 차이값 추가 (초 단위)
     )
 }

@@ -204,6 +204,47 @@ class MongoDbTestService(
 
 
     // ----
+    // (DB 테이블의 row_create_date 컬럼 근사치 기준으로 정렬한 리스트 조회 API)
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME, readOnly = true) // ReplicaSet 환경이 아니면 에러가 납니다.
+    fun selectRowsOrderByRowCreateDateSample(
+        httpServletResponse: HttpServletResponse,
+        dateString: String
+    ): MongoDbTestController.SelectRowsOrderByRowCreateDateSampleOutputVo? {
+        val foundEntityList =
+            mdb1TestDataRepositoryTemplate.findAllFromTemplateTestDataByNotDeletedWithRowCreateDateDistance(
+                ZonedDateTime.parse(dateString, DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                    .withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+            )
+
+        val testEntityVoList =
+            ArrayList<MongoDbTestController.SelectRowsOrderByRowCreateDateSampleOutputVo.TestEntityVo>()
+
+        for (entity in foundEntityList) {
+            testEntityVoList.add(
+                MongoDbTestController.SelectRowsOrderByRowCreateDateSampleOutputVo.TestEntityVo(
+                    entity.uid,
+                    entity.content,
+                    entity.randomNum,
+                    entity.testDatetime.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    entity.nullableValue,
+                    entity.rowCreateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    entity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    entity.timeDiffMicroSec
+                )
+            )
+        }
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return MongoDbTestController.SelectRowsOrderByRowCreateDateSampleOutputVo(
+            testEntityVoList
+        )
+    }
+
+
+    // ----
     // (트랜젝션 동작 테스트)
     @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME) // ReplicaSet 환경이 아니면 에러가 납니다.
     fun transactionRollbackTest(
