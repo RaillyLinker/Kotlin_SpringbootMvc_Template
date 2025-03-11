@@ -218,4 +218,68 @@ class Mdb1_TestData_Repository_Template(
         val rowDeleteDateStr: String,
         val distance: Int // 차이값 추가
     )
+
+
+    ////
+    fun findPageAllFromTemplateTestDataBySearchKeyword(
+        searchKeyword: String,
+        pageable: Pageable
+    ): Page<FindPageAllFromTemplateTestDataBySearchKeywordOutputVo> {
+        // 검색 키워드로 content 필드를 부분 일치 검색
+        val criteria = Criteria.where("rowDeleteDateStr").`is`("/") // 삭제되지 않은 데이터 필터링
+            .and("content").regex(".*$searchKeyword.*", "i") // content 필드에서 searchKeyword를 포함하는 문서 검색, 대소문자 구분 안함
+
+        val matchStage = Aggregation.match(criteria)
+
+        val projectStage = Aggregation.project(
+            "content",
+            "randomNum",
+            "testDatetime",
+            "nullableValue",
+            "uid",
+            "rowCreateDate",
+            "rowUpdateDate",
+            "rowDeleteDateStr"
+        )
+
+        val skipStage = Aggregation.skip((pageable.pageNumber * pageable.pageSize).toLong())
+        val limitStage = Aggregation.limit(pageable.pageSize.toLong())
+
+        val aggregation = Aggregation.newAggregation(
+            matchStage,
+            projectStage,
+            skipStage,
+            limitStage
+        )
+
+        // Aggregation 실행
+        val results = mongoTemplate.aggregate(
+            aggregation,
+            Mdb1_TestData::class.java,
+            FindPageAllFromTemplateTestDataBySearchKeywordOutputVo::class.java
+        ).mappedResults
+
+        // 전체 문서 개수 카운트
+        val totalElements = mongoTemplate.aggregate(
+            Aggregation.newAggregation(
+                Aggregation.match(criteria),
+                Aggregation.count().`as`("count") // 문서 개수 카운트
+            ),
+            Mdb1_TestData::class.java,
+            CountFromTemplateTestDataByNotDeletedOutputVo::class.java
+        ).uniqueMappedResult?.count ?: 0
+
+        return org.springframework.data.domain.PageImpl(results, pageable, totalElements)
+    }
+
+    data class FindPageAllFromTemplateTestDataBySearchKeywordOutputVo(
+        val content: String,
+        val randomNum: Int,
+        val testDatetime: LocalDateTime,
+        val nullableValue: String?,
+        val uid: String,
+        val rowCreateDate: LocalDateTime,
+        val rowUpdateDate: LocalDateTime,
+        val rowDeleteDateStr: String
+    )
 }

@@ -375,6 +375,48 @@ class MongoDbTestService(
 
 
     // ----
+    // (DB 정보 검색 테스트)
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME, readOnly = true) // ReplicaSet 환경이 아니면 에러가 납니다.
+    fun selectRowWhereSearchingKeywordSample(
+        httpServletResponse: HttpServletResponse,
+        page: Int,
+        pageElementsCount: Int,
+        searchKeyword: String
+    ): MongoDbTestController.SelectRowWhereSearchingKeywordSampleOutputVo? {
+        val pageable: Pageable = PageRequest.of(page - 1, pageElementsCount)
+        val voList = mdb1TestDataRepositoryTemplate.findPageAllFromTemplateTestDataBySearchKeyword(
+            searchKeyword,
+            pageable
+        )
+
+        val testEntityVoList =
+            ArrayList<MongoDbTestController.SelectRowWhereSearchingKeywordSampleOutputVo.TestEntityVo>()
+        for (vo in voList) {
+            testEntityVoList.add(
+                MongoDbTestController.SelectRowWhereSearchingKeywordSampleOutputVo.TestEntityVo(
+                    vo.uid,
+                    vo.content,
+                    vo.randomNum,
+                    vo.testDatetime.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    vo.nullableValue,
+                    vo.rowCreateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                    vo.rowUpdateDate.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                )
+            )
+        }
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return MongoDbTestController.SelectRowWhereSearchingKeywordSampleOutputVo(
+            voList.totalElements,
+            testEntityVoList
+        )
+    }
+
+
+    // ----
     // (트랜젝션 동작 테스트)
     @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME) // ReplicaSet 환경이 아니면 에러가 납니다.
     fun transactionRollbackTest(

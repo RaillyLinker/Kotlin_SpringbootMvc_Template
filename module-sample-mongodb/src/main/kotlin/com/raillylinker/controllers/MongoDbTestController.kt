@@ -704,89 +704,91 @@ class MongoDbTestController(
     )
 
 
-    // todo
-//    // ----
-//    @Operation(
-//        summary = "DB 정보 검색 테스트",
-//        description = "글 본문 내용중 searchKeyword 가 포함된 rows 를 검색하여 반환합니다."
-//    )
-//    @ApiResponses(
-//        value = [
-//            ApiResponse(
-//                responseCode = "200",
-//                description = "정상 동작"
-//            )
-//        ]
-//    )
-//    @GetMapping(
-//        path = ["/search-content"],
-//        consumes = [MediaType.ALL_VALUE],
-//        produces = [MediaType.APPLICATION_JSON_VALUE]
-//    )
-//    @ResponseBody
-//    fun selectRowWhereSearchingKeywordSample(
-//        @Parameter(hidden = true)
-//        httpServletResponse: HttpServletResponse,
-//        @Parameter(name = "page", description = "원하는 페이지(1 부터 시작)", example = "1")
-//        @RequestParam("page")
-//        page: Int,
-//        @Parameter(name = "pageElementsCount", description = "페이지 아이템 개수", example = "10")
-//        @RequestParam("pageElementsCount")
-//        pageElementsCount: Int,
-//        @Parameter(name = "searchKeyword", description = "검색어", example = "테스트")
-//        @RequestParam("searchKeyword")
-//        searchKeyword: String
-//    ): SelectRowWhereSearchingKeywordSampleOutputVo? {
-//        return service.selectRowWhereSearchingKeywordSample(
-//            httpServletResponse,
-//            page,
-//            pageElementsCount,
-//            searchKeyword
-//        )
-//    }
-//
-//    data class SelectRowWhereSearchingKeywordSampleOutputVo(
-//        @Schema(description = "아이템 전체 개수", required = true, example = "100")
-//        @JsonProperty("totalElements")
-//        val totalElements: Long,
-//        @Schema(description = "아이템 리스트", required = true)
-//        @JsonProperty("testEntityVoList")
-//        val testEntityVoList: List<TestEntityVo>
-//    ) {
-//        @Schema(description = "아이템")
-//        data class TestEntityVo(
-//            @Schema(description = "글 고유번호", required = true, example = "1")
-//            @JsonProperty("uid")
-//            val uid: Long,
-//            @Schema(description = "글 본문", required = true, example = "테스트 텍스트입니다.")
-//            @JsonProperty("content")
-//            val content: String,
-//            @Schema(description = "자동 생성 숫자", required = true, example = "21345")
-//            @JsonProperty("randomNum")
-//            val randomNum: Int,
-//            @Schema(
-//                description = "테스트용 일시 데이터(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//                required = true,
-//                example = "2024_05_02_T_15_14_49_552_KST"
-//            )
-//            @JsonProperty("testDatetime")
-//            val testDatetime: String,
-//            @Schema(
-//                description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//                required = true,
-//                example = "2024_05_02_T_15_14_49_552_KST"
-//            )
-//            @JsonProperty("createDate")
-//            val createDate: String,
-//            @Schema(
-//                description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
-//                required = true,
-//                example = "2024_05_02_T_15_14_49_552_KST"
-//            )
-//            @JsonProperty("updateDate")
-//            val updateDate: String
-//        )
-//    }
+    // ----
+    @Operation(
+        summary = "DB 정보 검색 테스트",
+        description = "글 본문 내용중 searchKeyword 가 포함된 rows 를 검색하여 반환합니다."
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "정상 동작"
+            )
+        ]
+    )
+    @GetMapping(
+        path = ["/search-content"],
+        consumes = [MediaType.ALL_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun selectRowWhereSearchingKeywordSample(
+        @Parameter(hidden = true)
+        httpServletResponse: HttpServletResponse,
+        @Parameter(name = "page", description = "원하는 페이지(1 부터 시작)", example = "1")
+        @RequestParam("page")
+        page: Int,
+        @Parameter(name = "pageElementsCount", description = "페이지 아이템 개수", example = "10")
+        @RequestParam("pageElementsCount")
+        pageElementsCount: Int,
+        @Parameter(name = "searchKeyword", description = "검색어", example = "테스트")
+        @RequestParam("searchKeyword")
+        searchKeyword: String
+    ): SelectRowWhereSearchingKeywordSampleOutputVo? {
+        return service.selectRowWhereSearchingKeywordSample(
+            httpServletResponse,
+            page,
+            pageElementsCount,
+            searchKeyword
+        )
+    }
+
+    data class SelectRowWhereSearchingKeywordSampleOutputVo(
+        @Schema(description = "아이템 전체 개수", required = true, example = "100")
+        @JsonProperty("totalElements")
+        val totalElements: Long,
+        @Schema(description = "아이템 리스트", required = true)
+        @JsonProperty("testEntityVoList")
+        val testEntityVoList: List<TestEntityVo>
+    ) {
+        @Schema(description = "아이템")
+        data class TestEntityVo(
+            @Schema(description = "글 고유번호", required = true, example = "1")
+            @JsonProperty("uid")
+            val uid: String,
+            @Schema(description = "글 본문", required = true, example = "테스트 텍스트입니다.")
+            @JsonProperty("content")
+            val content: String,
+            @Schema(description = "자동 생성 숫자", required = true, example = "21345")
+            @JsonProperty("randomNum")
+            val randomNum: Int,
+            @Schema(
+                description = "테스트용 일시 데이터(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+                required = true,
+                example = "2024_05_02_T_15_14_49_552_KST"
+            )
+            @JsonProperty("testDatetime")
+            val testDatetime: String,
+            @Schema(description = "테스트용 nullable 데이터", required = false, example = "test")
+            @JsonProperty("nullableValue")
+            val nullableValue: String?,
+            @Schema(
+                description = "글 작성일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+                required = true,
+                example = "2024_05_02_T_15_14_49_552_KST"
+            )
+            @JsonProperty("createDate")
+            val createDate: String,
+            @Schema(
+                description = "글 수정일(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)",
+                required = true,
+                example = "2024_05_02_T_15_14_49_552_KST"
+            )
+            @JsonProperty("updateDate")
+            val updateDate: String
+        )
+    }
 
 
     // ----

@@ -1,12 +1,7 @@
 
-- MongoDB 예시 완료
-
 - Springboot mvc template
     Socket ex 구현 완료
     (로그인 처리, redis 확장 처리, SimpMessage 가 아닌 메시지 큐 적용)
-
-- 채팅 포트폴리오 작성
-    Chatting + auth + channel + MongoDB + Kafka
 
 - springboot webflux 템플릿
     RDBMS, Redis, SpringSecurity, Webclient, Kafka, Mongodb, Quartz, Batch, Scheduler
@@ -24,6 +19,7 @@
     금액 기준 트리거, 개수 기준 트리거(N+1 이벤트), 그 외 트리거
 
 - 포트폴리오 프로젝트 추가
+    채팅 포트폴리오 (Chatting + auth + channel + MongoDB + Kafka)
     shopping (payment, point, sse)
     영상 채팅방 시스템
     배달 서비스
