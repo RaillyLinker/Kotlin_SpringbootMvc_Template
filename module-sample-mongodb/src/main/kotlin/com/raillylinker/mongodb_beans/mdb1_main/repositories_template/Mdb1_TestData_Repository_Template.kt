@@ -95,4 +95,42 @@ class Mdb1_TestData_Repository_Template(
         val rowDeleteDateStr: String,
         val timeDiffMicroSec: Long // 차이값 추가 (초 단위)
     )
+
+
+    ////
+    fun findFromTemplateTestDataByNotDeletedAndUid(testTableUid: String): FindFromTemplateTestDataByNotDeletedAndUidOutputVo? {
+        val criteria = Criteria.where("rowDeleteDateStr").`is`("/") // 삭제되지 않은 데이터 필터링
+            .and("uid").`is`(testTableUid.toString()) // uid 필터링
+
+        val query = Aggregation.newAggregation(
+            Aggregation.match(criteria),
+            Aggregation.project(
+                "content",
+                "randomNum",
+                "testDatetime",
+                "nullableValue",
+                "uid",
+                "rowCreateDate",
+                "rowUpdateDate",
+                "rowDeleteDateStr"
+            )
+        )
+
+        return mongoTemplate.aggregate(
+            query,
+            Mdb1_TestData::class.java,
+            FindFromTemplateTestDataByNotDeletedAndUidOutputVo::class.java
+        ).mappedResults.firstOrNull()
+    }
+
+    data class FindFromTemplateTestDataByNotDeletedAndUidOutputVo(
+        val content: String,
+        val randomNum: Int,
+        val testDatetime: LocalDateTime,
+        val nullableValue: String?,
+        val uid: String,
+        val rowCreateDate: LocalDateTime,
+        val rowUpdateDate: LocalDateTime,
+        val rowDeleteDateStr: String
+    )
 }

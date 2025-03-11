@@ -392,6 +392,37 @@ class MongoDbTestService(
 
 
     // ----
+    // (DB Row 조회 테스트 (네이티브))
+    @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME, readOnly = true) // ReplicaSet 환경이 아니면 에러가 납니다.
+    fun selectRowByNativeQuerySample(
+        httpServletResponse: HttpServletResponse,
+        testTableUid: String
+    ): MongoDbTestController.SelectRowByNativeQuerySampleOutputVo? {
+        val entity = mdb1TestDataRepositoryTemplate.findFromTemplateTestDataByNotDeletedAndUid(testTableUid)
+
+        if (entity == null) {
+            httpServletResponse.status = HttpStatus.OK.value()
+            httpServletResponse.setHeader("api-result-code", "1")
+            return null
+        }
+
+        httpServletResponse.status = HttpStatus.OK.value()
+        return MongoDbTestController.SelectRowByNativeQuerySampleOutputVo(
+            entity.uid,
+            entity.content,
+            entity.randomNum,
+            entity.testDatetime.atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+            entity.nullableValue,
+            entity.rowCreateDate.atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+            entity.rowUpdateDate.atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+        )
+    }
+
+
+    // ----
     // (유니크 테스트 테이블 Row 입력 API)
     @Transactional(transactionManager = Mdb1MainConfig.TRANSACTION_NAME) // ReplicaSet 환경이 아니면 에러가 납니다.
     fun insertUniqueTestTableRowSample(
