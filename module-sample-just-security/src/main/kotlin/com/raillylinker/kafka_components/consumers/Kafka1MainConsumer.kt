@@ -26,7 +26,7 @@ class Kafka1MainConsumer {
     // 이와 연관된 데이터 삭제 및 기타 처리
     @Transactional(transactionManager = Db1MainConfig.TRANSACTION_NAME)
     @KafkaListener(
-        topics = ["from_auth_db_delete_from_railly_linker_company_total_auth_member"],
+        topics = ["auth_member-deleted"],
         groupId = CONSUMER_GROUP_ID,
         containerFactory = Kafka1MainConfig.CONSUMER_BEAN_NAME
     )

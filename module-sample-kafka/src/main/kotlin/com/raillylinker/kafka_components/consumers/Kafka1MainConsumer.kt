@@ -8,6 +8,8 @@ import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
 import org.apache.kafka.clients.consumer.ConsumerRecord
 
+// kafka 토픽은 Producer 에서 결정합니다.
+// _ 로 구분하며, {모듈 고유값}_{Topic 고유값} 의 형태로 정합니다.
 @Component
 class Kafka1MainConsumer {
     // <멤버 변수 공간>
@@ -22,7 +24,7 @@ class Kafka1MainConsumer {
     // <공개 메소드 공간>
     // (testTopic1 에 대한 리스너)
     @KafkaListener(
-        topics = ["testTopic1"],
+        topics = ["sample-kafka_test-topic1"],
         groupId = CONSUMER_GROUP_ID,
         containerFactory = Kafka1MainConfig.CONSUMER_BEAN_NAME
     )
@@ -52,7 +54,7 @@ class Kafka1MainConsumer {
     // ----
     // (testTopic2 에 대한 리스너)
     @KafkaListener(
-        topics = ["testTopic2"],
+        topics = ["sample-kafka_test-topic2"],
         groupId = CONSUMER_GROUP_ID,
         containerFactory = Kafka1MainConfig.CONSUMER_BEAN_NAME
     )
@@ -74,7 +76,7 @@ class Kafka1MainConsumer {
     // (testTopic2 에 대한 동일 그룹 테스트 리스너)
     // 동일 topic 에 동일 group 을 설정할 경우, 리스너는 한개만을 선택하고 다른 하나는 침묵합니다.
     @KafkaListener(
-        topics = ["testTopic2"],
+        topics = ["sample-kafka_test-topic2"],
         groupId = CONSUMER_GROUP_ID,
         containerFactory = Kafka1MainConfig.CONSUMER_BEAN_NAME
     )
@@ -95,7 +97,7 @@ class Kafka1MainConsumer {
     // ----
     // (testTopic2 에 대한 리스너 - 그룹 변경)
     @KafkaListener(
-        topics = ["testTopic2"],
+        topics = ["sample-kafka_test-topic2"],
         groupId = CONSUMER_GROUP_ID + "_2",
         containerFactory = Kafka1MainConfig.CONSUMER_BEAN_NAME
     )

@@ -4,6 +4,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
+// kafka 토픽은 _ 로 구분하며, {모듈 고유값}_{Topic 고유값} 의 형태로 정합니다.
 @Component
 class Kafka1MainConsumer {
     // <멤버 변수 공간>
