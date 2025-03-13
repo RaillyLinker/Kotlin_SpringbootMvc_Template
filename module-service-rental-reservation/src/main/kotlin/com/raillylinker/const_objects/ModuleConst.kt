@@ -1,8 +1,5 @@
 package com.raillylinker.const_objects
 
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 // [모듈 전역 상수 모음]
@@ -15,8 +12,5 @@ object ModuleConst {
     const val PACKAGE_NAME = "com.raillylinker"
 
     // 서버 고유값
-    val SERVER_UUID: String = "${
-        LocalDateTime.now().atZone(ZoneId.systemDefault())
-            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-    }/${UUID.randomUUID()}"
+    val SERVER_UUID: String = "${System.currentTimeMillis()}/${UUID.randomUUID()}"
 }
