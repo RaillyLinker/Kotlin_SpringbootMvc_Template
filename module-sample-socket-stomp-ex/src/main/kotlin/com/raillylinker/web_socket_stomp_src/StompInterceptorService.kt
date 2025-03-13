@@ -28,6 +28,9 @@ class StompInterceptorService(
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
 
+    // Stomp 소켓 세션 정보(key : sessionId, value : principalUserName)
+    private val sessionInfoMap: HashMap<String, String> = hashMapOf()
+
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
@@ -45,6 +48,7 @@ class StompInterceptorService(
         // Authorization 헤더
         val authorization: String? = accessor.getFirstNativeHeader("Authorization")
 
+        // 연결 자체에 인증/인가 제약을 걸기 위해선 아래와 주석과 같이 처리하세요.
 //        if (authorization.isNullOrBlank() ||
 //            authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null
 //        ) {
@@ -64,16 +68,16 @@ class StompInterceptorService(
 //            )
 //        }
 
-        // 소켓 세션에 유저 정보 등록
-        accessor.user = StompPrincipalVo(
-            "${ModuleConst.SERVER_UUID}/$sessionId" +
-                    "/${
-                        LocalDateTime.now().atZone(ZoneId.systemDefault())
-                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-                    }"
-        )
+        // 소켓 세션에 개별 연결 정보 등록 (/session/queue 로 개별 메시지 발송시 이곳에서 등록한 principalUserName 을 사용합니다.)
+        val principalUserName = "${ModuleConst.SERVER_UUID}/$sessionId" +
+                "/${
+                    LocalDateTime.now().atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                }"
 
-        userName = accessor.user!!.name
+        accessor.user = StompPrincipalVo(principalUserName)
+        sessionInfoMap[sessionId] = principalUserName
+        println("count up : ${sessionInfoMap.size}")
 
         return message
     }
@@ -142,9 +146,9 @@ class StompInterceptorService(
 
             kafka1MainProducer.sendMessageToStomp(
                 Kafka1MainProducer.SendMessageToStompInputVo(
-                    userName,
+                    sessionInfoMap[sessionId],
                     "/queue/test-channel",
-                    Gson().toJson(StompSubVos.QueueTestChannelVo("Subscription denied: Unauthorized user. ${accessor.user?.name}"))
+                    Gson().toJson(StompSubVos.QueueTestChannelVo("send message denied: ${accessor.user?.name}"))
                 )
             )
 
@@ -153,8 +157,6 @@ class StompInterceptorService(
 
         return message
     }
-
-    var userName = ""
 
 
     ////
@@ -190,6 +192,10 @@ class StompInterceptorService(
         val sessionId = accessor.sessionId
         // Authorization 헤더
         val authorization: String? = accessor.getFirstNativeHeader("Authorization")
+
+        // 등록 세션 정보 삭제
+        sessionInfoMap.remove(sessionId)
+        println("count down : ${sessionInfoMap.size}")
 
         return message
     }

@@ -36,14 +36,14 @@ class Kafka1MainConsumer(
             StompSendMessageInputVo::class.java
         )
 
-        if (inputVo.userName == null) {
+        if (inputVo.principalName == null) {
             simpMessagingTemplate.convertAndSend(
                 inputVo.destination,
                 inputVo.messageJsonString
             )
         } else {
             simpMessagingTemplate.convertAndSendToUser(
-                inputVo.userName,
+                inputVo.principalName,
                 inputVo.destination,
                 inputVo.messageJsonString
             )
@@ -51,8 +51,8 @@ class Kafka1MainConsumer(
     }
 
     data class StompSendMessageInputVo(
-        // userName : null 이라면 topic 전송, not null 이라면 queue 전송
-        val userName: String?,
+        // principalName : null 이라면 topic 전송, not null 이라면 queue 전송
+        val principalName: String?,
         // 전송 주소(ex : /topic/server-heartbeat, /session/queue/test-channel)
         val destination: String,
         // 전송 메시지 Object 직렬화 String
