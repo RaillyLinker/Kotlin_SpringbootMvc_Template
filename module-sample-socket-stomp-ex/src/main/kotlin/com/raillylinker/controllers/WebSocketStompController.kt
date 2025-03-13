@@ -21,9 +21,4 @@ class WebSocketStompController(
         @JsonProperty("chat")
         val chat: String
     )
-
-    data class SendToTopicTestOutputVo(
-        @JsonProperty("content")
-        val content: String
-    )
 }

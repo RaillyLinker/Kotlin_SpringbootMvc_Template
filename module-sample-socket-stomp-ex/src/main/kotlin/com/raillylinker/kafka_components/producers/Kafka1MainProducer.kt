@@ -17,14 +17,18 @@ class Kafka1MainProducer(
 
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
-    // (stomp 에 메시지 발송)
+    // (stomp 메시지 발송)
     fun sendMessageToStomp(message: SendMessageToStompInputVo) {
         // stomp 에 토픽 메세지 발행
-        kafka1MainProducerTemplate.send("stomp", Gson().toJson(message))
+        kafka1MainProducerTemplate.send("stomp_send-message", Gson().toJson(message))
     }
 
     data class SendMessageToStompInputVo(
-        val stompVoTypeCode: Int,
-        val stompVoJsonString: String
+        // userName : null 이라면 topic 전송, not null 이라면 queue 전송
+        val userName: String?,
+        // 전송 주소(ex : /topic/server-heartbeat, /session/queue/test-channel)
+        val destination: String,
+        // 전송 메시지 Object 직렬화 String
+        val messageJsonString: String
     )
 }

@@ -1,16 +1,17 @@
 package com.raillylinker.web_socket_stomp_src
 
+import com.google.gson.Gson
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth
+import com.raillylinker.const_objects.ModuleConst
 import com.raillylinker.controllers.WebSocketStompController
+import com.raillylinker.kafka_components.producers.Kafka1MainProducer
 import com.raillylinker.util_components.JwtTokenUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Lazy
 import org.springframework.messaging.MessageChannel
 import org.springframework.stereotype.Service
 import org.springframework.messaging.Message
-import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import java.security.Principal
 import java.time.LocalDateTime
@@ -23,7 +24,7 @@ class StompInterceptorService(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
     private val authTokenFilterTotalAuth: AuthTokenFilterTotalAuth,
-    @Lazy private val simpMessagingTemplate: SimpMessagingTemplate,
+    private val kafka1MainProducer: Kafka1MainProducer,
     private val jwtTokenUtil: JwtTokenUtil
 ) {
     // <멤버 변수 공간>
@@ -67,10 +68,11 @@ class StompInterceptorService(
 
         // 소켓 세션에 유저 정보 등록
         accessor.user = StompPrincipalVo(
-            sessionId + "/${
-                LocalDateTime.now().atZone(ZoneId.systemDefault())
-                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
-            }/${UUID.randomUUID()}"
+            "${ModuleConst.SERVER_UUID}/$sessionId" +
+                    "/${
+                        LocalDateTime.now().atZone(ZoneId.systemDefault())
+                            .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
+                    }"
         )
 
         userName = accessor.user!!.name
@@ -139,11 +141,15 @@ class StompInterceptorService(
             if (sessionId == null) {
                 return null
             }
-            simpMessagingTemplate.convertAndSendToUser(
-                userName,
-                "/queue/test-channel",
-                WebSocketStompController.SendToTopicTestOutputVo("Subscription denied: Unauthorized user. ${accessor.user?.name}")
+
+            kafka1MainProducer.sendMessageToStomp(
+                Kafka1MainProducer.SendMessageToStompInputVo(
+                    userName,
+                    "/queue/test-channel",
+                    Gson().toJson(StompPubVos.QueueTestChannelVo("Subscription denied: Unauthorized user. ${accessor.user?.name}"))
+                )
             )
+
             return null
         }
 
@@ -193,7 +199,8 @@ class StompInterceptorService(
 
     // (Stomp Principal VO)
     class StompPrincipalVo(
-        // ${sessionId}/${yyyy_MM_dd_'T'_HH_mm_ss_SSS_z}/${Random UUID}
+        // ${ServerUid}/${sessionId}/${yyyy_MM_dd_'T'_HH_mm_ss_SSS_z}
+        // 서버 고유값과 세션 ID 로 메시지 전송 고유성을 확보할 수 있으며, 세션 생성 날짜로 전체 고유성을 확보하였습니다.
         private var name: String
     ) : Principal {
         override fun getName(): String = name

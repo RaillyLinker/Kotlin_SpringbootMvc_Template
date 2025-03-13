@@ -1,10 +1,11 @@
 package com.raillylinker.sys_components
 
+import com.google.gson.Gson
 import com.raillylinker.const_objects.ModuleConst
-import com.raillylinker.web_socket_stomp_src.StompVos
+import com.raillylinker.kafka_components.producers.Kafka1MainProducer
+import com.raillylinker.web_socket_stomp_src.StompPubVos
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Component
 @Component
 @EnableAsync
 class ApplicationScheduler(
-    private val simpMessagingTemplate: SimpMessagingTemplate
+    private val kafka1MainProducer: Kafka1MainProducer
 ) {
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -33,11 +34,13 @@ class ApplicationScheduler(
     @Scheduled(fixedDelay = STOMP_HEARTBEAT_MILLIS)
     // @Scheduled(fixedDelayString = "${fixedDelay.in.milliseconds}") // 문자열 milliseconds 사용 시
     fun stompHeartBeatTask() {
-        // Socket Stomp 서버 HeartBeat
-        // todo : kafka 로 전체 서버에 메시지 전달
-        simpMessagingTemplate.convertAndSend(
-            "/topic/server-heartbeat",
-            StompVos.StompServerHeartbeatVo(ModuleConst.SERVER_UUID!!, STOMP_HEARTBEAT_MILLIS)
+        // kafka 로 전체 서버에 HeartBeat 메시지 전달
+        kafka1MainProducer.sendMessageToStomp(
+            Kafka1MainProducer.SendMessageToStompInputVo(
+                null,
+                "/topic/server-heartbeat",
+                Gson().toJson(StompPubVos.TopicServerHeartbeatVo(ModuleConst.SERVER_UUID, STOMP_HEARTBEAT_MILLIS))
+            )
         )
     }
 
