@@ -1,8 +1,8 @@
 package com.raillylinker.web_socket_stomp_src
 
-// (Socket STOMP 발행 Value Object)
+// (Socket STOMP 구독 Value Object)
 // STOMP 채널별 구독시 발행받는 메시지에 대한 Value Object
-class StompPubVos {
+class StompSubVos {
     // (/topic/server-heartbeat)
     // Stomp 서버 동작 여부 확인용 하트비트 VO
     data class TopicServerHeartbeatVo(

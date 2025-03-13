@@ -3,7 +3,7 @@ package com.raillylinker.services
 import com.google.gson.Gson
 import com.raillylinker.controllers.WebSocketStompController
 import com.raillylinker.kafka_components.producers.Kafka1MainProducer
-import com.raillylinker.web_socket_stomp_src.StompPubVos
+import com.raillylinker.web_socket_stomp_src.StompSubVos
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -29,7 +29,7 @@ class WebSocketStompService(
             Kafka1MainProducer.SendMessageToStompInputVo(
                 null,
                 "/topic/test-channel",
-                Gson().toJson(StompPubVos.TopicTestChannelVo("from simpMessagingTemplate {inputVo.chat : ${inputVo.chat}}"))
+                Gson().toJson(StompSubVos.TopicTestChannelVo("from simpMessagingTemplate {inputVo.chat : ${inputVo.chat}}"))
             )
         )
     }

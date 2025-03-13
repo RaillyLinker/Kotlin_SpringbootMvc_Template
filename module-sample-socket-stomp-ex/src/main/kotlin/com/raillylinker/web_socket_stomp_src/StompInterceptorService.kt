@@ -3,7 +3,6 @@ package com.raillylinker.web_socket_stomp_src
 import com.google.gson.Gson
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth
 import com.raillylinker.const_objects.ModuleConst
-import com.raillylinker.controllers.WebSocketStompController
 import com.raillylinker.kafka_components.producers.Kafka1MainProducer
 import com.raillylinker.util_components.JwtTokenUtil
 import org.slf4j.Logger
@@ -17,7 +16,6 @@ import java.security.Principal
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.UUID
 
 @Service
 class StompInterceptorService(
@@ -146,7 +144,7 @@ class StompInterceptorService(
                 Kafka1MainProducer.SendMessageToStompInputVo(
                     userName,
                     "/queue/test-channel",
-                    Gson().toJson(StompPubVos.QueueTestChannelVo("Subscription denied: Unauthorized user. ${accessor.user?.name}"))
+                    Gson().toJson(StompSubVos.QueueTestChannelVo("Subscription denied: Unauthorized user. ${accessor.user?.name}"))
                 )
             )
 

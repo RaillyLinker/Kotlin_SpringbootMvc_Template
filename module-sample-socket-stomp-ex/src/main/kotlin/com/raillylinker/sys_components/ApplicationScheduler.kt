@@ -3,7 +3,7 @@ package com.raillylinker.sys_components
 import com.google.gson.Gson
 import com.raillylinker.const_objects.ModuleConst
 import com.raillylinker.kafka_components.producers.Kafka1MainProducer
-import com.raillylinker.web_socket_stomp_src.StompPubVos
+import com.raillylinker.web_socket_stomp_src.StompSubVos
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.EnableAsync
@@ -39,7 +39,7 @@ class ApplicationScheduler(
             Kafka1MainProducer.SendMessageToStompInputVo(
                 null,
                 "/topic/server-heartbeat",
-                Gson().toJson(StompPubVos.TopicServerHeartbeatVo(ModuleConst.SERVER_UUID, STOMP_HEARTBEAT_MILLIS))
+                Gson().toJson(StompSubVos.TopicServerHeartbeatVo(ModuleConst.SERVER_UUID, STOMP_HEARTBEAT_MILLIS))
             )
         )
     }
