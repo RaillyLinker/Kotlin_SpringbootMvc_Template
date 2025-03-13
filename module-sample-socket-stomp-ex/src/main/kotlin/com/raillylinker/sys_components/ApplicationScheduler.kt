@@ -1,9 +1,8 @@
 package com.raillylinker.sys_components
 
-import com.google.gson.Gson
 import com.raillylinker.const_objects.ModuleConst
-import com.raillylinker.kafka_components.producers.Kafka1MainProducer
-import com.raillylinker.web_socket_stomp_src.StompSubVos
+import com.raillylinker.redis_map_components.redis1_main.Redis1_Map_StompSessionInfo
+import com.raillylinker.web_socket_stomp_src.StompInterceptorService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.EnableAsync
@@ -19,7 +18,8 @@ import org.springframework.stereotype.Component
 @Component
 @EnableAsync
 class ApplicationScheduler(
-    private val kafka1MainProducer: Kafka1MainProducer
+    private val stompInterceptorService: StompInterceptorService,
+    private val redis1MapStompSessionInfo: Redis1_Map_StompSessionInfo
 ) {
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -28,20 +28,23 @@ class ApplicationScheduler(
         const val STOMP_HEARTBEAT_MILLIS = 1000L
     }
 
-    // [사용 예시]
-    // (fixedDelay)
-    // 해당 메서드가 끝나는 시간 기준으로 milliseconds 후의 간격으로 실행
+    // (Stomp 서버 하트비트)
+    // 일정 간격으로 STOMP 서버가 살아있다는 신호를 발생시킵니다.
     @Scheduled(fixedDelay = STOMP_HEARTBEAT_MILLIS)
-    // @Scheduled(fixedDelayString = "${fixedDelay.in.milliseconds}") // 문자열 milliseconds 사용 시
     fun stompHeartBeatTask() {
-        // kafka 로 전체 서버에 HeartBeat 메시지 전달
-        kafka1MainProducer.sendMessageToStomp(
-            Kafka1MainProducer.SendMessageToStompInputVo(
-                null,
-                "/topic/server-heartbeat",
-                Gson().toJson(StompSubVos.TopicServerHeartbeatVo(ModuleConst.SERVER_UUID, STOMP_HEARTBEAT_MILLIS))
+        // redis 에 현재 서버내 세션 정보 저장
+        // 서버 분산 환경에서 각 서버 내의 세션 정보를 Redis 안에 저장하여 공유합니다.
+        // 하트비트 간격마다 갱신되지 못한 유저는 접속이 끊겼다고 간주합니다.
+        for (sessionInfo in stompInterceptorService.sessionInfoMap) {
+            redis1MapStompSessionInfo.saveKeyValue(
+                sessionInfo.value,
+                Redis1_Map_StompSessionInfo.ValueVo(
+                    ModuleConst.SERVER_UUID
+                ),
+                // Stomp 서버 하트비트 스케쥴마다 Redis 에 정보를 갱신할 것이므로, 하트비트 타임 + 추가 여분 시간 설정
+                STOMP_HEARTBEAT_MILLIS + 100L
             )
-        )
+        }
     }
 
     // (initialDelay + fixedDelay)

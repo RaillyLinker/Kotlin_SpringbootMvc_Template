@@ -31,10 +31,6 @@
                 setConnectionStatus(true);
                 console.log('Connected: ' + frame);
 
-                stompClient.subscribe('/topic/server-heartbeat', function (frame) {
-                    console.log('serverUuid: ' + JSON.parse(frame.body).serverUuid + ', heartbeatIntervalMs: ' + JSON.parse(frame.body).heartbeatIntervalMs);
-                }, {Authorization : "Bearer aa"});
-
                 stompClient.subscribe('/topic/test-channel', function (greeting) {
                     showMessage(JSON.parse(greeting.body).content);
                 }, {Authorization : "Bearer aa"});
