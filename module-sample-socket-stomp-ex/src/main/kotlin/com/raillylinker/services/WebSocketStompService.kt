@@ -22,7 +22,7 @@ class WebSocketStompService(
     // ---------------------------------------------------------------------------------------------
     // <공개 메소드 공간>
     // (/test 로 받아서 /topic 토픽을 구독중인 모든 클라이언트에 메시지 전달)
-    fun sendToTopicTest(inputVo: WebSocketStompController.SendToTopicTestInputVo) {
+    fun appTopicTestChannel(inputVo: WebSocketStompController.AppTopicTestChannelInputVo) {
         // 이렇게 SimpMessagingTemplate 객체로 메세지를 전달할 수 있습니다.
         // /topic 을 구독하는 모든 유저에게 메시지를 전달하였습니다.
         kafka1MainProducer.sendMessageToStomp(

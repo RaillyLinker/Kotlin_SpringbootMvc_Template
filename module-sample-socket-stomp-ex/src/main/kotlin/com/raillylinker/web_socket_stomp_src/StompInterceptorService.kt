@@ -1,9 +1,7 @@
 package com.raillylinker.web_socket_stomp_src
 
-import com.google.gson.Gson
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth
 import com.raillylinker.const_objects.ModuleConst
-import com.raillylinker.kafka_components.producers.Kafka1MainProducer
 import com.raillylinker.redis_map_components.redis1_main.Redis1_Map_StompSessionInfo
 import com.raillylinker.sys_components.ApplicationScheduler.Companion.STOMP_HEARTBEAT_MILLIS
 import com.raillylinker.util_components.JwtTokenUtil
@@ -23,9 +21,9 @@ import java.time.format.DateTimeFormatter
 class StompInterceptorService(
     // (프로젝트 실행시 사용 설정한 프로필명 (ex : dev8080, prod80, local8080, 설정 안하면 default 반환))
     @Value("\${spring.profiles.active:default}") private var activeProfile: String,
-    private val authTokenFilterTotalAuth: AuthTokenFilterTotalAuth,
-    private val kafka1MainProducer: Kafka1MainProducer,
     private val jwtTokenUtil: JwtTokenUtil,
+    private val stompGateway: StompGateway,
+    private val authTokenFilterTotalAuth: AuthTokenFilterTotalAuth,
 
     private val redis1MapStompSessionInfo: Redis1_Map_StompSessionInfo
 ) {
@@ -33,7 +31,7 @@ class StompInterceptorService(
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
 
     // Stomp 소켓 세션 정보(key : sessionId, value : principalUserName)
-     val sessionInfoMap: HashMap<String, String> = hashMapOf()
+    val sessionInfoMap: HashMap<String, String> = hashMapOf()
 
 
     // ---------------------------------------------------------------------------------------------
@@ -49,10 +47,12 @@ class StompInterceptorService(
 
         // 소켓 세션 아이디 (CONNECT 에 발행된 후 DISCONNECT 전까지 변화 없음)
         val sessionId = accessor.sessionId!!
-        // Authorization 헤더
-        val authorization: String? = accessor.getFirstNativeHeader("Authorization")
 
-        // 연결 자체에 인증/인가 제약을 걸기 위해선 아래와 주석과 같이 처리하세요.
+        // 연결 자체에 인증/인가 제약을 걸기 위해선 아래 주석을 풀고 처리하세요.
+
+//        // Authorization 헤더
+//        val authorization: String? = accessor.getFirstNativeHeader("Authorization")
+//
 //        if (authorization.isNullOrBlank() ||
 //            authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null
 //        ) {
@@ -104,25 +104,8 @@ class StompInterceptorService(
         channel: MessageChannel,
         accessor: StompHeaderAccessor
     ): Message<*>? {
-        // 반환값 null 반환시 메시지 전달이 되지 않고 SUBSCRIBE 되지 않습니다.
-        // Exception 발생시엔 DISCONNECT 가 됩니다.
-
-        // 소켓 세션 아이디 (CONNECT 에 발행된 후 DISCONNECT 전까지 변화 없음)
-        val sessionId = accessor.sessionId!!
-        // 구독 경로 (ex : /topic)
-        val destination = accessor.destination ?: return null
-        // Authorization 헤더
-        val authorization: String? = accessor.getFirstNativeHeader("Authorization")
-
-        // 경로에 따른 구독 허용 여부 판단
-        if (destination.startsWith("/")) {
-            return message
-        }
-
-        // todo 개별 메시지 전송 queue 테스트, 주소 체계 결정, 구독 허용 처리
-
-        // 위에서 허용한 경로 외의 모든 구독 요청을 거절
-        return null
+        // 반환값 null 반환시 SUBSCRIBE 되지 않고, Exception 발생시엔 DISCONNECT 가 됩니다.
+        return stompGateway.filterSubscribe(message, channel, accessor)
     }
 
 
@@ -135,32 +118,7 @@ class StompInterceptorService(
         accessor: StompHeaderAccessor
     ): Message<out Any>? {
         // 반환값 null 반환시 메시지 전달이 되지 않고, Exception 발생시엔 DISCONNECT 가 됩니다.
-
-        // 소켓 세션 아이디 (CONNECT 에 발행된 후 DISCONNECT 전까지 변화 없음)
-        val sessionId = accessor.sessionId!!
-        // 메시지 발행 경로 (ex : /app/send-to-topic-test)
-        val destination = accessor.destination
-        // Authorization 헤더
-        val authorization: String? = accessor.getFirstNativeHeader("Authorization")
-
-        if (authorization.isNullOrBlank() || authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null) {
-            // Authorization 인증 실패
-            if (sessionId == null) {
-                return null
-            }
-
-            kafka1MainProducer.sendMessageToStomp(
-                Kafka1MainProducer.SendMessageToStompInputVo(
-                    sessionInfoMap[sessionId],
-                    "/queue/test-channel",
-                    Gson().toJson(StompSubVos.QueueTestChannelVo("send message denied: ${accessor.user?.name}"))
-                )
-            )
-
-            return null
-        }
-
-        return message
+        return stompGateway.filterSend(message, channel, accessor)
     }
 
 
@@ -175,9 +133,11 @@ class StompInterceptorService(
         // 반환값 null 반환시 메시지 전달이 되지 않고, Exception 발생시엔 DISCONNECT 가 됩니다.
 
         // 소켓 세션 아이디 (CONNECT 에 발행된 후 DISCONNECT 전까지 변화 없음)
-        val sessionId = accessor.sessionId!!
+//        val sessionId = accessor.sessionId!!
         // Authorization 헤더
-        val authorization: String? = accessor.getFirstNativeHeader("Authorization")
+//        val authorization: String? = accessor.getFirstNativeHeader("Authorization")
+        // 요청 코드 헤더
+//        val clientRequestCode: String? = accessor.getFirstNativeHeader("client-request-code")
 
         return message
     }
@@ -195,19 +155,21 @@ class StompInterceptorService(
 
         // 소켓 세션 아이디 (CONNECT 에 발행된 후 DISCONNECT 전까지 변화 없음)
         val sessionId = accessor.sessionId!!
-        // Authorization 헤더
-        val authorization: String? = accessor.getFirstNativeHeader("Authorization")
+        val sessionPrincipalName = sessionInfoMap[sessionId]
 
-        // 등록 세션 정보 삭제
-        sessionInfoMap.remove(sessionId)
+        if (sessionPrincipalName != null) {
+            // redis 에서 세션 정보 삭제
+            redis1MapStompSessionInfo.deleteKeyValue(sessionPrincipalName)
 
-        // redis 에서 세션 정보 삭제
-        redis1MapStompSessionInfo.deleteKeyValue(sessionId)
+            // 등록 세션 정보 삭제
+            sessionInfoMap.remove(sessionId)
+        }
 
         return message
     }
 
 
+    //// ---------------------------------------------------------------------------------------------------------------
     // (Stomp Principal VO)
     class StompPrincipalVo(
         // ${ServerUid}/${sessionId}/${yyyy_MM_dd_'T'_HH_mm_ss_SSS_z}

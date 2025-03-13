@@ -1,11 +1,9 @@
 
-- Socket ex 구현 완료
-    (로그인 처리, redis 확장 처리, SimpMessage 가 아닌 메시지 큐 적용)
+- Socket Stomp Chatting 모듈 구현 및 포트폴리오 준비(Socket stomp ex 도 개선할게 있다면 하기)
+    (Chatting + auth + channel + MongoDB + Kafka)
 
-- springboot webflux 템플릿
-    RDBMS, Redis, SpringSecurity, Webclient, Kafka, Mongodb, Quartz, Batch, Scheduler
-
-- 템플릿의 sse wrapper 다시 보기(구독 후 아무것도 없이 타임아웃 이후 신호를 보내면 에러)
+- 템플릿의 sse wrapper 다시 보고 SSE 모듈 추가
+    (구독 후 아무것도 없이 타임아웃 이후 신호를 보내면 에러)
     확장성 고려
 
 - 결제 예시 모듈 추가
@@ -17,8 +15,10 @@
     최대 할인 금액 설정, 최하 적용 금액 설정
     금액 기준 트리거, 개수 기준 트리거(N+1 이벤트), 그 외 트리거
 
+- springboot webflux 템플릿
+    RDBMS, Redis, SpringSecurity, Webclient, Kafka, Mongodb, Quartz, Batch, Scheduler
+
 - 포트폴리오 프로젝트 추가
-    채팅 포트폴리오 (Chatting + auth + channel + MongoDB + Kafka)
     shopping (payment, point, sse)
     영상 채팅방 시스템
     배달 서비스

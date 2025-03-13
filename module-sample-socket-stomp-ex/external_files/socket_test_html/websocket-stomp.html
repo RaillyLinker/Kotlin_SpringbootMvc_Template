@@ -31,13 +31,14 @@
                 setConnectionStatus(true);
                 console.log('Connected: ' + frame);
 
+                stompClient.subscribe('/session/queue/request-error', function (greeting) {
+                    showMessage(JSON.parse(greeting.body).clientRequestCode);
+                    showMessage(JSON.parse(greeting.body).errorCode);
+                }, {Authorization : "Bearer aa", "client-request-code" : "SUBSCRIBE"});
+
                 stompClient.subscribe('/topic/test-channel', function (greeting) {
                     showMessage(JSON.parse(greeting.body).content);
-                }, {Authorization : "Bearer aa"});
-
-                stompClient.subscribe('/session/queue/test-channel', function (greeting) {
-                    showMessage(JSON.parse(greeting.body).content);
-                }, {Authorization : "Bearer aa"});
+                }, {Authorization : "Bearer aa", "client-request-code" : "SUBSCRIBE"});
             });
         }
 
@@ -50,7 +51,7 @@
         }
 
         function sendMessage() {
-            stompClient.send("/app/send-to-topic-test", {}, JSON.stringify({ 'chat': $("#message").val() }));
+            stompClient.send("/app/topic/test-channel", {Authorization : "Bearer aa", "client-request-code" : "SEND"}, JSON.stringify({ 'chat': $("#message").val() }));
         }
 
         function showMessage(message) {
