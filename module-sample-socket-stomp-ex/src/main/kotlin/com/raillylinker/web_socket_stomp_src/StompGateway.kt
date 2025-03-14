@@ -2,6 +2,7 @@ package com.raillylinker.web_socket_stomp_src
 
 import com.google.gson.Gson
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth
+import com.raillylinker.const_objects.ModuleConst
 import com.raillylinker.kafka_components.producers.Kafka1MainProducer
 import org.springframework.context.annotation.Lazy
 import org.springframework.messaging.Message
@@ -71,13 +72,19 @@ class StompGateway(
             if (authorization.isNullOrBlank() || authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null) {
                 // Authorization 인증 실패
 
-                kafka1MainProducer.sendMessageToStomp(
-                    Kafka1MainProducer.SendMessageToStompInputVo(
-                        stompInterceptorService.sessionInfoMap[sessionId],
-                        "/queue/request-error",
-                        Gson().toJson(StompSubVos.SessionQueueRequestErrorVo(clientRequestCode, 1, "Need Login"))
+                // 개별 에러 메시지 발송
+                val stompSessionInfoKey = "${ModuleConst.SERVER_UUID}_${sessionId}"
+                val stompSessionInfoValue = stompInterceptorService.sessionInfoMap[stompSessionInfoKey]
+                if (stompSessionInfoValue != null) {
+                    kafka1MainProducer.sendMessageToStomp(
+                        Kafka1MainProducer.SendMessageToStompInputVo(
+                            stompSessionInfoValue.principalUserName,
+                            "/queue/request-error",
+                            Gson().toJson(StompSubVos.SessionQueueRequestErrorVo(clientRequestCode, 1, "Need Login"))
+                        )
                     )
-                )
+                }
+
             } else {
                 // Authorization 인증 성공
                 return message

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 
 // [RedisMap 컴포넌트]
 // StompSession 정보 (Stomp 서버에서 정한 하트비트 인터벌마다 Session 정보를 갱신하며, 만약 갱신이 되지 않는다면 해당 유저의 정보는 사라지고 연결 종료로 취급됩니다.)
-// Key : Session principalUserName
+// Key : ${serverUuid}_${sessionId}
 @Component
 class Redis1_Map_StompSessionInfo(
     // !!!RedisConfig 종류 변경!!!
@@ -22,7 +22,11 @@ class Redis1_Map_StompSessionInfo(
 
     // !!!본 RedisMAP 의 Value 클래스 설정!!!
     data class ValueVo(
+        // 세션 연결 일시(yyyy_MM_dd_'T'_HH_mm_ss_SSS_z)
+        var connectDatetime: String,
         // 서버 고유값
-        var serverUuid: String
+        var serverUuid: String,
+        // 세션 principal UserName
+        var principalUserName: String
     )
 }

@@ -30,8 +30,8 @@ class StompInterceptorService(
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    // Stomp 소켓 세션 정보(key : sessionId, value : principalUserName)
-    val sessionInfoMap: HashMap<String, String> = hashMapOf()
+    // Stomp 소켓 세션 정보(key : ${serverUuid}_${sessionId}, value : Redis1_Map_StompSessionInfo.ValueVo)
+    val sessionInfoMap: HashMap<String, Redis1_Map_StompSessionInfo.ValueVo> = hashMapOf()
 
 
     // ---------------------------------------------------------------------------------------------
@@ -78,18 +78,23 @@ class StompInterceptorService(
                     LocalDateTime.now().atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z"))
                 }"
-
         accessor.user = StompPrincipalVo(principalUserName)
-        sessionInfoMap[sessionId] = principalUserName
 
-        // redis 에 세션 정보 등록
-        redis1MapStompSessionInfo.saveKeyValue(
-            principalUserName,
+        // 세션 정보 State 및 Redis 정보 등록
+        val stompSessionInfoKey = "${ModuleConst.SERVER_UUID}_${sessionId}"
+        val stompSessionInfoValue =
             Redis1_Map_StompSessionInfo.ValueVo(
-                ModuleConst.SERVER_UUID
-            ),
-            // Stomp 서버 하트비트 스케쥴마다 Redis 에 정보를 갱신할 것이므로, 하트비트 타임 + 10% 간격으로 설정
-            STOMP_HEARTBEAT_MILLIS + (STOMP_HEARTBEAT_MILLIS * 0.1).toLong()
+                LocalDateTime.now().atZone(ZoneId.systemDefault())
+                    .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
+                ModuleConst.SERVER_UUID,
+                principalUserName
+            )
+        sessionInfoMap[stompSessionInfoKey] = stompSessionInfoValue
+        redis1MapStompSessionInfo.saveKeyValue(
+            stompSessionInfoKey,
+            stompSessionInfoValue,
+            // Stomp 서버 하트비트 스케쥴마다 Redis 에 정보를 갱신할 것이므로, 하트비트 타임 + 추가 여분 시간 설정
+            STOMP_HEARTBEAT_MILLIS + 100L
         )
 
         return message
@@ -155,15 +160,11 @@ class StompInterceptorService(
 
         // 소켓 세션 아이디 (CONNECT 에 발행된 후 DISCONNECT 전까지 변화 없음)
         val sessionId = accessor.sessionId!!
-        val sessionPrincipalName = sessionInfoMap[sessionId]
 
-        if (sessionPrincipalName != null) {
-            // redis 에서 세션 정보 삭제
-            redis1MapStompSessionInfo.deleteKeyValue(sessionPrincipalName)
-
-            // 등록 세션 정보 삭제
-            sessionInfoMap.remove(sessionId)
-        }
+        // state 및 Redis 등록 세션 정보 삭제
+        val stompSessionInfoKey = "${ModuleConst.SERVER_UUID}_${sessionId}"
+        redis1MapStompSessionInfo.deleteKeyValue(stompSessionInfoKey)
+        sessionInfoMap.remove(stompSessionInfoKey)
 
         return message
     }

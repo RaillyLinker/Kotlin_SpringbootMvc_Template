@@ -37,10 +37,8 @@ class ApplicationScheduler(
         // 하트비트 간격마다 갱신되지 못한 유저는 접속이 끊겼다고 간주합니다.
         for (sessionInfo in stompInterceptorService.sessionInfoMap) {
             redis1MapStompSessionInfo.saveKeyValue(
+                sessionInfo.key,
                 sessionInfo.value,
-                Redis1_Map_StompSessionInfo.ValueVo(
-                    ModuleConst.SERVER_UUID
-                ),
                 // Stomp 서버 하트비트 스케쥴마다 Redis 에 정보를 갱신할 것이므로, 하트비트 타임 + 추가 여분 시간 설정
                 STOMP_HEARTBEAT_MILLIS + 100L
             )
