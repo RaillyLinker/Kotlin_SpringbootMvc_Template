@@ -3,6 +3,7 @@ package com.raillylinker.web_socket_stomp_src
 import com.raillylinker.configurations.SecurityConfig.AuthTokenFilterTotalAuth
 import com.raillylinker.const_objects.ModuleConst
 import com.raillylinker.redis_map_components.redis1_main.Redis1_Map_StompSessionInfo
+import com.raillylinker.redis_map_components.redis1_main_repository.Redis1_Map_StompSession_Repository
 import com.raillylinker.sys_components.ApplicationScheduler.Companion.STOMP_HEARTBEAT_MILLIS
 import com.raillylinker.util_components.JwtTokenUtil
 import org.slf4j.Logger
@@ -25,7 +26,9 @@ class StompInterceptorService(
     private val stompGateway: StompGateway,
     private val authTokenFilterTotalAuth: AuthTokenFilterTotalAuth,
 
-    private val redis1MapStompSessionInfo: Redis1_Map_StompSessionInfo
+    private val redis1MapStompSessionInfo: Redis1_Map_StompSessionInfo,
+
+    private val redis1MapStompSessionRepository: Redis1_Map_StompSession_Repository
 ) {
     // <멤버 변수 공간>
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -48,29 +51,29 @@ class StompInterceptorService(
         // 소켓 세션 아이디 (CONNECT 에 발행된 후 DISCONNECT 전까지 변화 없음)
         val sessionId = accessor.sessionId!!
 
-        // 연결 자체에 인증/인가 제약을 걸기 위해선 아래 주석을 풀고 처리하세요.
+        // Authorization 헤더
+        val authorization: String? = accessor.getFirstNativeHeader("Authorization")
 
-//        // Authorization 헤더
-//        val authorization: String? = accessor.getFirstNativeHeader("Authorization")
-//
-//        if (authorization.isNullOrBlank() ||
-//            authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null
-//        ) {
-//            // 인증 실패
-//        } else {
-//            // 인증 성공
-//            val token = authorization.split(" ")[1].trim()
-//            val memberUid = jwtTokenUtil.getMemberUid(
-//                token,
-//                authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
-//                authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
-//            )
+        var memberUid: Long? = null
+        if (authorization.isNullOrBlank() ||
+            authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null
+        ) {
+            // 인증 실패
+            // 연결 자체에 인증/인가 제약을 걸기 위해선 이곳에서 null 을 반환하세요.
+        } else {
+            // 인증 성공
+            val token = authorization.split(" ")[1].trim()
+            memberUid = jwtTokenUtil.getMemberUid(
+                token,
+                authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+                authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
+            )
 //            val roleList = jwtTokenUtil.getRoleList(
 //                token,
 //                authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
 //                authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
 //            )
-//        }
+        }
 
         // 소켓 세션에 개별 연결 정보 등록 (/session/queue 로 개별 메시지 발송시 이곳에서 등록한 principalUserName 을 사용합니다.)
         val principalUserName = "${ModuleConst.SERVER_UUID}/$sessionId" +
@@ -87,7 +90,8 @@ class StompInterceptorService(
                 LocalDateTime.now().atZone(ZoneId.systemDefault())
                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
                 ModuleConst.SERVER_UUID,
-                principalUserName
+                principalUserName,
+                memberUid
             )
         sessionInfoMap[stompSessionInfoKey] = stompSessionInfoValue
         redis1MapStompSessionInfo.saveKeyValue(
@@ -96,6 +100,11 @@ class StompInterceptorService(
             // Stomp 서버 하트비트 스케쥴마다 Redis 에 정보를 갱신할 것이므로, 하트비트 타임 + 추가 여분 시간 설정
             STOMP_HEARTBEAT_MILLIS + 100L
         )
+
+        val a = redis1MapStompSessionRepository.findAllByMemberUid(null)
+        for(aa in a){
+            println(aa.value.principalUserName)
+        }
 
         return message
     }
