@@ -27,6 +27,9 @@ class Redis1_Map_StompSessionInfo(
         // 서버 고유값
         var serverUuid: String,
         // 세션 principal UserName
-        var principalUserName: String
+        var principalUserName: String,
+
+        // MemberUid (비 로그인시 null)
+        var memberUid: Long?
     )
 }

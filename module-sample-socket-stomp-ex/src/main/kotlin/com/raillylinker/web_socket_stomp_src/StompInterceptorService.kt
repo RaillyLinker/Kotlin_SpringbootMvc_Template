@@ -53,26 +53,26 @@ class StompInterceptorService(
         // Authorization 헤더
         val authorization: String? = accessor.getFirstNativeHeader("Authorization")
 
-//        var memberUid: Long? = null
-//        if (authorization.isNullOrBlank() ||
-//            authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null
-//        ) {
-//            // 인증 실패
-//            // 연결 자체에 인증/인가 제약을 걸기 위해선 이곳에서 null 을 반환하세요.
-//        } else {
-//            // 인증 성공
-//            val token = authorization.split(" ")[1].trim()
-//            memberUid = jwtTokenUtil.getMemberUid(
+        var memberUid: Long? = null
+        if (authorization.isNullOrBlank() ||
+            authTokenFilterTotalAuth.checkRequestAuthorization(authorization) == null
+        ) {
+            // 인증 실패
+            // 연결 자체에 인증/인가 제약을 걸기 위해선 이곳에서 null 을 반환하세요.
+        } else {
+            // 인증 성공
+            val token = authorization.split(" ")[1].trim()
+            memberUid = jwtTokenUtil.getMemberUid(
+                token,
+                authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
+                authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
+            )
+//            val roleList = jwtTokenUtil.getRoleList(
 //                token,
 //                authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
 //                authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
 //            )
-////            val roleList = jwtTokenUtil.getRoleList(
-////                token,
-////                authTokenFilterTotalAuth.authJwtClaimsAes256InitializationVector,
-////                authTokenFilterTotalAuth.authJwtClaimsAes256EncryptionKey
-////            )
-//        }
+        }
 
         // 소켓 세션에 개별 연결 정보 등록 (/session/queue 로 개별 메시지 발송시 이곳에서 등록한 principalUserName 을 사용합니다.)
         val principalUserName = "${ModuleConst.SERVER_UUID}/$sessionId" +
@@ -89,7 +89,8 @@ class StompInterceptorService(
                 LocalDateTime.now().atZone(ZoneId.systemDefault())
                     .format(DateTimeFormatter.ofPattern("yyyy_MM_dd_'T'_HH_mm_ss_SSS_z")),
                 ModuleConst.SERVER_UUID,
-                principalUserName
+                principalUserName,
+                memberUid
             )
         sessionInfoMap[stompSessionInfoKey] = stompSessionInfoValue
         redis1MapStompSessionInfo.saveKeyValue(
