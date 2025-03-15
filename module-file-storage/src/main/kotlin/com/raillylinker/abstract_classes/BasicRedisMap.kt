@@ -2,6 +2,7 @@ package com.raillylinker.abstract_classes
 
 import com.google.gson.Gson
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.core.ScanOptions
 import org.springframework.data.redis.core.script.RedisScript
 import java.util.concurrent.TimeUnit
 
@@ -99,30 +100,34 @@ abstract class BasicRedisMap<ValueVo>(
     fun findAllKeyValues(): List<RedisMapDataVo<ValueVo>> {
         val resultList = ArrayList<RedisMapDataVo<ValueVo>>()
 
-        val keySet: Set<String> = redisTemplateObj.keys("$mapName:*")
+        val scanOptions = ScanOptions.scanOptions().match("$mapName:*").build()
+        val cursor = redisTemplateObj.scan(scanOptions)
 
-        for (innerKey in keySet) {
-            // innerKey : Redis Storage 에 실제로 저장 되는 키 (map 이름과 키를 합친 String)
+        cursor.use {
+            while (it.hasNext()) {
+                // innerKey : Redis Storage 에 실제로 저장 되는 키 (map 이름과 키를 합친 String)
+                val innerKey = it.next()
 
-            // 외부적으로 사용되는 Key (innerKey 에서 map 이름을 제거한 String)
-            val key = innerKey.substring("$mapName:".length) // 키
+                // 외부적으로 사용되는 Key (innerKey 에서 map 이름을 제거한 String)
+                val key = innerKey.substring("$mapName:".length) // 키
 
-            // Redis Storage 에 실제로 저장 되는 Value (Json String 형식)
-            val innerValue = redisTemplateObj.opsForValue()[innerKey] ?: continue // 값
+                // Redis Storage 에 실제로 저장 되는 Value (Json String 형식)
+                val innerValue = redisTemplateObj.opsForValue()[innerKey] ?: continue // 값
 
-            // 외부적으로 사용되는 Value (Json String 을 테이블 객체로 변환)
-            val valueObject = gson.fromJson(
-                innerValue, // 해석하려는 json 형식의 String
-                clazz // 파싱할 데이터 객체 타입
-            )
-
-            resultList.add(
-                RedisMapDataVo(
-                    key,
-                    valueObject,
-                    redisTemplateObj.getExpire(innerKey, TimeUnit.MILLISECONDS) // 남은 만료시간
+                // 외부적으로 사용되는 Value (Json String 을 테이블 객체로 변환)
+                val valueObject = gson.fromJson(
+                    innerValue, // 해석하려는 json 형식의 String
+                    clazz // 파싱할 데이터 객체 타입
                 )
-            )
+
+                resultList.add(
+                    RedisMapDataVo(
+                        key,
+                        valueObject,
+                        redisTemplateObj.getExpire(innerKey, TimeUnit.MILLISECONDS) // 남은 만료시간
+                    )
+                )
+            }
         }
 
         return resultList
@@ -159,9 +164,21 @@ abstract class BasicRedisMap<ValueVo>(
 
     // (RedisMap 의 모든 Key-Value 리스트 삭제)
     fun deleteAllKeyValues() {
-        val keySet: Set<String> = redisTemplateObj.keys("$mapName:*")
+        val scanOptions = ScanOptions.scanOptions().match("$mapName:*").build()
+        val cursor = redisTemplateObj.scan(scanOptions)
 
-        redisTemplateObj.delete(keySet)
+        val keySet = mutableSetOf<String>()
+
+        cursor.use {
+            while (it.hasNext()) {
+                keySet.add(it.next())
+            }
+        }
+
+        // 삭제할 키가 있는 경우에만 삭제 요청
+        if (keySet.isNotEmpty()) {
+            redisTemplateObj.delete(keySet)
+        }
     }
 
     // (RedisMap 의 Key-Value 를 삭제)
