@@ -1,8 +1,8 @@
 
-- Socket Stomp Chatting 모듈 구현 및 포트폴리오 준비(Socket stomp ex 도 개선할게 있다면 하기)
-    (Chatting + auth + channel + MongoDB + Kafka)
+- Scalable STOMP Socket Server 포트폴리오 작성
+    README 에 정성들이기
 
-- Elastic Search
+- ElasticSearch
 
 - redis repository 깔끔하게 나누기(기존 객체 내 메소드를 레포지토리로)
 
@@ -23,6 +23,7 @@
     RDBMS, Redis, SpringSecurity, Webclient, Kafka, Mongodb, Quartz, Batch, Scheduler
 
 - 포트폴리오 프로젝트 추가
+    채팅 서비스
     shopping (payment, point, sse)
     영상 채팅방 시스템
     배달 서비스
