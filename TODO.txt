@@ -2,6 +2,8 @@
 - Socket Stomp Chatting 모듈 구현 및 포트폴리오 준비(Socket stomp ex 도 개선할게 있다면 하기)
     (Chatting + auth + channel + MongoDB + Kafka)
 
+- Elastic Search
+
 - 템플릿의 sse wrapper 다시 보고 SSE 모듈 추가
     (구독 후 아무것도 없이 타임아웃 이후 신호를 보내면 에러)
     확장성 고려
