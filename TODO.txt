@@ -1,7 +1,4 @@
 
-- Scalable STOMP Socket Server 포트폴리오 작성
-    README 에 정성들이기
-
 - ElasticSearch
 
 - redis repository 깔끔하게 나누기(기존 객체 내 메소드를 레포지토리로)
