@@ -1,8 +1,6 @@
 
 - ElasticSearch
 
-- redis repository 깔끔하게 나누기(기존 객체 내 메소드를 레포지토리로)
-
 - 템플릿의 sse wrapper 다시 보고 SSE 모듈 추가
     (구독 후 아무것도 없이 타임아웃 이후 신호를 보내면 에러)
     확장성 고려
