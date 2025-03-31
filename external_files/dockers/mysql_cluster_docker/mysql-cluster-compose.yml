@@ -19,7 +19,7 @@ services:
   
   mysql2:
     container_name: mysql2
-    image: mysql:late
+    image: mysql:latest
     restart: always
     ports:
       - 33062:3306
