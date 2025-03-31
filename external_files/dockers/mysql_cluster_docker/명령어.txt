@@ -15,14 +15,18 @@
 >> dba.configureInstance("clusteradmin@host.docker.internal:33061")
 >> {all y and waiting restart - 자동 재시작이 안되면 수동 재시작}
 
-- 다시 mysql1 exec 명령어창에서 mysql2 클러스터 설정 추가
+- 다시 mysql2 exec 명령어창에서 mysql2 클러스터 설정 추가
 >> mysqlsh -uclusteradmin -p'todo1234!'
 >> \js
->> dba.configureInstance("clusteradmin@host.docker.internal:33062")
+>> dba.checkInstanceConfiguration("clusteradmin@host.docker.internal:33062")
 >> {clusteradmin 비밀번호 입력}
+>> y
+>> dba.configureInstance("clusteradmin@host.docker.internal:33062")
 >> {all y and waiting restart - 자동 재시작이 안되면 수동 재시작}
 
 - mysql1 exec 명령어창 mysql1 을 main 으로 dbcluster 클러스터 생성
+>> mysqlsh -uclusteradmin -p'todo1234!'
+>> \js
 >> var cluster = dba.createCluster("dbcluster")
 >> cluster.status()
 
@@ -40,8 +44,7 @@
 - mysql1 에서 데이터베이스 조작 후 mysql2 에 반영이 되는지 확인하기
 >> CREATE DATABASE developer;
 >> use developer;
->> CREATE TABLE dev(name VARCHAR(20) NOT NULL, SLNO INT NOT NULL,
->> PRIMARY KEY(SLNO));
+>> CREATE TABLE dev(name VARCHAR(20) NOT NULL, SLNO INT NOT NULL, PRIMARY KEY(SLNO));
 >> INSERT INTO dev VALUE("dev1",1);
 
 - 재부팅 후 클러스터 설정 확인
