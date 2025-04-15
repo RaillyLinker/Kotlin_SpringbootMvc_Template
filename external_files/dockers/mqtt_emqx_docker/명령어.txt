@@ -1,0 +1,38 @@
+- 도커 컨테이너 실행 명령어 (커맨드창에서 본 디렉토리 경로로 이동하여 입력하세요.)
+>> docker-compose -f mqtt-emqx-compose.yml up -d
+
+- 포트 설명
+8082:1883 : (MQTT 기본 포트) → 외부에서 MQTT 연결 가능.
+8083:8083 : WebSocket MQTT 포트.
+8084:8084 : WebSocket MQTT 포트.
+8883:8883 : MQTT over SSL.
+18083:18083 : EMQX 대시보드 (웹 UI).
+
+- 18083 포트로 모니터링 웹 서비스로 접근 가능
+http://localhost:18083
+초기 아이디/비번 : admin/public
+
+- 클라이언트 접속 테스트
+테스트 프로그램 : https://mqttx.app/
+
+Host: localhost
+Port: 8082
+Client ID: 자유롭게
+Protocol: MQTT
+Username/Password: 없음 (기본 설정일 경우)
+
+New Subscription 에서 토픽을 구독하고,
+발송시에 해당 토픽에 데이터를 발송합니다.
+
+- Username/Password 적용
+모니터링 서비스에 접속해서
+왼쪽 메뉴 → Access Control > Authentication 클릭
+우측 상단 → Create 클릭
+인증 방식에서 Password Based 선택 -> Next 클릭
+Built-in Database 선택 -> Next 클릭
+기본 선택 -> Next 클릭
+
+Authentication 항목이 생성되면, Users 버튼을 누르고, Add 버튼 클릭.
+생성할 username, password 를 입력
+
+클라이언트에서 기존 연결을 종료하고 username, password 를 입력하고 다시 연결
