@@ -4,7 +4,7 @@
 - 포트 설명
 8082:1883 : (MQTT 기본 포트) → 외부에서 MQTT 연결 가능.
 8083:8083 : WebSocket MQTT 포트.
-8084:8084 : WebSocket MQTT 포트.
+8084:8084 : WebSocket MQTT 포트(SSL).
 8883:8883 : MQTT over SSL.
 18083:18083 : EMQX 대시보드 (웹 UI).
 
