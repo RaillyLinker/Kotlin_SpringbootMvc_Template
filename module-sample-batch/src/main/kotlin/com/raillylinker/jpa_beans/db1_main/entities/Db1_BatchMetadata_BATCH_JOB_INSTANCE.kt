@@ -11,7 +11,7 @@ import org.hibernate.annotations.Comment
 @Comment("BATCH_JOB_INSTANCE")
 class Db1_BatchMetadata_BATCH_JOB_INSTANCE(
     @Id
-    @Column(name = "JOB_INSTANCE_ID", nullable = true, columnDefinition = "BIGINT")
+    @Column(name = "JOB_INSTANCE_ID", nullable = false, columnDefinition = "BIGINT")
     @Comment("JOB_INSTANCE_ID")
     var jobInstanceId: Long,
 
