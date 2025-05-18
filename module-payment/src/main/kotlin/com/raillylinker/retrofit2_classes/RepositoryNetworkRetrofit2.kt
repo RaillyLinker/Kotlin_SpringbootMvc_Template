@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 
 // Retrofit2 함수 네트워크 URL 과 API 객체를 이어주고 제공하는 역할을 하는 객체
@@ -37,21 +36,8 @@ class RepositoryNetworkRetrofit2 private constructor() {
     // <Static 공간>
     // (싱글톤 설정)
     companion object {
-        private val singletonSemaphore = Semaphore(1)
-        private var instance: RepositoryNetworkRetrofit2? = null
-
-        fun getInstance(): RepositoryNetworkRetrofit2 {
-            singletonSemaphore.acquire()
-            try {
-                if (null == instance) {
-                    instance = RepositoryNetworkRetrofit2()
-                }
-            } finally {
-                singletonSemaphore.release()
-            }
-
-            return instance!!
-        }
+        // Retrofit2 인스턴스
+        val instance: RepositoryNetworkRetrofit2 = RepositoryNetworkRetrofit2()
     }
 
 

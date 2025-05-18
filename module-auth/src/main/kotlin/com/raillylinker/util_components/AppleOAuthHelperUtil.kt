@@ -15,7 +15,7 @@ import java.util.*
 @Component
 class AppleOAuthHelperUtil(private val cryptoUtil: CryptoUtil) {
     // Retrofit2 요청 객체
-    private val networkRetrofit2 = RepositoryNetworkRetrofit2.getInstance()
+    private val networkRetrofit2 = RepositoryNetworkRetrofit2.instance
 
     // (애플 Id Token 검증 함수)
     // 검증이 완료되었다면 프로필 정보가 반환되고, 검증되지 않는다면 null 반환

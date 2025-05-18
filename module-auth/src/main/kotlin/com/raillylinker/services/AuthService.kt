@@ -74,7 +74,7 @@ class AuthService(
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
 
     // Retrofit2 요청 객체
-    val networkRetrofit2: RepositoryNetworkRetrofit2 = RepositoryNetworkRetrofit2.getInstance()
+    val networkRetrofit2: RepositoryNetworkRetrofit2 = RepositoryNetworkRetrofit2.instance
 
     // (현 프로젝트 동작 서버의 외부 접속 주소)
     // 프로필 이미지 로컬 저장 및 다운로드 주소 지정을 위해 필요

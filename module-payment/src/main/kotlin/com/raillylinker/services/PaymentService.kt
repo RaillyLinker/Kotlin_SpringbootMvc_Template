@@ -63,7 +63,7 @@ class PaymentService(
         }
 
     // Retrofit2 요청 객체
-    val networkRetrofit2: RepositoryNetworkRetrofit2 = RepositoryNetworkRetrofit2.getInstance()
+    val networkRetrofit2: RepositoryNetworkRetrofit2 = RepositoryNetworkRetrofit2.instance
 
     // tossPayments Authorization
     // !!!Toss Payments API 키 수정!!!

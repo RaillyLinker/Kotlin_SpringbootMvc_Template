@@ -27,7 +27,7 @@ class Retrofit2TestService(
     private val classLogger: Logger = LoggerFactory.getLogger(this::class.java)
 
     // Retrofit2 요청 객체
-    val networkRetrofit2: RepositoryNetworkRetrofit2 = RepositoryNetworkRetrofit2.getInstance()
+    val networkRetrofit2: RepositoryNetworkRetrofit2 = RepositoryNetworkRetrofit2.instance
 
 
     // ---------------------------------------------------------------------------------------------

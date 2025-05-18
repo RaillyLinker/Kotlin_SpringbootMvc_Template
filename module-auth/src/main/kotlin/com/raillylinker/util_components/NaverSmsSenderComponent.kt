@@ -24,7 +24,7 @@ class NaverSmsSenderComponent(
 ) {
     // <멤버 변수 공간>
     // Retrofit2 요청 객체
-    private val networkRetrofit2: RepositoryNetworkRetrofit2 = RepositoryNetworkRetrofit2.getInstance()
+    private val networkRetrofit2: RepositoryNetworkRetrofit2 = RepositoryNetworkRetrofit2.instance
 
 
     // ---------------------------------------------------------------------------------------------
